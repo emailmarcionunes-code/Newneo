@@ -10,8 +10,8 @@ The opportunity is the source of truth. CRM views, sales playbooks, assessments,
 ## Repository strategy
 Public website and internal platform must be separate applications and repositories.
 
-- `newneo-website`: public website, SEO, lead generation, public assessment intake.
-- `newneo-platform`: authenticated internal application, CRM, playbooks, assessments, proposals, customer portal, admin and future learning modules.
+- `newneo-website`: public website, SEO, lead generation, public assessment intake and canonical public HTML presentations.
+- `newneo-platform`: authenticated internal application, CRM, playbooks, assessments, personalized customer presentations, proposals, admin and future learning modules.
 
 The platform should run on a separate authenticated domain such as `platform.newneo.ai`. Customer-facing engagement links can later use `engage.newneo.ai`.
 
@@ -20,21 +20,59 @@ The platform should run on a separate authenticated domain such as `platform.new
 2. Lead Qualification
 3. Sales & Engagement Playbook
 4. Assessment Engine
-5. Live Engagement Presentation
-6. Proposal Engine
-7. Admin & User Management
-8. Customer Portal
+5. Personalized Live Engagement Presentation
+6. Proposal Readiness
+7. Proposal Engine
+8. Admin & User Management
+9. Customer Portal / Secure Share Links
 
 Future modules:
-9. Delivery Workspace
-10. AgentOps Customer Workspace
-11. Newneo Academy / Learning Factory
+10. Delivery Workspace
+11. AgentOps Customer Workspace
+12. Newneo Academy / Learning Factory
 
 ## Core customer lifecycle
-`Lead → Qualification → Discovery → Paid Assessment → Solution Review → Proposal → POC / Deploy → Production → AgentOps`
+`Lead → Qualification → Discovery → Paid Assessment → Solution Review → Scope & Commercial Review → Proposal Ready → Proposal → POC / Deploy → Production → AgentOps`
 
 Public engagement language:
 `Discover → Assess → Prove → Deploy → Operate`
+
+## Public presentation model
+The canonical Newneo journey presentation is public website content, not CRM content.
+
+The website owns the generic, public presentation of:
+`Discover → Assess → Prove → Deploy → Operate`
+
+This presentation must be usable by:
+- public website visitors
+- customers independently
+- Sales during meetings
+- SREs and architects during technical/commercial conversations
+- internal Newneo teams as the canonical methodology reference
+
+The internal platform does not recreate this narrative from scratch. It reuses the same presentation structure and design language for customer-specific opportunity presentations.
+
+## Personalized customer presentation
+Every active opportunity may receive a customer-safe HTML presentation generated from live opportunity data.
+
+It should inherit the canonical public journey and add only approved customer-specific data such as:
+- customer name and approved logo
+- customer challenge
+- what Newneo understood
+- current engagement stage
+- completed steps
+- assessment findings approved for customer visibility
+- recommended architecture
+- recommended path
+- POC scope/results when relevant
+- next decision
+- proposal status
+
+The essence, sequence and methodology must remain consistent with the public presentation.
+
+The presentation stores no duplicate business data. It renders opportunity data.
+
+Internal-only information must never be visible in customer mode.
 
 ## Core entities
 At minimum:
@@ -112,6 +150,8 @@ Every downstream artifact should reuse this data.
 ## Stage gates
 The system must prevent stage advancement when required information is missing.
 
+Requirements should be conditional by engagement type so the system covers necessary pre-sales work without creating unnecessary administrative friction.
+
 ### Lead → Qualified
 Required:
 - company
@@ -142,21 +182,31 @@ Required:
 ### Assessment Complete → Solution Review
 Required:
 - findings
-- architecture recommendation
+- architecture recommendation when applicable
 - risks
 - success criteria
 - recommended next step
 
-### Solution Review → Proposal Ready
-Required:
-- approved architecture
-- defined scope
+### Solution Review → Scope & Commercial Review
+Required when applicable:
+- approved recommended approach
+- scope
+- deliverables
+- responsibilities
 - assumptions
 - exclusions
+- dependencies
 - delivery estimate
+- timeline
+- pricing model
+
+### Scope & Commercial Review → Proposal Ready
+Required when applicable:
 - pricing
-- approval status
+- commercial approval
 - legal/commercial terms
+- acceptance criteria
+- training/enablement option reviewed
 
 Proposal generation must remain disabled until Proposal Readiness is 100%.
 
@@ -194,64 +244,38 @@ Decision dimensions:
 
 Infrastructure changes should be recommended only when the workload requires them.
 
-## Live Engagement Presentation
-Every opportunity automatically gets a presentation view generated from live opportunity data.
-
-Two modes:
-
-### Internal View
-May show:
-- probability
-- margin
-- pricing assumptions
-- internal risks
-- competition
-- internal notes
-- decision makers
-- approvals
-
-### Customer View
-May show:
-- customer challenge
-- current understanding
-- Newneo engagement process
-- engagement progress
-- current stage highlighted
-- assessment findings
-- recommended architecture
-- recommended next step
-- POC scope/results when relevant
-- proposal status
-
-The customer-facing process bar must always show:
+## Engagement progress model
+Customer-facing journey always uses:
 `Discover → Assess → Prove → Deploy → Operate`
 
-Completed stages use a completed state, current stage is highlighted in Newneo green, future stages are neutral.
+Visual state:
+- completed = completed/check state
+- current = Newneo green `#60d394`
+- future = neutral
 
-The presentation stores no duplicate business data. It renders opportunity data.
-
-Internal principle: **Meet for decisions, not for information transfer.**
+This visual model must be shared by the public presentation and personalized customer presentation.
 
 ## Proposal Engine
+The formal proposal is the **last pre-sales artifact**.
+
 The proposal must be generated from structured opportunity and assessment data, not written from scratch.
 
-Default proposal sections:
+The proposal should be concise by default.
+
+Recommended sections:
 1. Executive Summary
-2. Customer Challenge
-3. Current State
-4. Proposed Solution
-5. Architecture
-6. Scope of Work
-7. Deliverables
-8. Responsibilities
-9. Assumptions
-10. Exclusions
-11. Timeline
-12. Acceptance Criteria
-13. Pricing
-14. Commercial Terms
-15. Training / Enablement Options
-16. Next Steps
+2. What We Understood
+3. Recommended Engagement / Solution
+4. Scope & Deliverables
+5. Customer / Newneo Responsibilities
+6. Assumptions & Key Dependencies
+7. Success / Acceptance Criteria
+8. Timeline
+9. Commercials
+10. Optional Training / Enablement
+11. Next Steps
+
+Detailed assessment reports, HLD/LLD, architecture documents and test evidence should be linked or attached rather than duplicated in the commercial proposal.
 
 Proposal versioning is mandatory.
 
