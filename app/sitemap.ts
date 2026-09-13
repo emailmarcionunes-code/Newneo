@@ -1,0 +1,3 @@
+import type {MetadataRoute} from 'next';
+const paths=['','ai-infrastructure','ai-compute','agent-factory','agentops','rag','mcp','ai-security','private-hybrid-ai','solutions/customer-service','solutions/finance','solutions/it-operations','solutions/hr','solutions/procurement','industries/financial-services','industries/manufacturing','industries/healthcare','industries/public-sector','industries/retail','company','how-we-work','contact'];
+export default function sitemap():MetadataRoute.Sitemap{return paths.map(path=>({url:`https://newneo.ai/${path}`,changeFrequency:path?'monthly':'weekly',priority:path?0.8:1}))}
