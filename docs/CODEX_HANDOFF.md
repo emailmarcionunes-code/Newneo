@@ -3,8 +3,8 @@
 ## Mission
 Continue Newneo as two coordinated products:
 
-1. `newneo-website` — public marketing, education, SEO and lead generation.
-2. `newneo-platform` — authenticated internal operating system for CRM, sales playbook, assessments, live presentations, proposals, admin, customer portal and future Academy.
+1. `newneo-website` — public marketing, education, SEO, public HTML presentations and lead generation.
+2. `newneo-platform` — authenticated internal operating system for CRM, sales playbook, assessments, customer-specific presentations, proposals, admin, customer portal and future Academy.
 
 The current repository contains the public website plus product specifications that define the internal platform. Treat those specifications as authoritative product requirements.
 
@@ -31,6 +31,7 @@ Commercial principles:
 - Assessment may be credited toward a subsequent Newneo implementation under agreed commercial terms.
 - POCs are paid.
 - No implementation proposal without a Newneo Assessment or equivalent assessment validated by Newneo.
+- The formal proposal is the **last pre-sales artifact**, not a discovery tool.
 - Meet for decisions, not for information transfer.
 - Enter once. Reuse everywhere.
 
@@ -78,8 +79,51 @@ Current/required public pages include:
 - `/how-we-work`
 - `/contact`
 - `/start-assessment`
+- `/presentations/engagement`
 
-### Implement the production Start an Assessment form
+## Public HTML Presentation System
+Public presentations are a core website feature, not private CRM content.
+
+They are:
+- public information
+- accessible directly from the website
+- usable by website visitors without a seller
+- the canonical presentation material used by Sales, SREs, architects and delivery teams
+- suitable for screen sharing during customer conversations
+- version-controlled HTML rather than manually rebuilt PowerPoint decks
+
+Initial public presentation:
+- `/presentations/engagement`
+
+Design future presentation architecture so additional public presentations can be added consistently for capabilities, assessments and industries.
+
+The public presentation must remain generic and customer-safe.
+
+## Customer-specific presentation
+Newneo Platform later creates a dynamic customer-specific HTML presentation by reusing the public presentation structure and adding approved opportunity data.
+
+Customer-specific additions may include:
+- customer challenge
+- what Newneo understood
+- current engagement stage
+- completed steps
+- approved findings
+- recommended architecture
+- recommended next step
+- POC scope/results
+- open customer decisions
+- proposal status
+
+Never expose internal-only CRM data in customer view.
+
+Always render:
+`Discover → Assess → Prove → Deploy → Operate`
+
+Completed = completed state.
+Current = Newneo green highlight.
+Future = neutral.
+
+## Implement the production Start an Assessment form
 The current page defines the information model but does not yet submit to a backend.
 
 Implement a polished form that collects:
@@ -128,32 +172,70 @@ Build mobile-responsive but optimize primary workflows for desktop/laptop.
 4. Lead Qualification
 5. Sales / Engagement Playbook
 6. Assessment Engine
-7. Live Engagement Presentation
-8. Proposal Engine
-9. Basic Customer View / secure share links
+7. Customer-specific Live Engagement Presentation
+8. Proposal Readiness
+9. Proposal Engine
+10. Basic Customer View / secure share links
 
 Do not implement Learning Factory first; prepare schema boundaries only.
 
 ## Opportunity workflow
 Internal stages:
-`New Lead → Qualified → Discovery Complete → Assessment Sold → Assessment Complete → Solution Review → Proposal → Won/Lost → Delivery → AgentOps`
+`New Lead → Qualified → Discovery Complete → Assessment Sold → Assessment Complete → Solution Review → Scope & Commercial Review → Proposal Ready → Proposal → Won/Lost → Delivery → AgentOps`
 
 Enforce stage gates in code. The seller must not be able to skip required information.
 
-### Proposal readiness
-Create a visible readiness component showing at least:
+The system should use conditional requirements so only fields relevant to the engagement are mandatory. Avoid administrative friction.
+
+## Proposal-last rule
+The proposal is generated only after required pre-sales work is complete.
+
+`Generate Proposal` must stay disabled until Proposal Readiness reaches 100%.
+
+Readiness should cover, when applicable:
+- Customer / Sponsor
 - Business Case
-- Sponsor
-- Assessment
-- Architecture
+- Desired Outcome
+- Assessment(s)
+- Findings
+- Architecture / Recommended Approach
 - Scope
+- Deliverables
+- Responsibilities
+- Assumptions
+- Exclusions
+- Dependencies
 - Risks
+- Success / Acceptance Criteria
 - Effort Estimate
+- Timeline
 - Pricing
 - Commercial Approval
-- Legal Terms
+- Legal / Commercial Terms
+- Training / Enablement Option
 
-`Generate Proposal` is disabled until all required gates are complete.
+The proposal should be concise by default and link/attach detailed technical documents rather than duplicating them.
+
+Recommended proposal structure:
+1. Executive Summary
+2. What We Understood
+3. Recommended Engagement / Solution
+4. Scope & Deliverables
+5. Customer / Newneo Responsibilities
+6. Assumptions & Key Dependencies
+7. Success / Acceptance Criteria
+8. Timeline
+9. Commercials
+10. Optional Training / Enablement
+11. Next Steps
+
+Requirements:
+- versioning
+- approval status
+- responsive HTML output
+- print/PDF output
+- controlled editable narrative fields
+- no manual re-entry of known opportunity data
 
 ## Assessment Engine
 Assessment types:
@@ -181,70 +263,6 @@ Each assessment needs:
 
 AI Compute Assessment must explicitly support Cloud AI / Compute Starter / Private AI Cluster / Hybrid AI.
 
-## Live Engagement Presentation
-This is a core product feature.
-
-Every opportunity receives an automatically generated HTML presentation sourced from live CRM/opportunity data.
-
-Two modes:
-
-### Internal View
-May show margin, probability, competitive notes, internal risks, pricing assumptions and approvals.
-
-### Customer View
-Must show:
-- Customer Challenge
-- Newneo Engagement Process
-- Where We Are
-- What We Understood
-- Current State
-- Findings
-- Recommended Architecture
-- Recommended Path
-- POC Scope / Results if applicable
-- Proposal Status
-- Next Decision
-
-Always render the engagement bar:
-`Discover → Assess → Prove → Deploy → Operate`
-
-Completed = completed state.
-Current = Newneo green highlight.
-Future = neutral.
-
-Do not duplicate data into the presentation. Render the opportunity source of truth.
-
-Support a clean presentation/full-screen mode suitable for customer calls and a secure customer share-link architecture.
-
-## Proposal Engine
-Generate proposal content from structured data.
-
-Default sections:
-1. Executive Summary
-2. Customer Challenge
-3. Current State
-4. Proposed Solution
-5. Architecture
-6. Scope of Work
-7. Deliverables
-8. Responsibilities
-9. Assumptions
-10. Exclusions
-11. Timeline
-12. Acceptance Criteria
-13. Pricing
-14. Commercial Terms
-15. Training / Enablement Options
-16. Next Steps
-
-Requirements:
-- versioning
-- approval status
-- responsive HTML output
-- print/PDF output
-- controlled editable narrative fields
-- no manual re-entry of known opportunity data
-
 ## Newneo Academy / Learning Factory — future
 Do not prioritize for v1, but maintain extensibility for:
 - courses
@@ -265,6 +283,7 @@ Proposal Engine should later be able to recommend training products based on pro
 Before coding the internal platform, read:
 - `docs/NEWNEO_PLATFORM_PRODUCT_SPEC.md`
 - `docs/SALES_ENGAGEMENT_PLAYBOOK.md`
+- `docs/PUBLIC_PRESENTATIONS_AND_PROPOSAL_FLOW.md`
 - `docs/LEARNING_FACTORY_ROADMAP.md`
 
 ## Engineering expectations
@@ -278,21 +297,24 @@ Before coding the internal platform, read:
 - Add automated tests for stage gates and proposal readiness.
 - Run typecheck/build/tests before considering work complete.
 - Do not weaken gates merely to make the demo easier.
+- Do not add meetings or manual re-entry as substitutes for good product workflow.
 
 ## First Codex milestone
 Deliver an end-to-end demonstrable vertical slice:
 
-1. Login.
-2. Admin creates a Sales user and an AI Architect user.
-3. Create/import a lead.
-4. Convert lead to opportunity.
-5. Complete qualification and discovery gates.
-6. Select a paid assessment.
-7. Record assessment findings and recommended compute path.
-8. Complete internal Solution Review.
-9. Reach 100% Proposal Readiness.
-10. Generate HTML proposal.
-11. Open customer-safe Live Engagement Presentation with the current stage highlighted.
-12. Generate/print proposal to PDF.
+1. Public `/presentations/engagement` works as a polished HTML presentation.
+2. Login to Newneo Platform.
+3. Admin creates a Sales user and an AI Architect user.
+4. Create/import a lead.
+5. Convert lead to opportunity.
+6. Complete qualification and discovery gates.
+7. Select a paid assessment.
+8. Record assessment findings and recommended compute path.
+9. Complete internal Solution Review.
+10. Open customer-specific presentation reusing the public engagement structure, with the current stage highlighted.
+11. Complete scope and commercial review.
+12. Reach 100% Proposal Readiness.
+13. Generate the concise HTML proposal as the final pre-sales artifact.
+14. Generate/print proposal to PDF.
 
 This vertical slice is more important than building many shallow modules.
