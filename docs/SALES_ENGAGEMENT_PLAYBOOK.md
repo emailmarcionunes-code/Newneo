@@ -7,16 +7,50 @@ Public engagement model:
 `Discover → Assess → Prove → Deploy → Operate`
 
 Internal pipeline:
-`New Lead → Qualified → Discovery Complete → Assessment Sold → Assessment Complete → Solution Review → Proposal → Won/Lost → Delivery → AgentOps`
+`New Lead → Qualified → Discovery Complete → Assessment Sold → Assessment Complete → Solution Review → Scope & Commercial Review → Proposal Ready → Proposal → Won/Lost → Delivery → AgentOps`
 
 ## Operating principles
 - Discovery is conversational; Assessment is engineering.
 - Assessment is paid.
 - No implementation proposal without a Newneo Assessment or an equivalent assessment validated by Newneo.
+- The proposal is the last pre-sales artifact.
 - Meet for decisions, not for information transfer.
 - Enter once. Reuse everywhere.
 - Reuse what the customer already has; add infrastructure only when the workload requires it.
 - Do not commoditize complex enterprise AI with an instant price calculator.
+- The public Newneo HTML journey is the canonical presentation used by customers and Newneo teams.
+
+## Canonical public presentation
+The standard Newneo engagement presentation is public and belongs to the website.
+
+It must:
+- explain Discover → Assess → Prove → Deploy → Operate
+- be usable without a seller
+- be the default presentation used by Sales, SREs and architects
+- be suitable for screen sharing
+- be version-controlled in HTML
+- avoid customer-specific or confidential information
+
+A website visitor should be able to navigate the journey and understand Newneo's method, maturity and delivery model before speaking with the company.
+
+## Personalized opportunity presentation
+When a seller presents to a specific customer, the system generates a personalized version based on the canonical public presentation.
+
+It may add:
+- customer name and approved logo
+- customer objective
+- what Newneo understood
+- current engagement stage
+- completed steps
+- approved findings
+- recommended architecture or path
+- next decision
+- POC scope/results when applicable
+- proposal status
+
+The essence, sequence, language and methodology remain the same as the public version.
+
+Internal-only data must never appear in the customer presentation.
 
 ## Stage 1 — New Lead
 Goal: capture enough information to decide whether a human follow-up is warranted.
@@ -173,13 +207,36 @@ Allowed decisions:
 - POC
 - Production Deployment
 
-## Stage 7 — Proposal Readiness
+## Stage 7 — Scope & Commercial Review
+Goal: convert validated technical and business decisions into a proposal-ready commercial package.
+
+Required, when applicable:
+- final recommended path
+- scope
+- deliverables
+- responsibilities
+- assumptions
+- exclusions
+- dependencies
+- risks
+- acceptance/success criteria
+- effort
+- timeline
+- pricing
+- approvals
+- legal/commercial terms
+- optional enablement/training
+
+Only fields relevant to the engagement are mandatory.
+
+## Stage 8 — Proposal Readiness
 The system displays readiness by domain.
 
 Example:
+- Customer / Sponsor ✓
 - Business Case ✓
-- Sponsor ✓
 - Assessment ✓
+- Recommended Approach ✓
 - Architecture ✓
 - Scope ✓
 - Risks ✓
@@ -190,30 +247,29 @@ Example:
 
 `Generate Proposal` remains disabled until all required gates are complete.
 
-## Stage 8 — Proposal
-Proposal is generated from the opportunity source of truth.
+## Stage 9 — Proposal
+The proposal is the final pre-sales artifact and is generated from the opportunity source of truth.
+
+It should be concise by default.
 
 Seller may edit controlled narrative fields, but should not recreate known data manually.
 
-Proposal sections:
+Recommended proposal sections:
 - Executive Summary
-- Customer Challenge
-- Current State
-- Proposed Solution
-- Architecture
-- Scope
-- Deliverables
-- Responsibilities
-- Assumptions
-- Exclusions
+- What We Understood
+- Recommended Engagement / Solution
+- Scope & Deliverables
+- Customer / Newneo Responsibilities
+- Assumptions & Key Dependencies
+- Success / Acceptance Criteria
 - Timeline
-- Acceptance Criteria
-- Pricing
-- Commercial Terms
-- Enablement / Training Options
+- Commercials
+- Optional Training / Enablement
 - Next Steps
 
-## Stage 9 — POC / Prove
+Detailed assessment findings, HLD/LLD, technical reports and test evidence should be linked or attached rather than duplicated.
+
+## Stage 10 — POC / Prove
 POC is paid.
 
 POC must define before execution:
@@ -230,7 +286,7 @@ Outputs:
 - lessons learned
 - production recommendation
 
-## Stage 10 — Production Readiness
+## Stage 11 — Production Readiness
 Before production, validate the difference between the POC and supportable production.
 
 Review:
@@ -247,7 +303,7 @@ Review:
 - support model
 - SLOs
 
-## Stage 11 — Deploy
+## Stage 12 — Deploy
 Convert validated design into a production system.
 
 Output:
@@ -258,7 +314,7 @@ Output:
 - operational runbooks
 - handoff
 
-## Stage 12 — Operate / AgentOps
+## Stage 13 — Operate / AgentOps
 Operate:
 - quality
 - reliability
@@ -268,36 +324,10 @@ Operate:
 
 Recurring service should include baseline, SLOs, continuous evaluation and improvement backlog.
 
-## Live Engagement Presentation
-Every active opportunity must have an always-current HTML presentation.
-
-Purpose:
-- reduce repetitive meetings
-- help the customer understand the full journey
-- show current position clearly
-- keep seller/SRE messaging consistent
-- avoid deck recreation
-
-Permanent engagement bar:
-`Discover → Assess → Prove → Deploy → Operate`
-
-Presentation sections appear progressively as data becomes available:
-- Customer Challenge
-- Newneo Process
-- Where We Are
-- What We Understood
-- Current State
-- Findings
-- Recommended Architecture
-- Recommended Path
-- POC Scope / Results
-- Proposal Status
-- Next Decision
-
 ## Meeting policy
 Default principle: **Meet for decisions, not for information transfer.**
 
-Use portal/presentation for status, findings and context. Use meetings for:
+Use public presentations, personalized engagement views and portal content for status, findings and context. Use meetings for:
 - clarification
 - architecture decisions
 - tradeoffs
