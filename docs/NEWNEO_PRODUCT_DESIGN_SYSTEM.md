@@ -1,68 +1,128 @@
-# Newneo Product Design System
+# Newneo Product Design System v2
 
 ## Status
-Canonical product UI reference for:
-- Newneo AI Platform
-- Newneo Business Platform
-- Newneo Admin Plane
+Canonical UI reference for Newneo AI Platform, Business Platform and Admin Plane.
 
-This document complements the Design Manifesto and translates the approved Agent Catalog / Agent Launch Guide visual reference into reusable product rules.
+Primary principle: **More sophistication through precision, not decoration.**
+North star: the approved Agent Catalog / Agent Launch Guide sequence.
 
-## 1. Design objective
-Newneo should feel:
-- premium
-- calm
-- precise
-- enterprise-grade
-- modern
-- operational
-- easy to understand
+## 1. Core visual language
+Newneo product surfaces should feel premium, calm, precise, enterprise-grade and easy to understand.
 
-It should not feel:
-- decorative
-- cyberpunk
-- overly dashboard-heavy
-- marketing-like inside the application
-- visually noisy
-- technically intimidating by default
-
-Primary visual principle:
-**Rich in useful detail, restrained in decoration.**
-
-## 2. Approved visual reference
-The approved Agent Catalog / Agent Launch Guide sequence is the primary visual reference for the customer-facing product.
-
-Preserve its qualities:
+Use:
 - compact dark sidebar
-- simple Newneo wordmark
-- white working canvas
-- very light topbar
-- modest page titles
+- simple lowercase `newneo` wordmark
+- white / near-white working canvas
+- light topbar
 - thin borders
-- flat or nearly flat cards
-- compact form controls
-- subtle status colors
-- clear blue primary CTA
+- nearly flat cards
+- modest page titles
+- compact but readable controls
+- blue as the single primary action color
+- green for success / healthy states
 - contextual right-side assistance
-- simple linear stepper
+- progressive disclosure
 - real integration identities
-- high information density with strong whitespace
+
+Avoid:
+- hero cards inside the application
+- decorative waves or gradients
+- heavy shadows
+- excessive rounding
+- cyberpunk treatment
+- oversized marketing headlines
+- too many accent colors
+
+## 2. Design tokens
+
+### Colors
+| Token | Value |
+|---|---|
+| primary | `#2563EB` |
+| primary-hover | `#1D4ED8` |
+| primary-light | `#3B82F6` |
+| primary-tint | `#EFF6FF` |
+| primary-tint-strong | `#DBEAFE` |
+| navy | `#0B1220` |
+| navy-soft / text-primary | `#0F172A` |
+| text-secondary | `#64748B` |
+| text-muted | `#94A3B8` |
+| border | `#E2E8F0` |
+| surface | `#FFFFFF` |
+| canvas | `#F8FAFC` |
+| chip-bg | `#F1F5F9` |
+| success | `#16A34A` |
+| success-light | `#10B981` |
+| success-tint | `#ECFDF5` |
+| warning | `#F59E0B` |
+| danger | `#EF4444` |
+| accent-purple | `#7C3AED` |
+| accent-purple-tint | `#F3E8FF` |
+| accent-green | `#059669` |
+| accent-green-tint | `#D1FAE5` |
+
+Color rule: blue = action, green = confirmation, amber/red = attention/failure, violet = limited secondary use.
+
+### Typography
+Font: `Inter, system-ui, -apple-system, sans-serif`.
+
+- page title: 24–28px / 700 / 1.2
+- section title: 18–20px / 600
+- card title: 15–16px / 600
+- body: 14px / 400 / 1.5
+- label: 13px / 500
+- caption: 12–13px / 400
+- button: 14px / 500
+- sidebar item: 14px / 500
+- stepper label: 12px / 500
+- metric large: 32–36px / 700
+
+Do not reduce body/sidebar text to tiny sizes merely to fit more information.
+
+### Spacing
+Use an 8px-based system:
+`4 / 8 / 12 / 16 / 24 / 32px`.
+
+Defaults:
+- card padding: 16–24px
+- card gap: 16px
+- canvas padding: 32px
+- section gap: 24–32px
+
+### Radius
+- small: 6px
+- medium: 8px
+- large: 12px
+- full: 9999px
+
+### Borders and elevation
+Default border: `1px solid #E2E8F0`.
+Default card shadow: `0 1px 2px rgba(15,23,42,0.04)`.
+
+Hierarchy comes from spacing, border and background before shadow.
+
+Selected card: `2px solid #3B82F6` + `#EFF6FF`.
+Selected success state: `2px solid #16A34A` + `#ECFDF5`.
 
 ## 3. Application shell
 
 ### Sidebar
-Recommended width: approximately 200–230 px on desktop.
+Canonical width: **220px**.
+Background: `#0B1220`.
 
-Visual characteristics:
-- dark navy background
-- simple Newneo wordmark near top
-- compact icon + label rows
-- no large logo tile
-- minimal active state
-- customer/workspace identity at bottom
-- no decorative gradients required
+Wordmark: `newneo`, all lowercase, no symbol.
+- on dark: `new` white, `neo` `#3B82F6`
+- reference height ~24px
 
-Primary customer navigation:
+Sidebar item:
+- 40px height
+- 8px 12px padding
+- 18px Lucide icon
+- 14px label
+- active = primary blue background + white icon/text
+- radius 8px
+
+Customer navigation:
 - Overview
 - Agents
 - Knowledge
@@ -73,226 +133,159 @@ Primary customer navigation:
 - AgentOps
 - FinOps
 - Governance
-- Team / Access where applicable
 - Settings
 
-Do not surface every product sub-object as permanent navigation.
+`Team / Access` stays under Governance or Settings unless a future requirement justifies top-level navigation.
+
+Workspace / organization switcher belongs at the bottom.
 
 ### Topbar
-Recommended height: approximately 56–64 px.
+Canonical height: **56px**.
+Background white, border-bottom `#E2E8F0`, horizontal padding 24px.
 
-May contain:
-- search
+Preferred contents:
+- breadcrumb left
 - notification
 - help
-- user profile
-- optional environment context
+- avatar
+- user / organization
+- chevron
 
-The topbar should remain visually subordinate to page content.
+Search is optional and should not visually dominate.
 
-## 4. Canvas
-Default application background should be white or extremely light neutral.
+### Canvas
+Background `#F8FAFC`, padding **32px**, max width about 1280px.
 
-Do not use large hero surfaces in ordinary operational pages.
+Normal page order:
+1. optional breadcrumb
+2. page title
+3. short subtitle
+4. one primary action
+5. optional stepper
+6. content
 
-Pages should generally begin with:
-- optional breadcrumb
-- page title
-- short supporting sentence
-- one primary action
-- optional workflow stepper
-- content
+## 4. Icons
+Canonical library: **Lucide**.
 
-## 5. Typography
-Use a modern sans-serif with compact enterprise proportions.
+- stroke 1.5px
+- 18–20px standard UI size
+- monochrome menu/action icons
+- category icons may sit in same-family tint tiles
+- third-party integrations must use official brand logos in original colors
 
-Suggested hierarchy:
-- page title: 24–32 px
-- section title: 15–20 px
-- body: 12–14 px
-- labels: 10–12 px
-- helper text: 9–11 px
+Suggested mapping:
+Agent `bot`; Knowledge `database/book-open`; Tools & MCP `plug/wrench`; Model `cpu`; Governance `shield-check`; Evaluation `clipboard-check`; Deploy `rocket`; Success `check-circle`; API `code`.
 
-Rules:
-- short headings
-- short descriptive copy
-- strong contrast
-- muted secondary text
-- avoid oversized marketing headlines inside the application
+## 5. Buttons
+Primary: blue background, white text, 14px/500, 8px 16px, radius 8px.
+Secondary: white + neutral border + dark text.
+Outline blue: white + primary border/text; used for `Connect`.
+Add action: dashed light-blue border, primary text, plus icon.
+Link action: primary text + optional arrow-right.
 
-## 6. Color roles
+One dominant primary CTA per screen.
 
-### Navy
-Application frame and sidebar.
+## 6. Chips and tags
+Filter chips: pill, 6px 14px, 13px/500. Active = primary blue/white. Inactive = white/border/secondary text.
 
-### Blue
-Primary action, selected state, current wizard step, links and focus.
+Tags: `#F1F5F9`, secondary text, 12px, 2px 8px, radius 6px.
 
-### Green
-Success, healthy, passed, connected, live.
+## 7. Agent Catalog
+Card:
+- white surface
+- neutral border
+- radius 12px
+- padding 20px
+- 40px icon tile with 22px icon
+- concise title and one-line description
+- short tags
+- clear Launch / Use This Agent action
 
-### Amber
-Needs attention, pending review, warning.
+Grid generally 3 columns, gap 16px.
 
-### Red
-Critical, failed, blocked.
+Avoid oversized descriptions or cards.
 
-### Violet
-Limited secondary category or technical state.
+## 8. Knowledge and Tools & MCP
+Integration tile:
+- white surface
+- border
+- radius 12px
+- padding 16px
+- official provider logo ~32px
+- provider name 13px/600
+- short caption
+- full-width outline-blue `Connect`
 
-Do not use multiple accent colors merely for visual variety.
+Examples:
+SharePoint, Google Drive, Confluence, OneDrive, Notion, Salesforce, ServiceNow, SAP, Microsoft Teams, Slack, Custom API.
 
-## 7. Borders, radius and shadow
-
-### Borders
-Use thin neutral borders as the primary method of separation.
-
-### Radius
-Moderate radius only.
-
-Suggested:
-- inputs: 6–9 px
-- buttons: 6–9 px
-- cards: 8–12 px
-- pills: fully rounded when appropriate
-
-Avoid excessive 16–24 px rounding throughout the app.
-
-### Shadows
-Use minimal shadows.
-
-Default card should normally work with border only.
-
-Shadow is reserved for:
-- floating menus
-- dialogs
-- elevated overlays
-- occasional hierarchy
-
-## 8. Buttons
-
-### Primary
-- solid blue
-- white text
-- one dominant primary action per screen
-
-### Secondary
-- white background
-- blue or dark text
-- thin neutral or blue border
-
-### Tertiary
-- text/link treatment
-
-Avoid large glossy buttons, gradients and multiple equal-weight CTAs.
+Connected / selected resources may appear in a compact right-side panel.
 
 ## 9. Forms
-Forms should remain compact and calm.
+Label: 13px/500.
+Input/select: 40px height, white, border, radius 8px, padding 0 12px, 14px text.
+Focus: primary border + 2px primary-tint-strong ring.
+Textarea: minimum 80px.
+Checkbox: 18px, radius 6px, primary blue when checked.
 
-Characteristics:
-- white background
-- thin border
-- compact field height
-- short labels
-- supporting copy only when necessary
-- clear selected state
-- error state close to the field
+Advanced engineering controls live behind `Advanced settings`, drawers, expanders or secondary tabs.
 
-Advanced configuration belongs behind:
-- Advanced Settings
-- drawer
-- expander
-- secondary tab
-
-## 10. Agent Launch Guide pattern
-Canonical steps:
+## 10. Canonical Agent Launch Guide
+Flow:
 `Use Case → Knowledge → Tools → Model → Governance → Evaluate → Deploy`
 
-### Stepper
-- horizontal on desktop
-- compact
-- blue current step
-- quiet completed/future states
-- labels remain readable
+Stepper:
+- horizontal desktop
+- 7 steps
+- 28px circles
+- 1px neutral connector
+- active = primary blue + white number
+- completed = primary tint + blue check
+- pending = neutral border / muted text
+- 12px labels
 
-### Page layout
-Primary task area dominates.
+Wizard desktop layout:
+- primary task area 2/3
+- contextual panel 1/3
+- 24px gap
 
-A secondary contextual panel may contain:
+Bottom navigation:
+`← Back` left and `Next →` right.
+
+Every wizard page must reuse this same skeleton.
+
+## 11. Contextual side panel
+Radius 12px, padding 20px.
+
+Only current-decision context belongs here:
 - expected outcomes
 - connected sources
 - selected tools
 - estimated impact
+- cost / latency
 - evaluation score
 - readiness
 
-The side panel should support the current decision only.
+Connected source pattern: 24px logo + name + detail/domain + 8px green status dot.
 
-## 11. Agent Catalog
-Agent Catalog should prioritize scanability.
+## 12. Model & Runtime
+First question: **Where should this AI run?**
 
-Use:
-- category filters
-- small icon tile
-- agent name
-- one-line purpose
-- short tags
-- clear Use This Agent / Launch action
+If the organization has a default, show it first as recommended with `Change execution model`.
 
-Avoid long descriptions and oversized cards.
-
-## 12. Knowledge and Tools
-Connector cards should use recognizable real integration identity when possible.
-
-Examples:
-- SharePoint
-- Google Drive
-- Confluence
-- OneDrive
-- Notion
-- Salesforce
-- ServiceNow
-- SAP
-- Microsoft Teams
-- Slack
-- Custom API
-
-Show:
-- provider identity
-- one-line purpose
-- connection state
-- primary Connect / Configure action
-
-Selected/connected resources may appear in a compact right-side list.
-
-## 13. Model & Runtime
-Default first decision:
-**Where should this AI run?**
-
-Present simple options:
+Choices:
 - Organization Default
 - Managed AI
 - Customer Cloud
 - Private AI
 - Hybrid AI
 
-Then show the approved model selection.
+Then show only approved model endpoints.
 
-Advanced details such as:
-- provider endpoint
-- context window
-- inference settings
-- region
-- cluster
-- GPU
-- networking
+Hide endpoint internals, inference settings, region, cluster, GPU and networking until advanced view.
 
-remain hidden until requested or role-authorized.
-
-## 14. Governance
-Present governance in business-readable groups.
-
-Recommended categories:
+## 13. Governance
+Business-readable groups:
 - Access & Permissions
 - Policies
 - Data Controls
@@ -306,36 +299,32 @@ Examples:
 - Respect data residency
 - Mask sensitive data
 
-Technical policy engine details remain advanced.
+Technical policy-engine detail remains advanced.
 
-## 15. Evaluation
-Evaluation should communicate production confidence.
+## 14. Test & Evaluate
+Show production confidence rather than raw telemetry.
 
-Show:
-- overall evaluation score
+Core evaluation dimensions:
 - relevance
 - groundedness
 - safety
 - tool success
 - task success
-- failed / warning cases
+- failed/warning cases
 
-Use green strongly only for passing states.
+Donut: green ring, neutral trail, large central value.
+Metric bars: 6px, fully rounded, green fill.
+Status: Passed / Needs Review / Failed.
 
-The screen should make the next action obvious:
-- review failed cases
-- rerun evaluation
-- proceed to deployment
+Test chat uses 28px avatars, light bordered message bubbles and 40px input with blue Send button.
 
-## 16. Deployment
-Deployment should clearly communicate environments:
+## 15. Deployment
+Environments:
 - Development
 - Staging / Test
 - Production
 
-Production should appear as the deliberate final selection.
-
-Before production, summarize:
+Before Production summarize:
 - Agent
 - Model / runtime
 - Knowledge sources
@@ -344,57 +333,41 @@ Before production, summarize:
 - Governance
 - Evaluation score
 
-The final CTA should be explicit, e.g.:
-**Deploy to Production**
+Final CTA: **Deploy to Production**.
 
-## 17. Success state
-After deployment, use a clean confirmation screen.
+## 16. Success state
+Centered, simple confirmation.
 
-Recommended content:
-- success icon
-- short confirmation
-- agent name
-- environment
-- primary action: Go to Agent Overview
-- secondary action: Create Another Agent
+- 64px success-tint circle
+- 32px green check
+- short headline: `Your agent is live!`
+- short subtitle
+- primary: `Go to Agent Overview →`
+- secondary: `Create Another Agent`
 
-Next-step cards may include:
-- Monitor performance
-- Review user feedback
-- Iterate and improve
-- Explore additional agents
+`What's next?` may show:
+Monitor performance, Review user feedback, Iterate and improve, Explore additional agents.
 
-## 18. Dashboard rules
-Dashboards should be operational, not decorative.
-
-Use:
+## 17. Dashboard rules
+Operational dashboards should use:
 - 3–5 top metrics
-- one or two main charts
+- one or two primary charts
 - ranked lists
 - lightweight tables
 - explicit recommendations
 
-Avoid:
-- large hero cards
-- decorative waves
-- excessive shadows
-- too many metric cards
-- large colored backgrounds
+Avoid giant hero cards, decorative waves, large colored backgrounds, heavy shadows and excessive metrics.
 
-## 19. AgentOps
-AgentOps should emphasize:
+## 18. AgentOps
+Prioritize:
 - what needs attention
 - affected agents/tasks
 - business impact
 - likely cause
 - evidence
-- recommended next action
+- recommended action
 
-Status colors must be semantic.
-
-## 20. FinOps
-FinOps should visually inherit AgentOps patterns.
-
+## 19. FinOps
 Prioritize:
 - AI Units
 - total spend
@@ -404,61 +377,58 @@ Prioritize:
 - forecast
 - optimization opportunities
 
-Do not expose raw token accounting as the default customer view.
+Raw token accounting is not the default customer view.
 
-## 21. Business Platform adaptation
-Use the same shell and component system.
+## 20. Business Platform adaptation
+Use the same shell and components.
+Higher density is acceptable for pipeline, accounts, assessments, proposal readiness, handoff and renewals.
+It must still look like Newneo, not a separate CRM product.
 
-Higher data density is acceptable for:
-- pipeline
-- accounts
-- assessments
-- proposal readiness
-- handoff
-- renewals
-
-But avoid making it visually resemble a separate CRM product.
-
-## 22. Admin Plane adaptation
+## 21. Admin Plane adaptation
 Use the same shell and design language.
+Admin Plane may have the highest density.
+Prioritize Customer 360, subscriptions, contracts, usage, infrastructure, incidents, FinOps, profitability and renewals.
+Dense tables are acceptable, but the UI stays flat and calm.
 
-Admin Plane can have the highest density.
+## 22. Implementation tokens
+```js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: { DEFAULT:'#2563EB', hover:'#1D4ED8', light:'#3B82F6', tint:'#EFF6FF', 'tint-strong':'#DBEAFE' },
+        navy: { DEFAULT:'#0B1220', soft:'#0F172A' },
+        surface:'#FFFFFF', canvas:'#F8FAFC', chip:'#F1F5F9', line:'#E2E8F0',
+        ink: { DEFAULT:'#0F172A', secondary:'#64748B', muted:'#94A3B8' },
+        success: { DEFAULT:'#16A34A', light:'#10B981', tint:'#ECFDF5' },
+        warning:'#F59E0B', danger:'#EF4444',
+        accent: { purple:'#7C3AED', 'purple-tint':'#F3E8FF', green:'#059669', 'green-tint':'#D1FAE5' }
+      },
+      fontFamily: { sans:['Inter','system-ui','sans-serif'] },
+      borderRadius: { sm:'6px', md:'8px', lg:'12px' },
+      boxShadow: { card:'0 1px 2px rgba(15,23,42,0.04)' },
+      spacing: { sidebar:'220px', topbar:'56px' }
+    }
+  }
+}
+```
 
-Prioritize:
-- Customer 360
-- subscriptions
-- contracts
-- usage
-- infrastructure
-- incidents
-- FinOps
-- profitability
-- renewals
+## 23. Acceptance checklist
+Before approving a screen:
+1. Does it match the approved Agent Launch Guide visual language?
+2. Is the shell quieter than the content?
+3. Can the user understand the screen within five seconds?
+4. Is there one primary action?
+5. Is body/sidebar text readable without miniaturization?
+6. Is color semantic rather than decorative?
+7. Are borders doing more work than shadows?
+8. Are advanced technical details progressively disclosed?
+9. Are third-party integrations represented with credible official identity?
+10. Is spacing consistent with the 8px system?
+11. Could any visual element be removed without losing meaning?
+12. Does it look like a production product rather than a concept dashboard?
 
-Tables may be denser, but the UI should remain flat and calm.
+## North star
+**The sophistication should live in the system, not in the user's cognitive load.**
 
-## 23. Component hierarchy
-Preferred hierarchy:
-1. Canvas
-2. Page header
-3. Primary task/content
-4. Secondary context
-5. Drill-down detail
-
-Do not create visual hierarchy primarily by increasing decoration.
-
-## 24. Real-product test
-Before accepting a screen, ask:
-
-- Does this look like a real product or a concept dashboard?
-- Can the user identify the primary task immediately?
-- Is the shell visually quieter than the content?
-- Are integrations represented credibly?
-- Are technical details progressively disclosed?
-- Could one visual element be removed without losing meaning?
-- Is the screen consistent with the approved Agent Launch Guide reference?
-
-If the answer to the last question is no, the screen is not complete.
-
-## 25. North star
 **More sophistication through precision, not decoration.**
