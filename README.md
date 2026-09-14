@@ -1,38 +1,38 @@
-# NewNeo
+# Newneo
 
-**Enterprise AI Operations Platform**
+**Enterprise AI Engineering**
 
-NewNeo designs, deploys and operates enterprise AI agents that execute real work across business workflows.
+Newneo builds and operates enterprise AI — from AI infrastructure and accelerated compute to production agents and AgentOps.
 
-## Product thesis
+## Positioning
 
-Enterprise AI should not become another technology stack the customer has to manage. NewNeo connects AI to enterprise knowledge, systems and workflows, puts it into production, and continuously operates and improves it.
+The public website is organized around three ways customers enter the conversation:
 
-**Lifecycle:** Discover → Build → Deploy → Operate → Improve
+1. **Technology** — AI Infrastructure, AI Compute, Agent Factory, AgentOps.
+2. **Business problem** — Customer Service, Finance, IT Operations, HR, Procurement.
+3. **Industry** — Financial Services, Manufacturing, Healthcare, Public Sector, Retail.
 
-## Initial platform pillars
+The communication rule across the site is simple: a visitor should understand the purpose of each page within five seconds. Technical depth comes later through progressive disclosure.
 
-1. **AI Agents** — role-based agents designed around real business responsibilities.
-2. **Workflows** — multi-step and multi-agent business execution.
-3. **Knowledge** — RAG, enterprise documents, trusted context and policies.
-4. **Integrations** — CRM, ERP, ITSM, APIs, databases and internal systems.
-5. **AI Operations** — quality, cost, latency, reliability, governance and continuous improvement.
+## Core architecture
 
-## Initial solution families
+- **AI Infrastructure** — networking, storage, connectivity and data center foundations.
+- **AI Compute** — GPU clusters, Kubernetes/OpenShift, model runtimes, training and inference.
+- **Agent Factory** — enterprise knowledge, RAG, MCP/tools, governance, evaluation and production agents.
+- **AgentOps** — quality, reliability, security, economics and continuous improvement.
 
-- **NewNeo Service** — customer service, support, sales and collections.
-- **NewNeo Work** — employee agents and internal business workflows.
-- **NewNeo Ops** — IT, NOC, SOC, troubleshooting and operational response.
-- **NewNeo Learn** — AI instructors, corporate knowledge, RAG and learning experiences.
+## Capabilities
 
-## Languages
+- Enterprise RAG
+- MCP & Enterprise Actions
+- AI Security
+- Private & Hybrid AI
 
-English is the canonical and default language. The product is designed for:
+## Engagement model
 
-- English (`en`)
-- Portuguese — Brazil (`pt-BR`)
-- Spanish (`es`)
-- French (`fr`)
+**Assess → Prove → Deploy → Operate**
+
+Start with one measurable business process, prove value with a bounded POC, productionize what works, then operate and improve it continuously.
 
 ## Technology baseline
 
@@ -40,6 +40,7 @@ English is the canonical and default language. The product is designed for:
 - React 19
 - TypeScript
 - App Router
+- Native Next.js metadata, sitemap and robots routes
 
 ## Run locally
 
@@ -50,10 +51,31 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+## Build
+
+```bash
+npm run build
+npm start
+```
+
+A GitHub Actions build workflow is included in `.github/workflows/build.yml`. If no workflow runs appear, enable GitHub Actions for the repository before relying on CI.
+
 ## Domain
 
 `newneo.ai`
 
-## Current status
+## Deployment
 
-The first public landing experience and an initial AI Workforce Console concept are implemented. The next product phase is to separate the public website from the authenticated console and add real agent, workflow, knowledge, integration, evaluation and operations data models.
+The current website implementation lives on branch `newneo-site-v1` and is reviewed through PR #1 before merging into `main`.
+
+Recommended deployment flow:
+
+1. Review the PR and visual experience.
+2. Ensure GitHub Actions or the chosen hosting provider completes a successful Next.js build.
+3. Merge `newneo-site-v1` into `main`.
+4. Connect `newneo.ai` to the deployment provider.
+5. Validate canonical URLs, sitemap, favicon and responsive behavior in production.
+
+## Language
+
+English is the canonical website language. Portuguese, Spanish and French are planned as optional localized experiences.
