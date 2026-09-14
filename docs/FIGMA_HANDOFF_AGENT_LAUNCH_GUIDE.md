@@ -1,7 +1,11 @@
 # Newneo AI Platform — Figma Handoff: Agent Launch Guide
 
 ## Status
-Canonical visual handoff for the Newneo Customer AI Platform Agent Launch Guide.
+**APPROVED FOR IMPLEMENTATION.**
+
+Canonical visual handoff for the Newneo Customer AI Platform Agent Catalog + Agent Launch Guide.
+
+Engineering may begin now. Final third-party logo assets and a small number of icon-polish items are still pending and should be treated as replaceable visual assets, not implementation blockers.
 
 ## Visual source of truth
 Figma file: `Newneo Product Design`
@@ -24,6 +28,7 @@ Canonical screens / node IDs:
 
 ## Canonical design system
 Read `docs/NEWNEO_PRODUCT_DESIGN_SYSTEM.md` before implementation.
+Also read `docs/NEWNEO_PRODUCT_SURFACE_ROADMAP.md` for approved/pending surface status.
 
 Visual foundations are also implemented directly in Figma as:
 
@@ -53,6 +58,7 @@ The Figma design already contains reusable component assets, including:
 - Filter Chip — Default / Active
 - Agent Card
 - Application Sidebar / Agents Active
+- Launch Stepper variants
 
 Do not recreate visually similar alternatives in code when a canonical product pattern already exists.
 
@@ -81,6 +87,12 @@ Canonical flow:
 `Use Case → Knowledge → Tools → Model → Governance → Evaluate → Deploy`
 
 Use the same horizontal stepper and shell across all steps.
+
+Stepper states:
+- completed = green success state + white check
+- current = primary blue + white number
+- future = neutral border / muted label
+- completed connector segment = green
 
 ### Knowledge
 Use credible provider identity for enterprise data sources. The canonical screen currently includes:
@@ -148,6 +160,8 @@ Canonical concepts:
 - passed / needs review / failed test cases
 - test chat
 
+The overall score must use a clean continuous progress ring, not a visually segmented/broken ring.
+
 ### Deploy
 The user deliberately selects:
 
@@ -171,6 +185,34 @@ Next actions:
 - Review user feedback
 - Iterate and improve
 - Explore additional agents
+
+## Asset polish pending — does not block implementation
+The following are intentionally classified as **visual polish pending**:
+
+- final official third-party provider logo SVGs
+- final optical sizing/normalization of provider logos
+- final Launch rocket icon asset
+- selected semantic icon refinements
+
+Codex must not hard-code these as custom one-off drawings inside screens.
+
+Implement reusable replaceable boundaries such as:
+
+```tsx
+<AgentIcon type="research" />
+<ProviderLogo provider="salesforce" />
+<LaunchIcon />
+```
+
+Names may follow project conventions; the architectural principle is mandatory.
+
+Agent Catalog icon semantics should remain distinct:
+- Customer Service → headset
+- IT Support → monitor
+- Knowledge → book/open book
+- Sales → chart / trending
+- Process Automation → gear/workflow
+- Research → flask
 
 ## Current code gap
 The current `ai-platform/components/AppShell.tsx` predates the canonical Figma shell.
@@ -203,12 +245,16 @@ Implement code counterparts for the canonical Figma components before composing 
 - Button
 - FilterChip
 - AgentCard
+- AgentIcon
+- ProviderLogo
+- LaunchIcon
 - IntegrationTile
 - Stepper
 - FormField / SelectField
 - ContextPanel
 - Callout
 - EnvironmentOption
+- ProgressRing
 
 Use existing project conventions where they already exist; do not introduce a second component system.
 
@@ -240,7 +286,8 @@ Once code components exist 1:1, map at minimum:
 - Figma Filter Chip ↔ code FilterChip
 - Figma Agent Card ↔ code AgentCard
 - Figma Application Sidebar ↔ code ApplicationSidebar
-- later: Stepper, IntegrationTile, ContextPanel and EnvironmentOption
+- Launch Stepper ↔ code Stepper
+- later: IntegrationTile, ContextPanel, EnvironmentOption, ProviderLogo and ProgressRing
 
 ## Acceptance rules
 A screen is not complete only because it compiles.
@@ -260,6 +307,8 @@ For each screen compare the implementation with its Figma node and verify:
 - product terminology
 
 The final implementation should look like the Figma product, not a reinterpretation of it.
+
+Minor logo/icon asset differences are acceptable during initial engineering only when components are replaceable and clearly marked for final visual QA.
 
 ## Ownership
 - Product / Strategy / UX Architecture: ChatGPT + Marcio final decision
