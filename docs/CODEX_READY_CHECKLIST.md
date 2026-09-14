@@ -20,6 +20,8 @@
 
 ## UX decisions complete
 - Design Manifesto approved
+- canonical Product Design System approved
+- approved Agent Catalog / Agent Launch Guide reference is the primary visual north star
 - Overview defined and prototyped
 - Agent Catalog defined and prototyped
 - Agent Launch Guide defined and prototyped
@@ -30,6 +32,28 @@
 - One primary intention per screen
 - Business language before technical language
 - customer AI Platform and internal Newneo Admin Plane must remain separate experiences
+- application UI should gain sophistication through precision, not decoration
+
+## Visual implementation rule
+Codex must implement the product shell and screens according to `NEWNEO_PRODUCT_DESIGN_SYSTEM.md` and `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`.
+
+Key rules:
+- compact dark navy sidebar
+- simple Newneo wordmark, not an ornamental logo tile
+- predominantly white canvas
+- visually quiet topbar
+- thin neutral borders
+- low or no card shadow by default
+- moderate radii
+- compact typography and forms
+- restrained semantic colors
+- blue primary action
+- green success/healthy state
+- real connector identities when available
+- linear launch stepper
+- no oversized hero cards or decorative waves in ordinary application workflows
+- no unnecessary gradients, glows or dashboard decoration
+- same core shell across Customer Platform, Business Platform and Admin Plane, with density changing by surface
 
 ## Core customer flow
 `Overview → Agent Catalog → Use Case → Knowledge → Tools → Model & Runtime → Governance → Evaluate → Deploy → Agent Detail → AgentOps → FinOps`
@@ -148,7 +172,7 @@ Do not implement a Service Provider layer now, but avoid structural assumptions 
 `Provider (future optional) → Organization → Workspace → Agent → Task`
 
 ## V1 build priority
-1. App foundation and design system
+1. App foundation and canonical design system
 2. Organization/workspace context
 3. Agent Catalog
 4. Agent/version lifecycle
@@ -192,6 +216,7 @@ Read before implementation:
 - `NEWNEO_AI_PLATFORM_SPEC.md`
 - `NEWNEO_AI_PLATFORM_V1_UX.md`
 - `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`
+- `NEWNEO_PRODUCT_DESIGN_SYSTEM.md`
 - `NEWNEO_EMPLOYEE_STUDY_GUIDE.md`
 - `NEWNEO_COMMERCIAL_MODEL.md`
 - `NEWNEO_SKILLS_STRATEGY.md`
@@ -213,4 +238,4 @@ Read before implementation:
 The implementation should avoid mandatory cloud-only dependencies so the same product can support SaaS and customer-controlled deployments.
 
 ## Handoff rule
-Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, commercial positioning, IP boundaries, Admin Plane boundaries, FinOps semantics, support boundaries and pricing architecture should not be reinterpreted without an explicit product decision.
+Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, visual design system, commercial positioning, IP boundaries, Admin Plane boundaries, FinOps semantics, support boundaries and pricing architecture should not be reinterpreted without an explicit product decision.
