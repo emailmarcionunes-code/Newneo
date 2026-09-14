@@ -1,12 +1,13 @@
 # Newneo — Codex Implementation Handoff
 
 ## Mission
-Continue Newneo as two coordinated products:
+Continue Newneo as three coordinated product surfaces:
 
 1. `newneo-website` — public marketing, education, SEO, public HTML presentations and lead generation.
-2. `newneo-platform` — authenticated internal operating system for CRM, sales playbook, assessments, customer-specific presentations, proposals, admin, customer portal and future Academy.
+2. `newneo-business-platform` — authenticated internal operating system for CRM, sales playbook, assessments, customer-specific presentations, proposals, admin and delivery handoff.
+3. `newneo-ai-platform` — customer-facing SaaS/control plane for building, governing, deploying and operating enterprise AI.
 
-The current repository contains the public website plus product specifications that define the internal platform. Treat those specifications as authoritative product requirements.
+The current repository contains the public website plus authoritative product specifications.
 
 ## Current public site repository
 Repository: `emailmarcionunes-code/Newneo`
@@ -16,33 +17,43 @@ Base branch: `main`
 
 Do not merge to `main` unless explicitly instructed.
 
-## Product positioning
-Newneo is an enterprise AI engineering company.
+## Strategic positioning
+Newneo is no longer positioned publicly as infrastructure-first.
 
-Core architecture:
-`AI Infrastructure → AI Compute → Agent Factory → AgentOps`
+Primary public positioning:
+**Enterprise AI Platform + Deployment Engineering + AI Operations**
+
+Primary commercial promise:
+**We bring enterprise AI into production.**
+
+Newneo remains capable of infrastructure, compute, networking, private AI and hybrid AI engineering, but these are deployment capabilities rather than headline products.
 
 Customer engagement model:
 `Discover → Assess → Prove → Deploy → Operate`
 
 Commercial principles:
+- Start with the business workflow and desired outcome.
 - Discovery is conversational and free.
 - Assessment is engineering and paid.
 - Assessment may be credited toward a subsequent Newneo implementation under agreed commercial terms.
 - POCs are paid.
-- No implementation proposal without a Newneo Assessment or equivalent assessment validated by Newneo.
-- The formal proposal is the **last pre-sales artifact**, not a discovery tool.
+- No implementation proposal without a Newneo Assessment or equivalent validated by Newneo.
+- The formal proposal is the last pre-sales artifact.
 - Meet for decisions, not for information transfer.
 - Enter once. Reuse everywhere.
+- Infrastructure is a deployment decision, not the headline.
+- Remain vendor-neutral across models, clouds and private runtimes.
 
-## Infrastructure / compute principle
+## Deployment principle
 Never assume every customer needs a local AI network or GPU cluster.
 
-Newneo first assesses readiness and then recommends one of:
-- Cloud AI
-- Compute Starter
-- Private AI Cluster
-- Hybrid AI
+Newneo may recommend and integrate:
+- managed AI/model APIs
+- customer AWS/Azure/GCP
+- private AI
+- hybrid AI
+- private Kubernetes/OpenShift
+- NVIDIA/private model environments
 
 Decision dimensions:
 - privacy
@@ -52,6 +63,8 @@ Decision dimensions:
 - control
 
 Reuse the customer environment where it works. Add specialized infrastructure only when justified by the workload.
+
+Newneo assumes responsibility for architecture, integration and deployment, even when cloud or infrastructure is supplied by the customer or a partner.
 
 ## Public website work
 Preserve the current design direction:
@@ -63,158 +76,125 @@ Preserve the current design direction:
 - strong 5-second positioning
 - English canonical language
 
-Current/required public pages include:
-- `/`
-- `/ai-infrastructure`
-- `/ai-compute`
-- `/agent-factory`
-- `/agentops`
-- `/rag`
-- `/mcp`
-- `/ai-security`
-- `/private-hybrid-ai`
-- solution pages
-- industry pages
-- `/company`
-- `/how-we-work`
-- `/contact`
-- `/start-assessment`
-- `/presentations/engagement`
+The homepage narrative should prioritize:
+1. Newneo AI Platform
+2. Deployment Engineering
+3. AI Operations
+
+Infrastructure, compute and private/hybrid AI remain available as deeper capability pages, not top-level commercial pillars.
+
+Primary homepage message:
+**We bring enterprise AI into production.**
+
+Support message:
+Newneo combines an enterprise AI platform, deployment engineering and ongoing AI operations to turn business workflows into governed production systems.
 
 ## Public HTML Presentation System
-Public presentations are a core website feature, not private CRM content.
+Public presentations are a core website feature.
 
-They are:
-- public information
-- accessible directly from the website
-- usable by website visitors without a seller
-- the canonical presentation material used by Sales, SREs, architects and delivery teams
-- suitable for screen sharing during customer conversations
-- version-controlled HTML rather than manually rebuilt PowerPoint decks
+Primary commercial presentation:
+- `/presentations/newneo`
 
-Initial public presentation:
+Detailed engagement presentation:
 - `/presentations/engagement`
 
-Design future presentation architecture so additional public presentations can be added consistently for capabilities, assessments and industries.
+The About Newneo presentation should tell the commercial story:
+- who Newneo is
+- business-first approach
+- Newneo AI Platform
+- deployment engineering
+- AI Operations / AgentOps
+- vendor-neutral runtime choices
+- Discover → Assess → Prove → Deploy → Operate
+- land-and-expand model
 
-The public presentation must remain generic and customer-safe.
+Public presentations are the canonical material used by customers, Sales, SREs, architects and delivery teams.
 
-## Customer-specific presentation
-Newneo Platform later creates a dynamic customer-specific HTML presentation by reusing the public presentation structure and adding approved opportunity data.
+## Newneo Business Platform
+Create the internal platform as a separate app/repository.
 
-Customer-specific additions may include:
-- customer challenge
-- what Newneo understood
-- current engagement stage
-- completed steps
-- approved findings
-- recommended architecture
-- recommended next step
-- POC scope/results
-- open customer decisions
-- proposal status
+Purpose:
+- CRM
+- qualification
+- assessments
+- customer-specific commercial presentation
+- proposal readiness
+- proposal generation
+- delivery handoff
+- commercial approvals
 
-Never expose internal-only CRM data in customer view.
-
-Always render:
-`Discover → Assess → Prove → Deploy → Operate`
-
-Completed = completed state.
-Current = Newneo green highlight.
-Future = neutral.
-
-## Implement the production Start an Assessment form
-The current page defines the information model but does not yet submit to a backend.
-
-Implement a polished form that collects:
-- name
-- company
-- business email
-- phone optional
-- country
-- industry
-- business objective
-- current AI stage: idea / experiment / POC / production
-- company knowledge requirement: yes / no / not sure
-- enterprise actions requirement: yes / no / not sure
-- expected execution model: cloud / private / hybrid / not sure
-- local AI compute: yes / limited / no / not sure
-- sensitive or regulated data: yes / no / not sure
-- systems involved
-- expected users / transaction volume
-- success outcome
-- free-text context
-
-The public form should not display automated pricing.
-
-Initially, design the API boundary cleanly so submissions can create leads in Newneo Platform when its backend exists. Until the platform API is available, use a safe development adapter or documented stub rather than embedding permanent business logic into the public site.
-
-## Internal platform
-Create a separate repository/app for Newneo Platform rather than placing authenticated CRM code inside the public SEO site.
-
-Preferred initial stack:
+Preferred stack:
 - Next.js
 - TypeScript
 - PostgreSQL / Supabase
 - Supabase Auth initially
 - RBAC
-- object storage for documents
-- HTML-to-PDF proposal generation
+- object storage
+- HTML-to-PDF
 - audit events
-- explicit opportunity state machine
+- opportunity state machine
 
-Build mobile-responsive but optimize primary workflows for desktop/laptop.
+Read `docs/NEWNEO_PLATFORM_PRODUCT_SPEC.md` for the business-platform requirements.
 
-## V1 platform modules
-1. Authentication
-2. Admin & User Management
-3. CRM
-4. Lead Qualification
-5. Sales / Engagement Playbook
-6. Assessment Engine
-7. Customer-specific Live Engagement Presentation
-8. Proposal Readiness
-9. Proposal Engine
-10. Basic Customer View / secure share links
+## Newneo AI Platform
+Treat the customer-facing AI platform as a separate strategic product, not a future CRM feature.
 
-Do not implement Learning Factory first; prepare schema boundaries only.
+Read `docs/NEWNEO_AI_PLATFORM_SPEC.md` before implementation.
+
+Core product model:
+`Build → Knowledge → Connect → Intelligence → Govern → Evaluate & Deploy → Operate`
+
+V1 navigation:
+- Overview
+- Workspaces
+- Agent Catalog
+- Agent Builder
+- Knowledge
+- Tools & MCP
+- Models
+- Evaluations
+- Security & Governance
+- Deployments
+- AgentOps
+- Settings / Administration
+
+The platform is a vendor-neutral control plane above cloud, private and hybrid AI execution environments.
+
+The platform must not attempt to replace AWS, Azure, GCP, model providers, Kubernetes/OpenShift or customer infrastructure. It orchestrates and governs AI workloads across them.
+
+## AI Platform V1 principles
+- multi-tenant organization/workspace model
+- customer-safe SaaS experience
+- RBAC and audit from day one
+- model-agnostic
+- external runtime integration is acceptable initially
+- do not build a new LLM runtime unless required
+- reusable assets across agents are core: knowledge, tools, MCP, policies, evaluation suites
+- self-service must remain governed
+- every production agent should have an evaluation suite
+- AgentOps combines quality, reliability, security, economics and business outcomes
+
+## Newneo Business Platform → AI Platform integration
+When an opportunity becomes an active deployment, the Business Platform should eventually be able to provision:
+- customer organization
+- customer workspace
+- approved users
+- engagement metadata
+
+in Newneo AI Platform.
+
+Do not duplicate CRM/commercial data unnecessarily inside the AI Platform.
 
 ## Opportunity workflow
 Internal stages:
 `New Lead → Qualified → Discovery Complete → Assessment Sold → Assessment Complete → Solution Review → Scope & Commercial Review → Proposal Ready → Proposal → Won/Lost → Delivery → AgentOps`
 
-Enforce stage gates in code. The seller must not be able to skip required information.
-
-The system should use conditional requirements so only fields relevant to the engagement are mandatory. Avoid administrative friction.
+Enforce stage gates in code with conditional requirements.
 
 ## Proposal-last rule
-The proposal is generated only after required pre-sales work is complete.
+`Generate Proposal` remains disabled until required Proposal Readiness reaches 100%.
 
-`Generate Proposal` must stay disabled until Proposal Readiness reaches 100%.
-
-Readiness should cover, when applicable:
-- Customer / Sponsor
-- Business Case
-- Desired Outcome
-- Assessment(s)
-- Findings
-- Architecture / Recommended Approach
-- Scope
-- Deliverables
-- Responsibilities
-- Assumptions
-- Exclusions
-- Dependencies
-- Risks
-- Success / Acceptance Criteria
-- Effort Estimate
-- Timeline
-- Pricing
-- Commercial Approval
-- Legal / Commercial Terms
-- Training / Enablement Option
-
-The proposal should be concise by default and link/attach detailed technical documents rather than duplicating them.
+The proposal should be concise and link/attach detailed technical documents rather than duplicate them.
 
 Recommended proposal structure:
 1. Executive Summary
@@ -229,15 +209,9 @@ Recommended proposal structure:
 10. Optional Training / Enablement
 11. Next Steps
 
-Requirements:
-- versioning
-- approval status
-- responsive HTML output
-- print/PDF output
-- controlled editable narrative fields
-- no manual re-entry of known opportunity data
-
 ## Assessment Engine
+Assessment families remain available, but public sales language should emphasize the business outcome rather than selling infrastructure assessments as the primary company identity.
+
 Assessment types:
 - Business & AI Opportunity
 - Infrastructure Readiness
@@ -248,39 +222,14 @@ Assessment types:
 - Production Readiness
 - AgentOps Baseline
 
-Each assessment needs:
-- owner
-- status
-- objective
-- scope
-- required customer inputs
-- activities
-- findings
-- risks
-- recommendations
-- deliverables
-- recommended next step
-
-AI Compute Assessment must explicitly support Cloud AI / Compute Starter / Private AI Cluster / Hybrid AI.
+Infrastructure/compute assessments are selected only when the use case requires them.
 
 ## Newneo Academy / Learning Factory — future
-Do not prioritize for v1, but maintain extensibility for:
-- courses
-- modules
-- lessons
-- labs
-- learning paths
-- customer training packages
-- enrollments
-- completions
-
-Course factory direction:
-`Course Brief → Learning Objectives → Syllabus → Modules → Lessons → Technical Content → Labs → Knowledge Checks → Assessment → Instructor Guide → Student Material → Presentation`
-
-Proposal Engine should later be able to recommend training products based on project scope.
+Maintain extensibility for courses, modules, lessons, labs, learning paths and customer training packages.
 
 ## Read these first
-Before coding the internal platform, read:
+Before coding, read:
+- `docs/NEWNEO_AI_PLATFORM_SPEC.md`
 - `docs/NEWNEO_PLATFORM_PRODUCT_SPEC.md`
 - `docs/SALES_ENGAGEMENT_PLAYBOOK.md`
 - `docs/PUBLIC_PRESENTATIONS_AND_PROPOSAL_FLOW.md`
@@ -290,31 +239,25 @@ Before coding the internal platform, read:
 - Prefer simple, explicit architecture over premature abstraction.
 - Use typed domain models.
 - Enforce authorization server-side.
-- Separate customer-safe and internal-only fields.
-- Preserve auditability of stage changes and approvals.
-- Use migrations for database changes.
-- Add seed/demo data for one realistic opportunity so the full workflow can be demonstrated.
-- Add automated tests for stage gates and proposal readiness.
+- Separate customer-safe and internal-only data.
+- Preserve auditability.
+- Use migrations.
+- Add realistic seed/demo data.
+- Add automated tests for gates, permissions and critical workflows.
 - Run typecheck/build/tests before considering work complete.
-- Do not weaken gates merely to make the demo easier.
-- Do not add meetings or manual re-entry as substitutes for good product workflow.
 
-## First Codex milestone
-Deliver an end-to-end demonstrable vertical slice:
+## Next product-design milestone
+Before deep implementation of Newneo AI Platform, define and prototype one end-to-end customer path:
 
-1. Public `/presentations/engagement` works as a polished HTML presentation.
-2. Login to Newneo Platform.
-3. Admin creates a Sales user and an AI Architect user.
-4. Create/import a lead.
-5. Convert lead to opportunity.
-6. Complete qualification and discovery gates.
-7. Select a paid assessment.
-8. Record assessment findings and recommended compute path.
-9. Complete internal Solution Review.
-10. Open customer-specific presentation reusing the public engagement structure, with the current stage highlighted.
-11. Complete scope and commercial review.
-12. Reach 100% Proposal Readiness.
-13. Generate the concise HTML proposal as the final pre-sales artifact.
-14. Generate/print proposal to PDF.
+1. Customer organization/workspace exists.
+2. User opens Agent Catalog.
+3. Selects one approved agent pattern.
+4. Connects a knowledge source.
+5. Selects or connects one enterprise tool/MCP endpoint.
+6. Selects an approved model/runtime.
+7. Applies permissions and approval rules.
+8. Runs an evaluation suite.
+9. Promotes from Test to Production.
+10. Views health, task success, cost, incidents and business KPI in AgentOps.
 
 This vertical slice is more important than building many shallow modules.
