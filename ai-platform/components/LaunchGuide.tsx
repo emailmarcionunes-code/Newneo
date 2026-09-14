@@ -1,32 +1,419 @@
 'use client';
 
-import {useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { getTemplate } from '@/lib/catalog';
+import {
+  approvedActions,
+  createDraft,
+  draftKey,
+  knowledgeFilters,
+  knowledgeSources,
+  parseDraft,
+  toolConnectors,
+  toolFilters,
+  toolSummary,
+  type Integration,
+  type LaunchDraft,
+} from '@/lib/launch';
+import { LaunchIcon, ProviderLogo } from './Assets';
+import {
+  Button,
+  Callout,
+  ContextPanel,
+  FilterChip,
+  FormField,
+  IntegrationTile,
+  SelectField,
+} from './UI';
+import { LaunchStepper } from './LaunchStepper';
+import { IntegrationDialog } from './IntegrationDialog';
 
-const steps=['Use Case','Knowledge','Tools','Model','Governance','Evaluate','Deploy'];
-const connectors=['SharePoint','Google Drive','Confluence','ServiceNow','Salesforce','Custom API'];
-const tools=['ServiceNow','Salesforce','SAP','Microsoft Teams','Slack','Custom API'];
-
-function ChoiceCard({title,body,selected,onClick}:{title:string,body:string,selected?:boolean,onClick?:()=>void}){return <button type="button" onClick={onClick} className={selected?'choiceCard selected':'choiceCard'}><b>{title}</b><span>{body}</span></button>}
-
-export default function LaunchGuide(){
-  const [step,setStep]=useState(0);
-  const [runtime,setRuntime]=useState('Managed AI');
-  const [selectedKnowledge,setSelectedKnowledge]=useState(['SharePoint']);
-  const [selectedTools,setSelectedTools]=useState(['ServiceNow']);
-  const toggle=(item:string,list:string[],setter:(v:string[])=>void)=>setter(list.includes(item)?list.filter(x=>x!==item):[...list,item]);
-  const next=()=>setStep(v=>Math.min(6,v+1));
-  const back=()=>setStep(v=>Math.max(0,v-1));
-  return <>
-    <div className="steps">{steps.map((s,i)=><button type="button" onClick={()=>setStep(i)} className={i===step?'step active':i<step?'step done':'step'} key={s}><i>{i+1}</i>{s}</button>)}</div>
-    <section className="wizardCard">
-      {step===0&&<div className="wizardGrid"><div><span className="eyebrow">Step 1 of 7</span><h2 className="wizardTitle">What should this agent accomplish?</h2><p className="wizardLead">Define the purpose and expected outcome. Newneo uses this context to guide later configuration.</p><div className="field"><label>Agent name</label><input className="input" defaultValue="Customer Service Agent"/></div><div className="field"><label>Business objective</label><textarea className="textarea" defaultValue="Help customers get accurate answers, resolve common issues and create support tickets when needed."/></div><div className="field"><label>Target users</label><select className="select" defaultValue="customers"><option value="customers">Customers</option><option value="employees">Employees</option><option value="partners">Partners</option><option value="mixed">Mixed audience</option></select></div><div className="field"><label>Primary goals</label><div className="checkList"><div className="check"><i>✓</i>Answer common questions</div><div className="check"><i>✓</i>Create support tickets</div><div className="check"><i>✓</i>Escalate complex issues</div><div className="check"><i>✓</i>Improve resolution time</div></div></div></div><aside className="sideHint"><h3>Expected outcomes</h3><ul><li>Reduce repetitive support work</li><li>Improve customer experience</li><li>Provide consistent assistance</li><li>Escalate sensitive requests safely</li></ul><div className="note">Keep this step business-focused. Technical choices come later.</div></aside></div>}
-      {step===1&&<div><span className="eyebrow">Step 2 of 7</span><h2 className="wizardTitle">Connect the knowledge this agent can trust.</h2><p className="wizardLead">Use existing approved sources. Permissions remain governed by your organization.</p><div className="choiceGrid">{connectors.map(c=><ChoiceCard key={c} title={c} body={selectedKnowledge.includes(c)?'Connected':'Available to connect'} selected={selectedKnowledge.includes(c)} onClick={()=>toggle(c,selectedKnowledge,setSelectedKnowledge)}/>)}</div><div className="note">{selectedKnowledge.length} knowledge source{selectedKnowledge.length===1?'':'s'} selected. Advanced retrieval settings remain hidden unless needed.</div></div>}
-      {step===2&&<div><span className="eyebrow">Step 3 of 7</span><h2 className="wizardTitle">What should this agent be allowed to do?</h2><p className="wizardLead">Add systems and actions. Newneo separates technical availability from approved agent permissions.</p><div className="choiceGrid">{tools.map(t=><ChoiceCard key={t} title={t} body={selectedTools.includes(t)?'Enabled for this agent':'Available'} selected={selectedTools.includes(t)} onClick={()=>toggle(t,selectedTools,setSelectedTools)}/>)}</div><div className="note">Actions can be restricted individually and can require human approval.</div></div>}
-      {step===3&&<div><span className="eyebrow">Step 4 of 7</span><h2 className="wizardTitle">Where should this AI run?</h2><p className="wizardLead">Choose the operating model first. Detailed provider and runtime settings appear only when needed.</p><div className="choiceGrid four">{[['Managed AI','Use approved managed models and cloud AI services.'],['Customer Cloud','Run inside the organization’s AWS, Azure or GCP environment.'],['Private AI','Run inside a private or on-prem environment.'],['Hybrid','Combine approved private and cloud execution.']].map(([t,b])=><ChoiceCard key={t} title={t} body={b} selected={runtime===t} onClick={()=>setRuntime(t)}/>)}</div><div className="field compact"><label>Approved model</label><select className="select"><option>Organization Default — Recommended</option><option>Approved Model A</option><option>Approved Model B</option><option>Private Model Endpoint</option></select></div></div>}
-      {step===4&&<div><span className="eyebrow">Step 5 of 7</span><h2 className="wizardTitle">Define the boundaries.</h2><p className="wizardLead">Make access and approval rules understandable before deployment.</p><div className="governGrid"><div className="panel flat"><h2>Access & permissions</h2><div className="checkList"><div className="check"><i>✓</i>Available to approved workspace users</div><div className="check"><i>✓</i>Require approval for sensitive actions</div><div className="check"><i>✓</i>Log all production interactions</div></div></div><div className="panel flat"><h2>Data controls</h2><div className="checkList"><div className="check"><i>✓</i>Respect source permissions</div><div className="check"><i>✓</i>Mask sensitive data where required</div><div className="check"><i>✓</i>Use approved data sources only</div></div></div></div><div className="note">This agent can read approved knowledge, create support tickets, and requires human approval for sensitive actions.</div></div>}
-      {step===5&&<div><span className="eyebrow">Step 6 of 7</span><h2 className="wizardTitle">Test before production.</h2><p className="wizardLead">Mandatory evaluations must pass before the agent can be promoted.</p><div className="evalGrid"><div className="scoreRing"><strong>92%</strong><span>Evaluation score</span></div><div className="scoreList">{[['Task Success','94%'],['Groundedness','90%'],['Tool Success','96%'],['Policy Compliance','100%'],['Safety','98%']].map(([a,b])=><div className="scoreRow" key={a}><span>{a}</span><b>{b}</b></div>)}</div></div><div className="note">46 test cases passed, 3 need review, 1 failed non-mandatory scenario. Production gate is currently eligible.</div></div>}
-      {step===6&&<div><span className="eyebrow">Step 7 of 7</span><h2 className="wizardTitle">Ready to deploy.</h2><p className="wizardLead">Review the configuration and select the target environment.</p><div className="deployGrid"><div className="summaryList">{[['Agent','Customer Service Agent'],['Knowledge',`${selectedKnowledge.length} sources connected`],['Tools',`${selectedTools.length} tools enabled`],['Runtime',runtime],['Governance','Organization policy enabled'],['Evaluation','92% — eligible']].map(([a,b])=><div className="summaryRow" key={a}><span>{a}</span><b>{b}</b></div>)}</div><div className="envChoices"><ChoiceCard title="Development" body="Internal testing"/><ChoiceCard title="Test" body="Pre-production validation"/><ChoiceCard title="Production" body="Live for approved users" selected/></div></div><div className="note">Production health checks and AgentOps monitoring will start automatically after deployment.</div></div>}
-      <div className="wizardActions"><button type="button" className="button secondary" onClick={back} disabled={step===0}>← Back</button><button type="button" className="button primary" onClick={next}>{step===6?'Deploy to Production':'Next →'}</button></div>
-    </section>
-  </>
+export default function LaunchGuide({
+  templateId = 'customer-service',
+}: {
+  templateId?: string;
+}) {
+  const template = getTemplate(templateId);
+  const [draft, setDraft] = useState<LaunchDraft>(() =>
+    createDraft(template.id),
+  );
+  const [ready, setReady] = useState(false);
+  const [notice, setNotice] = useState('');
+  const [filter, setFilter] = useState('All');
+  const [dialog, setDialog] = useState<Integration | null>(null);
+  const form = useRef<HTMLFormElement>(null);
+  const filters = useRef<HTMLDivElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(draftKey(template.id));
+      if (raw) {
+        const saved = parseDraft(raw, template.id);
+        if (saved) {
+          setDraft(saved);
+          setNotice('Saved draft restored.');
+        } else
+          setNotice(
+            'The saved draft could not be restored. You can start a new draft.',
+          );
+      }
+    } catch {
+      setNotice(
+        'Draft storage is unavailable. You can continue in this session.',
+      );
+    }
+    setReady(true);
+  }, [template.id]);
+  const update = (changes: Partial<LaunchDraft>) => {
+    setDraft((current) => ({ ...current, ...changes }));
+    setNotice('');
+  };
+  const goTo = (step: number) => {
+    update({ step });
+    setFilter('All');
+    setDialog(null);
+    requestAnimationFrame(() => heading.current?.focus());
+  };
+  const save = () => {
+    try {
+      const saved = { ...draft, savedAt: new Date().toISOString() };
+      localStorage.setItem(draftKey(template.id), JSON.stringify(saved));
+      setDraft(saved);
+      setNotice('Draft saved on this device.');
+    } catch {
+      setNotice(
+        'Draft could not be saved. Check browser storage and try again. Your changes remain in this session.',
+      );
+    }
+  };
+  const next = () => {
+    if (
+      draft.step === 0 &&
+      (!form.current?.reportValidity() ||
+        !draft.name.trim() ||
+        !draft.description.trim())
+    )
+      return;
+    if (draft.step < 3) goTo(draft.step + 1);
+  };
+  const isKnowledge = draft.step === 1;
+  const integrations = isKnowledge ? knowledgeSources : toolConnectors;
+  const selectedIds = isKnowledge ? draft.knowledge : Object.keys(draft.tools);
+  const selected = selectedIds
+    .map((id) => integrations.find((item) => item.id === id))
+    .filter((item): item is Integration => Boolean(item));
+  const titles = [
+    "Let's start with the fundamentals.",
+    'Connect knowledge sources',
+    'Add tools and actions',
+    'Choose model and runtime',
+  ];
+  const subtitles = [
+    'Define what your agent will do and who will use it.',
+    'Add the data your agent will use to find accurate answers.',
+    'Connect the systems your agent can use and define what it can do.',
+    'Use your organization default or choose another approved execution model.',
+  ];
+  const attach = (actions: string[]) => {
+    if (!dialog) return;
+    if (isKnowledge)
+      update({ knowledge: [...new Set([...draft.knowledge, dialog.id])] });
+    else
+      update({
+        tools: {
+          ...draft.tools,
+          [dialog.id]: approvedActions(dialog.id, actions),
+        },
+      });
+    setDialog(null);
+  };
+  const remove = () => {
+    if (!dialog) return;
+    if (isKnowledge)
+      update({ knowledge: draft.knowledge.filter((id) => id !== dialog.id) });
+    else {
+      const tools = { ...draft.tools };
+      delete tools[dialog.id];
+      update({ tools });
+    }
+    setDialog(null);
+  };
+  const addMore = () => {
+    setFilter('All');
+    filters.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    filters.current?.scrollIntoView({ block: 'nearest' });
+  };
+  return (
+    <div className={`launchGuide step-${draft.step}`} aria-busy={!ready}>
+      {draft.step === 0 && (
+        <header className="launchHeader">
+          <div className="launchIdentity">
+            <LaunchIcon />
+            <div>
+              <h1>Launch {template.name}</h1>
+              <p>Follow the steps to configure, test and deploy your agent.</p>
+            </div>
+          </div>
+          <div className="launchHeaderActions">
+            <Button variant="secondary" onClick={save} disabled={!ready}>
+              Save draft
+            </Button>
+            <Button onClick={next} disabled={!ready}>
+              Next →
+            </Button>
+          </div>
+        </header>
+      )}
+      <LaunchStepper current={draft.step} onStep={goTo} />
+      <div className="stepHeading">
+        <h2 ref={heading} tabIndex={-1}>
+          {titles[draft.step]}
+        </h2>
+        <p>{subtitles[draft.step]}</p>
+      </div>
+      {draft.step === 0 && (
+        <div className="launchColumns useCaseColumns">
+          <form
+            id="use-case-form"
+            ref={form}
+            className="useCaseForm"
+            onSubmit={(event) => {
+              event.preventDefault();
+              next();
+            }}
+          >
+            <FormField
+              id="agent-name"
+              label="Agent name"
+              value={draft.name}
+              maxLength={120}
+              required
+              pattern=".*\S.*"
+              onChange={(event) => update({ name: event.target.value })}
+            />
+            <div className="field">
+              <label htmlFor="agent-description">Description</label>
+              <textarea
+                id="agent-description"
+                required
+                maxLength={2000}
+                value={draft.description}
+                onChange={(event) =>
+                  update({ description: event.target.value })
+                }
+                onBlur={(event) =>
+                  event.target.setCustomValidity(
+                    event.target.value.trim()
+                      ? ''
+                      : 'Describe what your agent will do.',
+                  )
+                }
+                onInput={(event) => event.currentTarget.setCustomValidity('')}
+              />
+            </div>
+            <SelectField
+              id="target-users"
+              label="Target users"
+              value={draft.targetUsers}
+              onChange={(event) => update({ targetUsers: event.target.value })}
+            >
+              {[
+                'Customers (external)',
+                'Employees (internal)',
+                'Partners',
+                'Mixed audience',
+              ].map((value) => (
+                <option key={value}>{value}</option>
+              ))}
+            </SelectField>
+            <SelectField
+              id="industry"
+              label="Industry (optional)"
+              value={draft.industry}
+              onChange={(event) => update({ industry: event.target.value })}
+            >
+              {[
+                '',
+                'Technology',
+                'Financial Services',
+                'Healthcare',
+                'Retail',
+                'Manufacturing',
+                'Public Sector',
+                'Other',
+              ].map((value) => (
+                <option key={value} value={value}>
+                  {value || 'Select industry'}
+                </option>
+              ))}
+            </SelectField>
+          </form>
+          <aside className="contextStack">
+            <ContextPanel title="Expected outcomes">
+              {template.outcomes.length ? (
+                <ul className="outcomes">
+                  {template.outcomes.map((outcome) => (
+                    <li key={outcome}>
+                      <span aria-hidden="true">✓</span>
+                      {outcome}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Define what your agent will do and who will use it.</p>
+              )}
+            </ContextPanel>
+            <Callout tone="info">
+              A well-defined use case leads to better results.
+            </Callout>
+          </aside>
+        </div>
+      )}
+      {(draft.step === 1 || draft.step === 2) && (
+        <>
+          <div
+            ref={filters}
+            className="filterRow integrationFilters"
+            aria-label={
+              isKnowledge ? 'Knowledge categories' : 'Tool categories'
+            }
+          >
+            {(isKnowledge ? knowledgeFilters : toolFilters).map((category) => (
+              <FilterChip
+                key={category}
+                active={filter === category}
+                onClick={() => setFilter(category)}
+              >
+                {category}
+              </FilterChip>
+            ))}
+          </div>
+          <div className="launchColumns integrationColumns">
+            <section
+              className={`integrationGrid ${isKnowledge ? 'knowledgeGrid' : 'toolsGrid'}`}
+              aria-label={isKnowledge ? 'Knowledge sources' : 'Tools & MCP'}
+            >
+              {integrations
+                .filter(
+                  (item) =>
+                    filter === 'All' || item.categories.includes(filter),
+                )
+                .map((item) => (
+                  <IntegrationTile
+                    key={item.id}
+                    provider={item.id}
+                    name={item.name}
+                    caption={item.caption}
+                    onConnect={() => setDialog(item)}
+                  />
+                ))}
+            </section>
+            <aside className="contextStack">
+              <ContextPanel
+                className={isKnowledge ? 'sourcesPanel' : 'toolsPanel'}
+                title={`${isKnowledge ? 'Connected sources' : 'Selected tools'} (${selected.length})`}
+              >
+                <div className="connectedResources">
+                  {selected.map((item) => (
+                    <button
+                      type="button"
+                      className="connectedResource"
+                      key={item.id}
+                      onClick={() => setDialog(item)}
+                      aria-label={`Manage ${item.name}`}
+                    >
+                      <ProviderLogo provider={item.id} size={24} />
+                      <span>
+                        <strong>{item.name}</strong>
+                        <small>
+                          {isKnowledge
+                            ? item.detail
+                            : toolSummary(item, draft.tools[item.id] ?? [])}
+                        </small>
+                      </span>
+                      <span className="statusDot" aria-label="Selected" />
+                    </button>
+                  ))}
+                </div>
+                {!selected.length && (
+                  <p>
+                    No {isKnowledge ? 'sources' : 'tools'} selected. Choose an
+                    approved {isKnowledge ? 'source' : 'tool'} to connect.
+                  </p>
+                )}
+                <Button variant="add" onClick={addMore}>
+                  + {isKnowledge ? 'Add more sources' : 'Add tools'}
+                </Button>
+              </ContextPanel>
+              <Callout>
+                {isKnowledge
+                  ? 'Your data stays in its approved environment and existing permissions are respected.'
+                  : 'Control what your agent can do. Permissions and approvals stay explicit.'}
+              </Callout>
+            </aside>
+          </div>
+        </>
+      )}
+      {draft.step === 3 && (
+        <section className="continuationPanel">
+          <div className="organizationDefault">
+            <h3>Organization Default · Recommended</h3>
+            <p>Customer Cloud · US East · Approved enterprise model endpoint</p>
+          </div>
+          <ContextPanel title="Continue configuring your agent">
+            <p>
+              Model configuration is not available in this preview. Save your
+              draft to continue later.
+            </p>
+            <p>
+              Your use case, knowledge sources and selected tool actions are
+              preserved when you save.
+            </p>
+          </ContextPanel>
+        </section>
+      )}
+      <footer className="wizardActions">
+        {draft.step === 0 ? (
+          <Link href="/agents" className="button secondary">
+            ← Back
+          </Link>
+        ) : (
+          <Button variant="secondary" onClick={() => goTo(draft.step - 1)}>
+            ← Back
+          </Button>
+        )}
+        <div>
+          {draft.step > 0 && draft.step < 3 && (
+            <Button variant="secondary" onClick={save} disabled={!ready}>
+              Save draft
+            </Button>
+          )}
+          {draft.step < 3 ? (
+            <Button onClick={next} disabled={!ready}>
+              Next →
+            </Button>
+          ) : (
+            <Button onClick={save} disabled={!ready}>
+              Save draft
+            </Button>
+          )}
+        </div>
+      </footer>
+      <p role="status" className="draftNotice">
+        {notice}
+      </p>
+      {dialog && (
+        <IntegrationDialog
+          key={dialog.id}
+          integration={dialog}
+          selected={selectedIds.includes(dialog.id)}
+          selectedActions={isKnowledge ? [] : (draft.tools[dialog.id] ?? [])}
+          onClose={() => setDialog(null)}
+          onSave={attach}
+          onRemove={remove}
+        />
+      )}
+    </div>
+  );
 }
