@@ -9,12 +9,12 @@
 
 ## UX decisions complete
 - Design Manifesto approved
-- Overview defined
-- Agent Catalog defined
-- Agent Launch Guide defined
-- Agent Detail defined
-- AgentOps defined in product/UX specification
-- Governance defined
+- Overview defined and prototyped
+- Agent Catalog defined and prototyped
+- Agent Launch Guide defined and prototyped
+- Agent Detail defined and prototyped
+- AgentOps fully defined in product/UX specification
+- Governance defined and prototyped
 - Progressive disclosure required
 - One primary intention per screen
 - Business language before technical language
@@ -94,6 +94,19 @@ Read before implementation:
 - `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`
 - `CODEX_HANDOFF.md`
 - `SALES_ENGAGEMENT_PLAYBOOK.md`
+
+## Recommended technical baseline
+- Next.js + TypeScript frontend
+- TypeScript modular backend
+- PostgreSQL as primary platform database
+- OIDC identity abstraction
+- S3-compatible object storage abstraction
+- OpenTelemetry for traces and metrics
+- PostgreSQL-backed background jobs for V1 where practical
+- containerized packaging from the beginning
+- runtime adapter boundary around the first agent runtime/framework
+
+The implementation should avoid mandatory cloud-only dependencies so the same product can support SaaS and customer-controlled deployments.
 
 ## Handoff rule
 Codex should now optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles and commercial positioning should not be reinterpreted without an explicit product decision.
