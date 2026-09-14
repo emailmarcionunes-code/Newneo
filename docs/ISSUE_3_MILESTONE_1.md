@@ -96,3 +96,30 @@ The engineering counterparts are ready for subsequent mapping: Button, FilterChi
 6. Publish Code Connect when the Figma account supports it.
 
 The issue should remain open until the remaining scope is delivered.
+
+### Card sizing update
+
+At the user's request, journey cards now share the Agent Catalog sizing tokens:
+284 px desktop width, 220 px minimum height, 20 px padding, and 16 px grid gap.
+Knowledge and Tools & MCP use the same responsive card width as the catalog;
+phones use a single full-width column. Context panels share the width and minimum
+height and can grow to accommodate their content. This explicitly supersedes the
+original smaller integration tiles in the Figma milestone screens.
+
+Validation: production build passed. Browser measurements confirmed matching
+catalog/integration dimensions at viewport widths 1440, 1180, 1100, 768, and
+390 px, with no horizontal page overflow.
+
+Follow-up: Knowledge and Tools & MCP now show three columns on desktop, with
+context panels below the grid to preserve the 284 × 220 px card size. The grid
+caps at three columns and reduces columns on smaller screens. Production build
+and browser checks at 1440, 1180, 768, and 390 px passed without page overflow.
+
+Latest layout refinement: on desktop, keep three integration columns and the
+connected-resource summary in a fourth column. The summary is top-aligned and
+sticky below the topbar, with natural height as connections are added. Cards
+shrink to fit four columns on narrower desktop windows and retain the shared
+220 px minimum height. Small-screen stacking remains unchanged. This supersedes
+the preceding below-grid desktop summary arrangement. Production build and
+browser checks for three columns, summary alignment, sticky positioning during
+scroll, and horizontal overflow passed at 1180 px.

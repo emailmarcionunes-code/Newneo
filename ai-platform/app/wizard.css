@@ -658,3 +658,65 @@ input[type='radio'] {
     padding: 20px;
   }
 }
+
+/* Use the catalog dimensions for journey cards, including responsive widths. */
+.useCaseColumns {
+  grid-template-columns: minmax(0, 1fr) var(--card-width);
+}
+.integrationColumns {
+  grid-template-columns: minmax(0, 1fr);
+}
+.integrationColumns > .contextStack {
+  width: var(--card-width);
+  max-width: 100%;
+}
+.integrationGrid {
+  width: 100%;
+  max-width: calc(3 * var(--card-width) + 2 * var(--card-gap));
+  grid-template-columns: repeat(auto-fill, minmax(0, var(--card-width)));
+  gap: var(--card-gap);
+  align-items: stretch;
+}
+.integrationTile,
+.integrationTile.withCaption {
+  min-height: var(--card-min-height);
+  padding: var(--card-padding);
+}
+.integrationTile:not(.withCaption) .button {
+  margin-top: auto;
+}
+.contextPanel {
+  min-height: var(--card-min-height);
+  padding: var(--card-padding);
+}
+@media (max-width: 1100px) {
+  .launchColumns {
+    grid-template-columns: 1fr;
+  }
+  .contextStack {
+    max-width: var(--card-width);
+  }
+}
+
+/* Three connection columns plus a persistent summary in the fourth column. */
+@media (min-width: 1101px) {
+  .integrationColumns {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    gap: var(--card-gap);
+    max-width: calc(4 * 284px + 3 * var(--card-gap));
+  }
+  .integrationGrid {
+    max-width: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .integrationColumns > .contextStack {
+    width: 100%;
+    position: sticky;
+    top: calc(var(--topbar-height) + 24px);
+    align-self: start;
+  }
+  .integrationColumns .contextPanel {
+    height: auto;
+    overflow-wrap: anywhere;
+  }
+}

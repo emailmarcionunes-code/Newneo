@@ -23,6 +23,10 @@
   --white: var(--surface);
   --sidebar-width: 220px;
   --topbar-height: 56px;
+  --card-width: 284px;
+  --card-min-height: 220px;
+  --card-padding: 20px;
+  --card-gap: 16px;
 }
 * {
   box-sizing: border-box;
@@ -374,11 +378,11 @@ summary::-webkit-details-marker {
   gap: 16px;
 }
 .agentCard {
-  min-height: 220px;
+  min-height: var(--card-min-height);
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 20px;
+  padding: var(--card-padding);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -608,7 +612,7 @@ summary::-webkit-details-marker {
     grid-template-columns: 1fr;
   }
   .agentCard {
-    min-height: 220px;
+    min-height: var(--card-min-height);
   }
   .userContext {
     display: none;
@@ -617,5 +621,24 @@ summary::-webkit-details-marker {
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
+  }
+}
+
+/* Shared card sizing for the catalog and Launch Guide. */
+.content {
+  --card-width: min(284px, calc(100vw - 284px));
+}
+.catalog .agentGrid {
+  grid-template-columns: repeat(auto-fill, minmax(0, var(--card-width)));
+  gap: var(--card-gap);
+}
+@media (max-width: 760px) {
+  .content {
+    --card-width: min(284px, calc(100vw - 32px));
+  }
+}
+@media (max-width: 520px) {
+  .content {
+    --card-width: calc(100vw - 32px);
   }
 }
