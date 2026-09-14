@@ -268,9 +268,7 @@ for (const viewport of [
     await next(page);
     await check('governance');
     await next(page);
-    await page
-      .getByRole('button', { name: 'Load reference evaluation', exact: true })
-      .click();
+
     await expect(
       page.getByRole('meter', { name: 'Evaluation score', exact: true }),
     ).toHaveAttribute('aria-valuenow', '92');
@@ -400,10 +398,6 @@ test('evaluation retries, deliberate environment selection and simulated success
     'aria-busy',
     'false',
   );
-  for (let step = 0; step < 5; step++) await next(page);
-  await expect(
-    page.getByRole('button', { name: 'Next →', exact: true }),
-  ).toBeDisabled();
   await page.route(
     '**/api/launch/preview',
     (route) =>
@@ -416,9 +410,7 @@ test('evaluation retries, deliberate environment selection and simulated success
       }),
     { times: 1 },
   );
-  await page
-    .getByRole('button', { name: 'Load reference evaluation', exact: true })
-    .click();
+  for (let step = 0; step < 5; step++) await next(page);
   await expect(page.locator('.evaluateStep').getByRole('alert')).toContainText(
     'Temporary preview failure',
   );
@@ -477,18 +469,24 @@ test('evaluation retries, deliberate environment selection and simulated success
   expect(denied.status()).toBe(503);
 });
 
-test('configuration changes invalidate the preview evaluation', async ({
+test('configuration changes automatically reload the preview evaluation', async ({
   page,
 }) => {
+  let evaluations = 0;
+  page.on('request', (request) => {
+    if (
+      request.url().endsWith('/api/launch/preview') &&
+      request.postDataJSON()?.action === 'evaluate'
+    )
+      evaluations++;
+  });
   await page.goto('/agents/launch');
   await expect(page.locator('.launchGuide')).toHaveAttribute(
     'aria-busy',
     'false',
   );
   for (let step = 0; step < 5; step++) await next(page);
-  await page
-    .getByRole('button', { name: 'Load reference evaluation', exact: true })
-    .click();
+
   await expect(
     page.getByRole('button', { name: 'Next →', exact: true }),
   ).toBeEnabled();
@@ -501,8 +499,9 @@ test('configuration changes invalidate the preview evaluation', async ({
   await next(page);
   await expect(
     page.getByRole('button', { name: 'Next →', exact: true }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await expect(
     page.getByRole('meter', { name: 'Evaluation score', exact: true }),
-  ).toHaveCount(0);
+  ).toHaveAttribute('aria-valuenow', '92');
+  expect(evaluations).toBe(2);
 });

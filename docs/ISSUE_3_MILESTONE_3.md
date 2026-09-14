@@ -85,3 +85,9 @@ must not be described as production-ready or as a deployed customer agent.
 Final local validation: production build, 13 domain tests and 10 browser tests
 passed. The mobile stepper also scrolls its active step into view without scrolling
 the document. No new dependencies were added.
+
+Evaluate usability fix: reference results now load automatically when the user
+enters the step without a current receipt. Next enables after loading succeeds;
+a visible loading message and manual retry remain available. Configuration changes
+still invalidate the old receipt and trigger a fresh load on the next visit.
+Production build and all 10 browser tests passed after this change.

@@ -28,10 +28,11 @@ export function EvaluateStep({
     { role: 'agent', text: sampleAnswer },
   ]);
   const requests = useRef<AbortController[]>([]);
-  useEffect(
-    () => () => requests.current.forEach((request) => request.abort()),
-    [],
-  );
+  useEffect(() => {
+    // Each visit loads a fresh reference if configuration changes cleared it.
+    if (!result) void evaluate();
+    return () => requests.current.forEach((request) => request.abort());
+  }, []);
   async function evaluate() {
     const controller = new AbortController();
     requests.current.push(controller);
@@ -242,8 +243,9 @@ export function EvaluateStep({
               </div>
             ) : (
               <p className="evaluationEmpty">
-                No evaluation loaded. Load the reference results to explore this
-                screen.
+                {loading
+                  ? 'Loading reference results… Next will be enabled shortly.'
+                  : 'Reference results could not be loaded. Use the button below to try again.'}
               </p>
             )}
           </section>
