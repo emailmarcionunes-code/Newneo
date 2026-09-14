@@ -1,3 +1,4 @@
+import { environments, type Environment } from './preview';
 import { getTemplate } from './catalog';
 import {
   defaultRuntime,
@@ -232,6 +233,7 @@ export type LaunchDraft = {
   workspaceId: 'customer-service-demo';
   templateId: string;
   step: number;
+  environment: Environment | null;
   name: string;
   description: string;
   targetUsers: string;
@@ -251,6 +253,7 @@ export function createDraft(templateId?: string | null): LaunchDraft {
     workspaceId: 'customer-service-demo',
     templateId: template.id,
     step: 0,
+    environment: null,
     name: template.id === 'custom' ? '' : template.name,
     description: template.objective,
     targetUsers: template.targetUsers,
@@ -292,7 +295,7 @@ export function parseDraft(
       ) ||
       !Number.isInteger(value.step) ||
       value.step < 0 ||
-      value.step > 5
+      value.step > 6
     )
       return null;
     if (
@@ -333,13 +336,18 @@ export function parseDraft(
       step = Math.min(step, 4);
     return {
       ...createDraft(templateId),
+      environment: environments.some((item) => item.name === value.environment)
+        ? value.environment
+        : null,
       runtime: runtime ?? defaultRuntime(),
       governance: governance ?? defaultGovernance(),
       name: value.name,
       description: value.description,
       targetUsers: value.targetUsers,
       industry: value.industry,
-      step: value.name.trim() && value.description.trim() ? step : 0,
+      // Evaluation receipts are session-only; reloading Deploy returns to Evaluate.
+      step:
+        value.name.trim() && value.description.trim() ? Math.min(step, 5) : 0,
       knowledge: [...new Set<string>(value.knowledge)].filter((id) =>
         knowledgeSources.some((source) => source.id === id),
       ),

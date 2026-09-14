@@ -10,3 +10,5 @@ Exported from **Newneo Product Design**, file `DmYoatzciQTR67GWU9zI98`, for GitH
 `components/Assets.tsx` owns asset selection and sizing. The product handoff explicitly classifies final provider logos and icon optical polish as pending; these supplied exports remain replaceable. Provider marks do not imply a live connection. The Inter font is bundled locally through `@fontsource/inter` with its included license.
 
 - Runtime SVGs from Model & Runtime `14:189`: `30:907` (Managed AI), `30:910` (Customer Cloud), `30:912` (Private AI), `30:915` (Hybrid AI). Rendered through `AssetIcon`.
+
+- Success SVGs from `14:493`: `28:918` (monitor), `28:924` (feedback), `28:930` (iterate), `28:937` (explore), `28:907` (success circle), `28:908` (check).

@@ -1,0 +1,69 @@
+import Link from 'next/link';
+import { AssetIcon } from './Assets';
+import { Button } from './UI';
+import type { PreviewDeployment } from '@/lib/preview';
+export function LaunchSuccess({
+  receipt,
+  onOverview,
+  onIterate,
+}: {
+  receipt: PreviewDeployment;
+  onOverview: () => void;
+  onIterate: () => void;
+}) {
+  return (
+    <section className="launchSuccess" aria-label="Deployment success preview">
+      <div className="successCelebration" aria-hidden="true">
+        <AssetIcon name="success-circle" size={64} />
+        <AssetIcon name="success-check" size={32} />
+        {Array.from({ length: 6 }, (_, i) => (
+          <i key={i} className={`confetti confetti-${i}`} />
+        ))}
+      </div>
+      <h1>Your agent is live!</h1>
+      <p>
+        Preview: {receipt.agentName} would be deployed to{' '}
+        {receipt.environment.toLowerCase()}. No live deployment occurred.
+      </p>
+      <div className="successActions">
+        <Button onClick={onOverview}>Go to Agent Overview →</Button>
+        <Link className="button secondary" href="/agents">
+          Create Another Agent
+        </Link>
+      </div>
+      <section className="successNext">
+        <h2>What's next?</h2>
+        <div>
+          <Link href="/agentops">
+            <span className="nextIcon monitor">
+              <AssetIcon name="next-monitor" />
+            </span>
+            <strong>Monitor performance</strong>
+            <small>in AgentOps</small>
+          </Link>
+          <Button variant="link" onClick={onOverview}>
+            <span className="nextIcon feedback">
+              <AssetIcon name="next-feedback" />
+            </span>
+            <strong>Review user feedback</strong>
+            <small>and improve</small>
+          </Button>
+          <Button variant="link" onClick={onIterate}>
+            <span className="nextIcon iterate">
+              <AssetIcon name="next-iterate" />
+            </span>
+            <strong>Iterate and improve</strong>
+            <small>with new versions</small>
+          </Button>
+          <Link href="/agents">
+            <span className="nextIcon explore">
+              <AssetIcon name="next-explore" />
+            </span>
+            <strong>Explore additional agents</strong>
+            <small>and use cases</small>
+          </Link>
+        </div>
+      </section>
+    </section>
+  );
+}

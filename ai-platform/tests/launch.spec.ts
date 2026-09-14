@@ -267,6 +267,26 @@ for (const viewport of [
     await check('model');
     await next(page);
     await check('governance');
+    await next(page);
+    await page
+      .getByRole('button', { name: 'Load reference evaluation', exact: true })
+      .click();
+    await expect(
+      page.getByRole('meter', { name: 'Evaluation score', exact: true }),
+    ).toHaveAttribute('aria-valuenow', '92');
+    await check('evaluate');
+    await next(page);
+    await page
+      .getByRole('radio', { name: /Production Live for end users/ })
+      .check();
+    await check('deploy');
+    await page
+      .getByRole('button', { name: 'Deploy to Production', exact: true })
+      .click();
+    await expect(
+      page.getByRole('heading', { name: 'Your agent is live!', exact: true }),
+    ).toBeVisible();
+    await check('success');
     if (viewport.width === 390) {
       await page.getByRole('button', { name: 'Open navigation' }).click();
       await expect(
@@ -350,7 +370,7 @@ test('model selection, approval settings and evaluation boundary preserve the dr
   await next(page);
   await expect(
     page.getByRole('heading', {
-      name: 'Continue with evaluation',
+      name: 'Test your agent',
       exact: true,
     }),
   ).toBeVisible();
@@ -361,7 +381,7 @@ test('model selection, approval settings and evaluation boundary preserve the dr
   await page.reload();
   await expect(
     page.getByRole('heading', {
-      name: 'Continue with evaluation',
+      name: 'Test your agent',
       exact: true,
     }),
   ).toBeVisible();
@@ -369,4 +389,120 @@ test('model selection, approval settings and evaluation boundary preserve the dr
   await expect(
     page.getByRole('checkbox', { name: 'HIPAA (if applicable)', exact: true }),
   ).toBeChecked();
+});
+
+test('evaluation retries, deliberate environment selection and simulated success are usable', async ({
+  page,
+  request,
+}) => {
+  await page.goto('/agents/launch');
+  await expect(page.locator('.launchGuide')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  );
+  for (let step = 0; step < 5; step++) await next(page);
+  await expect(
+    page.getByRole('button', { name: 'Next →', exact: true }),
+  ).toBeDisabled();
+  await page.route(
+    '**/api/launch/preview',
+    (route) =>
+      route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          error: 'Temporary preview failure. Try again.',
+        }),
+      }),
+    { times: 1 },
+  );
+  await page
+    .getByRole('button', { name: 'Load reference evaluation', exact: true })
+    .click();
+  await expect(page.locator('.evaluateStep').getByRole('alert')).toContainText(
+    'Temporary preview failure',
+  );
+  await page
+    .getByRole('button', { name: 'Load reference evaluation', exact: true })
+    .click();
+  await expect(
+    page.getByRole('meter', { name: 'Evaluation score', exact: true }),
+  ).toHaveAttribute('aria-valuenow', '92');
+  await page
+    .getByRole('button', { name: 'View all results →', exact: true })
+    .click();
+  await expect(
+    page.getByRole('tab', { name: 'Evaluation Results', exact: true }),
+  ).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('table')).toContainText('Failed');
+  await page.getByRole('tab', { name: 'Test Chat', exact: true }).click();
+  await page.getByLabel('Test message', { exact: true }).fill('Hello');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByRole('log')).toContainText(
+    'No model or connected system was called.',
+  );
+  await next(page);
+  await expect(
+    page.getByRole('button', { name: 'Deploy to environment', exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole('radio', { name: /Development For internal testing/ })
+    .check();
+  await page
+    .getByRole('button', { name: 'Deploy to Development', exact: true })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Your agent is live!', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/would be deployed to development/),
+  ).toBeVisible();
+  await expect(page.getByText(/No live deployment occurred/)).toBeVisible();
+  await page
+    .getByRole('button', { name: 'Go to Agent Overview →', exact: true })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Customer Service Agent', exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole('button', { name: '← Back to confirmation', exact: true })
+    .click();
+  await page.getByRole('button', { name: /Iterate and improve/ }).click();
+  await expect(page.getByLabel('Agent name', { exact: true })).toHaveValue(
+    'Customer Service Agent',
+  );
+  const denied = await request.post('/api/launch/deploy', {
+    data: { environment: 'Production', approved: true, evaluationScore: 100 },
+  });
+  expect(denied.status()).toBe(503);
+});
+
+test('configuration changes invalidate the preview evaluation', async ({
+  page,
+}) => {
+  await page.goto('/agents/launch');
+  await expect(page.locator('.launchGuide')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  );
+  for (let step = 0; step < 5; step++) await next(page);
+  await page
+    .getByRole('button', { name: 'Load reference evaluation', exact: true })
+    .click();
+  await expect(
+    page.getByRole('button', { name: 'Next →', exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole('button', { name: 'Governance, completed', exact: true })
+    .click();
+  await page
+    .getByRole('checkbox', { name: 'HIPAA (if applicable)', exact: true })
+    .check();
+  await next(page);
+  await expect(
+    page.getByRole('button', { name: 'Next →', exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole('meter', { name: 'Evaluation score', exact: true }),
+  ).toHaveCount(0);
 });

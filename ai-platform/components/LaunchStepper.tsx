@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { launchSteps } from '@/lib/launch';
 export function LaunchStepper({
   current,
@@ -6,8 +7,27 @@ export function LaunchStepper({
   current: number;
   onStep: (step: number) => void;
 }) {
+  const navigation = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const nav = navigation.current;
+    const active = nav?.querySelector<HTMLElement>('[aria-current="step"]');
+    if (!nav || !active || nav.scrollWidth <= nav.clientWidth) return;
+    const bounds = nav.getBoundingClientRect();
+    const target = active.getBoundingClientRect();
+    nav.scrollTo({
+      left:
+        nav.scrollLeft +
+        target.left -
+        bounds.left -
+        (nav.clientWidth - target.width) / 2,
+    });
+  }, [current]);
   return (
-    <nav className="launchStepper" aria-label="Launch progress">
+    <nav
+      ref={navigation}
+      className="launchStepper"
+      aria-label="Launch progress"
+    >
       <ol>
         {launchSteps.map((label, index) => (
           <li

@@ -891,3 +891,470 @@ input[type='radio'] {
     grid-template-columns: 1fr;
   }
 }
+
+.previewBanner {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.evaluationTabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.evaluationTabs button {
+  padding: 0 0 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+}
+.evaluationTabs button[aria-selected='true'] {
+  border-color: var(--primary);
+  color: var(--ink);
+}
+.evaluationColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 530fr) minmax(320px, 342fr);
+  gap: 24px;
+  align-items: start;
+}
+.evaluationMain {
+  min-width: 0;
+}
+.testChat,
+.evaluationResults,
+.evaluationScore,
+.testCases,
+.deploymentSummary,
+.successNext {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--card-padding);
+  min-width: 0;
+}
+.testChat {
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.testChat[hidden],
+.evaluationResults[hidden] {
+  display: none;
+}
+.referenceLabel {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+.chatMessages {
+  display: grid;
+  gap: 20px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.chatMessage {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 12px;
+  font-size: 13px;
+  line-height: 19px;
+  overflow-wrap: anywhere;
+}
+.chatMessage.user {
+  background: var(--canvas);
+  width: 70%;
+}
+.chatMessage.agent {
+  background: var(--surface);
+  width: 90%;
+  margin-left: auto;
+}
+.chatComposer {
+  display: flex;
+  gap: 4px;
+  margin-top: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 3px;
+}
+.chatComposer input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  padding: 0 8px;
+  font-size: 13px;
+  background: transparent;
+  color: var(--ink);
+}
+.chatComposer input::placeholder {
+  color: var(--muted);
+}
+.chatComposer .button {
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  flex-shrink: 0;
+}
+.evaluationSummary {
+  display: grid;
+  gap: 16px;
+}
+.evaluationSummary h3,
+.evaluationResults h3,
+.deploymentSummary h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.evaluationScore {
+  min-height: var(--card-min-height);
+  padding: 16px;
+}
+.scoreContent {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 24px;
+  align-items: start;
+}
+.evaluationScore .progressRing {
+  width: 96px;
+  height: 96px;
+  padding: 7px;
+}
+.evaluationScore .progressRing strong {
+  font-size: 25px;
+  color: var(--success);
+}
+.evaluationScore .progressRing small {
+  font-size: 10px;
+}
+.evaluationMetrics {
+  display: grid;
+  gap: 10px;
+}
+.evaluationMetric {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 5px 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.evaluationMetric strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.metricTrack {
+  grid-column: 1 / -1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--line);
+}
+.metricTrack > div {
+  height: 100%;
+  border-radius: inherit;
+  background: #10b981;
+}
+.evaluationEmpty {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 24px;
+}
+.testCases {
+  padding: 16px;
+}
+.caseCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 8px;
+}
+.caseCounts > span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+.caseDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+.caseDot.failed {
+  background: var(--danger);
+}
+.caseDot.review {
+  background: var(--warning);
+}
+.testCases .button {
+  font-size: 12px;
+  min-height: 28px;
+}
+.evaluationResults {
+  min-height: 340px;
+}
+.evaluationResults p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 20px;
+  margin-top: 16px;
+}
+.evaluationResults table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 20px;
+  text-align: left;
+}
+.evaluationResults caption {
+  text-align: left;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.evaluationResults th,
+.evaluationResults td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 0;
+}
+.requestError {
+  font-size: 13px;
+  color: #b91c1c;
+  line-height: 20px;
+}
+.deployColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 520fr) minmax(0, 350fr);
+  gap: 26px;
+  align-items: start;
+}
+.deploymentSummary {
+  min-height: 350px;
+}
+.deploymentSummary dl {
+  margin: 20px 0 0;
+  display: grid;
+  gap: 16px;
+}
+.deploymentSummary dl > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 1fr) minmax(0, 1.65fr);
+  gap: 16px;
+  font-size: 13px;
+  color: #3a4c6c;
+}
+.deploymentSummary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.environmentSelection {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+}
+.environmentSelection legend {
+  padding: 0;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+.environmentSelection .environmentOption {
+  min-height: 72px;
+  align-items: center;
+}
+.environmentSelection .environmentOption strong {
+  font-size: 13px;
+}
+.environmentSelection .environmentOption small {
+  font-size: 12px;
+}
+.environmentSelection .environmentOption input {
+  margin: 0;
+}
+.environmentSelection .selected input {
+  accent-color: var(--success);
+}
+.launchSuccess {
+  text-align: center;
+  padding: 36px 0 64px;
+}
+.successCelebration {
+  position: relative;
+  width: min(320px, 100%);
+  height: 96px;
+  margin: 0 auto 28px;
+  display: grid;
+  place-items: center;
+}
+.successCelebration > img:nth-child(2) {
+  position: absolute;
+  left: calc(50% - 16px);
+  top: 32px;
+}
+.confetti {
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--primary);
+}
+.confetti-0 {
+  left: 10%;
+  top: 35%;
+}
+.confetti-1 {
+  left: 26%;
+  top: 6%;
+  background: var(--warning);
+  height: 6px;
+}
+.confetti-2 {
+  left: 75%;
+  top: 24%;
+  background: #7c3aed;
+}
+.confetti-3 {
+  left: 88%;
+  top: 53%;
+  background: var(--success);
+  height: 6px;
+}
+.confetti-4 {
+  left: 2%;
+  top: 69%;
+  height: 6px;
+}
+.confetti-5 {
+  right: 0;
+  top: 84%;
+  background: var(--warning);
+}
+.launchSuccess h1 {
+  font-size: 26px;
+  font-weight: 600;
+}
+.launchSuccess > p {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 14px auto 0;
+  max-width: 600px;
+}
+.successActions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 36px 0 48px;
+  flex-wrap: wrap;
+}
+.successActions .button {
+  font-size: 13px;
+}
+.successNext {
+  max-width: 768px;
+  margin: 0 auto;
+  text-align: left;
+  min-height: 180px;
+}
+.successNext h2 {
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+.successNext > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.successNext a,
+.successNext button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  white-space: normal;
+  text-align: left;
+  justify-content: flex-start;
+}
+.successNext strong {
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.successNext small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.nextIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--primary-tint-strong);
+}
+.nextIcon.feedback {
+  background: #f3e8ff;
+}
+.nextIcon.iterate {
+  background: var(--success-tint);
+}
+.nextIcon.explore {
+  background: var(--primary-tint);
+}
+.previewOverview {
+  display: grid;
+  gap: 24px;
+}
+.previewOverview > .button {
+  justify-self: start;
+}
+@media (max-width: 1000px) {
+  .evaluationColumns,
+  .deployColumns {
+    grid-template-columns: 1fr;
+  }
+  .evaluationSummary {
+    max-width: 500px;
+  }
+}
+@media (max-width: 600px) {
+  .successNext > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .deploymentSummary dl > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .scoreContent {
+    gap: 12px;
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+  .evaluationScore .progressRing {
+    width: 88px;
+    height: 88px;
+  }
+}

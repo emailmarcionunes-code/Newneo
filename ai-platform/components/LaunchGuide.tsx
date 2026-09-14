@@ -31,6 +31,14 @@ import { IntegrationDialog } from './IntegrationDialog';
 import { ModelRuntimeStep } from './ModelRuntimeStep';
 import { GovernanceStep } from './GovernanceStep';
 import { runtimeIsReady } from '@/lib/configuration';
+import { EvaluateStep } from './EvaluateStep';
+import { DeployStep } from './DeployStep';
+import { LaunchSuccess } from './LaunchSuccess';
+import {
+  previewRequest,
+  type ReferenceEvaluation,
+  type PreviewDeployment,
+} from '@/lib/preview';
 
 export default function LaunchGuide({
   templateId = 'customer-service',
@@ -42,6 +50,12 @@ export default function LaunchGuide({
     createDraft(template.id),
   );
   const [ready, setReady] = useState(false);
+  const [evaluation, setEvaluation] = useState<ReferenceEvaluation | null>(
+    null,
+  );
+  const [deployment, setDeployment] = useState<PreviewDeployment | null>(null);
+  const [deploying, setDeploying] = useState(false);
+  const [overview, setOverview] = useState(false);
   const [notice, setNotice] = useState('');
   const [filter, setFilter] = useState('All');
   const [dialog, setDialog] = useState<Integration | null>(null);
@@ -69,10 +83,15 @@ export default function LaunchGuide({
     setReady(true);
   }, [template.id]);
   const update = (changes: Partial<LaunchDraft>) => {
+    if (
+      Object.keys(changes).some((key) => !['step', 'environment'].includes(key))
+    )
+      setEvaluation(null);
     setDraft((current) => ({ ...current, ...changes }));
     setNotice('');
   };
   const goTo = (step: number) => {
+    if (deploying || (step === 6 && !evaluation)) return;
     update({ step });
     setFilter('All');
     setDialog(null);
@@ -99,7 +118,8 @@ export default function LaunchGuide({
     )
       return;
     if (draft.step === 3 && !runtimeIsReady(draft.runtime)) return;
-    if (draft.step < 5) goTo(draft.step + 1);
+    if (draft.step === 5 && !evaluation) return;
+    if (draft.step < 6) goTo(draft.step + 1);
   };
   const isKnowledge = draft.step === 1;
   const integrations = isKnowledge ? knowledgeSources : toolConnectors;
@@ -113,7 +133,8 @@ export default function LaunchGuide({
     'Add tools and actions',
     'Choose model and runtime',
     'Define governance settings',
-    'Evaluate your agent',
+    'Test your agent',
+    'Ready to deploy',
   ];
   const subtitles = [
     'Define what your agent will do and who will use it.',
@@ -121,7 +142,8 @@ export default function LaunchGuide({
     'Connect the systems your agent can use and define what it can do.',
     'Use your organization default or choose another approved execution model.',
     'Keep your agent secure, compliant and aligned with company policies.',
-    'Save your configuration to continue with evaluation.',
+    'Run sample queries and review production confidence before promotion.',
+    'Review your configuration and choose the environment.',
   ];
   const attach = (actions: string[]) => {
     if (!dialog) return;
@@ -152,6 +174,75 @@ export default function LaunchGuide({
     filters.current?.querySelector<HTMLButtonElement>('button')?.focus();
     filters.current?.scrollIntoView({ block: 'nearest' });
   };
+  const deploy = async () => {
+    if (!evaluation || !draft.environment || deploying) return;
+    setDeploying(true);
+    setNotice('');
+    try {
+      const result = await previewRequest<PreviewDeployment>({
+        action: 'deploy',
+        draft,
+        token: evaluation.token,
+        environment: draft.environment,
+      });
+      if (
+        result.deployed !== false ||
+        result.agentName !== draft.name ||
+        result.environment !== draft.environment
+      )
+        throw new Error('Unexpected preview confirmation. Please try again.');
+      setDeployment(result);
+      window.scrollTo(0, 0);
+    } catch (error) {
+      setEvaluation(null);
+      setDraft((current) => ({ ...current, step: 5 }));
+      setNotice(
+        error instanceof Error
+          ? error.message
+          : 'Preview failed. Please try again.',
+      );
+    } finally {
+      setDeploying(false);
+    }
+  };
+  const previewBanner = (
+    <p className="previewBanner">
+      Demo preview · Reference results and simulated deployment only. No live
+      agent is created.
+    </p>
+  );
+  if (deployment)
+    return (
+      <div className="launchGuide" aria-busy={false}>
+        {previewBanner}
+        {overview ? (
+          <section className="previewOverview">
+            <h1>{draft.name}</h1>
+            <ContextPanel title="Agent Overview">
+              <p>
+                Your configuration is ready for review. Live performance and
+                user feedback are not available in this preview.
+              </p>
+              <p>{draft.description}</p>
+              <p>Preview environment: {deployment.environment}</p>
+            </ContextPanel>
+            <Button variant="secondary" onClick={() => setOverview(false)}>
+              ← Back to confirmation
+            </Button>
+          </section>
+        ) : (
+          <LaunchSuccess
+            receipt={deployment}
+            onOverview={() => setOverview(true)}
+            onIterate={() => {
+              setDeployment(null);
+              setEvaluation(null);
+              goTo(0);
+            }}
+          />
+        )}
+      </div>
+    );
   return (
     <div className={`launchGuide step-${draft.step}`} aria-busy={!ready}>
       {draft.step === 0 && (
@@ -164,7 +255,11 @@ export default function LaunchGuide({
             </div>
           </div>
           <div className="launchHeaderActions">
-            <Button variant="secondary" onClick={save} disabled={!ready}>
+            <Button
+              variant="secondary"
+              onClick={save}
+              disabled={!ready || deploying}
+            >
               Save draft
             </Button>
             <Button onClick={next} disabled={!ready}>
@@ -173,6 +268,7 @@ export default function LaunchGuide({
           </div>
         </header>
       )}
+      {draft.step >= 5 && previewBanner}
       <LaunchStepper current={draft.step} onStep={goTo} />
       <div className="stepHeading">
         <h2 ref={heading} tabIndex={-1}>
@@ -377,19 +473,19 @@ export default function LaunchGuide({
         />
       )}
       {draft.step === 5 && (
-        <section className="continuationPanel">
-          <ContextPanel title="Continue with evaluation">
-            <p>
-              Evaluation is not available in this preview. Save your draft to
-              continue later.
-            </p>
-            <p>
-              Your use case, knowledge, tools, model and governance settings are
-              preserved when you save. No evaluation has run and production
-              deployment remains unavailable.
-            </p>
-          </ContextPanel>
-        </section>
+        <EvaluateStep
+          draft={draft}
+          result={evaluation}
+          onResult={setEvaluation}
+        />
+      )}
+      {draft.step === 6 && evaluation && (
+        <DeployStep
+          draft={draft}
+          evaluation={evaluation}
+          disabled={deploying}
+          onEnvironment={(environment) => update({ environment })}
+        />
       )}
       <footer className="wizardActions">
         {draft.step === 0 ? (
@@ -397,28 +493,43 @@ export default function LaunchGuide({
             ← Back
           </Link>
         ) : (
-          <Button variant="secondary" onClick={() => goTo(draft.step - 1)}>
+          <Button
+            variant="secondary"
+            disabled={deploying}
+            onClick={() => goTo(draft.step - 1)}
+          >
             ← Back
           </Button>
         )}
         <div>
-          {draft.step > 0 && draft.step < 5 && (
-            <Button variant="secondary" onClick={save} disabled={!ready}>
+          {draft.step > 0 && (
+            <Button
+              variant="secondary"
+              onClick={save}
+              disabled={!ready || deploying}
+            >
               Save draft
             </Button>
           )}
-          {draft.step < 5 ? (
+          {draft.step < 6 ? (
             <Button
               onClick={next}
               disabled={
-                !ready || (draft.step === 3 && !runtimeIsReady(draft.runtime))
+                !ready ||
+                (draft.step === 3 && !runtimeIsReady(draft.runtime)) ||
+                (draft.step === 5 && !evaluation)
               }
             >
               Next →
             </Button>
           ) : (
-            <Button onClick={save} disabled={!ready}>
-              Save draft
+            <Button
+              onClick={deploy}
+              disabled={!draft.environment || !evaluation || deploying}
+            >
+              {deploying
+                ? 'Previewing deployment…'
+                : `Deploy to ${draft.environment ?? 'environment'}`}
             </Button>
           )}
         </div>
