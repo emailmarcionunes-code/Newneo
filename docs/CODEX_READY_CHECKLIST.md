@@ -6,6 +6,10 @@
 - Global, vendor-neutral product language
 - Business-first sales and product experience
 - Infrastructure and compute treated as deployment choices, not headline products
+- customer lifecycle clarified as Deploy → Operate → Expand
+- Platform is the production control layer
+- agents are organizational objects; tasks are economic objects
+- reusable skills are important, but the moat is broader operating intelligence
 
 ## UX decisions complete
 - Design Manifesto approved
@@ -37,6 +41,7 @@
 - Evaluation Run
 - Deployment
 - Operational Metric
+- Task / Execution Outcome
 - Incident
 - Audit Event
 
@@ -57,6 +62,23 @@ The product must support the same customer flow across:
 `Draft → Configure → Evaluate → Test → Approve → Production → Operate → New Version`
 
 Production changes create a new version rather than editing the live version directly.
+
+## Economics requirement
+AgentOps must be designed to support task-level operating economics over time, including:
+- task outcome
+- underlying usage/cost attribution
+- cost per task
+- cost per successful task
+- escalation
+- business KPI/value when available
+
+Do not make agent count the core billing assumption in the data model.
+
+## Reusable intelligence requirement
+Support reusable skills and versioned enterprise patterns, but do not architect the product as if owning a closed skill catalog is the primary moat.
+
+Skill maturity should be able to evolve toward:
+`Experimental → Validated → Production Ready → Proven at Scale`
 
 ## V1 build priority
 1. App foundation and design system
@@ -84,14 +106,20 @@ Customer Service Agent:
 7. Run evaluation suite
 8. Deploy to Test
 9. Approve and promote to Production
-10. View production health and outcomes
+10. View production health, task outcomes and operating economics
 11. Create a new version and repeat safely
 
 ## Reference documents
 Read before implementation:
+- `NEWNEO_RESPONSIBILITY_CHARTER.md`
+- `NEWNEO_PRODUCT_DECISIONS_ADDENDUM_2026-09-14.md`
 - `NEWNEO_AI_PLATFORM_SPEC.md`
 - `NEWNEO_AI_PLATFORM_V1_UX.md`
 - `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`
+- `NEWNEO_EMPLOYEE_STUDY_GUIDE.md`
+- `NEWNEO_COMMERCIAL_MODEL.md`
+- `NEWNEO_SKILLS_STRATEGY.md`
+- `NEWNEO_IP_AND_CONTRACT_PRINCIPLES.md`
 - `CODEX_HANDOFF.md`
 - `SALES_ENGAGEMENT_PLAYBOOK.md`
 
@@ -109,4 +137,4 @@ Read before implementation:
 The implementation should avoid mandatory cloud-only dependencies so the same product can support SaaS and customer-controlled deployments.
 
 ## Handoff rule
-Codex should now optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles and commercial positioning should not be reinterpreted without an explicit product decision.
+Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, commercial positioning, IP boundaries and pricing architecture should not be reinterpreted without an explicit product decision.
