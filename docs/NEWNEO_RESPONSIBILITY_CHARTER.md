@@ -19,6 +19,7 @@ Responsibilities:
 - product terminology and messaging
 - feature acceptance from a product perspective
 - deployment-model strategy: SaaS, Dedicated, BYOC, Private and Hybrid
+- IP/product boundary decisions
 - architecture decisions that materially change the product experience or commercial model
 
 Engineering must not independently reinterpret these decisions.
@@ -49,7 +50,7 @@ Responsibilities:
 Codex should prefer the simplest maintainable implementation that satisfies the approved product requirements.
 
 ## Decisions Codex may make autonomously
-Codex may choose or change implementation details when they do not alter product behavior, UX intent, commercial commitments or deployment capabilities.
+Codex may choose or change implementation details when they do not alter product behavior, UX intent, commercial commitments, IP boundaries or deployment capabilities.
 
 Examples:
 - internal function names
@@ -71,6 +72,8 @@ Codex must not independently make changes that affect:
 - terminology visible to customers
 - pricing or packaging
 - commercial promises
+- customer/Newneo IP boundaries
+- task and usage economics
 - removal of SaaS, BYOC, private or hybrid capability
 - security/governance behavior visible to customers
 - production approval rules
@@ -95,12 +98,16 @@ Engineering feedback may challenge a product decision when there is a technical,
 When instructions conflict, use this order:
 1. explicit latest decision from Marcio
 2. this Responsibility Charter
-3. NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md
-4. NEWNEO_AI_PLATFORM_V1_UX.md
-5. NEWNEO_AI_PLATFORM_SPEC.md
-6. CODEX_READY_CHECKLIST.md
-7. CODEX_HANDOFF.md
-8. existing prototype code
+3. NEWNEO_PRODUCT_DECISIONS_ADDENDUM_2026-09-14.md
+4. NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md
+5. NEWNEO_AI_PLATFORM_V1_UX.md
+6. NEWNEO_AI_PLATFORM_SPEC.md
+7. CODEX_READY_CHECKLIST.md
+8. NEWNEO_COMMERCIAL_MODEL.md
+9. NEWNEO_SKILLS_STRATEGY.md
+10. NEWNEO_IP_AND_CONTRACT_PRINCIPLES.md
+11. CODEX_HANDOFF.md
+12. existing prototype code
 
 Prototype code is never authority over an explicit product specification.
 
