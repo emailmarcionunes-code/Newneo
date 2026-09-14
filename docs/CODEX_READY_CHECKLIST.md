@@ -10,6 +10,11 @@
 - Platform is the production control layer
 - agents are organizational objects; tasks are economic objects
 - reusable skills are important, but the moat is broader operating intelligence
+- Newneo requires a separate internal Admin Plane for customer, subscription, contract, technical and financial operations
+- FinOps is cross-cutting for both customer and internal views
+- AWS is the initial Newneo SaaS home, but the product must remain portable
+- Public Sector/Sovereign requirements must be supported by the same core platform
+- a future Service Provider/white-label edition must remain architecturally possible but is not V1 scope
 
 ## UX decisions complete
 - Design Manifesto approved
@@ -22,9 +27,13 @@
 - Progressive disclosure required
 - One primary intention per screen
 - Business language before technical language
+- customer AI Platform and internal Newneo Admin Plane must remain separate experiences
 
 ## Core customer flow
-`Overview → Agent Catalog → Use Case → Knowledge → Tools → Model & Runtime → Governance → Evaluate → Deploy → Agent Detail → AgentOps`
+`Overview → Agent Catalog → Use Case → Knowledge → Tools → Model & Runtime → Governance → Evaluate → Deploy → Agent Detail → AgentOps → FinOps`
+
+## Internal Newneo flow
+`Admin Overview → Customers → Subscriptions → Usage → Contracts → Infrastructure → Incidents → FinOps → Analytics → Platform Operations`
 
 ## V1 product objects
 - Organization
@@ -42,6 +51,10 @@
 - Deployment
 - Operational Metric
 - Task / Execution Outcome
+- Usage Record
+- Subscription
+- Contract Reference
+- Cost Allocation
 - Incident
 - Audit Event
 
@@ -58,27 +71,64 @@ The product must support the same customer flow across:
 - Private / On-Prem
 - future disconnected/private environments
 
+Newneo SaaS may initially run on AWS, but implementation should preserve portable primitives and avoid unnecessary AWS-only coupling.
+
 ## Production lifecycle
 `Draft → Configure → Evaluate → Test → Approve → Production → Operate → New Version`
 
 Production changes create a new version rather than editing the live version directly.
 
-## Economics requirement
-AgentOps must be designed to support task-level operating economics over time, including:
+## Economics and FinOps requirement
+AgentOps and FinOps must support task-level operating economics over time, including:
 - task outcome
 - underlying usage/cost attribution
+- AI Units
 - cost per task
 - cost per successful task
+- spend by workspace/agent/model/runtime
+- budgets and forecast
 - escalation
 - business KPI/value when available
 
+Internal Newneo FinOps must additionally support:
+- revenue by customer
+- direct cost
+- gross profit
+- gross margin
+- customer profitability
+- margin by deployment model
+- margin by model/runtime
+- infrastructure/provider efficiency
+
 Do not make agent count the core billing assumption in the data model.
+
+## Admin Plane requirement
+Newneo needs an internal-only operating console for the full customer estate.
+
+It should be designed around one canonical Customer 360 record containing commercial, technical and financial context.
+
+V1 should establish the data model and initial views for:
+- Customers
+- Subscriptions
+- Usage
+- Contracts
+- Infrastructure / deployment status
+- Incidents
+- FinOps
+- Analytics
 
 ## Reusable intelligence requirement
 Support reusable skills and versioned enterprise patterns, but do not architect the product as if owning a closed skill catalog is the primary moat.
 
 Skill maturity should be able to evolve toward:
 `Experimental → Validated → Production Ready → Proven at Scale`
+
+## Future-compatible hierarchy
+V1 customer hierarchy remains:
+`Organization → Workspace → Agent → Task`
+
+Do not implement a Service Provider layer now, but avoid structural assumptions that would make this impossible later:
+`Provider (future optional) → Organization → Workspace → Agent → Task`
 
 ## V1 build priority
 1. App foundation and design system
@@ -93,7 +143,10 @@ Skill maturity should be able to evolve toward:
 10. Deployment lifecycle
 11. Agent Detail
 12. AgentOps
-13. Audit history and operational hardening
+13. Customer FinOps foundation
+14. Newneo Admin Plane foundation
+15. Internal FinOps / Customer 360
+16. Audit history and operational hardening
 
 ## First vertical slice
 Customer Service Agent:
@@ -107,12 +160,17 @@ Customer Service Agent:
 8. Deploy to Test
 9. Approve and promote to Production
 10. View production health, task outcomes and operating economics
-11. Create a new version and repeat safely
+11. Surface usage/cost in customer FinOps
+12. Surface the same customer in Newneo Admin Customer 360
+13. Create a new version and repeat safely
 
 ## Reference documents
 Read before implementation:
 - `NEWNEO_RESPONSIBILITY_CHARTER.md`
 - `NEWNEO_PRODUCT_DECISIONS_ADDENDUM_2026-09-14.md`
+- `NEWNEO_PLATFORM_OPERATING_MODEL.md`
+- `NEWNEO_ADMIN_PLANE_SPEC.md`
+- `NEWNEO_FINOPS_SPEC.md`
 - `NEWNEO_AI_PLATFORM_SPEC.md`
 - `NEWNEO_AI_PLATFORM_V1_UX.md`
 - `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`
@@ -137,4 +195,4 @@ Read before implementation:
 The implementation should avoid mandatory cloud-only dependencies so the same product can support SaaS and customer-controlled deployments.
 
 ## Handoff rule
-Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, commercial positioning, IP boundaries and pricing architecture should not be reinterpreted without an explicit product decision.
+Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, commercial positioning, IP boundaries, Admin Plane boundaries, FinOps semantics and pricing architecture should not be reinterpreted without an explicit product decision.
