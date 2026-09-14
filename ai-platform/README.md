@@ -33,3 +33,9 @@ Issue #3, milestone 1: canonical application shell, six-template catalog, reusab
 This is a frontend preview backed by an explicit demo registry. `Acme Corp` and its approved resources are fixture data. Source attachment does not authenticate to providers or ingest documents, and tool selection does not execute actions. Saved drafts are versioned and scoped to the demo organization/workspace/template in browser storage. They are local to the device, not a server-side persistence or authorization system.
 
 Model & Runtime and Governance are now implemented; see `../docs/ISSUE_3_MILESTONE_2.md`. Evaluate, Deploy and Success now complete the explicit demonstration flow; see `../docs/ISSUE_3_MILESTONE_3.md`. Reference results are not measurements of the draft, and simulated confirmations never deploy a live agent. The real deployment endpoint fails closed.
+
+## Backend foundation
+
+The PostgreSQL schema, OIDC session flow and authenticated server draft copies are implemented. They require a configured database and identity provider; dashboards and runtime operations remain demonstrative. See [backend setup and boundaries](../docs/NEWNEO_BACKEND_FOUNDATION.md).
+
+All sidebar routes now have frontend coverage, including AgentOps and FinOps. See [workspace surface status](../docs/NEWNEO_WORKSPACE_SURFACES.md) for what is implemented versus demonstrative, [backend configuration](../docs/NEWNEO_BACKEND_FOUNDATION.md) for authenticated server draft copies, and [pilot deployment](../docs/NEWNEO_PILOT_DEPLOYMENT.md) for container packaging. `npm run start` serves the standalone build; use `-- --port 3100` to override its local port.

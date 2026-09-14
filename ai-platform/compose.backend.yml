@@ -1,0 +1,19 @@
+# Local development only. Supply POSTGRES_PASSWORD via an ignored env file.
+services:
+  database:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: newneo_owner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: newneo
+    ports:
+      - '127.0.0.1:5434:5432'
+    volumes:
+      - newneo_database:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U newneo_owner -d newneo']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+volumes:
+  newneo_database:

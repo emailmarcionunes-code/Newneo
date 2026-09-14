@@ -10,6 +10,23 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: newneo_owner
+          POSTGRES_PASSWORD: ci-only-owner
+          POSTGRES_DB: newneo
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U newneo_owner -d newneo"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      # Ephemeral CI credentials only; never reuse outside this job.
+      MIGRATION_DATABASE_URL: postgresql://newneo_owner:ci-only-owner@127.0.0.1:5432/newneo
+      TEST_DATABASE_URL: postgresql://newneo_owner:ci-only-owner@127.0.0.1:5432/newneo
+      DATABASE_URL: postgresql://newneo_app:ci-only-runtime-password-123456@127.0.0.1:5432/newneo
+      APP_DATABASE_PASSWORD: ci-only-runtime-password-123456
     defaults:
       run:
         working-directory: ai-platform
@@ -22,6 +39,8 @@ jobs:
           cache-dependency-path: ai-platform/package-lock.json
       - run: npm ci
       - run: npm run typecheck
+      - run: npm run db:migrate
+      - run: npm run db:provision
       - run: npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium
@@ -34,3 +53,14 @@ jobs:
             ai-platform/playwright-report/
             ai-platform/test-results/
           retention-days: 14
+      - name: Build pilot container
+        run: docker build --target runner -t newneo-pilot:ci .
+      - name: Smoke test pilot container
+        run: |
+          docker run -d --name newneo-pilot-ci -p 3120:3000 newneo-pilot:ci
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:3120/agents > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          docker logs newneo-pilot-ci
+          exit 1
