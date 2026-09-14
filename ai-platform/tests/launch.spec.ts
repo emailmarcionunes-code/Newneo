@@ -183,12 +183,12 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await page.goto('/agents');
     const check = async (name: string) => {
-      await expect(page).toHaveTitle('Newneo AI Platform');
       if (await page.locator('.launchGuide').count())
         await expect(page.locator('.launchGuide')).toHaveAttribute(
           'aria-busy',
           'false',
         );
+      await expect(page).toHaveTitle('Newneo AI Platform');
       await page.evaluate(() => document.fonts.ready);
       expect(
         await page.evaluate(
@@ -254,11 +254,19 @@ for (const viewport of [
     await page
       .getByRole('link', { name: 'Get started with Customer Service Agent' })
       .click();
+    await expect(page.locator('.launchGuide')).toHaveAttribute(
+      'aria-busy',
+      'false',
+    );
     await check('use-case');
     await next(page);
     await check('knowledge');
     await next(page);
     await check('tools');
+    await next(page);
+    await check('model');
+    await next(page);
+    await check('governance');
     if (viewport.width === 390) {
       await page.getByRole('button', { name: 'Open navigation' }).click();
       await expect(
@@ -279,3 +287,86 @@ for (const viewport of [
     }
   });
 }
+
+test('model selection, approval settings and evaluation boundary preserve the draft', async ({
+  page,
+}) => {
+  await page.goto('/agents/launch');
+  await expect(page.locator('.launchGuide')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  );
+  await next(page);
+  await next(page);
+  await next(page);
+  await expect(page.getByLabel('Approved model')).toHaveValue(
+    'acme-cloud-gpt4o',
+  );
+  await page.getByRole('button', { name: 'Change execution model →' }).click();
+  await expect(
+    page.getByRole('button', { name: /Managed AI Use leading/ }),
+  ).toBeFocused();
+  await page.getByRole('button', { name: /Private AI Run approved/ }).click();
+  await expect(page.getByLabel('Approved model')).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: 'Next →', exact: true }),
+  ).toBeDisabled();
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await page.reload();
+  await expect(
+    page.getByRole('button', { name: /Private AI Run approved/ }),
+  ).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Use organization default' }).click();
+  await page.getByText('Advanced settings (optional)', { exact: true }).click();
+  await expect(
+    page.getByText('Demo organization and workspace', { exact: true }),
+  ).toBeVisible();
+  await next(page);
+  await expect(page.getByLabel('Who can use this agent?')).toHaveValue(
+    'everyone',
+  );
+  await expect(
+    page.getByRole('checkbox', {
+      name: 'Require approval for sensitive actions',
+      exact: true,
+    }),
+  ).toBeChecked();
+  await page
+    .getByRole('checkbox', { name: 'HIPAA (if applicable)', exact: true })
+    .check();
+  await page
+    .getByRole('checkbox', { name: 'Log all interactions', exact: true })
+    .uncheck();
+  await page.getByText('Access and approval summary', { exact: true }).click();
+  await expect(page.locator('.governanceSummary')).toContainText('SharePoint');
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await page.reload();
+  await expect(
+    page.getByRole('checkbox', { name: 'HIPAA (if applicable)', exact: true }),
+  ).toBeChecked();
+  await expect(
+    page.getByRole('checkbox', { name: 'Log all interactions', exact: true }),
+  ).not.toBeChecked();
+  await next(page);
+  await expect(
+    page.getByRole('heading', {
+      name: 'Continue with evaluation',
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Deploy, upcoming', exact: true }),
+  ).toBeDisabled();
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await page.reload();
+  await expect(
+    page.getByRole('heading', {
+      name: 'Continue with evaluation',
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: '← Back', exact: true }).click();
+  await expect(
+    page.getByRole('checkbox', { name: 'HIPAA (if applicable)', exact: true }),
+  ).toBeChecked();
+});

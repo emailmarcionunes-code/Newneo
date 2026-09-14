@@ -8,3 +8,5 @@ Exported from **Newneo Product Design**, file `DmYoatzciQTR67GWU9zI98`, for GitH
 - Provider PNG exports: `45:2` (SharePoint), `45:7` (Google Drive), `45:11` (Confluence), `45:14` (OneDrive), `45:16` (Notion), `45:19` (Salesforce), `45:22` (ServiceNow), `45:25` (Custom API), `45:45` (SAP), `45:48` (Teams), `45:54` (Slack).
 
 `components/Assets.tsx` owns asset selection and sizing. The product handoff explicitly classifies final provider logos and icon optical polish as pending; these supplied exports remain replaceable. Provider marks do not imply a live connection. The Inter font is bundled locally through `@fontsource/inter` with its included license.
+
+- Runtime SVGs from Model & Runtime `14:189`: `30:907` (Managed AI), `30:910` (Customer Cloud), `30:912` (Private AI), `30:915` (Hybrid AI). Rendered through `AssetIcon`.

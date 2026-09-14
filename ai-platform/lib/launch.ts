@@ -1,4 +1,13 @@
 import { getTemplate } from './catalog';
+import {
+  defaultRuntime,
+  defaultGovernance,
+  parseRuntime,
+  parseGovernance,
+  runtimeIsReady,
+  type RuntimeSelection,
+  type GovernanceSelection,
+} from './configuration';
 
 export const launchSteps = [
   'Use Case',
@@ -229,6 +238,8 @@ export type LaunchDraft = {
   industry: string;
   knowledge: string[];
   tools: Record<string, string[]>;
+  runtime: RuntimeSelection;
+  governance: GovernanceSelection;
   savedAt?: string;
 };
 export function createDraft(templateId?: string | null): LaunchDraft {
@@ -244,6 +255,8 @@ export function createDraft(templateId?: string | null): LaunchDraft {
     description: template.objective,
     targetUsers: template.targetUsers,
     industry: 'Technology',
+    runtime: defaultRuntime(),
+    governance: defaultGovernance(),
     knowledge: service ? ['sharepoint', 'servicenow', 'confluence'] : [],
     tools: service
       ? { servicenow: ['search', 'create'], teams: ['notify'] }
@@ -279,7 +292,7 @@ export function parseDraft(
       ) ||
       !Number.isInteger(value.step) ||
       value.step < 0 ||
-      value.step > 3
+      value.step > 5
     )
       return null;
     if (
@@ -300,13 +313,33 @@ export function parseDraft(
       const allowed = approvedActions(id, actions);
       if (allowed.length) tools[id] = allowed;
     }
+    // Additive migration: existing milestone-one drafts keep their storage key.
+    const runtime =
+      value.runtime === undefined
+        ? defaultRuntime()
+        : parseRuntime(value.runtime);
+    const governance =
+      value.governance === undefined
+        ? defaultGovernance()
+        : parseGovernance(value.governance);
+    let step = value.step;
+    if (
+      !runtime ||
+      !runtimeIsReady(runtime) ||
+      (value.runtime === undefined && step > 3)
+    )
+      step = Math.min(step, 3);
+    if (!governance || (value.governance === undefined && step > 4))
+      step = Math.min(step, 4);
     return {
       ...createDraft(templateId),
+      runtime: runtime ?? defaultRuntime(),
+      governance: governance ?? defaultGovernance(),
       name: value.name,
       description: value.description,
       targetUsers: value.targetUsers,
       industry: value.industry,
-      step: value.name.trim() && value.description.trim() ? value.step : 0,
+      step: value.name.trim() && value.description.trim() ? step : 0,
       knowledge: [...new Set<string>(value.knowledge)].filter((id) =>
         knowledgeSources.some((source) => source.id === id),
       ),

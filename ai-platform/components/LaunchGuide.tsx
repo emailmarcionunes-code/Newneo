@@ -28,6 +28,9 @@ import {
 } from './UI';
 import { LaunchStepper } from './LaunchStepper';
 import { IntegrationDialog } from './IntegrationDialog';
+import { ModelRuntimeStep } from './ModelRuntimeStep';
+import { GovernanceStep } from './GovernanceStep';
+import { runtimeIsReady } from '@/lib/configuration';
 
 export default function LaunchGuide({
   templateId = 'customer-service',
@@ -95,7 +98,8 @@ export default function LaunchGuide({
         !draft.description.trim())
     )
       return;
-    if (draft.step < 3) goTo(draft.step + 1);
+    if (draft.step === 3 && !runtimeIsReady(draft.runtime)) return;
+    if (draft.step < 5) goTo(draft.step + 1);
   };
   const isKnowledge = draft.step === 1;
   const integrations = isKnowledge ? knowledgeSources : toolConnectors;
@@ -108,12 +112,16 @@ export default function LaunchGuide({
     'Connect knowledge sources',
     'Add tools and actions',
     'Choose model and runtime',
+    'Define governance settings',
+    'Evaluate your agent',
   ];
   const subtitles = [
     'Define what your agent will do and who will use it.',
     'Add the data your agent will use to find accurate answers.',
     'Connect the systems your agent can use and define what it can do.',
     'Use your organization default or choose another approved execution model.',
+    'Keep your agent secure, compliant and aligned with company policies.',
+    'Save your configuration to continue with evaluation.',
   ];
   const attach = (actions: string[]) => {
     if (!dialog) return;
@@ -356,19 +364,29 @@ export default function LaunchGuide({
         </>
       )}
       {draft.step === 3 && (
+        <ModelRuntimeStep
+          value={draft.runtime}
+          onChange={(runtime) => update({ runtime })}
+        />
+      )}
+      {draft.step === 4 && (
+        <GovernanceStep
+          value={draft.governance}
+          draft={draft}
+          onChange={(governance) => update({ governance })}
+        />
+      )}
+      {draft.step === 5 && (
         <section className="continuationPanel">
-          <div className="organizationDefault">
-            <h3>Organization Default · Recommended</h3>
-            <p>Customer Cloud · US East · Approved enterprise model endpoint</p>
-          </div>
-          <ContextPanel title="Continue configuring your agent">
+          <ContextPanel title="Continue with evaluation">
             <p>
-              Model configuration is not available in this preview. Save your
-              draft to continue later.
+              Evaluation is not available in this preview. Save your draft to
+              continue later.
             </p>
             <p>
-              Your use case, knowledge sources and selected tool actions are
-              preserved when you save.
+              Your use case, knowledge, tools, model and governance settings are
+              preserved when you save. No evaluation has run and production
+              deployment remains unavailable.
             </p>
           </ContextPanel>
         </section>
@@ -384,13 +402,18 @@ export default function LaunchGuide({
           </Button>
         )}
         <div>
-          {draft.step > 0 && draft.step < 3 && (
+          {draft.step > 0 && draft.step < 5 && (
             <Button variant="secondary" onClick={save} disabled={!ready}>
               Save draft
             </Button>
           )}
-          {draft.step < 3 ? (
-            <Button onClick={next} disabled={!ready}>
+          {draft.step < 5 ? (
+            <Button
+              onClick={next}
+              disabled={
+                !ready || (draft.step === 3 && !runtimeIsReady(draft.runtime))
+              }
+            >
               Next →
             </Button>
           ) : (
