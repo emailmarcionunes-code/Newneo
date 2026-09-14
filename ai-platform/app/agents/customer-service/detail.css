@@ -1,0 +1,204 @@
+.agentDetail {
+  display: grid;
+  gap: 20px;
+}
+.agentDetail .pageHead {
+  margin: 0;
+}
+.detailActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.detailNotice {
+  padding: 16px 20px;
+  border: 1px solid var(--primary-tint-strong);
+  border-radius: var(--radius);
+  background: var(--primary-tint);
+}
+.detailNotice p {
+  font-size: 13px;
+  margin-top: 4px;
+}
+.detailIdentity {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.detailIdentity dt,
+.detailMuted,
+.detailLifecycle p {
+  color: var(--muted);
+  font-size: 13px;
+}
+.detailIdentity dd {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+.detailLifecycle {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.detailTabs {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  gap: 4px;
+  padding: 4px;
+}
+.detailTabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: 10px 14px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.detailTabs button[aria-selected='true'] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.detailCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--card-gap);
+}
+.detailCards .tag {
+  align-self: flex-start;
+  color: var(--ink);
+}
+.detailCards small {
+  color: var(--muted);
+}
+.detailValue {
+  font-size: 34px;
+}
+.detailSection {
+  margin-top: 20px;
+}
+.agentDetail .panel > .button {
+  margin-top: 16px;
+}
+.detailRows {
+  margin: 20px 0;
+}
+.detailRows > div {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+  gap: 16px;
+}
+.detailRows dt {
+  font-weight: 600;
+}
+.detailRows dd {
+  margin: 0;
+  color: var(--muted);
+}
+.detailConnections {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(180px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.detailSummary {
+  position: sticky;
+  top: 20px;
+  overflow-wrap: anywhere;
+}
+.detailSummary p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.detailSummary h3 {
+  font-size: 14px;
+  margin: 16px 0 8px;
+}
+.detailSummary ul {
+  padding-left: 18px;
+  font-size: 13px;
+}
+.detailSummary li {
+  margin-bottom: 12px;
+}
+.detailTableWrap {
+  overflow-x: auto;
+}
+.agentDetail table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.agentDetail caption {
+  text-align: left;
+  color: var(--muted);
+  padding: 16px 0;
+}
+.agentDetail th,
+.agentDetail td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.detailTimeline {
+  padding-left: 20px;
+}
+.detailTimeline li {
+  padding: 12px 0;
+}
+.detailTimeline small,
+.detailTimeline p {
+  color: var(--muted);
+  font-size: 13px;
+}
+.detailTimeline h3 {
+  font-size: 14px;
+  margin: 4px 0;
+}
+.detailTest {
+  width: min(560px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+}
+.detailTest::backdrop {
+  background: rgb(15 23 42 / 40%);
+}
+.detailTest > .button,
+.detailTest .detailNotice {
+  margin-top: 16px;
+}
+@media (max-width: 1100px) {
+  .detailConnections {
+    grid-template-columns: 1fr;
+  }
+  .detailSummary {
+    position: static;
+  }
+  .detailCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .detailCards {
+    grid-template-columns: 1fr;
+  }
+  .detailRows > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .detailTest .button {
+    white-space: normal;
+  }
+}
+.agentDetail > *, .agentDetail .panel { min-width: 0; }

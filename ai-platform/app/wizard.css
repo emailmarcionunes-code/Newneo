@@ -1358,3 +1358,9 @@ input[type='radio'] {
     height: 88px;
   }
 }
+.serverDrafts { margin: 16px 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.serverDrafts summary { font-weight: 600; }
+.serverDrafts p { margin: 12px 0; }
+.serverDrafts label { display: grid; gap: 6px; max-width: 400px; }
+.serverDrafts select { min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.serverDraftActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }

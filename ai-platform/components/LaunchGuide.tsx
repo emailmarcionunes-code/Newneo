@@ -34,6 +34,7 @@ import { runtimeIsReady } from '@/lib/configuration';
 import { EvaluateStep } from './EvaluateStep';
 import { DeployStep } from './DeployStep';
 import { LaunchSuccess } from './LaunchSuccess';
+import ServerDrafts from './ServerDrafts';
 import {
   previewRequest,
   type ReferenceEvaluation,
@@ -269,6 +270,14 @@ export default function LaunchGuide({
         </header>
       )}
       {draft.step >= 5 && previewBanner}
+      <ServerDrafts
+        draft={draft}
+        onLoad={(saved) => {
+          setDraft(saved);
+          setEvaluation(null);
+          setNotice('Server draft restored.');
+        }}
+      />
       <LaunchStepper current={draft.step} onStep={goTo} />
       <div className="stepHeading">
         <h2 ref={heading} tabIndex={-1}>

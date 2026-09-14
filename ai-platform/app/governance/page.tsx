@@ -1,3 +1,10 @@
 import AppShell from '@/components/AppShell';
-
-export default function Governance(){return <AppShell><div className="pageHead"><div><span className="eyebrow">Governance</span><h1>Clear controls for production AI.</h1><p>Manage access, approvals, policies and audit history as part of the normal AI lifecycle.</p></div><button className="button primary">Create Policy</button></div><div className="filterRow"><button className="chip active">Policies</button><button className="chip">Access</button><button className="chip">Approvals</button><button className="chip">Audit Log</button></div><section className="metricGrid"><article className="metricCard"><small>Active Policies</small><strong>12</strong><span className="trend">Healthy</span></article><article className="metricCard"><small>Pending Approvals</small><strong>3</strong><span className="trend">Action required</span></article><article className="metricCard"><small>Policy Exceptions</small><strong>1</strong><span className="trend">Under review</span></article><article className="metricCard"><small>Audit Coverage</small><strong>100%</strong><span className="trend">Enabled</span></article></section><section className="grid2"><article className="panel"><h2>Key controls</h2><div className="activity"><div className="activityRow"><i className="activityDot"/><div><b>Retention rules</b><span>Organization defaults inherited by production agents.</span></div><time>Configured</time></div><div className="activityRow"><i className="activityDot"/><div><b>Approval rules</b><span>Human review required for selected actions.</span></div><time>Enabled</time></div><div className="activityRow"><i className="activityDot"/><div><b>Production audit</b><span>Changes and approvals recorded.</span></div><time>Enabled</time></div></div></article><article className="panel"><h2>Needs attention</h2><div className="activity"><div className="activityRow"><i className="activityDot"/><div><b>Review one policy exception</b><span>A temporary permission is nearing expiration.</span></div><time>Review</time></div><div className="activityRow"><i className="activityDot"/><div><b>Approve production promotion</b><span>Customer Service Agent v1.3 passed required evaluations.</span></div><time>Ready</time></div></div></article></section></AppShell>}
+import RegistrySurface from '@/components/RegistrySurface';
+import '../surfaces.css';
+export default function Governance() {
+  return (
+    <AppShell>
+      <RegistrySurface surface="governance" />
+    </AppShell>
+  );
+}
