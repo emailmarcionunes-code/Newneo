@@ -1,10 +1,30 @@
 # Newneo Product Design System v2
 
 ## Status
-Canonical UI reference for Newneo AI Platform, Business Platform and Admin Plane.
+**Approved family-wide design standard.**
+
+This document is the canonical visual and interaction reference for:
+- Newneo AI Platform
+- Newneo Business Platform
+- Newneo Admin Plane
+- Newneo Website where application patterns are reused
+- future Newneo product surfaces
+- other products that intentionally adopt the Newneo visual system
 
 Primary principle: **More sophistication through precision, not decoration.**
-North star: the approved Agent Catalog / Agent Launch Guide sequence.
+North star / Golden Reference UI: the approved **Agent Catalog + Agent Launch Guide** sequence in the `Newneo Product Design` Figma file.
+
+The approved Golden Reference is the default benchmark for spacing, hierarchy, typography, density, component treatment and interaction quality. New screens should extend this system rather than invent a new visual language.
+
+## 0. Product-family rule
+**One design language. Different information density.**
+
+- Customer AI Platform: cleanest and lowest cognitive load.
+- Business Platform: same language, more workflow and commercial density.
+- Admin Plane: same language, highest analytical and operational density.
+- Website: same brand foundations, but more freedom for storytelling, hero sections, motion and visual expression.
+
+Application surfaces should not use website-style visual decoration as a substitute for product hierarchy.
 
 ## 1. Core visual language
 Newneo product surfaces should feel premium, calm, precise, enterprise-grade and easy to understand.
@@ -164,17 +184,28 @@ Normal page order:
 5. optional stepper
 6. content
 
-## 4. Icons
-Canonical library: **Lucide**.
+## 4. Icons and third-party logos
+Canonical UI icon library: **Lucide**.
 
 - stroke 1.5px
 - 18–20px standard UI size
 - monochrome menu/action icons
 - category icons may sit in same-family tint tiles
-- third-party integrations must use official brand logos in original colors
+- agent categories should use distinct semantic icons, not repeated placeholders
+- third-party integrations must use credible official brand logos / supplied SVG assets where licensing and availability allow
 
-Suggested mapping:
+Suggested agent mapping:
+- Customer Service Agent → headset
+- IT Support Agent → monitor
+- Knowledge Assistant → book-open
+- Sales Assistant → chart / trending-up
+- Process Automation → settings / workflow
+- Research Assistant → flask
+
+Suggested platform mapping:
 Agent `bot`; Knowledge `database/book-open`; Tools & MCP `plug/wrench`; Model `cpu`; Governance `shield-check`; Evaluation `clipboard-check`; Deploy `rocket`; Success `check-circle`; API `code`.
+
+**Asset rule:** icon/logo polish is replaceable and must not block engineering. Code must reference reusable `AgentIcon`, `ProviderLogo`, `LaunchIcon` or equivalent components/assets rather than hard-coded drawings.
 
 ## 5. Buttons
 Primary: blue background, white text, 14px/500, 8px 16px, radius 8px.
@@ -197,6 +228,7 @@ Card:
 - radius 12px
 - padding 20px
 - 40px icon tile with 22px icon
+- unique semantic icon per agent type
 - concise title and one-line description
 - short tags
 - clear Launch / Use This Agent action
@@ -211,7 +243,7 @@ Integration tile:
 - border
 - radius 12px
 - padding 16px
-- official provider logo ~32px
+- official / approved provider logo ~28–32px
 - provider name 13px/600
 - short caption
 - full-width outline-blue `Connect`
@@ -219,7 +251,7 @@ Integration tile:
 Examples:
 SharePoint, Google Drive, Confluence, OneDrive, Notion, Salesforce, ServiceNow, SAP, Microsoft Teams, Slack, Custom API.
 
-Connected / selected resources may appear in a compact right-side panel.
+Connected / selected resources may appear in a contextual right-side panel. These panels must preserve comfortable horizontal padding, row spacing, status alignment and readable two-line labels; do not compress the content merely to preserve a rigid 2/3 split.
 
 ## 9. Forms
 Label: 13px/500.
@@ -238,16 +270,18 @@ Stepper:
 - horizontal desktop
 - 7 steps
 - 28px circles
-- 1px neutral connector
+- 1px connector
 - active = primary blue + white number
-- completed = primary tint + blue check
+- completed = success green + white check
+- completed connector segment = success green
 - pending = neutral border / muted text
 - 12px labels
 
 Wizard desktop layout:
-- primary task area 2/3
-- contextual panel 1/3
+- primary task area approximately 2/3
+- contextual panel approximately 1/3
 - 24px gap
+- proportions may flex when readability requires more room in contextual panels
 
 Bottom navigation:
 `← Back` left and `Next →` right.
@@ -312,7 +346,7 @@ Core evaluation dimensions:
 - task success
 - failed/warning cases
 
-Donut: green ring, neutral trail, large central value.
+Donut: **continuous** green progress ring, neutral trail, large central value. Do not use visually chopped or segmented progress rings unless explicitly required.
 Metric bars: 6px, fully rounded, green fill.
 Status: Passed / Needs Review / Failed.
 
@@ -390,7 +424,38 @@ Admin Plane may have the highest density.
 Prioritize Customer 360, subscriptions, contracts, usage, infrastructure, incidents, FinOps, profitability and renewals.
 Dense tables are acceptable, but the UI stays flat and calm.
 
-## 22. Implementation tokens
+## 22. Website adaptation
+The Website shares brand foundations, typography, color discipline and component DNA, but may be more expressive.
+
+Allowed on Website when useful:
+- hero storytelling
+- larger typography
+- background motion / subtle waves
+- richer illustration
+- marketing narrative sections
+
+Do not copy marketing decoration into ordinary product screens.
+
+## 23. Reuse across other products
+The Newneo foundations may be reused by other products when intentionally adopted.
+
+Reusable layers include:
+- tokens
+- typography
+- spacing
+- radius
+- icon system
+- cards
+- forms
+- tables
+- navigation patterns
+- status patterns
+- charts
+- progressive disclosure
+
+Brand accent, wordmark, domain terminology and product-specific IA may change. The core UX philosophy remains reusable.
+
+## 24. Implementation tokens
 ```js
 module.exports = {
   theme: {
@@ -413,9 +478,9 @@ module.exports = {
 }
 ```
 
-## 23. Acceptance checklist
+## 25. Acceptance checklist
 Before approving a screen:
-1. Does it match the approved Agent Launch Guide visual language?
+1. Does it match the approved Golden Reference UI visual language?
 2. Is the shell quieter than the content?
 3. Can the user understand the screen within five seconds?
 4. Is there one primary action?
@@ -423,12 +488,15 @@ Before approving a screen:
 6. Is color semantic rather than decorative?
 7. Are borders doing more work than shadows?
 8. Are advanced technical details progressively disclosed?
-9. Are third-party integrations represented with credible official identity?
+9. Are third-party integrations represented with credible identity?
 10. Is spacing consistent with the 8px system?
 11. Could any visual element be removed without losing meaning?
 12. Does it look like a production product rather than a concept dashboard?
+13. Does it reuse an existing pattern before inventing a new one?
 
-## North star
-**The sophistication should live in the system, not in the user's cognitive load.**
+## Golden Reference UI
+**Agent Catalog + Agent Launch Guide** in Figma are the approved Golden Reference UI for the Newneo product family.
+
+The sophistication should live in the system, not in the user's cognitive load.
 
 **More sophistication through precision, not decoration.**
