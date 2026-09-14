@@ -15,6 +15,8 @@
 - AWS is the initial Newneo SaaS home, but the product must remain portable
 - Public Sector/Sovereign requirements must be supported by the same core platform
 - a future Service Provider/white-label edition must remain architecturally possible but is not V1 scope
+- customer autonomy is the target operating model after onboarding and first production use cases
+- Platform Support is included according to support tier; Managed AgentOps is a separate optional recurring service
 
 ## UX decisions complete
 - Design Manifesto approved
@@ -31,6 +33,11 @@
 
 ## Core customer flow
 `Overview → Agent Catalog → Use Case → Knowledge → Tools → Model & Runtime → Governance → Evaluate → Deploy → Agent Detail → AgentOps → FinOps`
+
+## Engineering journey
+`Business Outcome → Identity → Knowledge → Tools/MCP → Skills → Model & Runtime → Governance → Agent Version → Evaluate → Test → Approve → Production → AgentOps → FinOps → Business Outcome`
+
+This journey is defined in `NEWNEO_ENGINEERING_JOURNEY.md` and should guide the first end-to-end implementation.
 
 ## Internal Newneo flow
 `Admin Overview → Customers → Subscriptions → Usage → Contracts → Infrastructure → Incidents → FinOps → Analytics → Platform Operations`
@@ -77,6 +84,16 @@ Newneo SaaS may initially run on AWS, but implementation should preserve portabl
 `Draft → Configure → Evaluate → Test → Approve → Production → Operate → New Version`
 
 Production changes create a new version rather than editing the live version directly.
+
+## Customer autonomy and support
+Newneo should be heavily involved during onboarding and the first production use cases, then enable authorized customer teams to create, configure, evaluate and deploy additional agents within governance and approval rules.
+
+Platform subscription should include:
+- AgentOps product capabilities
+- FinOps product capabilities
+- Platform Support according to contracted support level
+
+Managed AgentOps is a separate optional service where Newneo personnel actively monitor, analyze, recommend and operate alongside the customer.
 
 ## Economics and FinOps requirement
 AgentOps and FinOps must support task-level operating economics over time, including:
@@ -168,6 +185,7 @@ Customer Service Agent:
 Read before implementation:
 - `NEWNEO_RESPONSIBILITY_CHARTER.md`
 - `NEWNEO_PRODUCT_DECISIONS_ADDENDUM_2026-09-14.md`
+- `NEWNEO_ENGINEERING_JOURNEY.md`
 - `NEWNEO_PLATFORM_OPERATING_MODEL.md`
 - `NEWNEO_ADMIN_PLANE_SPEC.md`
 - `NEWNEO_FINOPS_SPEC.md`
@@ -195,4 +213,4 @@ Read before implementation:
 The implementation should avoid mandatory cloud-only dependencies so the same product can support SaaS and customer-controlled deployments.
 
 ## Handoff rule
-Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, commercial positioning, IP boundaries, Admin Plane boundaries, FinOps semantics and pricing architecture should not be reinterpreted without an explicit product decision.
+Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, commercial positioning, IP boundaries, Admin Plane boundaries, FinOps semantics, support boundaries and pricing architecture should not be reinterpreted without an explicit product decision.
