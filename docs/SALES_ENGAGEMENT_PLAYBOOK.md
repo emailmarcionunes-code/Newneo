@@ -1,7 +1,7 @@
 # Newneo Sales & Engagement Playbook
 
 ## Purpose
-Create a repeatable commercial process that reduces friction, protects engineering time and produces proposals only from validated information.
+Create a repeatable commercial process that reduces friction, protects engineering time and converts business workflows into production AI engagements with recurring platform and operations value.
 
 Public engagement model:
 `Discover → Assess → Prove → Deploy → Operate`
@@ -9,7 +9,27 @@ Public engagement model:
 Internal pipeline:
 `New Lead → Qualified → Discovery Complete → Assessment Sold → Assessment Complete → Solution Review → Scope & Commercial Review → Proposal Ready → Proposal → Won/Lost → Delivery → AgentOps`
 
+## Commercial positioning
+Newneo is positioned publicly as:
+
+**Enterprise AI Platform + Deployment Engineering + AI Operations**
+
+Primary promise:
+**We bring enterprise AI into production.**
+
+Do not lead with infrastructure, GPU, networking, cloud or model vendors.
+
+Lead with:
+1. the business workflow
+2. the desired outcome
+3. what AI must know and do
+4. what systems it must connect to
+5. what governance and operating model are required
+
+Infrastructure, compute and runtime are deployment decisions made after the use case and constraints are understood.
+
 ## Operating principles
+- Start with the business workflow, not the technology stack.
 - Discovery is conversational; Assessment is engineering.
 - Assessment is paid.
 - No implementation proposal without a Newneo Assessment or an equivalent assessment validated by Newneo.
@@ -17,21 +37,69 @@ Internal pipeline:
 - Meet for decisions, not for information transfer.
 - Enter once. Reuse everywhere.
 - Reuse what the customer already has; add infrastructure only when the workload requires it.
+- Remain vendor-neutral across cloud, model and runtime choices.
+- Newneo assumes responsibility for architecture, integration and deployment even when the customer or a partner supplies cloud/infrastructure.
 - Do not commoditize complex enterprise AI with an instant price calculator.
 - The public Newneo HTML journey is the canonical presentation used by customers and Newneo teams.
 
+## Sales narrative
+The default sales conversation should sound like this:
+
+**What should AI do inside your company?**
+
+Then determine:
+- which workflow should improve
+- who owns it
+- what outcome matters
+- what knowledge is needed
+- what actions AI must perform
+- what systems must be connected
+- what controls are required
+
+Only then discuss where the workload should run.
+
+Recommended runtime language:
+- Managed AI
+- Customer Cloud
+- Private AI
+- Hybrid AI
+
+Avoid presenting runtime choices as products Newneo is trying to sell.
+
+## Newneo product story
+Three commercial pillars:
+
+### 1. Newneo AI Platform
+One control plane for agents, knowledge, tools, models, governance, evaluation, deployment and AgentOps.
+
+### 2. Deployment Engineering
+Newneo integrates the platform and AI workloads into the customer's real environment and takes the use case to production.
+
+### 3. AI Operations
+Newneo helps keep production AI reliable, secure, economically efficient and continuously improving.
+
+Infrastructure and compute remain engineering capabilities inside Deployment Engineering.
+
 ## Canonical public presentation
-The standard Newneo engagement presentation is public and belongs to the website.
+The standard Newneo presentation is public and belongs to the website.
 
-It must:
-- explain Discover → Assess → Prove → Deploy → Operate
-- be usable without a seller
-- be the default presentation used by Sales, SREs and architects
-- be suitable for screen sharing
-- be version-controlled in HTML
-- avoid customer-specific or confidential information
+Primary commercial presentation:
+- `/presentations/newneo`
 
-A website visitor should be able to navigate the journey and understand Newneo's method, maturity and delivery model before speaking with the company.
+Detailed methodology presentation:
+- `/presentations/engagement`
+
+The primary presentation must explain:
+- who Newneo is
+- what Newneo does
+- Newneo AI Platform
+- Deployment Engineering
+- AI Operations / AgentOps
+- vendor-neutral execution choices
+- Discover → Assess → Prove → Deploy → Operate
+- land-and-expand model
+
+A visitor should understand Newneo's maturity and method before speaking with a seller.
 
 ## Personalized opportunity presentation
 When a seller presents to a specific customer, the system generates a personalized version based on the canonical public presentation.
@@ -43,14 +111,12 @@ It may add:
 - current engagement stage
 - completed steps
 - approved findings
-- recommended architecture or path
+- recommended architecture or execution path
 - next decision
 - POC scope/results when applicable
 - proposal status
 
-The essence, sequence, language and methodology remain the same as the public version.
-
-Internal-only data must never appear in the customer presentation.
+Internal-only information must never appear in the customer presentation.
 
 ## Stage 1 — New Lead
 Goal: capture enough information to decide whether a human follow-up is warranted.
@@ -88,10 +154,14 @@ Seller captures:
 - business process
 - knowledge/RAG requirement
 - tool/API/MCP requirement
-- cloud/private/hybrid expectations
-- local compute state
 - security/regulatory constraints
 - expected scale
+
+Runtime questions are secondary:
+- existing cloud preference/commitment
+- current infrastructure that may be reused
+- local/private AI requirement if any
+- data residency/privacy constraints
 
 System should suggest a likely assessment path.
 
@@ -110,22 +180,30 @@ Business discovery:
 - What result should improve?
 - How will success be measured?
 
-Technology discovery:
-- Systems involved
-- Data sources
-- Existing AI use
-- Cloud services
-- Local infrastructure
-- AI compute availability
-- Identity model
-- Security constraints
-- Regulatory constraints
-- Integration methods
+AI discovery:
+- What must the AI know?
+- What must the AI do?
+- Which systems must it access?
+- Which actions require approval?
+- Who can use it?
+- What must never happen?
+
+Technology discovery only as needed:
+- systems involved
+- data sources
+- existing AI use
+- cloud services
+- existing infrastructure
+- identity model
+- security constraints
+- regulatory constraints
+- integration methods
 
 Discovery exit criteria:
 - business process defined
 - owner/sponsor identified
 - expected outcome defined
+- knowledge/actions defined at a useful level
 - systems identified
 - key constraints identified
 - assessment path recommended
@@ -146,35 +224,38 @@ Assessment proposal must include:
 
 Assessment families:
 - Business & AI Opportunity
-- Infrastructure Readiness
-- AI Compute
 - Knowledge & RAG
 - Integration & MCP
 - AI Security & Governance
 - Production Readiness
 - AgentOps Baseline
+- AI Compute when required
+- Infrastructure Readiness when required
+
+Infrastructure and Compute Assessments are conditional, not automatic.
 
 ## Stage 5 — Assessment Execution
 Goal: produce a decision-ready engineering baseline.
 
 Typical outputs:
 - current state
-- gap analysis
+- business/technical gaps
+- recommended Newneo Platform/use-case design
+- runtime/execution recommendation when applicable
 - architecture recommendation
-- execution model recommendation
 - risks
 - assumptions
 - dependencies
 - success criteria
 - recommended next step
 
-For AI Compute, recommendation must select or compare:
-- Cloud AI
-- Compute Starter
-- Private AI Cluster
+Runtime options may include:
+- Managed AI
+- Customer Cloud
+- Private AI
 - Hybrid AI
 
-using:
+Decision dimensions:
 - privacy
 - performance
 - scale
@@ -191,12 +272,14 @@ Participants:
 Review dimensions:
 - business value
 - technical feasibility
-- infrastructure readiness
-- compute readiness
-- data/knowledge readiness
+- knowledge/data readiness
 - integration complexity
-- security/governance risk
+- governance/security risk
+- execution/runtime fit
+- infrastructure readiness only when relevant
 - delivery effort
+- platform fit
+- AgentOps model
 - commercial model
 - expected customer outcome
 
@@ -204,15 +287,17 @@ Allowed decisions:
 - No-Go
 - More Discovery
 - Additional Assessment
-- POC
+- POC / First Use Case
 - Production Deployment
 
 ## Stage 7 — Scope & Commercial Review
-Goal: convert validated technical and business decisions into a proposal-ready commercial package.
+Goal: convert validated decisions into a proposal-ready commercial package.
 
 Required, when applicable:
 - final recommended path
-- scope
+- Newneo Platform scope
+- deployment scope
+- AgentOps scope
 - deliverables
 - responsibilities
 - assumptions
@@ -236,8 +321,8 @@ Example:
 - Customer / Sponsor ✓
 - Business Case ✓
 - Assessment ✓
-- Recommended Approach ✓
-- Architecture ✓
+- Platform / Use Case Design ✓
+- Recommended Runtime ✓
 - Scope ✓
 - Risks ✓
 - Effort Estimate ✓
@@ -252,13 +337,13 @@ The proposal is the final pre-sales artifact and is generated from the opportuni
 
 It should be concise by default.
 
-Seller may edit controlled narrative fields, but should not recreate known data manually.
-
 Recommended proposal sections:
 - Executive Summary
 - What We Understood
 - Recommended Engagement / Solution
-- Scope & Deliverables
+- Newneo Platform Scope
+- Deployment Scope
+- AI Operations / AgentOps Scope when applicable
 - Customer / Newneo Responsibilities
 - Assumptions & Key Dependencies
 - Success / Acceptance Criteria
@@ -274,40 +359,42 @@ POC is paid.
 
 POC must define before execution:
 - hypothesis
-- bounded scope
+- bounded business use case
 - inputs
+- knowledge/tools involved
 - success criteria
 - evaluation method
 - Go / No-Go decision rule
 
 Outputs:
-- working POC
+- working first use case / POC
 - Evaluation Report
 - lessons learned
 - production recommendation
+- reusable platform components identified
 
 ## Stage 11 — Production Readiness
-Before production, validate the difference between the POC and supportable production.
-
-Review:
+Before production, validate:
 - security
 - identity
 - integrations
-- HA/resilience
+- resilience
 - observability
 - evaluation
 - data lifecycle
 - versioning
-- CI/CD
+- CI/CD / deployment process
 - rollback
 - support model
 - SLOs
 
 ## Stage 12 — Deploy
-Convert validated design into a production system.
+Convert the validated use case into a production system on the chosen execution model.
 
 Output:
-- production environment
+- Newneo Platform customer workspace
+- production agent/use case
+- integrated runtime
 - documented architecture
 - tests
 - acceptance evidence
@@ -315,14 +402,28 @@ Output:
 - handoff
 
 ## Stage 13 — Operate / AgentOps
-Operate:
+Operate across:
 - quality
 - reliability
 - security
 - economics
 - business outcomes
 
-Recurring service should include baseline, SLOs, continuous evaluation and improvement backlog.
+Recurring service should include baseline, SLOs, continuous evaluation, cost monitoring and improvement backlog.
+
+## Land-and-expand principle
+The first use case should establish reusable assets:
+- identity
+- knowledge connectors
+- tools/MCP
+- policies
+- evaluation suites
+- deployment patterns
+- AgentOps instrumentation
+
+The next use case should be faster because these components already exist.
+
+**Land with one use case. Expand across the enterprise.**
 
 ## Meeting policy
 Default principle: **Meet for decisions, not for information transfer.**
@@ -339,8 +440,6 @@ Use public presentations, personalized engagement views and portal content for s
 The proposal engine should recommend training/enablement based on project scope.
 
 Examples:
-- AI Infrastructure Foundations
-- AI Compute & Runtime Fundamentals
 - Enterprise RAG Design
 - MCP & Enterprise Actions
 - Enterprise Agent Engineering
@@ -348,3 +447,5 @@ Examples:
 - AI Evaluation & Testing
 - Production AI Deployment
 - Operating AI in Production
+- AI Infrastructure Foundations when relevant
+- AI Compute & Runtime Fundamentals when relevant
