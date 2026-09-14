@@ -20,22 +20,31 @@
 
 ## UX decisions complete
 - Design Manifesto approved
-- canonical Product Design System approved
-- approved Agent Catalog / Agent Launch Guide reference is the primary visual north star
-- Overview defined and prototyped
-- Agent Catalog defined and prototyped
-- Agent Launch Guide defined and prototyped
-- Agent Detail defined and prototyped
-- AgentOps fully defined in product/UX specification
-- Governance defined and prototyped
+- canonical Product Design System approved as the family-wide visual standard
+- approved Agent Catalog / Agent Launch Guide reference is the Golden Reference UI
+- Agent Catalog + Agent Launch Guide are approved for engineering implementation
+- final third-party logo/icon polish does not block implementation when assets remain replaceable
+- Overview defined and prototyped; final Figma alignment remains pending
+- Agent Detail defined and prototyped; final Figma treatment remains pending
+- AgentOps fully defined in product/UX specification; final Figma pending
+- Governance launch-step defined and approved; organization-level governance console Figma pending
 - Progressive disclosure required
 - One primary intention per screen
 - Business language before technical language
 - customer AI Platform and internal Newneo Admin Plane must remain separate experiences
 - application UI should gain sophistication through precision, not decoration
+- same Newneo design language should extend to Business Platform, Admin Plane and future intentionally-adopting products with different information density
+
+## Canonical design / status documents
+Codex must read:
+- `NEWNEO_PRODUCT_DESIGN_SYSTEM.md`
+- `NEWNEO_PRODUCT_SURFACE_ROADMAP.md`
+- `FIGMA_HANDOFF_AGENT_LAUNCH_GUIDE.md`
+
+These documents define what is approved, pending, reusable and safe to implement now.
 
 ## Visual implementation rule
-Codex must implement the product shell and screens according to `NEWNEO_PRODUCT_DESIGN_SYSTEM.md` and `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`.
+Codex must implement the product shell and screens according to `NEWNEO_PRODUCT_DESIGN_SYSTEM.md`, `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`, and the canonical Figma frames.
 
 Key rules:
 - compact dark navy sidebar
@@ -51,9 +60,21 @@ Key rules:
 - green success/healthy state
 - real connector identities when available
 - linear launch stepper
+- completed launch steps use success green + white check
 - no oversized hero cards or decorative waves in ordinary application workflows
 - no unnecessary gradients, glows or dashboard decoration
 - same core shell across Customer Platform, Business Platform and Admin Plane, with density changing by surface
+
+## Asset implementation rule
+Provider logos, semantic agent icons and launch/deployment icons are replaceable visual assets.
+
+Do not hard-code custom drawings directly inside screens. Use reusable component boundaries such as:
+- `AgentIcon`
+- `ProviderLogo`
+- `LaunchIcon`
+- `ProgressRing`
+
+Exact component names may follow repository conventions.
 
 ## Core customer flow
 `Overview → Agent Catalog → Use Case → Knowledge → Tools → Model & Runtime → Governance → Evaluate → Deploy → Agent Detail → AgentOps → FinOps`
@@ -173,21 +194,23 @@ Do not implement a Service Provider layer now, but avoid structural assumptions 
 
 ## V1 build priority
 1. App foundation and canonical design system
-2. Organization/workspace context
+2. Refactor canonical application shell from Figma
 3. Agent Catalog
-4. Agent/version lifecycle
-5. Knowledge registry
-6. Tools/MCP registry
-7. Model registry
-8. Governance and approval flow
-9. Evaluation flow
-10. Deployment lifecycle
-11. Agent Detail
-12. AgentOps
-13. Customer FinOps foundation
-14. Newneo Admin Plane foundation
-15. Internal FinOps / Customer 360
-16. Audit history and operational hardening
+4. Agent Launch Guide full flow
+5. Organization/workspace context
+6. Agent/version lifecycle
+7. Knowledge registry
+8. Tools/MCP registry
+9. Model registry
+10. Governance and approval flow
+11. Evaluation flow
+12. Deployment lifecycle
+13. Agent Detail
+14. AgentOps
+15. Customer FinOps foundation
+16. Newneo Admin Plane foundation
+17. Internal FinOps / Customer 360
+18. Audit history and operational hardening
 
 ## First vertical slice
 Customer Service Agent:
@@ -205,6 +228,17 @@ Customer Service Agent:
 12. Surface the same customer in Newneo Admin Customer 360
 13. Create a new version and repeat safely
 
+## Remaining design backlog
+The authoritative surface backlog is `NEWNEO_PRODUCT_SURFACE_ROADMAP.md`.
+
+High-level pending design waves:
+- complete remaining Customer AI Platform sidebar screens
+- Newneo Admin Plane
+- Newneo Business Platform / sales + delivery playbook
+- Newneo Website visual alignment
+
+Do not invent a new visual direction for these surfaces. Start from the approved Golden Reference UI and Design System.
+
 ## Reference documents
 Read before implementation:
 - `NEWNEO_RESPONSIBILITY_CHARTER.md`
@@ -217,6 +251,8 @@ Read before implementation:
 - `NEWNEO_AI_PLATFORM_V1_UX.md`
 - `NEWNEO_AI_PLATFORM_DESIGN_MANIFESTO.md`
 - `NEWNEO_PRODUCT_DESIGN_SYSTEM.md`
+- `NEWNEO_PRODUCT_SURFACE_ROADMAP.md`
+- `FIGMA_HANDOFF_AGENT_LAUNCH_GUIDE.md`
 - `NEWNEO_EMPLOYEE_STUDY_GUIDE.md`
 - `NEWNEO_COMMERCIAL_MODEL.md`
 - `NEWNEO_SKILLS_STRATEGY.md`
@@ -239,3 +275,5 @@ The implementation should avoid mandatory cloud-only dependencies so the same pr
 
 ## Handoff rule
 Codex should optimize for implementation quality, maintainability, tests and working end-to-end behavior. Product scope, UX principles, visual design system, commercial positioning, IP boundaries, Admin Plane boundaries, FinOps semantics, support boundaries and pricing architecture should not be reinterpreted without an explicit product decision.
+
+**Current implementation permission:** Codex may begin the canonical Application Shell + Agent Catalog + Agent Launch Guide now. Pending logo/icon polish is not a blocker when implemented behind replaceable components.
