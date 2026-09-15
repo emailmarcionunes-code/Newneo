@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import ResourceExperience from './ResourceExperience';
 import { surfaces } from '@/lib/surfaces';
 import { FilterChip, Button } from './UI';
 export function DemoNotice() {
@@ -14,6 +15,11 @@ export function DemoNotice() {
   );
 }
 export default function RegistrySurface({ surface }: { surface: string }) {
+  if (surface === 'knowledge' || surface === 'tools')
+    return <ResourceExperience key={surface} surface={surface} />;
+  return <GenericRegistry surface={surface} />;
+}
+function GenericRegistry({ surface }: { surface: string }) {
   const config = surfaces[surface];
   const [category, setCategory] = useState('All');
   const [search, setSearch] = useState('');
