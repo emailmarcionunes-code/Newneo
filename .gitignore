@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+playwright-report/
+test-results/
+.env*
+!.env.example
+.DS_Store
+
+# Local database backups must never be committed.
+ai-platform/backups/

@@ -1,0 +1,84 @@
+.journeyDialog {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  width: min(620px, calc(100vw - 32px));
+  max-height: 85vh;
+  overflow: auto;
+  color: #0f172a;
+  background: #fff;
+  box-shadow: 0 20px 80px #0f172a33;
+}
+.journeyDialog::backdrop {
+  background: #0f172a66;
+}
+.journeyDialog .surfaceHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.journeyField {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 0;
+}
+.journeyField input,
+.journeyField select,
+.journeyField textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+  background: white;
+  color: #0f172a;
+  font: inherit;
+}
+.journeyField textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.journeyFormGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.journeyList {
+  padding-left: 24px;
+  line-height: 1.7;
+}
+.journeyList li {
+  padding: 8px 0;
+  overflow-wrap: anywhere;
+}
+.journeyDialog .resourceFooter {
+  margin-top: 20px;
+}
+.surfaceNotice {
+  padding: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+.surfaceNotice p {
+  margin: 8px 0 0;
+}
+.surfacePage .agentCard .journeyField {
+  width: 100%;
+}
+.journeyDialog a {
+  color: #1d4ed8;
+}
+@media (max-width: 600px) {
+  .journeyFormGrid {
+    grid-template-columns: 1fr;
+  }
+  .journeyDialog {
+    padding: 16px;
+  }
+}

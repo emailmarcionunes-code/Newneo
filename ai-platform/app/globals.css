@@ -1,0 +1,644 @@
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #3b82f6;
+  --primary-tint: #eff6ff;
+  --primary-tint-strong: #dbeafe;
+  --navy: #0b1220;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --text-muted: #94a3b8;
+  --line: #e2e8f0;
+  --surface: #fff;
+  --canvas: #f8fafc;
+  --chip: #f1f5f9;
+  --success: #16a34a;
+  --success-tint: #ecfdf5;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgb(15 23 42 / 4%);
+  --blue: var(--primary);
+  --green: var(--success);
+  --white: var(--surface);
+  --sidebar-width: 220px;
+  --topbar-height: 56px;
+  --card-width: 284px;
+  --card-min-height: 220px;
+  --card-padding: 20px;
+  --card-gap: 16px;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+summary {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+a,
+button,
+input,
+select,
+textarea,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+.assetIcon {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.appShell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+}
+.sidebar {
+  height: 100dvh;
+  min-height: 600px;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--navy);
+  color: var(--text-muted);
+  padding: 20px 12px 24px;
+  z-index: 30;
+}
+.brand {
+  display: inline-block;
+  margin: 0 8px 23px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  line-height: 26px;
+}
+.brand span {
+  color: var(--primary-light);
+}
+.sidebar nav {
+  display: grid;
+  gap: 2px;
+}
+.navItem {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+.navItem:hover {
+  background: #172237;
+  color: #fff;
+}
+.navItem.active {
+  background: var(--primary);
+  color: #fff;
+}
+.navItem.active .assetIcon {
+  filter: brightness(0) invert(1);
+}
+.workspaceMenu {
+  position: relative;
+  margin-top: auto;
+  padding: 20px 8px 0;
+  color: var(--line);
+  font-size: 13px;
+}
+.workspaceMenu summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+.organizationAvatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 10px;
+}
+.workspacePopover {
+  position: absolute;
+  bottom: 48px;
+  left: 0;
+  width: 196px;
+  padding: 16px;
+  background: #172237;
+  border: 1px solid #334155;
+  border-radius: 8px;
+}
+.workspacePopover p {
+  margin: 8px 0;
+}
+.mainArea {
+  min-width: 0;
+}
+.topbar {
+  height: var(--topbar-height);
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 20;
+}
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #6366f1;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+.userContext {
+  display: grid;
+  gap: 1px;
+  text-align: left;
+  line-height: 16px;
+}
+.userContext strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.userContext small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.topbarMenu {
+  position: relative;
+  color: var(--muted);
+}
+.topbarMenu summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 24px;
+  min-height: 32px;
+  justify-content: center;
+}
+.profileMenu {
+  color: var(--ink);
+}
+.topbarPopover {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  width: 280px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  border-radius: 8px;
+  color: var(--ink);
+}
+.topbarPopover p {
+  margin-top: 8px;
+  color: var(--muted);
+}
+.content {
+  max-width: 1344px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+.skipLink {
+  position: fixed;
+  top: -60px;
+  left: 12px;
+  z-index: 100;
+  background: white;
+  padding: 12px;
+  border: 1px solid var(--primary);
+}
+.skipLink:focus {
+  top: 8px;
+}
+.menuToggle,
+.sidebarBackdrop,
+.sidebarClose {
+  display: none;
+}
+.pageHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.pageHead h1 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  margin: 0 0 4px;
+}
+.pageHead p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 20px;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  border: 1px solid transparent;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: none;
+  white-space: nowrap;
+}
+.button.primary {
+  background: var(--primary);
+  color: #fff;
+}
+.button.primary:hover {
+  background: var(--primary-hover);
+}
+.button.secondary {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--line);
+}
+.button.secondary:hover {
+  background: var(--canvas);
+}
+.button.outline {
+  background: var(--surface);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.button.outline:hover,
+.button.add:hover {
+  background: var(--primary-tint);
+}
+.button.add {
+  background: #fff;
+  border: 1px solid #93c5fd;
+  color: var(--primary);
+}
+.button.link {
+  color: var(--primary);
+  background: transparent;
+  padding: 0;
+}
+.button:disabled {
+  opacity: 0.5;
+}
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.chip {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+}
+.chip:hover {
+  border-color: var(--primary-light);
+}
+.chip.active {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.agentGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.agentCard {
+  min-height: var(--card-min-height);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow);
+}
+.agentCard.featured {
+  border: 2px solid var(--primary-light);
+  padding: 19px;
+  background: var(--primary-tint);
+}
+.agentIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--primary-tint-strong);
+  flex-shrink: 0;
+}
+.agentIcon.assistant,
+.agentIcon.sales,
+.agentIcon.research {
+  background: #f3e8ff;
+}
+.agentIcon.automation {
+  background: #d1fae5;
+}
+.agentCard h2 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.agentCard p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 19px;
+  min-height: 40px;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  background: var(--chip);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  line-height: 15px;
+}
+.agentLaunch {
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: auto;
+  align-self: flex-start;
+}
+.agentLaunch:hover {
+  text-decoration: underline;
+}
+/* Existing, non-canonical prototype routes keep their content within the new shell. */
+.eyebrow {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.metricCard,
+.panel {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.metricCard small {
+  color: var(--muted);
+  font-size: 13px;
+}
+.metricCard strong {
+  display: block;
+  font-size: 32px;
+  margin: 8px 0;
+}
+.trend {
+  color: var(--success);
+  font-size: 12px;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+}
+.panel h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+.chart {
+  height: 230px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--canvas);
+}
+.activityRow {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+.activityRow:last-child {
+  border: 0;
+}
+.activityRow b {
+  font-size: 13px;
+  font-weight: 500;
+}
+.activityRow span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.activityRow time {
+  color: var(--muted);
+  font-size: 12px;
+}
+.activityDot,
+.statusDot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  flex-shrink: 0;
+}
+@media (min-width: 1180px) {
+  .catalog .agentGrid {
+    grid-template-columns: repeat(3, minmax(0, 284px));
+  }
+}
+@media (max-width: 1100px) {
+  .agentGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pageHead {
+    flex-wrap: wrap;
+  }
+  .metricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .appShell {
+    display: block;
+  }
+  .sidebar {
+    display: none;
+    min-height: 0;
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 220px;
+    overflow-y: auto;
+  }
+  .sidebar.isOpen {
+    display: flex;
+  }
+  .sidebarClose {
+    display: block;
+    position: absolute;
+    right: 12px;
+    top: 18px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    background: transparent;
+    color: white;
+    font-size: 20px;
+  }
+  .sidebarBackdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: rgb(15 23 42 / 30%);
+    z-index: 25;
+  }
+  .menuToggle {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink);
+    background: white;
+    width: 36px;
+    height: 36px;
+    margin-right: auto;
+  }
+  .topbar {
+    padding: 0 16px;
+  }
+  .topActions {
+    gap: 12px;
+  }
+  .topbarPopover {
+    max-width: calc(100vw - 40px);
+  }
+  .content {
+    padding: 24px 16px;
+  }
+  .pageHead {
+    gap: 16px;
+  }
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 520px) {
+  .agentGrid,
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+  .agentCard {
+    min-height: var(--card-min-height);
+  }
+  .userContext {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Shared card sizing for the catalog and Launch Guide. */
+.content {
+  --card-width: min(284px, calc(100vw - 284px));
+}
+.catalog .agentGrid {
+  grid-template-columns: repeat(auto-fill, minmax(0, var(--card-width)));
+  gap: var(--card-gap);
+}
+@media (max-width: 760px) {
+  .content {
+    --card-width: min(284px, calc(100vw - 32px));
+  }
+}
+@media (max-width: 520px) {
+  .content {
+    --card-width: calc(100vw - 32px);
+  }
+}

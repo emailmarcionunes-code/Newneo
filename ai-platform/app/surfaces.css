@@ -1,0 +1,356 @@
+.surfacePage {
+  display: grid;
+  gap: 20px;
+}
+.surfacePage > *,
+.surfaceColumns > * {
+  min-width: 0;
+}
+.surfacePage .pageHead,
+.surfacePage .filterRow {
+  margin: 0;
+}
+.surfaceNotice {
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--primary-tint-strong);
+  background: var(--primary-tint);
+}
+.surfaceNotice p {
+  font-size: 13px;
+}
+.surfaceMuted {
+  color: var(--muted);
+}
+.surfaceCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--card-gap);
+}
+.surfaceCards .tag {
+  color: var(--ink);
+  align-self: flex-start;
+}
+.surfaceCards .button {
+  margin-top: auto;
+  white-space: normal;
+  text-align: left;
+  justify-content: flex-start;
+}
+.surfaceCards h3 {
+  font-size: 15px;
+}
+.surfaceStatus {
+  font-size: 13px;
+}
+.surfaceColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(200px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.surfaceAside {
+  position: sticky;
+  top: 20px;
+  overflow-wrap: anywhere;
+}
+.surfaceAside h2 {
+  font-size: 16px;
+}
+.surfaceAside p,
+.surfaceFacts dd {
+  font-size: 13px;
+  color: var(--muted);
+}
+.surfaceFacts {
+  margin: 16px 0;
+}
+.surfaceFacts > div {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.surfaceFacts dt {
+  font-size: 13px;
+  font-weight: 600;
+}
+.surfaceFacts dd {
+  margin: 4px 0 0;
+}
+.surfacePage details {
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+.surfacePage summary {
+  font-size: 13px;
+  font-weight: 600;
+}
+.surfacePage details p {
+  margin-top: 12px;
+}
+.surfaceHeading,
+.surfaceControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.surfaceSearch {
+  display: grid;
+  gap: 6px;
+  max-width: 420px;
+}
+.surfacePage input,
+.surfacePage select {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  min-width: 0;
+  max-width: 100%;
+}
+.surfaceControls label,
+.surfaceBudget {
+  display: grid;
+  gap: 6px;
+}
+.surfaceBudget {
+  max-width: 280px;
+  margin: 16px 0;
+}
+.surfaceTable {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+.surfaceTable table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+.surfaceTable caption {
+  text-align: left;
+  padding: 16px;
+  color: var(--muted);
+}
+.surfaceTable td,
+.surfaceTable th {
+  padding: 14px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  min-width: 110px;
+}
+.surfaceTable .button {
+  white-space: normal;
+  min-width: 150px;
+  text-align: left;
+}
+.surfaceValue {
+  font-size: 30px;
+}
+.surfacePage .panel > .button {
+  margin-top: 16px;
+}
+.surfacePage section > h2 {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+@media (max-width: 1100px) {
+  .surfaceColumns {
+    grid-template-columns: 1fr;
+  }
+  .surfaceAside {
+    position: static;
+  }
+  .surfaceCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .surfaceCards {
+    grid-template-columns: 1fr;
+  }
+}
+.surfaceTable table {
+  min-width: 800px;
+}
+.surfaceTable td,
+.surfaceTable th {
+  padding: 14px 10px;
+  min-width: 0;
+}
+.surfaceTable .button {
+  min-width: 0;
+  padding: 0;
+  font-size: 13px;
+}
+.resourceExperience .surfaceAside .button {
+  white-space: normal;
+  text-align: left;
+}
+.resourceExperience hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 20px 0;
+}
+.resourceConnected {
+  padding-left: 16px;
+}
+.resourceConnected li {
+  margin: 8px 0;
+}
+.resourceConnected .button {
+  font-size: 13px;
+}
+.resourceNotice {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.resourceTabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  padding: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.resourceTabs button {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  padding: 12px;
+  white-space: nowrap;
+}
+.resourceTabs button[aria-selected='true'] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.resourceSection {
+  margin-top: 20px;
+}
+.resourceSection .button {
+  margin-top: 16px;
+}
+.resourceExperience [role='tabpanel'] {
+  min-width: 0;
+}
+.resourceExperience [role='tabpanel'] > section > h2 {
+  margin-bottom: 12px;
+}
+.resourceField {
+  display: grid;
+  gap: 6px;
+  margin: 16px 0;
+}
+.resourceField input,
+.resourceField select {
+  width: 100%;
+}
+.resourceCheck {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.resourceCheck input {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.resourceContent {
+  padding: 0;
+  list-style: none;
+}
+.resourceContent li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.resourceContent span {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+.resourceEvents {
+  padding-left: 20px;
+  margin-top: 20px;
+}
+.resourceEvents li {
+  padding: 8px 0;
+  font-size: 13px;
+}
+.resourceDialog {
+  width: min(720px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+}
+.resourceDialog::backdrop {
+  background: rgb(15 23 42 / 40%);
+}
+.resourceDialog h2 {
+  font-size: 20px;
+}
+.resourceDialog fieldset {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+}
+.resourceSteps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.resourceSteps [aria-current='step'] {
+  color: var(--primary);
+  font-weight: 600;
+}
+.resourceProviders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.resourceProviders label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.resourceProviders label.chosen {
+  border-color: var(--primary);
+  background: var(--primary-tint);
+}
+.resourceFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 520px) {
+  .resourceProviders {
+    grid-template-columns: 1fr;
+  }
+  .resourceDialog {
+    padding: 16px;
+  }
+}

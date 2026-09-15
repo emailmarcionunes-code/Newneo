@@ -1,0 +1,68 @@
+# Single-VM pilot. No cloud resources are created by this file.
+services:
+  database:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: newneo
+      POSTGRES_USER: newneo_owner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - database:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U newneo_owner -d newneo']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 512m
+  app:
+    build:
+      context: .
+      target: runner
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Use the restricted runtime role and database hostname}
+      APP_ORIGIN: ${APP_ORIGIN:?Set HTTPS public origin}
+      SESSION_SECRET: ${SESSION_SECRET:?Set a random 64-character hex secret}
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+    mem_limit: 768m
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:?Set the public DNS hostname}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    mem_limit: 128m
+  tooling:
+    profiles: ['maintenance']
+    build:
+      context: .
+      target: tooling
+    environment:
+      MIGRATION_DATABASE_URL: ${MIGRATION_DATABASE_URL:-}
+      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD:-}
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
+      BOOTSTRAP_SUBJECT: ${BOOTSTRAP_SUBJECT:-}
+      BOOTSTRAP_ORGANIZATION: ${BOOTSTRAP_ORGANIZATION:-}
+      BOOTSTRAP_WORKSPACE: ${BOOTSTRAP_WORKSPACE:-}
+      BOOTSTRAP_CAN_EDIT: ${BOOTSTRAP_CAN_EDIT:-false}
+    depends_on:
+      database:
+        condition: service_healthy
+volumes:
+  database:
+  caddy_data:
+  caddy_config:
