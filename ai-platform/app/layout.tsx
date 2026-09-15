@@ -5,6 +5,8 @@ import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import './globals.css';
 import './wizard.css';
+import './journeys.css';
+import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 
 export const metadata: Metadata = {
   title: 'Newneo AI Platform',
@@ -18,7 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PreviewStateProvider>{children}</PreviewStateProvider>
+      </body>
     </html>
   );
 }

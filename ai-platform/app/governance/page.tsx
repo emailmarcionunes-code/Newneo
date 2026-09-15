@@ -1,10 +1,10 @@
 import AppShell from '@/components/AppShell';
-import RegistrySurface from '@/components/RegistrySurface';
+import GovernanceExperience from '@/components/journeys/Governance';
 import '../surfaces.css';
 export default function Governance() {
   return (
     <AppShell>
-      <RegistrySurface surface="governance" />
+      <GovernanceExperience />
     </AppShell>
   );
 }

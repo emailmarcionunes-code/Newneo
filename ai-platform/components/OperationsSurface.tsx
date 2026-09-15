@@ -1,4 +1,5 @@
 'use client';
+import JourneyOperations from './journeys/Operations';
 import { useState } from 'react';
 import Link from 'next/link';
 import { fleet, fleetTotals, incidents } from '@/lib/surfaces';
@@ -275,6 +276,7 @@ export default function OperationsSurface({
           )}
         </section>
       )}
+      <JourneyOperations finops={finops} />
     </div>
   );
 }
