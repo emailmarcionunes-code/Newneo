@@ -11,6 +11,11 @@ import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 export const metadata: Metadata = {
   title: 'Newneo AI Platform',
   description: 'Build, govern, deploy and operate enterprise AI.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
