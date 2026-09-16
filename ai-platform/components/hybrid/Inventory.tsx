@@ -1,12 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-  hybridAgents,
-  sourceRows,
-  actionRows,
-  activity,
-} from '@/lib/hybrid-data';
+import { hybridAgents, sourceRows, actionRows } from '@/lib/hybrid-data';
 import { Button, FilterChip } from '../UI';
 import ResourceExperience from '../ResourceExperience';
 import {
@@ -22,7 +17,7 @@ export function Agents() {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage agentsPage">
       <PageTitle
         title="All Agents"
         description="4 live · 1 staging · 1 degraded"
@@ -68,11 +63,34 @@ export function Agents() {
           )
           .map((a) => [
             <DetailLink key={a.id} href={`/agents/${a.id}`}>
-              {a.name}
+              <span className="agentNameWithStatus">
+                <i
+                  className={
+                    a.status === 'Degraded'
+                      ? 'hybridDanger'
+                      : a.status === 'Live'
+                        ? 'successText'
+                        : 'blueText'
+                  }
+                  aria-hidden="true"
+                />
+                {a.name}
+              </span>
             </DetailLink>,
             <Status key="s">{a.status}</Status>,
             a.tasks,
-            a.success,
+            <span
+              key="success"
+              className={
+                a.status === 'Degraded'
+                  ? 'hybridDanger'
+                  : a.status === 'Live'
+                    ? 'successText'
+                    : ''
+              }
+            >
+              {a.success}
+            </span>,
             a.latency,
             a.model,
           ])}
@@ -81,70 +99,7 @@ export function Agents() {
     </div>
   );
 }
-export function Overview() {
-  return (
-    <div className="surfacePage hybridPage">
-      <h1 className="srOnly">Overview</h1>
-      <Metrics
-        items={[
-          ['Agents live', '6', '+1 this week'],
-          ['Tasks today', '7,112', '+18% vs yesterday'],
-          ['Success rate', '95.4%', '↑ 0.6% vs last week'],
-          ['Avg latency', '1.2s', 'P50 across all agents'],
-          ['AI spend', '$1,840', '82% monthly budget'],
-          ['Incidents', '1', 'Sales Agent degraded'],
-        ]}
-      />
-      <div className="hybridSplit">
-        <section className="panel">
-          <div className="surfaceHeading">
-            <h2>Agent Health</h2>
-            <Link href="/agents">View all →</Link>
-          </div>
-          <Table
-            caption="Agent health"
-            headers={['Agent', 'Status', 'Tasks/day', 'Success', 'Latency']}
-            rows={hybridAgents.slice(0, 5).map((a) => [
-              <DetailLink key={a.id} href={`/agents/${a.id}`}>
-                {a.name}
-              </DetailLink>,
-              <Status key="s">{a.status}</Status>,
-              a.tasks,
-              a.success,
-              a.latency,
-            ])}
-          />
-        </section>
-        <section className="panel">
-          <h2>Activity</h2>
-          <ul className="hybridActivity">
-            {activity.map((v, i) => (
-              <li key={v}>
-                <Link
-                  href={
-                    [
-                      '/deployments/customer-service',
-                      '/agentops/incidents/inc-001',
-                      '/evaluations/customer-service',
-                      '/deployments',
-                      '/governance',
-                    ][i]
-                  }
-                >
-                  {v}
-                </Link>
-                <small>
-                  {['8 min ago', '23 min ago', '1h ago', '2h ago', '3h ago'][i]}
-                </small>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-      <DataNote />
-    </div>
-  );
-}
+export { default as Overview } from './OverviewFidelity';
 export function Resources({ tools = false }: { tools?: boolean }) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
@@ -159,7 +114,9 @@ export function Resources({ tools = false }: { tools?: boolean }) {
       </>
     );
   return (
-    <div className="surfacePage hybridPage">
+    <div
+      className={`surfacePage hybridPage ${tools ? 'toolsPage' : 'knowledgePage'}`}
+    >
       <PageTitle
         title={tools ? 'Tools & Actions' : 'Knowledge Sources'}
         description={
@@ -213,7 +170,8 @@ export function Resources({ tools = false }: { tools?: boolean }) {
       {tools ? (
         <div className="hybridSplit">
           <Table
-            caption="Tool actions" emptyMessage="No tools match your filters. Clear the search or add an approved tool."
+            caption="Tool actions"
+            emptyMessage="No tools match your filters. Clear the search or add an approved tool."
             headers={[
               'Action',
               'System',
@@ -237,8 +195,11 @@ export function Resources({ tools = false }: { tools?: boolean }) {
           />
           <aside>
             <section className="panel">
-              <h2>MCP Servers</h2>
-              <ul className="hybridActivity">
+              <div className="surfaceHeading">
+                <h2>MCP Servers</h2>
+                <span className="modelPill">3/4 online</span>
+              </div>
+              <ul className="mcpServers">
                 {[
                   'filesystem-mcp',
                   'github-mcp',
@@ -246,13 +207,19 @@ export function Resources({ tools = false }: { tools?: boolean }) {
                   'postgres-mcp',
                 ].map((x, i) => (
                   <li key={x}>
-                    {x}
-                    <Status>{i === 3 ? 'Error' : 'Live'}</Status>
+                    <span
+                      className={i === 3 ? 'hybridDanger' : 'successText'}
+                      aria-label={i === 3 ? 'Offline' : 'Online'}
+                    >
+                      ●
+                    </span>
+                    <span>{x}</span>
+                    <small>{['4ms', '32ms', '18ms', '—'][i]}</small>
                   </li>
                 ))}
               </ul>
             </section>
-            <section className="panel">
+            <section className="panel permissionBreakdown">
               <h2>Permission breakdown</h2>
               <Bars
                 items={[
@@ -268,7 +235,8 @@ export function Resources({ tools = false }: { tools?: boolean }) {
       ) : (
         <>
           <Table
-            caption="Knowledge sources" emptyMessage="No knowledge sources match your search. Clear it or connect a source."
+            caption="Knowledge sources"
+            emptyMessage="No knowledge sources match your search. Clear it or connect a source."
             headers={[
               'Source',
               'Type',
@@ -289,7 +257,18 @@ export function Resources({ tools = false }: { tools?: boolean }) {
                 ...r.slice(2, 5),
                 <Status key="s">{r[5]}</Status>,
                 r[6],
-                r[7],
+                <span
+                  key="coverage"
+                  className={
+                    parseInt(r[7]) >= 85
+                      ? 'successText'
+                      : parseInt(r[7]) === 0
+                        ? 'hybridDanger'
+                        : 'warningText'
+                  }
+                >
+                  {r[7]}
+                </span>,
               ])}
           />
           <div className="intelligenceNote">

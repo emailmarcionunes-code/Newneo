@@ -103,6 +103,12 @@ export const knowledgeSources: Integration[] = [
     detail: 'acme.service-now.com',
   },
   {
+    id: 'zendesk',
+    name: 'Zendesk',
+    categories: ['Collaboration'],
+    detail: 'Acme support articles and ticket resolutions',
+  },
+  {
     id: 'api',
     name: 'Custom API',
     categories: ['Custom', 'Web'],

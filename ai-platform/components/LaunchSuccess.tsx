@@ -18,15 +18,15 @@ export function LaunchSuccess({
       <div className="successCelebration" aria-hidden="true">
         <AssetIcon name="success-circle" size={64} />
         <AssetIcon name="success-check" size={32} />
-        {Array.from({ length: 6 }, (_, i) => (
-          <i key={i} className={`confetti confetti-${i}`} />
-        ))}
       </div>
       <h1>Your agent is live!</h1>
       <p>
         Preview: {receipt.agentName} would be deployed to{' '}
         {receipt.environment.toLowerCase()}. No live deployment occurred.
       </p>
+      <span className="successEnvironment">
+        {receipt.environment.toUpperCase()} · LIVE PREVIEW
+      </span>
       <div className="successActions">
         <Button onClick={onOverview}>View Agent →</Button>
         <Link className="button secondary" href="/agentops">

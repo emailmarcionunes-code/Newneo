@@ -24,7 +24,7 @@ test('catalog search, categories and custom entry retain template identity', asy
 });
 test('eight stages preserve mission, sources, actions, infrastructure and model', async ({
   page,
-}) => {
+}, info) => {
   await page.goto('/agents/launch?template=it-support');
   await page.getByLabel('Business owner').fill('IT Operations');
   await page.getByLabel('Success metric').fill('70% autonomous');
@@ -77,6 +77,10 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
     page.getByRole('heading', { name: 'Your agent is live!', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/No live deployment/)).toBeVisible();
+  await page.screenshot({
+    path: info.outputPath('launch-success.png'),
+    fullPage: true,
+  });
   await page
     .getByRole('button', { name: 'View Deployment', exact: false })
     .click();

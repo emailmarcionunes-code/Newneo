@@ -2,11 +2,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { hybridAgents, auditRows } from '@/lib/hybrid-data';
-import { Button, FormField } from '../UI';
-import { Tabs, Panel, Feedback } from '../journeys/Shared';
+import { Button } from '../UI';
 import { usePreview } from '../journeys/PreviewState';
-import GovernanceEditor from '../journeys/Governance';
-import AccountSettings from '../AccountSettings';
 import { PageTitle, Metrics, Table, Status, DataNote, exportCsv } from './UI';
 export function Reports() {
   return (
@@ -60,17 +57,40 @@ export function Reports() {
         <h2>Agent performance breakdown</h2>
         <Table
           caption="Agent performance breakdown"
-          headers={['Agent', 'Tasks', 'Success', 'Latency', 'Cost', 'Eval']}
-          rows={hybridAgents.slice(0, 3).map((a) => [
-            <Link key={a.id} href={`/agents/${a.id}`}>
-              {a.name}
-            </Link>,
-            a.tasks,
-            a.success,
-            a.latency,
-            `$${a.cost}`,
-            `${a.score}%`,
-          ])}
+          headers={[
+            'Agent',
+            'Tasks',
+            'Success',
+            'Latency',
+            'Cost',
+            'Eval',
+            'Trend',
+          ]}
+          rows={[hybridAgents[0], hybridAgents[1], hybridAgents[3]].map(
+            (a, i) => [
+              <Link key={a.id} href={`/agents/${a.id}`}>
+                {a.name}
+              </Link>,
+              ['18.4K', '6.3K', '4.1K'][i],
+              <span
+                key="success"
+                className={
+                  a.status === 'Degraded' ? 'hybridDanger' : 'successText'
+                }
+              >
+                {a.success}
+              </span>,
+              a.latency,
+              `$${a.cost}`,
+              `${a.score}%`,
+              <span
+                key="trend"
+                className={i === 2 ? 'hybridDanger' : 'successText'}
+              >
+                {['+4%', '+1%', '−6%'][i]}
+              </span>,
+            ],
+          )}
         />
       </section>
       <DataNote />
@@ -206,9 +226,13 @@ export function Playground() {
   const [tokens, setTokens] = useState('2048');
   const [show, setShow] = useState(true);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<{ role: string; text: string }[]>(
-    [],
-  );
+  const [messages, setMessages] = useState<{ role: string; text: string }[]>([
+    { role: 'user', text: 'Preciso cancelar meu pedido #78234' },
+    {
+      role: 'assistant',
+      text: 'Consultei seu pedido. Ele está em transporte. Posso criar um ticket de devolução quando chegar.',
+    },
+  ]);
   return (
     <div className="surfacePage hybridPage">
       <PageTitle
@@ -325,4 +349,4 @@ export function Playground() {
     </div>
   );
 }
-export {default as Settings} from './SettingsWorkspace';
+export { default as Settings } from './SettingsWorkspace';

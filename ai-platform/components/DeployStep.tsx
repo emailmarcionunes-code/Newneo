@@ -29,7 +29,7 @@ export function DeployStep({
       approvedEndpoints.find((item) => item.id === draft.model.modelId)?.name,
     ],
     ['Knowledge sources', `${draft.knowledge.length} connected`],
-    ['Tools', `${Object.keys(draft.tools).length} connected`],
+    ['Tools', `${Object.values(draft.tools).flat().length} approved actions`],
     ['Access', 'Everyone in the company'],
     [
       'Governance',

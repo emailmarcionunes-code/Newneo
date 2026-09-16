@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { evaluationScenarios } from '@/lib/readiness';
-import { Button } from './UI';
+import { Button, ProgressRing } from './UI';
 import {
   previewRequest,
   sampleAnswer,
@@ -103,16 +103,10 @@ export function EvaluateStep({
     >
       {result ? (
         <>
-          <div className="readinessBanner">
-            <div
-              role="meter"
-              aria-label="Evaluation score"
-              aria-valuenow={result.score}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              {result.score}%
-            </div>
+          <div
+            className={`readinessBanner ${draft.evaluationRemediation ? 'passed' : 'needsReview'}`}
+          >
+            <ProgressRing value={result.score} />
             <div>
               <h3>
                 {draft.evaluationRemediation
@@ -133,7 +127,16 @@ export function EvaluateStep({
           </div>
           <div className="evaluationRows">
             {result.metrics.map((metric, index) => (
-              <div key={metric.name}>
+              <div
+                key={metric.name}
+                data-outcome={
+                  metric.value >= 85
+                    ? 'passed'
+                    : metric.value >= 60
+                      ? 'warning'
+                      : 'failed'
+                }
+              >
                 <span>
                   <strong>{metric.name}</strong>
                   <small>

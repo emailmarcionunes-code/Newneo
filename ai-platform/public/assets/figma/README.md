@@ -12,3 +12,5 @@ Exported from **Newneo Product Design**, file `DmYoatzciQTR67GWU9zI98`, for GitH
 - Runtime SVGs from Model & Runtime `14:189`: `30:907` (Managed AI), `30:910` (Customer Cloud), `30:912` (Private AI), `30:915` (Hybrid AI). Rendered through `AssetIcon`.
 
 - Success SVGs from `14:493`: `28:918` (monitor), `28:924` (feedback), `28:930` (iterate), `28:937` (explore), `28:907` (success circle), `28:908` (check).
+
+Zendesk: exact SVG from https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/zendesk.svg (Simple Icons, CC0). Added for approved Hybrid Knowledge frame 5:2; rendered through ProviderLogo. The filename directory is shared with the earlier Figma exports; this particular asset is not claimed as a Figma export.

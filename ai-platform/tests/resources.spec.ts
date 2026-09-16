@@ -168,7 +168,7 @@ test('preview storage errors recover and disconnect preserves configuration', as
   await expect(
     page.getByText('Saved preview unavailable.', { exact: false }),
   ).toBeVisible();
-  await expect(page.locator('.surfaceCards .agentCard')).toHaveCount(8);
+  await expect(page.locator('.surfaceCards .agentCard')).toHaveCount(9);
   await add(page, true);
   await page.getByRole('tab', { name: 'Connection', exact: true }).click();
   await page

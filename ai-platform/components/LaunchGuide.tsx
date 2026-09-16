@@ -142,7 +142,7 @@ export default function LaunchGuide({
   const titles = [
     'Launch a New Agent',
     'Connect knowledge sources',
-    'Add tools and actions',
+    'Define tools & actions',
     'Choose where the agent runs',
     'Select the intelligence layer',
     'Governance & controls',
@@ -151,13 +151,13 @@ export default function LaunchGuide({
   ];
   const subtitles = [
     'Turn a business outcome into a production-ready AI mission.',
-    'Add the data your agent will use to find accurate answers.',
-    'Connect the systems your agent can use and define what it can do.',
-    'Choose where your agent will run.',
-    'Compare providers and select a model for your infrastructure.',
-    'Keep your agent secure, compliant and aligned with company policies.',
-    'Run sample queries and review production confidence before promotion.',
-    'Review your configuration and choose the environment.',
+    'Define what the agent knows. NEWNEO estimates whether the connected knowledge can support the business outcome.',
+    'Define what the agent can do. Actions carry permission scope, business impact and approval requirements.',
+    'Infrastructure is a deployment decision — separate from the model. Optimize sovereignty, latency, operations and cost.',
+    'Select the foundation model independently from infrastructure. Compare context, reasoning, latency, governance fit and cost.',
+    'Define how this agent is controlled. Active protections create confidence without adding unnecessary bureaucracy.',
+    'Review confidence, warnings and failures from representative scenarios before deployment.',
+    'Review the deployment manifest, select the environment and deliberately promote this agent into service.',
   ];
   const deploy = async () => {
     if (

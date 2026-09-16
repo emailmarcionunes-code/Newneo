@@ -64,7 +64,7 @@ export default function HybridDetail({
     const r = sourceRows.find((r) => r[0] === id) ?? sourceRows[0];
     const names = ['Overview', 'Documents', 'Sync'];
     return (
-      <div className="surfacePage hybridPage">
+      <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
           title={r[1]}
           description={`Last synced ${r[4]} · ${r[3]} documents · 2 agents`}
@@ -121,6 +121,7 @@ export default function HybridDetail({
               </div>
               <section className="panel">
                 <Bars
+                  semantics="quality"
                   items={[
                     ['Index coverage for connected agents', parseInt(r[7])],
                   ]}
@@ -171,7 +172,7 @@ export default function HybridDetail({
   if (kind === 'tools') {
     const r = actionRows.find((r) => r[0] === id) ?? actionRows[0];
     return (
-      <div className="surfacePage hybridPage">
+      <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
           title={r[1]}
           description={`${r[2]} · ${r[3]} permission · ${r[4]} risk · organization-approved endpoint`}
@@ -216,7 +217,7 @@ export default function HybridDetail({
           </section>
           <section className="panel">
             <h2>Agents using this action</h2>
-            {hybridAgents.slice(0, 3).map((a) => (
+            {[hybridAgents[0], hybridAgents[1], hybridAgents[4]].map((a) => (
               <p key={a.id}>
                 <Link href={`/agents/${a.id}`}>{a.name}</Link>
               </p>
@@ -250,7 +251,11 @@ export default function HybridDetail({
                 'Failed',
                 '30.0s',
               ],
-            ]}
+            ].map((row) =>
+              row.map((cell, i) =>
+                i === 3 ? <Status key={i}>{cell}</Status> : cell,
+              ),
+            )}
           />
         </section>
         <DataNote />
@@ -259,7 +264,7 @@ export default function HybridDetail({
   }
   if (kind === 'evaluations')
     return (
-      <div className="surfacePage hybridPage">
+      <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
           title={
             id === 'customer-service'
@@ -270,27 +275,56 @@ export default function HybridDetail({
         >
           <Status>{agent.score >= 90 ? 'Passed' : 'Warning'}</Status>
         </PageTitle>
-        <Metrics
-          items={[
-            ['Readiness score', `${agent.score}%`],
-            ['Scenarios passed', `${Math.round(agent.score / 2)}/50`],
-            ['Failed scenarios', agent.score >= 90 ? '0' : '3'],
-            ['Duration', '4m 12s'],
-          ]}
-        />
-        <section className="panel">
-          <h2>Scenario results</h2>
-          <Bars
+        <div className="evaluationSummary">
+          <section
+            className={`panel evaluationScore ${agent.score >= 90 ? 'healthy' : 'warning'}`}
+          >
+            <strong>{agent.score}%</strong>
+            <span>readiness score</span>
+            <small>
+              {agent.score >= 90
+                ? '5 pass · 2 warn · 0 fail'
+                : '4 pass · 2 warn · 1 fail'}
+            </small>
+          </section>
+          <Metrics
             items={[
-              ['Task completion', 96],
-              ['Answer accuracy', 91],
-              ['Hallucination resistance', 94],
-              ['Safety & policy', 78],
-              ['Tool execution', 97],
-              ['Latency P95', 91],
-              ['Edge cases', 72],
+              ['Scenarios passed', `${Math.round(agent.score / 2)}/50`],
+              ['Failed scenarios', agent.score >= 90 ? '0' : '3'],
+              ['Duration', '4m 12s'],
+              ['Model', id === 'customer-service' ? 'GPT-4o' : agent.model],
+              ['Pass rate', `${agent.score}%`],
+              ['Run date', 'Today'],
             ]}
           />
+        </div>
+        <section className="panel">
+          <h2>Scenario results</h2>
+          <div className="scenarioResults">
+            {[
+              ['Task completion', '48/50 scenarios resolved', 96],
+              ['Answer accuracy', 'High groundedness against KB', 91],
+              ['Hallucination resistance', 'Assertions verified', 94],
+              ['Safety & policy', '2 PII snippets need review', 78],
+              ['Tool execution', 'All actions completed', 97],
+              ['Latency P95', '2.4s vs 3s threshold', 91],
+              ['Edge cases', 'Ambiguous queries need work', 72],
+            ].map(([name, note, score]) => (
+              <div
+                key={String(name)}
+                data-tone={Number(score) < 85 ? 'warning' : 'healthy'}
+              >
+                <span>{name}</span>
+                <small>{note}</small>
+                <progress
+                  aria-label={String(name)}
+                  max={100}
+                  value={Number(score)}
+                />
+                <strong>{score}%</strong>
+              </div>
+            ))}
+          </div>
         </section>
         <section className="evaluationScenarios panel">
           <h2>Representative outputs and recommendations</h2>
@@ -323,7 +357,7 @@ export default function HybridDetail({
     );
   if (kind === 'deployments')
     return (
-      <div className="surfacePage hybridPage">
+      <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
           title={`${agent.name} — v2.4`}
           description="Production · Today 12:04 · 2m 14s · Deployed by j.silva"
@@ -361,6 +395,18 @@ export default function HybridDetail({
                 'Deploy complete',
               ].map((v, i) => (
                 <li key={v}>
+                  <time>
+                    {
+                      [
+                        'Today 12:04',
+                        '+0:12',
+                        '+0:38',
+                        '+1:20',
+                        '+1:44',
+                        '2m 14s',
+                      ][i]
+                    }
+                  </time>
                   <strong>{v}</strong>
                   <small>
                     {
@@ -400,7 +446,7 @@ export default function HybridDetail({
     );
   if (kind === 'incidents')
     return (
-      <div className="surfacePage hybridPage">
+      <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
           title={`${id.toUpperCase()} · ${id === 'inc-002' ? 'Tool execution failed' : 'High latency detected'}`}
           description={`${id === 'inc-002' ? 'Process Automation' : 'Sales Assistant'} · Started 14:30 · 45 min ongoing`}
@@ -450,8 +496,36 @@ export default function HybridDetail({
                     'Circuit breaker enabled on CRM',
                     'P95 improving — 5.1s → 3.8s',
                   ]
-              ).map((v) => (
-                <li key={v}>{v}</li>
+              ).map((v, i) => (
+                <li
+                  key={v}
+                  data-tone={
+                    [
+                      'danger',
+                      'warning',
+                      'blue',
+                      'blue',
+                      'warning',
+                      'healthy',
+                      'healthy',
+                    ][i]
+                  }
+                >
+                  <time>
+                    {
+                      [
+                        '14:30:00',
+                        '14:30:05',
+                        '14:30:10',
+                        '14:31:00',
+                        '14:32:00',
+                        '14:35:00',
+                        '14:45:00',
+                      ][i]
+                    }
+                  </time>
+                  <span>{v}</span>
+                </li>
               ))}
             </ol>
           </section>
@@ -480,7 +554,7 @@ export default function HybridDetail({
       </div>
     );
   return (
-    <div className="surfacePage hybridPage">
+    <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
       <PageTitle
         title={`Edit: ${policy}`}
         description="Last modified Sep 12, 2026 · Actively enforced"
@@ -488,6 +562,7 @@ export default function HybridDetail({
       <Feedback message={message} />
       <div className="hybridSplit">
         <form
+          id="policy-form"
           className="panel"
           onSubmit={(e) => {
             e.preventDefault();
@@ -519,7 +594,14 @@ export default function HybridDetail({
                   : 'Security'}
             </span>
             <span className="tag">Required</span>
-            <span className="tag">All agents</span>
+          </div>
+          <div className="policyScope">
+            <h3>Scope</h3>
+            <div className="tags">
+              <span className="tag">All agents</span>
+              <span className="tag">Customer Service</span>
+              <span className="tag">Sales Assistant</span>
+            </div>
           </div>
           <fieldset className="policyModes">
             <legend>Enforcement mode</legend>
@@ -543,7 +625,6 @@ export default function HybridDetail({
               </label>
             ))}
           </fieldset>
-          <Button type="submit">Save changes</Button>
         </form>
         <section className="panel">
           <h2>Policy status</h2>
@@ -561,10 +642,18 @@ export default function HybridDetail({
                   'Customer Service Agent — CPF detected',
                 ]
               : []
-            ).map((v) => (
-              <li key={v}>{v}</li>
+            ).map((v, i) => (
+              <li key={v}>
+                {v}
+                <small>
+                  {['Sep 15 14:32', 'Sep 14 09:10', 'Sep 13 16:45'][i]}
+                </small>
+              </li>
             ))}
           </ul>
+          <Button type="submit" form="policy-form">
+            Save changes
+          </Button>
         </section>
       </div>
       <DataNote />

@@ -66,7 +66,7 @@ test('catalog proves scale and every category has multiple working templates', a
 });
 test('agent versions isolate changes from Production and all eight tabs have content', async ({
   page,
-}) => {
+}, info) => {
   await page.goto('/agents/it-support');
   await expect(page.getByRole('tab')).toHaveCount(8);
   await page.getByRole('tab', { name: 'Configuration', exact: true }).click();
@@ -82,9 +82,22 @@ test('agent versions isolate changes from Production and all eight tabs have con
   await expect(
     page.getByRole('region', { name: 'Agent versions' }),
   ).toContainText('v2.5');
-  for (const name of ['Evaluations', 'Activity', 'AgentOps']) {
+  for (const name of [
+    'Overview',
+    'Configuration',
+    'Knowledge',
+    'Tools',
+    'Evaluations',
+    'Versions',
+    'Activity',
+    'AgentOps',
+  ]) {
     await page.getByRole('tab', { name, exact: true }).click();
     await expect(page.getByRole('tabpanel')).not.toBeEmpty();
+    await page.screenshot({
+      path: info.outputPath(`agent-${name}.png`),
+      fullPage: true,
+    });
     expect(
       (await new AxeBuilder({ page }).include('main').analyze()).violations,
     ).toEqual([]);
@@ -92,7 +105,7 @@ test('agent versions isolate changes from Production and all eight tabs have con
 });
 test('all Settings tabs support demo interactions without external effects', async ({
   page,
-}) => {
+}, info) => {
   await page.goto('/settings');
   for (const name of [
     'Organization',
@@ -103,16 +116,24 @@ test('all Settings tabs support demo interactions without external effects', asy
     'Getting Started',
   ]) {
     await page.getByRole('tab', { name, exact: true }).click();
+    await page.screenshot({
+      path: info.outputPath(`settings-${name.replaceAll(' ', '-')}.png`),
+      fullPage: true,
+    });
     expect(
       (await new AxeBuilder({ page }).include('main').analyze()).violations,
     ).toEqual([]);
   }
   await page.getByRole('tab', { name: 'API & Webhooks', exact: true }).click();
+  await page
+    .getByRole('button', { name: '+ New API key', exact: true })
+    .click();
   await page.getByLabel('Key name', { exact: true }).fill('Audit test');
   await page.getByRole('button', { name: 'Create key preview' }).click();
   await expect(page.getByRole('region', { name: 'API keys' })).toContainText(
     'Audit test',
   );
+  await page.getByRole('button', { name: 'Webhooks', exact: true }).click();
   await page.getByLabel('HTTPS endpoint').fill('https://example.com/events');
   await page.getByRole('button', { name: 'Add webhook preview' }).click();
   await expect(page.getByRole('status')).toContainText('No request was sent');

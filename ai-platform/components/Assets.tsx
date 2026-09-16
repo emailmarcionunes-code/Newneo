@@ -1,3 +1,4 @@
+import { ChartNoAxesCombined, Terminal, ScrollText } from 'lucide-react';
 import type { CSSProperties } from 'react';
 
 /** Exact Figma exports; replace assets here when final optical polish is approved. */
@@ -12,6 +13,22 @@ export function AssetIcon({
   className?: string;
   monochrome?: boolean;
 }) {
+  const navigationIcon = {
+    reports: ChartNoAxesCombined,
+    playground: Terminal,
+    audit: ScrollText,
+  }[name as 'reports' | 'playground' | 'audit'];
+  if (navigationIcon) {
+    const Icon = navigationIcon;
+    return (
+      <Icon
+        size={size}
+        strokeWidth={1.5}
+        className={`assetIcon ${className}`}
+        aria-hidden="true"
+      />
+    );
+  }
   if (monochrome)
     return (
       <span
@@ -61,7 +78,7 @@ export function ProviderLogo({
       style={{ '--logo-size': `${size}px` } as CSSProperties}
     >
       <img
-        src={`/assets/figma/${provider}.png`}
+        src={`/assets/figma/${provider}.${provider === 'zendesk' ? 'svg' : 'png'}`}
         width={size}
         height={size}
         alt=""

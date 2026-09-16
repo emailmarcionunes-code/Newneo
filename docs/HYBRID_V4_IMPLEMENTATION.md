@@ -1,6 +1,6 @@
 # Hybrid v4 implementation — Issue #3
 
-Current audit: **READY WITH MINOR POLISH**. See [fidelity and completeness audit](HYBRID_V4_AUDIT.md) for the gaps corrected, route evidence and remaining limits.
+Status: **HYBRID V4 IMPLEMENTATION COMPLETE** for the visual, navigable customer frontend. See the [final visual audit](VISUAL_FIDELITY_AUDIT.md) for reference mapping, corrections, rendered review, test evidence and integration boundaries.
 
 ## Authority and scope
 
@@ -67,4 +67,4 @@ PLAYWRIGHT_PORT=3115 npm run test:e2e -- --workers=2
 
 Code Connect is intentionally not registered against whole-screen frames: only component-level 1:1 mappings should be published when matching reusable Figma component nodes exist. No speculative mapping has been created.
 
-Validation result: production build passed; 28 browser tests passed, including accessibility/responsive checks. Unit suite: 23 passed; the optional PostgreSQL integration test is skipped without `TEST_DATABASE_URL`. Backend integration was not provisioned as part of this frontend delivery.
+Validation result: production build passed; 32 browser tests passed, including accessibility/responsive checks. Unit suite: 23 passed; the optional PostgreSQL integration test is skipped without `TEST_DATABASE_URL`. Backend integration was not provisioned as part of this frontend delivery.

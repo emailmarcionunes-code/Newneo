@@ -87,7 +87,7 @@ export function Evaluations() {
         </section>
         <section className="panel">
           <h2>Scenario categories</h2>
-          <Bars items={scenarios} />
+          <Bars items={scenarios} semantics="quality" />
         </section>
       </div>
       <DataNote />
@@ -114,13 +114,36 @@ export function Deployments() {
       >
         <Button onClick={() => setEdit(true)}>Request promotion</Button>
       </PageTitle>
-      <Metrics
-        items={[
-          ['Production', '4 healthy · 1 degraded', '5 agents · Latest v2.4'],
-          ['Staging', '2 healthy', '2 agents · Latest v0.9'],
-          ['Development', '1 healthy', '1 agent · Latest v1.0'],
-        ]}
-      />
+      <div className="environmentSummaryGrid">
+        {[
+          ['Production', '5 agents', '4', '1', 'v2.4', 'Updated 2 hr ago'],
+          ['Staging', '2 agents', '2', '0', 'v0.9', 'Updated 1 day ago'],
+          ['Development', '1 agent', '1', '0', 'v1.0', 'Updated 3 hr ago'],
+        ].map(([name, count, healthy, degraded, version, when]) => (
+          <article key={name}>
+            <header>
+              <h2>{name}</h2>
+              <span>{count}</span>
+            </header>
+            <div className="environmentHealth">
+              <div>
+                <strong>{healthy}</strong>
+                <small>Healthy</small>
+              </div>
+              {degraded !== '0' && (
+                <div className="danger">
+                  <strong>{degraded}</strong>
+                  <small>Degraded</small>
+                </div>
+              )}
+            </div>
+            <footer>
+              <span>Latest: {version}</span>
+              <span>{when}</span>
+            </footer>
+          </article>
+        ))}
+      </div>
       <section className="panel">
         <div className="surfaceHeading">
           <h2>Deployment history</h2>
@@ -222,7 +245,18 @@ export function AgentOps() {
                     ['Tasks', a.tasks],
                     ['Success', a.success],
                     ['Latency', a.latency],
-                    ['Error', a.status === 'Degraded' ? '18.8%' : '0.2%'],
+                    [
+                      'Error',
+                      a.status === 'Degraded'
+                        ? '18.8%'
+                        : a.status === 'Staging'
+                          ? '—'
+                          : a.id === 'it-support'
+                            ? '0.0%'
+                            : a.id === 'process-automation'
+                              ? '0.3%'
+                              : '0.2%',
+                    ],
                   ].map(([k, v]) => (
                     <div key={k}>
                       <dt>{k}</dt>
@@ -276,7 +310,7 @@ export function AgentOps() {
                         >
                           INC-002 · Tool execution failed
                         </DetailLink>,
-                        'Sales Assistant',
+                        'Process Automation',
                         'Medium',
                         'Investigating',
                       ],
@@ -337,8 +371,27 @@ export function FinOps() {
             </Button>
           </div>
           <Bars
+            semantics="budget"
             items={[...hybridAgents]
-              .sort((a, b) => b.cost - a.cost)
+              .sort(
+                (a, b) =>
+                  [
+                    'customer-service',
+                    'knowledge-assistant',
+                    'process-automation',
+                    'it-support',
+                    'sales-assistant',
+                    'research-assistant',
+                  ].indexOf(a.id) -
+                  [
+                    'customer-service',
+                    'knowledge-assistant',
+                    'process-automation',
+                    'it-support',
+                    'sales-assistant',
+                    'research-assistant',
+                  ].indexOf(b.id),
+              )
               .map((a) => [
                 a.name,
                 Math.min(100, (100 * a.cost) / a.budget),
@@ -468,6 +521,13 @@ export function Governance() {
                       'Cap usage per user and department.',
                     ][i]
                   }
+                </small>
+                <small className="policyAudience">
+                  {i === 3
+                    ? 'High-risk tools'
+                    : i === 4
+                      ? '2 agents'
+                      : 'All agents'}
                 </small>
                 <Status>
                   {i < 3 ? 'Required' : i === 5 ? 'Optional' : 'Recommended'}

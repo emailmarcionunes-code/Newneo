@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-for (const width of [1440, 768, 390])
+for (const width of [1440, 1180, 768, 390])
   test(`Hybrid v4 surfaces ${width}`, async ({ page }, info) => {
-    await page.setViewportSize({ width, height: 900 });
+    await page.setViewportSize({ width, height: width === 1180 ? 740 : 900 });
     for (const route of [
       '/',
       '/agents',
@@ -39,7 +39,7 @@ for (const width of [1440, 768, 390])
       ).toBe(true);
       const result = await new AxeBuilder({ page }).include('main').analyze();
       expect(result.violations, route).toEqual([]);
-      if (width === 1440)
+      if (width === 1440 || width === 1180)
         await page.screenshot({
           path: info.outputPath(
             `${route.replaceAll('/', '_') || 'overview'}.png`,

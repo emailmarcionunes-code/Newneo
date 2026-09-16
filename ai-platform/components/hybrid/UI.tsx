@@ -23,7 +23,7 @@ export function Metrics({ items }: { items: [string, string, string?][] }) {
   return (
     <div className={`hybridMetrics count-${items.length}`}>
       {items.map(([label, value, note]) => (
-        <article key={label}>
+        <article key={label} data-metric={label} data-value={value}>
           <span>{label}</span>
           <strong>{value}</strong>
           {note && <small>{note}</small>}
@@ -81,17 +81,40 @@ export function Table({
 export function Status({ children }: { children: string }) {
   return (
     <span
-      className={`hybridStatus ${/Live|Success|Passed|Active|Approved|Resolved/.test(children) ? 'healthy' : /Error|Failed|Degraded|High|Rejected/.test(children) ? 'danger' : /Warning|Pending|Medium|Rollback/.test(children) ? 'warning' : 'neutral'}`}
+      className={`hybridStatus ${/Live|Success|Passed|Active|Approved|Resolved|Enforced|Low/.test(children) ? 'healthy' : /Error|Failed|Degraded|High|Rejected/.test(children) ? 'danger' : /Warning|Pending|Medium|Rollback|Rolled back|Required|Optional|Recommended/.test(children) ? 'warning' : 'neutral'}`}
     >
       {children}
     </span>
   );
 }
-export function Bars({ items }: { items: [string, number, string?][] }) {
+export function Bars({
+  items,
+  semantics = 'neutral',
+}: {
+  items: [string, number, string?][];
+  semantics?: 'neutral' | 'budget' | 'quality';
+}) {
   return (
     <div className="hybridBars">
       {items.map(([name, value, note]) => (
-        <div key={name}>
+        <div
+          key={name}
+          data-tone={
+            semantics === 'budget'
+              ? value >= 100
+                ? 'danger'
+                : value >= 80
+                  ? 'warning'
+                  : 'healthy'
+              : semantics === 'quality'
+                ? value < 70
+                  ? 'danger'
+                  : value < 85
+                    ? 'warning'
+                    : 'healthy'
+                : 'blue'
+          }
+        >
           <div>
             <span>{name}</span>
             <strong>{note ?? `${value}%`}</strong>

@@ -45,7 +45,7 @@ export default function AgentWorkspace({
     setEvents((e) => ['Draft v2.5 created from Production v2.4', ...e]);
   }
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage agentWorkspace">
       <PageTitle
         title={agent.name}
         description={`${agent.model} · ${agent.status} · Version v2.4`}
@@ -64,7 +64,7 @@ export default function AgentWorkspace({
                 ['Tasks today', agent.tasks],
                 ['Success rate', agent.success],
                 ['Latency P95', agent.latency],
-                ['Evaluation', `${agent.score}%`],
+                ['Cost today', '$22.4'],
               ]}
             />
             <div className="hybridSplit">
@@ -89,7 +89,8 @@ export default function AgentWorkspace({
                     ['Model', agent.model],
                     ['Knowledge', '2 sources'],
                     ['Tools', '3 approved actions'],
-                    ['Governance', '6 active protections'],
+                    ['Policies', '4 active'],
+                    ['Eval score', `${agent.score}%`],
                   ].map(([k, v]) => (
                     <div key={k}>
                       <dt>{k}</dt>
@@ -105,6 +106,23 @@ export default function AgentWorkspace({
                 </button>
               </section>
             </div>
+            <section className="panel">
+              <h2>Recent tasks</h2>
+              <Table
+                caption="Recent agent tasks"
+                headers={['Task', 'When', 'Result']}
+                rows={[
+                  ['Resolved refund question', '2 min ago', 'Success'],
+                  ['Created ServiceNow Ticket #4832', '8 min ago', 'Success'],
+                  ['Escalated billing dispute', '14 min ago', 'Escalated'],
+                  ['Answered order-status request', '18 min ago', 'Success'],
+                ].map(([task, time, result]) => [
+                  task,
+                  time,
+                  <Status key={task}>{result}</Status>,
+                ])}
+              />
+            </section>
           </>
         ) : tab === 'Configuration' ? (
           <section className="panel">

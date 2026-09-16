@@ -1,0 +1,1178 @@
+/* Visual source: Hybrid Overview 2:2. Canonical shell/semantics use v4 47:657. */
+.overviewFidelity {
+  padding: 18px 0 0;
+}
+.overviewReferenceMetrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.overviewReferenceMetrics article {
+  height: 128px;
+  padding: 17px 15px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+.overviewReferenceMetrics h2 {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0 0 16px;
+}
+.overviewReferenceMetrics strong {
+  font-size: 25px;
+  line-height: 30px;
+  font-weight: 700;
+}
+.overviewReferenceMetrics p {
+  font-size: 11px;
+  color: #64748b;
+  margin: 12px 0 0;
+  line-height: 14px;
+}
+.overviewFidelity .healthy {
+  color: #15803d;
+}
+.overviewFidelity .danger {
+  color: #dc2626;
+}
+.overviewFidelity .blue {
+  color: #2563eb;
+}
+.overviewReferencePanels {
+  display: grid;
+  grid-template-columns: minmax(0, 826fr) minmax(0, 314fr);
+  gap: 16px;
+}
+.overviewReferencePanels > section {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  min-height: 520px;
+  overflow: hidden;
+}
+.overviewReferencePanels header {
+  height: 58px;
+  padding: 18px 19px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e2e8f0;
+}
+.overviewReferencePanels h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.overviewReferencePanels header > a {
+  font-size: 12px;
+  color: #2563eb;
+}
+.overviewHealthPanel .hybridTable {
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+}
+.overviewHealthPanel th {
+  height: 38px;
+  font-size: 10px;
+  font-weight: 500;
+  background: white;
+}
+.overviewHealthPanel td {
+  height: 58px;
+  font-size: 13px;
+}
+.overviewHealthPanel th:not(:first-child),
+.overviewHealthPanel td:not(:first-child) {
+  text-align: right;
+  padding-left: 6px;
+  padding-right: 18px;
+}
+.overviewHealthPanel th:first-child,
+.overviewHealthPanel td:first-child {
+  padding-left: 19px;
+  width: 48%;
+}
+.overviewHealthPanel td:first-child a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+.overviewHealthDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.overviewActivityPanel ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.overviewActivityPanel li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 17px;
+  border-bottom: 1px solid #e2e8f0;
+  min-height: 86px;
+  font-size: 12px;
+  line-height: 17px;
+}
+.overviewActivityPanel li:last-child {
+  border: 0;
+}
+.overviewEventIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: #eff6ff;
+}
+.overviewEventIcon.healthy {
+  background: #ecfdf5;
+}
+.overviewEventIcon.danger {
+  background: #fef2f2;
+}
+.overviewActivityPanel small {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  margin-top: 13px;
+}
+.overviewFidelity > .hybridDataNote {
+  margin-top: 24px;
+}
+@media (max-width: 1100px) {
+  .overviewReferenceMetrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .overviewReferencePanels {
+    grid-template-columns: 1fr;
+  }
+  .overviewReferencePanels > section {
+    min-height: 0;
+  }
+}
+@media (max-width: 600px) {
+  .overviewFidelity {
+    padding: 0;
+  }
+  .overviewReferenceMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .overviewHealthPanel th:first-child,
+  .overviewHealthPanel td:first-child {
+    min-width: 190px;
+  }
+}
+/* Compact label/value layout is shared by Hybrid detail frames 22:* and 29:*. */
+.hybridPage .surfaceFacts > div {
+  display: grid;
+  grid-template-columns: minmax(90px, 38%) minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding: 7px 0;
+  border: 0;
+}
+.hybridPage .surfaceFacts dt {
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748b;
+}
+.hybridPage .surfaceFacts dd {
+  font-size: 12px;
+  margin: 0;
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+.hybridPage .hybridChart {
+  height: 175px;
+}
+.agentWorkspace .hybridChart {
+  height: 155px;
+}
+.agentWorkspace .hybridSplit {
+  grid-template-columns: minmax(0, 2.1fr) minmax(220px, 1fr);
+}
+.organizationFacts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 32px;
+  margin: 20px 0 4px;
+}
+.organizationFacts > div {
+  display: grid;
+  grid-template-columns: minmax(100px, 40%) 1fr;
+  gap: 12px;
+  font-size: 11px;
+}
+.organizationFacts dt {
+  color: #64748b;
+}
+.organizationFacts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.settingsWorkspace .notificationChoice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  margin: 16px 0;
+}
+.hybridMetrics article[data-metric='Success rate'] strong,
+.hybridMetrics article[data-metric='Avg success rate'] strong,
+.hybridMetrics article[data-metric='Active policies'] strong,
+.hybridMetrics article[data-metric='Active actions'] strong {
+  color: #15803d;
+}
+.hybridMetrics article[data-metric='Active incidents'] strong,
+.hybridMetrics article[data-metric='Sync errors'] strong,
+.hybridMetrics article[data-metric='Failing scenarios'] strong,
+.hybridMetrics article[data-metric='Open violations'] strong,
+.hybridMetrics article[data-metric='Sales Agent overage'] strong {
+  color: #dc2626;
+}
+.environmentSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.environmentSummaryGrid article {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+.environmentSummaryGrid header,
+.environmentSummaryGrid footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.environmentSummaryGrid h2 {
+  font-size: 14px;
+  margin: 0;
+}
+.environmentSummaryGrid header > span {
+  font-size: 11px;
+  color: #2563eb;
+}
+.environmentHealth {
+  display: flex;
+  gap: 30px;
+  margin: 20px 0;
+  color: #15803d;
+}
+.environmentHealth strong {
+  font-size: 24px;
+}
+.environmentHealth small {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  margin-top: 4px;
+}
+.environmentHealth .danger {
+  color: #dc2626;
+}
+.environmentSummaryGrid footer {
+  font-size: 10px;
+  color: #64748b;
+}
+@media (max-width: 850px) {
+  .agentWorkspace .hybridSplit,
+  .organizationFacts,
+  .environmentSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 1180px) {
+  .catalog .agentGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.catalog .agentCard {
+  min-height: 274px;
+  box-shadow: none;
+}
+.catalog .hybridCatalogCard p {
+  min-height: 0;
+}
+.catalog .catalogMetrics {
+  margin-top: auto;
+}
+.catalog .hybridCatalogCard > a {
+  gap: 10px;
+}
+.readinessBanner {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+.readinessBanner .progressRing {
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+  padding: 6px;
+  --success: #d97706;
+}
+.readinessBanner.passed .progressRing {
+  --success: #16a34a;
+}
+.readinessBanner .progressRing > div {
+  width: 100%;
+  height: 100%;
+  background: #f8fafc;
+}
+.readinessBanner .progressRing strong {
+  font-size: 20px;
+  color: #92400e;
+}
+.readinessBanner.passed .progressRing strong {
+  color: #15803d;
+}
+.readinessBanner .progressRing small {
+  display: none;
+}
+.evaluationRows > div {
+  display: grid;
+  grid-template-columns: 8px minmax(110px, 1fr) minmax(0, 1.3fr) 28px;
+  gap: 12px;
+  padding: 10px 12px;
+  min-height: 42px;
+}
+.evaluationRows > div:before {
+  content: '';
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background: #15803d;
+}
+.evaluationRows > div[data-outcome='warning']:before {
+  background: #d97706;
+}
+.evaluationRows > div[data-outcome='failed']:before {
+  background: #dc2626;
+}
+.evaluationRows > div[data-outcome='failed'] {
+  border-color: #fecaca;
+}
+.evaluationRows > div[data-outcome='failed'] b {
+  color: #dc2626;
+}
+.evaluationRows > div[data-outcome='warning'] b {
+  color: #b45309;
+}
+.evaluationRows > div[data-outcome='passed'] b {
+  color: #15803d;
+}
+.evaluationRows span {
+  display: contents;
+}
+.evaluationRows small {
+  margin: 0;
+}
+.evaluationRows progress {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.hybridBars [data-tone='healthy'] progress::-webkit-progress-value {
+  background: #16a34a;
+}
+.hybridBars [data-tone='warning'] progress::-webkit-progress-value {
+  background: #d97706;
+}
+.hybridBars [data-tone='danger'] progress::-webkit-progress-value {
+  background: #dc2626;
+}
+.hybridBars [data-tone='healthy'] progress::-moz-progress-bar {
+  background: #16a34a;
+}
+.hybridBars [data-tone='warning'] progress::-moz-progress-bar {
+  background: #d97706;
+}
+.hybridBars [data-tone='danger'] progress::-moz-progress-bar {
+  background: #dc2626;
+}
+.hybridBars [data-tone='healthy'] strong {
+  color: #15803d;
+}
+.hybridBars [data-tone='warning'] strong {
+  color: #b45309;
+}
+.hybridBars [data-tone='danger'] strong {
+  color: #dc2626;
+}
+@media (max-width: 600px) {
+  .evaluationRows > div {
+    grid-template-columns: 8px minmax(0, 1fr) 28px;
+  }
+  .evaluationRows small {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .evaluationRows b {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+/* Supporting frames 22:* / 29:* retain compact facts, timelines and scores. */
+.detailPage .hybridSplit {
+  grid-template-columns: minmax(0, 1.75fr) minmax(250px, 1fr);
+  align-items: stretch;
+}
+.detailPage .hybridSplit.equal {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.detailPage .hybridSplit > .panel {
+  height: 100%;
+}
+.hybridPage .surfaceFacts dd {
+  min-width: 0;
+}
+.detailPage .surfaceFacts > div {
+  grid-template-columns: minmax(85px, 36%) minmax(0, 1fr);
+}
+.evaluationSummary {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(0, 3fr);
+  gap: 20px;
+}
+.evaluationSummary .hybridMetrics.count-6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.evaluationSummary .hybridMetrics strong {
+  font-size: 21px;
+}
+.evaluationScore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.evaluationScore > strong {
+  font-size: 32px;
+}
+.evaluationScore > span,
+.evaluationScore > small {
+  color: #64748b;
+  font-size: 11px;
+}
+.evaluationScore.healthy > strong {
+  color: #15803d;
+}
+.evaluationScore.warning > strong {
+  color: #b45309;
+}
+.scenarioResults {
+  display: grid;
+  gap: 20px;
+  padding: 8px 0;
+}
+.scenarioResults > div {
+  display: grid;
+  grid-template-columns:
+    minmax(130px, 1fr) minmax(160px, 1.9fr) minmax(100px, 1fr)
+    36px;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+}
+.scenarioResults small {
+  color: #64748b;
+  font-size: 10px;
+}
+.scenarioResults progress {
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.scenarioResults progress::-webkit-progress-bar {
+  background: #e2e8f0;
+}
+.scenarioResults [data-tone='healthy'] progress::-webkit-progress-value {
+  background: #16a34a;
+}
+.scenarioResults [data-tone='warning'] progress::-webkit-progress-value {
+  background: #d97706;
+}
+.scenarioResults [data-tone='healthy'] progress::-moz-progress-bar {
+  background: #16a34a;
+}
+.scenarioResults [data-tone='warning'] progress::-moz-progress-bar {
+  background: #d97706;
+}
+.scenarioResults [data-tone='healthy'] strong {
+  color: #15803d;
+}
+.scenarioResults [data-tone='warning'] strong {
+  color: #b45309;
+}
+.hybridTimeline {
+  margin: 18px 0 0;
+  padding-left: 8px;
+}
+.hybridTimeline li {
+  min-height: 46px;
+  padding-bottom: 16px;
+  padding-left: 22px;
+  font-size: 11px;
+  border-left: 0;
+}
+.hybridTimeline li:last-child {
+  padding-bottom: 0;
+}
+.hybridTimeline time {
+  float: right;
+  font-size: 10px;
+  color: #64748b;
+  margin-left: 12px;
+}
+.hybridTimeline small {
+  font-size: 10px;
+  margin-top: 4px;
+}
+.incidentsDetail .hybridTimeline li {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+}
+.incidentsDetail .hybridTimeline time {
+  float: none;
+  margin: 0;
+}
+.hybridTimeline [data-tone='danger']:before {
+  background: #dc2626;
+}
+.hybridTimeline [data-tone='warning']:before {
+  background: #d97706;
+}
+.hybridTimeline [data-tone='blue']:before {
+  background: #2563eb;
+}
+.policyModes label {
+  position: relative;
+  cursor: pointer;
+}
+.policyModes label:has(:checked) {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.policyModes input {
+  margin-right: 6px;
+  accent-color: #2563eb;
+}
+.policiesDetail .hybridSplit {
+  grid-template-columns: minmax(0, 2.25fr) minmax(230px, 1fr);
+}
+.policiesDetail .hybridSplit > section {
+  display: flex;
+  flex-direction: column;
+}
+.policiesDetail .hybridSplit > section > .button {
+  margin-top: auto;
+  align-self: flex-end;
+}
+.policiesDetail .hybridActivity {
+  margin-bottom: 24px;
+}
+.policyScope h3 {
+  font-weight: 400;
+  color: #64748b;
+}
+/* Native switches preserve checkbox keyboard support and visible focus. */
+:is(.hybridPage, .hybridJourney) input[role='switch'] {
+  appearance: none;
+  width: 34px;
+  height: 20px;
+  border: 1px solid #94a3b8;
+  border-radius: 9999px;
+  background: #cbd5e1;
+  position: relative;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+:is(.hybridPage, .hybridJourney) input[role='switch']::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 2px #0b122033;
+}
+:is(.hybridPage, .hybridJourney) input[role='switch']:checked {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+:is(.hybridPage, .hybridJourney) input[role='switch']:checked::before {
+  transform: translateX(14px);
+}
+.hybridPolicyList > div {
+  grid-template-columns:
+    34px minmax(130px, 1.1fr) 84px minmax(150px, 1.6fr)
+    82px 90px;
+  gap: 12px;
+  padding: 10px 12px;
+  font-size: 11px;
+}
+.hybridPolicyList small {
+  font-size: 10px;
+}
+.hybridPolicyList > div > span:not(.hybridStatus) {
+  color: #2563eb;
+}
+.hybridMetrics article[data-metric='Sources connected'] strong,
+.hybridMetrics article[data-metric='Index coverage'] strong,
+.hybridMetrics article[data-metric='Knowledge coverage'] strong,
+.hybridMetrics article[data-metric='vs. baseline'] strong,
+.hybridMetrics article[data-metric='Active'] strong,
+.hybridMetrics article[data-metric='Active keys'] strong,
+.hybridMetrics article[data-metric='Production keys'] strong,
+.hybridMetrics article[data-metric='Scenarios passed'] strong,
+.hybridMetrics article[data-metric='Pass rate'] strong {
+  color: #15803d;
+}
+.hybridMetrics article[data-metric='Avg eval score'] strong,
+.hybridMetrics article[data-metric='Compliance score'] strong,
+.hybridMetrics article[data-metric='Agents compliant'] strong,
+.hybridMetrics article[data-metric='Users impacted'] strong {
+  color: #b45309;
+}
+.hybridMetrics article[data-metric='High-risk actions'] strong,
+.hybridMetrics article[data-metric='Tasks affected'] strong,
+.hybridMetrics article[data-metric='SLA breach risk'] strong {
+  color: #dc2626;
+}
+.settingsWorkspace .usageLine > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.settingsWorkspace .usageLine small {
+  font-size: 10px;
+  color: #64748b;
+}
+.settingsWorkspace .notificationChoice {
+  display: grid;
+  grid-template-columns: 34px minmax(90px, 1fr) minmax(90px, 1.1fr);
+  gap: 12px;
+  font-size: 11px;
+}
+.settingsWorkspace .notificationChoice small {
+  color: #64748b;
+  font-size: 10px;
+}
+.tableSecondary {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 4px;
+}
+.settingsWorkspace [role='tabpanel'] > .hybridControls {
+  margin-bottom: 20px;
+}
+.onboardingBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  background: #0f172a;
+  color: white;
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.onboardingBanner h2 {
+  font-size: 24px;
+  margin: 12px 0 4px;
+}
+.onboardingBanner p {
+  color: #cbd5e1;
+  font-size: 13px;
+}
+.onboardingBanner small {
+  color: #93c5fd;
+  font-size: 10px;
+  display: block;
+}
+.onboardingBanner strong {
+  font-size: 30px;
+}
+.learningResources a {
+  display: block;
+  font-size: 12px;
+  padding: 7px 0;
+}
+.onboardingTask {
+  padding: 6px 0;
+}
+.onboardingTask .button {
+  padding: 4px 0;
+  min-height: 28px;
+}
+.sidebar > .brand,
+.sidebarCreate,
+.sidebarBottom,
+.sidebar > .workspaceMenu,
+.sidebar > button {
+  flex-shrink: 0;
+}
+.sidebar > nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+@media (max-height: 820px) and (min-width: 761px) {
+  .sidebar .brand {
+    margin-bottom: 14px;
+  }
+  .navGroup {
+    padding: 8px 0;
+  }
+  .sidebar .navItem {
+    height: 30px;
+  }
+  .navGroup h2 {
+    margin-bottom: 5px;
+  }
+}
+@media (max-width: 1100px) {
+  .hybridPolicyList > div {
+    grid-template-columns: 34px minmax(140px, 1fr) 84px 90px;
+  }
+  .hybridPolicyList small {
+    grid-column: 2 / -1;
+  }
+  .hybridPolicyList .policyAudience {
+    display: none;
+  }
+}
+@media (max-width: 850px) {
+  .detailPage .hybridSplit,
+  .detailPage .hybridSplit.equal,
+  .policiesDetail .hybridSplit {
+    grid-template-columns: 1fr;
+  }
+  .evaluationSummary {
+    grid-template-columns: 1fr;
+  }
+  .scenarioResults > div {
+    grid-template-columns: minmax(100px, 1fr) minmax(70px, 1fr) 36px;
+  }
+  .scenarioResults small {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .onboardingBanner {
+    padding: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .evaluationSummary .hybridMetrics.count-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .hybridPolicyList > div {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+  .hybridPolicyList > div > span {
+    grid-column: 2;
+  }
+  .incidentsDetail .hybridTimeline li {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 8px;
+  }
+  .settingsWorkspace .notificationChoice {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+  .settingsWorkspace .notificationChoice small {
+    grid-column: 2;
+  }
+  .onboardingBanner {
+    align-items: flex-start;
+  }
+  .onboardingBanner h2 {
+    font-size: 20px;
+  }
+}
+.hybridPage .resourceTabs {
+  margin-bottom: 0;
+}
+.hybridPage .resourceTabs button {
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.hybridTable td {
+  padding: 10px 12px;
+}
+:is(.hybridPage, .hybridJourney) input[role='switch']:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.launchSuccess {
+  max-width: 920px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 48px 32px 32px;
+}
+.successCelebration {
+  margin-bottom: 20px;
+}
+.successEnvironment {
+  display: inline-block;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  color: #15803d;
+  border-radius: 9999px;
+  font-size: 11px;
+  padding: 6px 20px;
+  margin-top: 22px;
+}
+.successActions {
+  margin: 24px 0 32px;
+}
+.successNext {
+  min-height: 0;
+}
+.successNext h2 {
+  margin-bottom: 16px;
+}
+.launchSuccess .successNext a,
+.launchSuccess .successNext button.button {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8fafc;
+  gap: 8px;
+}
+.successNext .nextIcon {
+  display: none;
+}
+@media (max-width: 600px) {
+  .launchSuccess {
+    padding: 28px 16px;
+  }
+}
+.hybridPage .playgroundMessages p {
+  color: #0f172a;
+  margin: 0;
+}
+.hybridPage .hybridHealth {
+  padding: 14px;
+}
+.hybridPage .hybridHealth .surfaceHeading {
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+.hybridPage .hybridHealth .surfaceHeading h2 {
+  margin: 0;
+  font-size: 12px;
+}
+.hybridHealth dl {
+  margin: 16px 0 0;
+}
+.hybridHealth dl > div {
+  padding: 5px 8px;
+}
+.hybridPage .hybridHealth p.hybridDanger {
+  font-size: 10px;
+  line-height: 14px;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  border-radius: 4px;
+  margin: 4px 0 0;
+  padding: 0 5px;
+}
+.mcpServers {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.mcpServers li {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 0;
+  font-size: 11px;
+}
+.mcpServers li > span:first-child {
+  font-size: 9px;
+}
+.mcpServers small {
+  font-size: 10px;
+  color: #64748b;
+}
+.toolsPage .surfaceHeading h2 {
+  margin: 0;
+}
+.toolsPage .surfaceHeading {
+  align-items: center;
+  gap: 8px;
+}
+.permissionBreakdown .hybridBars {
+  gap: 10px;
+  margin: 14px 0 0;
+}
+.permissionBreakdown .hybridBars > div {
+  display: grid;
+  grid-template-columns: 62px minmax(30px, 1fr) 12px;
+  gap: 8px;
+  align-items: center;
+}
+.permissionBreakdown .hybridBars > div > div {
+  display: contents;
+}
+.permissionBreakdown .hybridBars span {
+  font-size: 10px;
+}
+.permissionBreakdown .hybridBars strong {
+  grid-column: 3;
+  grid-row: 1;
+  font-size: 10px;
+  color: #64748b;
+}
+.permissionBreakdown .hybridBars progress {
+  grid-column: 2;
+  grid-row: 1;
+}
+.permissionBreakdown
+  .hybridBars
+  > div:first-child
+  progress::-webkit-progress-value {
+  background: #64748b;
+}
+.permissionBreakdown
+  .hybridBars
+  > div:nth-child(3)
+  progress::-webkit-progress-value {
+  background: #d97706;
+}
+.permissionBreakdown
+  .hybridBars
+  > div:nth-child(4)
+  progress::-webkit-progress-value {
+  background: #dc2626;
+}
+.permissionBreakdown .hybridBars > div:first-child progress::-moz-progress-bar {
+  background: #64748b;
+}
+.permissionBreakdown
+  .hybridBars
+  > div:nth-child(3)
+  progress::-moz-progress-bar {
+  background: #d97706;
+}
+.permissionBreakdown
+  .hybridBars
+  > div:nth-child(4)
+  progress::-moz-progress-bar {
+  background: #dc2626;
+}
+.warningText {
+  color: #b45309;
+}
+.hybridPage .hybridHealth p.hybridDanger {
+  color: #b91c1c;
+}
+.hybridPage fieldset.policyModes {
+  display: flex;
+  padding: 0;
+  border: 0;
+  gap: 12px;
+}
+.settingsWorkspace .hybridControls .filterRow .button.primary {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+.settingsWorkspace .onboardingTask {
+  font-size: 12px;
+}
+.settingsWorkspace .onboardingTask input {
+  width: 14px;
+  height: 14px;
+  accent-color: #15803d;
+}
+.settingsWorkspace .onboardingTask .button,
+.settingsWorkspace .onboardingTask > a {
+  font-size: 11px;
+}
+.hybridStage .missionControl {
+  padding: 14px 18px;
+}
+.hybridStage .missionControl strong {
+  display: block;
+  font-size: 9px;
+  line-height: 12px;
+}
+.hybridStage .missionControl h3 {
+  font-size: 14px;
+  line-height: 20px;
+  margin: 6px 0 4px;
+}
+.hybridStage .missionControl p {
+  font-size: 10px;
+  line-height: 15px;
+  margin: 0;
+}
+.hybridStage .stepHeading p {
+  line-height: 1.45;
+}
+@media (max-width: 600px) {
+  .hybridPage fieldset.policyModes {
+    flex-direction: column;
+  }
+}
+.hybridMetrics article {
+  padding: 14px 16px;
+}
+.hybridMetrics article > span {
+  line-height: 14px;
+}
+.hybridMetrics article > strong {
+  line-height: 30px;
+  margin: 5px 0;
+}
+.hybridMetrics article > small {
+  display: block;
+  line-height: 14px;
+}
+.hybridPage .hybridControls > input {
+  flex: 0 1 320px;
+  max-width: 320px;
+  width: 100%;
+}
+.agentNameWithStatus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.agentNameWithStatus i {
+  display: block;
+  border-radius: 50%;
+  background: currentColor;
+  height: 8px;
+  width: 8px;
+  flex-shrink: 0;
+}
+.blueText {
+  color: #2563eb;
+}
+.agentsPage .hybridTable {
+  min-height: 470px;
+}
+@media (max-width: 760px) {
+  .agentsPage .hybridTable {
+    min-height: 0;
+  }
+}
+.policyModes small {
+  color: #475569;
+}
+.pageHead > .resourceFooter {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.hybridMetrics
+  article[data-metric='Environment'][data-value='Production']
+  strong,
+.hybridMetrics article[data-metric='Status'][data-value='Success'] strong,
+.hybridMetrics article[data-metric='Failed scenarios'][data-value='0'] strong {
+  color: #15803d;
+}
+.hybridMetrics article[data-metric='Status'][data-value='Rolled back'] strong {
+  color: #b45309;
+}
+@media (min-width: 701px) {
+  .hybridLogin {
+    grid-template-columns: 610fr 570fr;
+  }
+  .hybridLogin > section:first-child {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    gap: 18px;
+    padding: 44px 56px 28px;
+    min-height: 740px;
+  }
+  .hybridLogin > section:first-child > div:nth-child(2) {
+    align-self: end;
+    margin-bottom: 62px;
+  }
+  .hybridLogin h1 {
+    font-size: 38px;
+    line-height: 48px;
+  }
+  .hybridLogin > section:first-child p {
+    font-size: 15px;
+    line-height: 18px;
+    max-width: 430px;
+  }
+  .loginNumbers {
+    max-width: 400px;
+  }
+  .loginNumbers strong {
+    font-size: 22px;
+  }
+  .hybridLogin > section:last-child {
+    align-items: start;
+  }
+  .loginForm {
+    margin-top: 134px;
+  }
+}
+.hybridLogin .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.hybridLogin .tags .tag {
+  background: #111827;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  border-radius: 6px;
+  font-size: 10px;
+  padding: 6px 11px;
+  min-width: 108px;
+}
+.loginForm > .button,
+.loginForm form > .button.primary {
+  min-height: 44px;
+}
+.loginForm .field label {
+  font-size: 11px;
+  color: #64748b;
+}
+.hybridStage .environmentSelection .callout {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}

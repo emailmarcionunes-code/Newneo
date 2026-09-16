@@ -29,7 +29,7 @@ Baseline: bfd0423, branch newneo-ai-platform-v1. Authority: Issue #3, approved H
 
 ## Verification / disposition
 
-Baseline was **NOT READY**. Audited frontend disposition: **READY WITH MINOR POLISH**.
+Final frontend status: **HYBRID V4 IMPLEMENTATION COMPLETE**. The [final visual audit](VISUAL_FIDELITY_AUDIT.md) supersedes the intermediate review status and records the completed visual correction pass. The functional evidence below remains applicable.
 
 ### Corrections and evidence
 
@@ -68,13 +68,13 @@ No required frontend route is left as a generic heading-only placeholder. Data-d
 
 - `npm test`: 23 passed, 1 skipped. The skipped native PostgreSQL integration requires `TEST_DATABASE_URL`; embedded PostgreSQL isolation checks passed.
 - `npm run build`: passed, including TypeScript validation.
-- `PLAYWRIGHT_PORT=3115 npm run test:e2e -- --workers=2`: 28 passed. Includes full launch-to-success/current-record navigation, 22 route surfaces, accessible tabs/search/notifications, production gating, resource editing and keyboard/sidebar behavior.
-- Responsive checks: 390, 768, 1180 and 1440px for launch; 390, 768 and 1440px for the route matrix. Automated axe checks produced no violations in the tested states; horizontal overflow assertions passed.
+- `PLAYWRIGHT_PORT=3115 npm run test:e2e -- --workers=2`: 32 passed. Includes full launch-to-success/current-record navigation, 22 route surfaces, accessible tabs/search/notifications, production gating, resource editing and keyboard/sidebar behavior.
+- Responsive checks: 390, 768, 1180 and 1440px for launch; 390, 768, 1180 and 1440px for the route matrix. Automated axe checks produced no violations in the tested states; horizontal overflow assertions passed.
 - Screenshots: `ai-platform/test-results/launch-Hybrid-v4-launch-visual-and-accessibility-1440-chromium/` and `ai-platform/test-results/surfaces-Hybrid-v4-surfaces-1440-chromium/` (generated, ignored). Primary Use Case, Infrastructure, Model and shell composition compared against the five requested v4 nodes, with operational/detail screenshots also reviewed.
 
 ### Fidelity and verification limits
 
-Remaining polish is optical spacing/line wrapping at intermediate widths and exact third-party icon silhouettes behind the existing replaceable asset boundaries. Responsive reflow, explicit preview labels and validation-driven readiness intentionally differ from static fixture content; they do not change navigation, product hierarchy or the eight decisions. No pixel-difference baseline is claimed.
+No blocking frontend gap remains in the audited scope. Exact raster equality across browsers and intermediate widths is not asserted. Responsive reflow, explicit preview labels and validation-driven readiness intentionally differ from static fixture content; they do not change navigation, product hierarchy or the eight decisions. No pixel-difference baseline is claimed.
 
 Make's previously inspected demo login/catalog/template interactions remain the behavioral evidence documented in `HYBRID_V4_IMPLEMENTATION.md`. During this audit its sign-in page was reachable, but automatic approval review rejected clicking Sign in as an authentication action. No workaround was attempted, and a fresh authenticated Make walkthrough is not claimed. Visual comparisons used the accessible Hybrid Figma frames, not Make styling.
 
