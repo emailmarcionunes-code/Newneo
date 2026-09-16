@@ -3,13 +3,13 @@ import type { CSSProperties } from 'react';
 
 export type NeoState =
   'default' | 'assembling' | 'success' | 'thinking' | 'warning';
-// One approved pose for now. Future poses can be replaced here without changing screens.
+// Approved full-body poses. The salute is reserved for successful completion.
 const neoAssets: Record<NeoState, string> = {
-  default: '/assets/neo/salute.png',
-  assembling: '/assets/neo/salute.png',
-  success: '/assets/neo/salute.png',
-  thinking: '/assets/neo/salute.png',
-  warning: '/assets/neo/salute.png',
+  default: '/assets/neo/standing-full.png',
+  assembling: '/assets/neo/standing-full.png',
+  success: '/assets/neo/salute-full.png',
+  thinking: '/assets/neo/standing-full.png',
+  warning: '/assets/neo/standing-full.png',
 };
 export function NeoMascot({
   state = 'default',

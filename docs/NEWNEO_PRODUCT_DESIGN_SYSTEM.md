@@ -511,13 +511,13 @@ Neo provides a calm, premium, enterprise technology presence for assembly, onboa
 
 ### Component and assets
 
-`NeoMascot` centralizes assets, accessible naming and reveal behavior. Supported states: `default`, `assembling`, `success`, `thinking`, `warning`; props: `state`, `progress`, `size`, `agentName`, `showLabel`, `animate`. The approved saluting pose lives at `public/assets/neo/salute.png`. All states initially reuse this approved asset; future approved poses can be replaced in the component’s asset registry without touching product screens. No invented pose variants are introduced.
+`NeoMascot` centralizes assets, accessible naming and reveal behavior. Supported states: `default`, `assembling`, `success`, `thinking`, `warning`; props: `state`, `progress`, `size`, `agentName`, `showLabel`, `animate`. Approved full-body assets live at `public/assets/neo/standing-full.png` (default, assembling, thinking, warning) and `public/assets/neo/salute-full.png` (success only). The saluting gesture is reserved for completion. Future approved poses can be replaced in the registry without touching screens.
 
 ### Agent Assembly
 
-Use one proportional transparent image, progressively clipped from bottom to top using validated readiness across the canonical eight stages. At zero, a subtle neutral silhouette/base indicates assembly has not started. Each completion reveals more of Neo; editing invalid configuration may lower progress again. The initial approved asset depicts head, shoulders and hand, so the reveal begins at the lower torso rather than inventing feet. Full-body artwork may replace it later through the same boundary.
+Use one proportional transparent image, progressively clipped from bottom to top using validated readiness across the canonical eight stages. At zero, a subtle neutral silhouette/base indicates assembly has not started. Each completion reveals more of Neo; editing invalid configuration may lower progress again. The full-body neutral pose reveals from feet upward. The rail renders Neo at 112px; successful completion renders the full-body salute at 200px.
 
-Keep the mascot compact, contextual agent name separate, all eight stage states visible, connectors continuous, and independent readiness percentage, progress bar, completed stage count and current stage. Neo is supplemental and must never be required to understand progress.
+The right rail contains only one Readiness card, combining Neo, contextual agent name, percentage, progress bar, completed stage count and current stage. The redundant Agent Assembly heading and vertical stage list are removed; all eight stage states remain in the top journey guide. Neo is supplemental and must never be required to understand progress.
 
 Animate only the vertical reveal when its value changes (650ms ease-in-out). No idle animation. Honor `animate={false}` and `prefers-reduced-motion`. Preserve aspect ratio and responsive sizing.
 

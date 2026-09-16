@@ -30,6 +30,10 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
     'data-progress',
     '0',
   );
+  await expect(page.locator('.hybridAssembly .assemblyCard')).toHaveCount(1);
+  await expect(page.locator('.assemblyStages')).toHaveCount(0);
+  await expect(page.locator('.hybridAssembly .neoImage')).toHaveAttribute('src', /standing-full/);
+  await expect(page.locator('.hybridAssembly .neoMascot')).toHaveCSS('width', '112px');
   await page.getByLabel('Business owner').fill('IT Operations');
   await page.getByLabel('Success metric').fill('70% autonomous');
   await next(page);
@@ -93,6 +97,7 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
     page.getByRole('heading', { name: 'Agent Created', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/No live deployment/)).toBeVisible();
+  await expect(page.locator('.neoImage')).toHaveAttribute('src', /salute-full/);
   await expect(page.locator('.neoMascot')).toHaveAttribute(
     'data-progress',
     '100',

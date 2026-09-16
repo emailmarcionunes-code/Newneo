@@ -1,10 +1,7 @@
 import { NeoMascot } from './NeoMascot';
-import { Check } from 'lucide-react';
 import { readiness } from '@/lib/readiness';
 import type { ReferenceEvaluation } from '@/lib/preview';
 import { launchSteps, type LaunchDraft } from '@/lib/launch';
-import { approvedEndpoints, executionModels } from '@/lib/configuration';
-import { NewneoMark } from './NewneoLogo';
 export function AgentAssembly({
   draft,
   evaluation,
@@ -14,65 +11,21 @@ export function AgentAssembly({
 }) {
   const ready = readiness(draft, evaluation);
   const complete = ready.stages.filter((s) => s.complete).length;
-  const summaries = [
-    draft.name,
-    `${draft.knowledge.length} sources`,
-    `${Object.values(draft.tools).flat().length} tools`,
-    executionModels.find((x) => x.id === draft.infrastructure.kind)?.name ??
-      'Cloud',
-    approvedEndpoints.find((x) => x.id === draft.model.modelId)?.name ??
-      'Model selected',
-    `${(['logInteractions', 'maskSensitive', 'roleBasedAccess', 'sensitiveApproval', 'dataResidency', 'retentionPolicy'] as const).filter((key) => draft.governance.controls[key]).length} policies`,
-    evaluation ? `${evaluation.score}% readiness` : 'Awaiting evaluation',
-    draft.environment ?? 'Select environment',
-  ];
   return (
     <aside className="hybridAssembly" aria-label="Agent Assembly">
-      <section className="assemblyCard">
-        <h2>
-          <NewneoMark size={15} /> AGENT ASSEMBLY
-        </h2>
-        <NeoMascot
-          state="assembling"
-          progress={ready.percent}
-          agentName={draft.name}
-          showLabel
-        />
-        <ol className="assemblyStages">
-          {launchSteps.map((name, i) => (
-            <li
-              key={name}
-              className={
-                i === draft.step
-                  ? 'current'
-                  : ready.stages[i].complete
-                    ? 'complete'
-                    : ''
-              }
-            >
-              <b aria-hidden="true">
-                {i !== draft.step && ready.stages[i].complete && (
-                  <Check size={12} />
-                )}
-              </b>
-              <div>
-                <span>{name}</span>
-                {i === draft.step ? (
-                  <small>In progress</small>
-                ) : ready.stages[i].complete ? (
-                  <small title={summaries[i]}>{summaries[i]}</small>
-                ) : null}
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
       <section
         className={`assemblyCard assemblyReadiness ${ready.percent >= 88 ? 'ready' : ''}`}
       >
         <h2>
           READINESS <span>{ready.percent}%</span>
         </h2>
+        <NeoMascot
+          state="assembling"
+          progress={ready.percent}
+          size={112}
+          agentName={draft.name}
+          showLabel
+        />
         <div className="assemblyScore">
           <strong>{ready.percent}%</strong>
           <progress
