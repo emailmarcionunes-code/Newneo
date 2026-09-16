@@ -26,9 +26,25 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
   page,
 }, info) => {
   await page.goto('/agents/launch?template=it-support');
+  await expect(page.locator('.neoMascot')).toHaveAttribute(
+    'data-progress',
+    '0',
+  );
   await page.getByLabel('Business owner').fill('IT Operations');
   await page.getByLabel('Success metric').fill('70% autonomous');
   await next(page);
+  await expect(page.locator('.neoMascot')).toHaveAttribute(
+    'data-progress',
+    '13',
+  );
+  await expect(page.locator('.neoMascot figcaption')).toHaveText(
+    'Assembling: IT Support Agent',
+  );
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.neoReveal')).toHaveCSS(
+    'transition-duration',
+    '0s',
+  );
   await page
     .getByRole('button', { name: /Confluence Approved organization source/ })
     .click();
@@ -74,19 +90,27 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
     .getByRole('button', { name: 'Deploy to Production', exact: true })
     .click();
   await expect(
-    page.getByRole('heading', { name: 'Ready for the mission', exact: true }),
+    page.getByRole('heading', { name: 'Agent Created', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/No live deployment/)).toBeVisible();
+  await expect(page.locator('.neoMascot')).toHaveAttribute(
+    'data-progress',
+    '100',
+  );
+  await expect(page.locator('.neoReveal')).toHaveCSS(
+    'clip-path',
+    'inset(0% 0px 0px)',
+  );
+  await expect(
+    page.getByRole('list', { name: 'Agent creation summary' }).locator('li'),
+  ).toHaveCount(7);
   await expect(
     page.getByRole('img', {
-      name: 'Friendly robot saluting, ready for the mission',
+      name: 'Neo, the NEWNEO companion, saluting to celebrate your agent creation',
     }),
   ).toBeVisible();
-  await expect(page.locator('.salutingRobot')).toHaveJSProperty(
-    'complete',
-    true,
-  );
-  await expect(page.locator('.salutingRobot')).not.toHaveJSProperty(
+  await expect(page.locator('.neoImage')).toHaveJSProperty('complete', true);
+  await expect(page.locator('.neoImage')).not.toHaveJSProperty(
     'naturalWidth',
     0,
   );

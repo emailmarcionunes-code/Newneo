@@ -316,6 +316,8 @@ export default function LaunchGuide({
           />
         ) : (
           <LaunchSuccess
+            evaluation={evaluation}
+            draft={draft}
             receipt={deployment}
             onOverview={() => setOverview('agent')}
             onDeployment={() => setOverview('deployment')}

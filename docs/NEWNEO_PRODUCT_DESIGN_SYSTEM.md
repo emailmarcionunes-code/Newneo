@@ -502,3 +502,27 @@ Before approving a screen:
 The sophistication should live in the system, not in the user's cognitive load.
 
 **More sophistication through precision, not decoration.**
+
+## Neo — official NEWNEO product companion
+
+Neo is the NEWNEO mascot. Neo is not renamed per agent. The business role/name belongs to the created agent and appears separately, for example “Assembling: IT Support Agent”. Chest branding, if present in future approved assets, must be NEO or the official NEWNEO N mark, never an agent role.
+
+Neo provides a calm, premium, enterprise technology presence for assembly, onboarding, contextual guidance and completion. Use selectively in meaningful setup milestones, help or empty states. Do not repeat Neo across cards, tables, dashboards or KPIs. Avoid cartoon exaggeration, comic speech bubbles, bouncing, gaming effects and excessive glow.
+
+### Component and assets
+
+`NeoMascot` centralizes assets, accessible naming and reveal behavior. Supported states: `default`, `assembling`, `success`, `thinking`, `warning`; props: `state`, `progress`, `size`, `agentName`, `showLabel`, `animate`. The approved saluting pose lives at `public/assets/neo/salute.png`. All states initially reuse this approved asset; future approved poses can be replaced in the component’s asset registry without touching product screens. No invented pose variants are introduced.
+
+### Agent Assembly
+
+Use one proportional transparent image, progressively clipped from bottom to top using validated readiness across the canonical eight stages. At zero, a subtle neutral silhouette/base indicates assembly has not started. Each completion reveals more of Neo; editing invalid configuration may lower progress again. The initial approved asset depicts head, shoulders and hand, so the reveal begins at the lower torso rather than inventing feet. Full-body artwork may replace it later through the same boundary.
+
+Keep the mascot compact, contextual agent name separate, all eight stage states visible, connectors continuous, and independent readiness percentage, progress bar, completed stage count and current stage. Neo is supplemental and must never be required to understand progress.
+
+Animate only the vertical reveal when its value changes (650ms ease-in-out). No idle animation. Honor `animate={false}` and `prefers-reduced-motion`. Preserve aspect ratio and responsive sizing.
+
+### Completion and accessibility
+
+Success shows Neo fully and immediately, without clipping, alongside “Agent Created”, a configuration summary and View Agent / Open AgentOps / View Deployment / Create New Version actions. Preview mode remains explicitly identified; never imply a live deployment has occurred. Success has concise accessible text naming Neo; other states use empty alt text because independent text communicates all functional information. The faint assembly silhouette is hidden from assistive technology.
+
+Implementation verification: production build passed; eight launch browser tests passed at 1440, 1180, 768 and 390 pixels, including accessibility scans, 0→13% reveal progression, reduced-motion behavior, full 100% success reveal, loaded image, seven summary items, persistence and preview approval gates. The assembly rail stacks below content on tablet/mobile to prevent action overlap.

@@ -1,3 +1,4 @@
+import { NeoMascot } from './NeoMascot';
 import { Check } from 'lucide-react';
 import { readiness } from '@/lib/readiness';
 import type { ReferenceEvaluation } from '@/lib/preview';
@@ -31,6 +32,12 @@ export function AgentAssembly({
         <h2>
           <NewneoMark size={15} /> AGENT ASSEMBLY
         </h2>
+        <NeoMascot
+          state="assembling"
+          progress={ready.percent}
+          agentName={draft.name}
+          showLabel
+        />
         <ol className="assemblyStages">
           {launchSteps.map((name, i) => (
             <li
