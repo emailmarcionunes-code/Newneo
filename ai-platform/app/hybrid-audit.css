@@ -1,0 +1,366 @@
+/* Hybrid v4 audit refinements: shared metrics and semantic treatments. */
+:root {
+  --radius: 12px;
+  --radius-control: 9px;
+}
+.globalSearch {
+  position: relative;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 300px;
+  max-width: 32vw;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--canvas);
+  padding: 8px 10px;
+  color: #64748b;
+}
+.globalSearch input {
+  border: 0;
+  background: transparent;
+  min-width: 0;
+  width: 100%;
+  font-size: 11px;
+  outline: 0;
+}
+.globalSearch:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.headerSearchResults {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px #0b122018;
+  padding: 12px;
+  z-index: 80;
+}
+.headerSearchResults > a {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.headerSearchResults > a:hover {
+  background: #eff6ff;
+}
+.headerSearchResults small {
+  color: #475569;
+}
+.topActions {
+  margin-left: 8px;
+}
+.notificationMenu summary {
+  position: relative;
+}
+.notificationCount {
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  font-size: 9px;
+  background: var(--primary);
+  color: white;
+  border-radius: 9999px;
+  padding: 2px 4px;
+}
+.topbar .notificationPopover {
+  width: 360px;
+  max-height: 70dvh;
+  overflow: auto;
+  max-width: calc(100vw - 32px);
+  padding: 16px;
+}
+.notificationHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.notificationHeading button {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  padding: 6px;
+}
+.notificationPopover > a {
+  display: block;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.notificationPopover > a:hover {
+  background: #f8fafc;
+}
+.notificationPopover strong {
+  display: block;
+  font-size: 12px;
+}
+.notificationPopover p {
+  font-size: 11px;
+  margin: 5px 0;
+}
+.notificationPopover small {
+  color: #475569;
+  font-size: 10px;
+}
+.categoryBadge,
+.hybridPage .tag {
+  border-radius: 5px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 10px;
+  padding: 3px 6px;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.hybridStatus,
+.modelPill {
+  border-radius: 9999px;
+}
+.hybridPage .panel,
+.hybridMetrics article,
+.agentCard,
+.hybridSourceGrid button,
+.infraOption {
+  border-radius: 12px;
+}
+.button,
+input,
+select,
+textarea {
+  border-radius: 9px;
+}
+.hybridTable th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+  height: 40px;
+}
+.hybridTable td {
+  height: 48px;
+}
+.hybridTable tbody tr:hover {
+  background: #f5f9ff;
+}
+.hybridPage progress,
+.hybridJourney progress {
+  height: 5px;
+}
+.readinessIssues {
+  font-size: 11px;
+  color: #475569;
+  margin: 12px 0;
+}
+.readinessIssues li {
+  margin-bottom: 8px;
+}
+.readinessIssues ul {
+  padding-left: 16px;
+}
+.successText {
+  color: #15803d;
+}
+.deploymentApproval {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  background: white;
+  font-size: 12px;
+}
+.deploymentApproval ul {
+  color: #92400e;
+  padding-left: 18px;
+}
+.evaluationScenarios {
+  margin: 20px 0;
+}
+.evaluationScenarios > details {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 12px;
+}
+.evaluationScenarios summary {
+  cursor: pointer;
+}
+.evaluationScenarios summary > span {
+  float: right;
+}
+.evaluationScenarios code {
+  display: block;
+  white-space: normal;
+  color: #475569;
+  font-size: 11px;
+}
+.settingsInlineForm {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.settingsInlineForm .field {
+  flex: 1;
+  min-width: 160px;
+}
+.onboardingTask {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+.onboardingTask label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hybridSourceGrid button {
+  min-height: 120px;
+}
+.hybridSourceGrid small {
+  line-height: 1.5;
+}
+.hybridPage fieldset {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  margin: 16px 0;
+}
+.hybridPage fieldset:disabled {
+  background: #f8fafc;
+}
+.hybridPage input:focus-visible,
+.hybridPage select:focus-visible,
+.hybridPage textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.routeSkeleton {
+  padding: 24px;
+}
+.routeSkeleton > div {
+  height: 90px;
+  margin: 18px 0;
+  background: #e2e8f0;
+  border-radius: 12px;
+  animation: skeletonPulse 1s alternate infinite;
+}
+@keyframes skeletonPulse {
+  to {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .routeSkeleton > div {
+    animation: none;
+  }
+}
+@media (max-width: 950px) {
+  .globalSearch {
+    width: 220px;
+  }
+  .shellBreadcrumb {
+    gap: 6px;
+  }
+  .topbar {
+    gap: 8px;
+  }
+}
+@media (max-width: 650px) {
+  .globalSearch {
+    max-width: none;
+    width: 100%;
+    order: 3;
+    flex-basis: 100%;
+  }
+  .topbar {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    padding: 10px 16px;
+  }
+  .topActions {
+    margin-left: auto;
+  }
+  .headerSearchResults {
+    left: 0;
+    width: 100%;
+  }
+  .topbar .notificationPopover {
+    position: fixed;
+    top: 100px;
+    right: 16px;
+    left: auto;
+  }
+  .settingsInlineForm {
+    display: grid;
+  }
+  .hybridSourceGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.hybridStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  background: #f1f5f9;
+  white-space: nowrap;
+}
+.hybridStatus.healthy {
+  background: #f0fdf4;
+  color: #15803d;
+}
+.hybridStatus.warning {
+  background: #fffbeb;
+  color: #92400e;
+}
+.hybridStatus.danger {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.hybridStatus.neutral {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.hybridJourney progress {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+.hybridJourney progress::-webkit-progress-bar {
+  background: #e2e8f0;
+  border-radius: 9999px;
+}
+.hybridJourney progress::-webkit-progress-value {
+  background: var(--primary);
+  border-radius: 9999px;
+}
+.hybridJourney progress::-moz-progress-bar {
+  background: var(--primary);
+  border-radius: 9999px;
+}
+.surfaceHeading > label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

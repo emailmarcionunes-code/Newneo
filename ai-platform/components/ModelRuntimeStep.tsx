@@ -1,5 +1,5 @@
 import { AssetIcon } from './Assets';
-import { endpointsFor, type RuntimeSelection } from '@/lib/configuration';
+import { type InfrastructureSelection } from '@/lib/configuration';
 const options = [
   {
     id: 'managed',
@@ -34,13 +34,10 @@ export function ModelRuntimeStep({
   value,
   onChange,
 }: {
-  value: RuntimeSelection;
-  onChange: (v: RuntimeSelection) => void;
+  value: InfrastructureSelection;
+  onChange: (v: InfrastructureSelection) => void;
 }) {
-  const selected =
-    value.executionModel === 'organization-default'
-      ? 'managed'
-      : value.executionModel;
+  const selected = value.kind;
   const option = options.find((o) => o.id === selected)!;
   return (
     <section aria-label="Infrastructure configuration">
@@ -53,12 +50,7 @@ export function ModelRuntimeStep({
             aria-pressed={selected === o.id}
             onClick={() =>
               onChange({
-                executionModel: o.id,
-                endpointId: endpointsFor(o.id).some(
-                  (e) => e.id === value.endpointId,
-                )
-                  ? value.endpointId
-                  : (endpointsFor(o.id)[0]?.id ?? ''),
+                kind: o.id,
               })
             }
           >

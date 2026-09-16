@@ -213,7 +213,7 @@ export function Resources({ tools = false }: { tools?: boolean }) {
       {tools ? (
         <div className="hybridSplit">
           <Table
-            caption="Tool actions"
+            caption="Tool actions" emptyMessage="No tools match your filters. Clear the search or add an approved tool."
             headers={[
               'Action',
               'System',
@@ -268,7 +268,7 @@ export function Resources({ tools = false }: { tools?: boolean }) {
       ) : (
         <>
           <Table
-            caption="Knowledge sources"
+            caption="Knowledge sources" emptyMessage="No knowledge sources match your search. Clear it or connect a source."
             headers={[
               'Source',
               'Type',

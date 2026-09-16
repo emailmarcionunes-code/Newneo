@@ -5,10 +5,12 @@ import type { PreviewDeployment } from '@/lib/preview';
 export function LaunchSuccess({
   receipt,
   onOverview,
+  onDeployment,
   onIterate,
 }: {
   receipt: PreviewDeployment;
   onOverview: () => void;
+  onDeployment: () => void;
   onIterate: () => void;
 }) {
   return (
@@ -26,7 +28,7 @@ export function LaunchSuccess({
         {receipt.environment.toLowerCase()}. No live deployment occurred.
       </p>
       <div className="successActions">
-        <Button onClick={onOverview}>Go to Agent Overview →</Button>
+        <Button onClick={onOverview}>View Agent →</Button>
         <Link className="button secondary" href="/agentops">
           Open AgentOps
         </Link>
@@ -41,18 +43,18 @@ export function LaunchSuccess({
             <strong>Monitor performance</strong>
             <small>in AgentOps</small>
           </Link>
-          <Button variant="link" onClick={onOverview}>
+          <Button variant="link" onClick={onDeployment}>
             <span className="nextIcon feedback">
               <AssetIcon name="next-feedback" />
             </span>
-            <strong>Review user feedback</strong>
-            <small>and improve</small>
+            <strong>View Deployment</strong>
+            <small>and review configuration</small>
           </Button>
           <Button variant="link" onClick={onIterate}>
             <span className="nextIcon iterate">
               <AssetIcon name="next-iterate" />
             </span>
-            <strong>Create a new version</strong>
+            <strong>Create New Version</strong>
             <small>with new versions</small>
           </Button>
           <Link href="/agents/catalog">

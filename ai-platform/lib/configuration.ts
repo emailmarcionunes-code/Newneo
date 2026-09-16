@@ -149,3 +149,44 @@ export function parseGovernance(value: unknown): GovernanceSelection | null {
   }
   return { audience: selection.audience, controls };
 }
+
+// Canonical domain selections. RuntimeSelection remains only a legacy adapter.
+export type InfrastructureSelection = { kind: ExecutionModel };
+export type ModelSelection = { modelId: string };
+export const defaultInfrastructure = (): InfrastructureSelection => ({
+  kind: 'managed',
+});
+export const defaultModel = (): ModelSelection => ({
+  modelId: 'acme-cloud-gpt4o',
+});
+export function parseInfrastructure(
+  v: unknown,
+): InfrastructureSelection | null {
+  if (
+    !v ||
+    typeof v !== 'object' ||
+    !executionModels.some((x) => x.id === (v as InfrastructureSelection).kind)
+  )
+    return null;
+  return { kind: (v as InfrastructureSelection).kind };
+}
+export function parseModel(v: unknown): ModelSelection | null {
+  if (
+    !v ||
+    typeof v !== 'object' ||
+    !approvedEndpoints.some((x) => x.id === (v as ModelSelection).modelId)
+  )
+    return null;
+  return { modelId: (v as ModelSelection).modelId };
+}
+export function splitLegacyRuntime(v: RuntimeSelection) {
+  return {
+    infrastructure: {
+      kind:
+        v.executionModel === 'organization-default'
+          ? 'managed'
+          : v.executionModel,
+    } as InfrastructureSelection,
+    model: { modelId: v.endpointId },
+  };
+}

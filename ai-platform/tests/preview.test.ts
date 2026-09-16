@@ -4,7 +4,14 @@ import { createDraft, parseDraft } from '../lib/launch';
 import { handlePreview } from '../lib/preview-server';
 import { POST as liveDeploy } from '../app/api/launch/deploy/route';
 
-const draft = () => ({ ...createDraft(), step: 5 });
+const draft = () => ({
+  ...createDraft(),
+  step: 5,
+  businessOwner: 'Operations',
+  successMetric: '70% autonomous',
+  evaluationRemediation: true,
+  productionApproved: true,
+});
 function evaluate(value = draft(), now = 1000) {
   const response = handlePreview(
     { mode: 'preview', action: 'evaluate', draft: value },
@@ -86,7 +93,8 @@ test('invalid resources, runtime and scope cannot enter the preview flow', () =>
     { organizationId: 'other' },
     { knowledge: ['unknown'] },
     { tools: { servicenow: ['close'] } },
-    { runtime: { executionModel: 'invalid', endpointId: 'acme-cloud-gpt4o' } },
+    { infrastructure: { kind: 'invalid' } },
+    { model: { modelId: 'unknown' } },
     { name: '' },
   ]) {
     assert.equal(

@@ -1,5 +1,7 @@
 # Hybrid v4 implementation — Issue #3
 
+Current audit: **READY WITH MINOR POLISH**. See [fidelity and completeness audit](HYBRID_V4_AUDIT.md) for the gaps corrected, route evidence and remaining limits.
+
 ## Authority and scope
 
 [Issue #3](https://github.com/emailmarcionunes-code/Newneo/issues/3) approves Hybrid v4. Visual authority is [Newneo Product Design — Hybrid Exploration](https://www.figma.com/design/7NFyk2kxLzbWsFWF8zWKNO/?node-id=47-502). The [Interactive v4 Make](https://www.figma.com/make/YMlofUTw6w1GY4PasnJ0MD/Sem-t%C3%ADtulo) is a behavior reference only. Its demo login, inventory-to-catalog entry, category filtering and template navigation were inspected separately from visual frames.
@@ -38,14 +40,14 @@ The current v4 shell and eight-stage journey override the obsolete shell and sev
 - `/finops`, `/reports`: costs, budgets, reference usage/compliance and exports.
 - `/playground`: sample conversations and adjustable model parameters.
 - `/audit-log`: search/filter and CSV export.
-- `/settings`: organization, users/roles, API key context, integrations and existing account configuration.
+- `/settings`: Organization, Team & Roles, API & Webhooks, Integrations, Notifications and Getting Started; local preview interactions remain separate from live access changes.
 - `/login`: official brand, SSO entry, email form and explicit workspace preview entry. Actual SSO needs configured OIDC.
 
 Sidebar is manually collapsible (224/60px) with custom tooltips and no hover expansion. Groups and ordering follow Issue #3. Models are contextual under Settings, not a top-level navigation item. Small screens use the existing dismissible navigation drawer and an internally scrollable horizontal stepper.
 
 ## State and safety boundaries
 
-Launch drafts retain the existing version migration and separate infrastructure/model selections. Changes invalidate evaluation receipts; API validation still rejects invalid resources, unavailable actions and stale receipts. Loading/error/retry states do not strand users in Evaluate. New role-based-access and retention controls have distinct keys; older drafts migrate those additions to defaults rather than conflating them with unrelated controls.
+Launch drafts store independent `infrastructure.kind` and `model.modelId` selections; a legacy runtime adapter migrates existing drafts. Readiness combines validated and reviewed stages, evaluation outcomes and manifest approval rather than current step position. Changes invalidate evaluation receipts; API validation still rejects invalid resources, unavailable actions and stale receipts. Loading/error/retry states do not strand users in Evaluate. New role-based-access and retention controls have distinct keys; older drafts migrate those additions to defaults rather than conflating them with unrelated controls.
 
 Model profiles and infrastructure choices describe the approved visual reference, not live availability, pricing or an execution compatibility guarantee. Actual provisioning, provider routing and enforcement remain backend integration work. Operations UI previews use local state and the existing preview store; reference inventory is not a production database.
 
@@ -65,4 +67,4 @@ PLAYWRIGHT_PORT=3115 npm run test:e2e -- --workers=2
 
 Code Connect is intentionally not registered against whole-screen frames: only component-level 1:1 mappings should be published when matching reusable Figma component nodes exist. No speculative mapping has been created.
 
-Validation result: production build passed; 23 browser tests passed, including accessibility/responsive checks. Unit suite: 18 passed; the optional PostgreSQL integration test is skipped without `TEST_DATABASE_URL`. Backend integration was not provisioned as part of this frontend delivery.
+Validation result: production build passed; 28 browser tests passed, including accessibility/responsive checks. Unit suite: 23 passed; the optional PostgreSQL integration test is skipped without `TEST_DATABASE_URL`. Backend integration was not provisioned as part of this frontend delivery.

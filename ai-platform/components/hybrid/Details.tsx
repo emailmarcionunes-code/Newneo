@@ -1,4 +1,7 @@
 'use client';
+import AgentWorkspace from './AgentWorkspace';
+import { evaluationScenarios } from '@/lib/readiness';
+import { sourceProfiles } from '@/lib/resource-profiles';
 import { useState } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -18,6 +21,7 @@ export default function HybridDetail({
   const [tab, setTab] = useState('Overview');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('Success');
+  const [syncing, setSyncing] = useState(false);
   const policyNames: Record<string, string> = {
     '0': 'Audit Logging',
     pii: 'PII Data Protection',
@@ -28,7 +32,17 @@ export default function HybridDetail({
   };
   const [policy, setPolicy] = useState(policyNames[id] ?? '');
   const [description, setDescription] = useState(
-    'Detect, mask and handle personal data according to GDPR / LGPD policy.',
+    id === 'pii'
+      ? 'Detect, mask and handle personal data according to GDPR / LGPD policy.'
+      : id === '0'
+        ? 'Retain an auditable record of agent actions and approvals.'
+        : id === '2'
+          ? 'Limit agent access to authorized organization roles.'
+          : id === '3'
+            ? 'Require human approval before sensitive actions execute.'
+            : id === '4'
+              ? 'Keep processing and storage inside approved EU regions.'
+              : 'Limit per-user request volume within approved quotas.',
   );
   const [mode, setMode] = useState('Enforce');
   if (
@@ -45,130 +59,7 @@ export default function HybridDetail({
     setMessage(`${text} · preview only.`);
     update((s) => ({ ...s, audit: [`${text} · preview`, ...s.audit] }));
   }
-  if (kind === 'agents') {
-    const names = [
-      'Overview',
-      'Knowledge',
-      'Tools',
-      'Governance',
-      'Evaluations',
-      'Deployments',
-      'Logs',
-    ];
-    return (
-      <div className="surfacePage hybridPage">
-        <PageTitle
-          title={agent.name}
-          description={`${agent.model} · CX Operations · Deployed Sep 14, 2026`}
-        />
-        <Tabs names={names} current={tab} onChange={setTab} />
-        <Panel names={names} current={tab}>
-          {tab === 'Overview' ? (
-            <>
-              <Metrics
-                items={[
-                  ['Tasks today', agent.tasks],
-                  ['Success rate', agent.success],
-                  ['Latency P95', agent.latency],
-                  ['Cost today', '$22.4'],
-                ]}
-              />
-              <div className="hybridSplit">
-                <section className="panel">
-                  <h2>Task volume — last 7 days</h2>
-                  <div className="hybridChart">
-                    {[60, 72, 68, 84, 76, 88, 88].map((n, i) => (
-                      <div key={i}>
-                        <span style={{ height: n }} />
-                        <small>
-                          {
-                            ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'][
-                              i
-                            ]
-                          }
-                        </small>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-                <section className="panel">
-                  <h2>Configuration</h2>
-                  <dl className="surfaceFacts">
-                    {[
-                      ['Model', agent.model],
-                      ['Owner', 'CX Operations'],
-                      ['Knowledge', '2 sources'],
-                      ['Tools', '3 actions'],
-                      ['Policies', '4 active'],
-                      ['Eval score', `${agent.score}%`],
-                    ].map(([k, v]) => (
-                      <div key={k}>
-                        <dt>{k}</dt>
-                        <dd>{v}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </section>
-              </div>
-              <section className="panel">
-                <h2>Recent tasks</h2>
-                <Table
-                  caption="Recent tasks"
-                  headers={['Task', 'When', 'Result']}
-                  rows={[
-                    'Resolved refund question',
-                    'Created ServiceNow ticket #4832',
-                    'Escalated billing dispute',
-                    'Answered order-status request',
-                  ].map((v, i) => [
-                    v,
-                    `${2 + i * 6} min ago`,
-                    <Status key="s">
-                      {i === 2 ? 'Escalated' : 'Success'}
-                    </Status>,
-                  ])}
-                />
-              </section>
-            </>
-          ) : (
-            <section className="panel">
-              <h2>{tab}</h2>
-              {tab === 'Knowledge' ? (
-                <>
-                  <p>Confluence · SharePoint</p>
-                  <Link href="/knowledge/confluence">
-                    Open connected source →
-                  </Link>
-                </>
-              ) : tab === 'Tools' ? (
-                <>
-                  <p>Create ServiceNow Ticket · Search Knowledge Base</p>
-                  <Link href="/tools/servicenow">
-                    Inspect tool permissions →
-                  </Link>
-                </>
-              ) : tab === 'Governance' ? (
-                <Link href="/governance/policies/pii">
-                  Review PII Data Protection →
-                </Link>
-              ) : tab === 'Evaluations' ? (
-                <Link href={`/evaluations/${agent.id}`}>
-                  Open evaluation run →
-                </Link>
-              ) : tab === 'Deployments' ? (
-                <Link href={`/deployments/${agent.id}`}>
-                  Open deployment detail →
-                </Link>
-              ) : (
-                <Link href="/audit-log">Open Audit Log →</Link>
-              )}
-            </section>
-          )}
-        </Panel>
-        <DataNote />
-      </div>
-    );
-  }
+  if (kind === 'agents') return <AgentWorkspace agent={agent} />;
   if (kind === 'knowledge') {
     const r = sourceRows.find((r) => r[0] === id) ?? sourceRows[0];
     const names = ['Overview', 'Documents', 'Sync'];
@@ -200,7 +91,8 @@ export default function HybridDetail({
                     {[
                       [
                         'Description',
-                        'Enterprise wiki with product docs and SOPs',
+                        sourceProfiles[id]?.description ??
+                          'Approved organization source',
                       ],
                       ['Auth type', 'OAuth 2.0'],
                       ['Region', 'EU (Frankfurt)'],
@@ -234,7 +126,10 @@ export default function HybridDetail({
                   ]}
                 />
                 <p>
-                  Healthy coverage. Review freshness and source permissions.
+                  {parseInt(r[7]) >= 80
+                    ? 'Healthy coverage.'
+                    : 'Coverage needs attention.'}{' '}
+                  Review freshness and source permissions.
                 </p>
               </section>
             </>
@@ -254,8 +149,17 @@ export default function HybridDetail({
               <p>
                 Last sync: {r[4]} · {r[5]}
               </p>
-              <Button onClick={() => act(`${r[1]} synchronization completed`)}>
-                Run sync preview
+              <Button
+                disabled={syncing}
+                onClick={async () => {
+                  setSyncing(true);
+                  setMessage('Sync in progress — indexing approved documents.');
+                  await new Promise((resolve) => setTimeout(resolve, 700));
+                  setSyncing(false);
+                  act(`${r[1]} synchronization completed`);
+                }}
+              >
+                {syncing ? 'Syncing…' : 'Run sync preview'}
               </Button>
             </section>
           )}
@@ -270,7 +174,7 @@ export default function HybridDetail({
       <div className="surfacePage hybridPage">
         <PageTitle
           title={r[1]}
-          description={`${r[3]} · ${r[4]} risk · ITSM · acme.service-now.com/api/incident`}
+          description={`${r[2]} · ${r[3]} permission · ${r[4]} risk · organization-approved endpoint`}
         >
           <Button
             onClick={() =>
@@ -293,8 +197,11 @@ export default function HybridDetail({
           <section className="panel">
             <h2>Description</h2>
             <p>
-              Creates incident or request tickets with field mapping for
-              priority, category and assignment group.
+              {r[1]} through {r[2]}, using organization-scoped{' '}
+              {r[3].toLowerCase()} permission.{' '}
+              {r[4] === 'High'
+                ? 'Human approval is required before execution.'
+                : 'Execution follows the approved policy and is audited.'}
             </p>
             <dl className="surfaceFacts">
               <div>
@@ -359,7 +266,7 @@ export default function HybridDetail({
               ? 'Tier-1 Support Suite'
               : `${agent.name} evaluation`
           }
-          description={`${agent.name} · Today 14:00 · 4m 12s · GPT-4o`}
+          description={`${agent.name} · Today 14:00 · 4m 12s · ${agent.model}`}
         >
           <Status>{agent.score >= 90 ? 'Passed' : 'Warning'}</Status>
         </PageTitle>
@@ -384,6 +291,29 @@ export default function HybridDetail({
               ['Edge cases', 72],
             ]}
           />
+        </section>
+        <section className="evaluationScenarios panel">
+          <h2>Representative outputs and recommendations</h2>
+          <p>
+            {agent.score >= 90
+              ? 'Production candidate: no failed scenarios. Review warnings before promotion.'
+              : 'Production blocked: resolve failed scenarios and rerun the evaluation.'}
+          </p>
+          {evaluationScenarios
+            .filter((s) => (agent.score >= 90 ? s.status !== 'Failed' : true))
+            .map((s) => (
+              <details key={s.id}>
+                <summary>
+                  <strong>{s.name}</strong>
+                  <Status>{s.status}</Status>
+                </summary>
+                <p>{s.output}</p>
+                <p>
+                  <strong>Recommendation:</strong> {s.recommendation}
+                </p>
+                <code>{s.trace}</code>
+              </details>
+            ))}
         </section>
         <Link className="button outline" href="/evaluations">
           Compare evaluation runs →
@@ -473,7 +403,7 @@ export default function HybridDetail({
       <div className="surfacePage hybridPage">
         <PageTitle
           title={`${id.toUpperCase()} · ${id === 'inc-002' ? 'Tool execution failed' : 'High latency detected'}`}
-          description="Sales Assistant · Started 14:30 · 45 min ongoing"
+          description={`${id === 'inc-002' ? 'Process Automation' : 'Sales Assistant'} · Started 14:30 · 45 min ongoing`}
         >
           <div className="resourceFooter">
             <Button variant="outline" onClick={() => act('Incident escalated')}>
@@ -503,29 +433,46 @@ export default function HybridDetail({
           <section className="panel">
             <h2>Incident timeline</h2>
             <ol className="hybridTimeline">
-              {[
-                'Latency threshold exceeded — P95 crossed 3s limit',
-                'Incident auto-created by monitoring',
-                'Alert sent to #ops-alerts Slack channel',
-                'On-call engineer acknowledged incident',
-                'Root cause identified: Salesforce CRM API degraded',
-                'Circuit breaker enabled on CRM',
-                'P95 improving — 5.1s → 3.8s',
-              ].map((v) => (
+              {(id === 'inc-002'
+                ? [
+                    'ServiceNow action timed out',
+                    'Execution halted without duplicate write',
+                    'Failure recorded in audit log',
+                    'Human review requested',
+                    'Retry pending endpoint recovery',
+                  ]
+                : [
+                    'Latency threshold exceeded — P95 crossed 3s limit',
+                    'Incident auto-created by monitoring',
+                    'Alert sent to #ops-alerts Slack channel',
+                    'On-call engineer acknowledged incident',
+                    'Root cause identified: Salesforce CRM API degraded',
+                    'Circuit breaker enabled on CRM',
+                    'P95 improving — 5.1s → 3.8s',
+                  ]
+              ).map((v) => (
                 <li key={v}>{v}</li>
               ))}
             </ol>
           </section>
           <section className="panel">
             <h2>Incident context</h2>
-            <p>Agent: Sales Assistant</p>
+            <p>
+              Agent:{' '}
+              {id === 'inc-002' ? 'Process Automation' : 'Sales Assistant'}
+            </p>
             <p>Severity: High</p>
             <h3>Root cause</h3>
-            <p>Salesforce CRM API degraded</p>
+            <p>
+              {id === 'inc-002'
+                ? 'ServiceNow action exceeded its execution deadline'
+                : 'Salesforce CRM API degraded'}
+            </p>
             <h3>Recommended action</h3>
             <p>
-              Keep circuit breaker enabled and fail over reads to cached CRM
-              snapshot until provider recovers.
+              {id === 'inc-002'
+                ? 'Retry with an idempotency key after validating the ServiceNow endpoint; keep failed writes in the human review queue.'
+                : 'Keep circuit breaker enabled and fail over reads to the cached CRM snapshot until the provider recovers.'}
             </p>
           </section>
         </div>
@@ -564,7 +511,13 @@ export default function HybridDetail({
             />
           </label>
           <div className="tags">
-            <span className="tag">Privacy</span>
+            <span className="tag">
+              {id === 'pii'
+                ? 'Privacy'
+                : id === '4'
+                  ? 'Compliance'
+                  : 'Security'}
+            </span>
             <span className="tag">Required</span>
             <span className="tag">All agents</span>
           </div>
@@ -594,14 +547,21 @@ export default function HybridDetail({
         </form>
         <section className="panel">
           <h2>Policy status</h2>
-          <Status>Enforced</Status>
-          <p className="hybridDanger">3 active violations</p>
+          <Status>{mode === 'Enforce' ? 'Enforced' : mode}</Status>
+          <p className={id === 'pii' ? 'hybridDanger' : ''}>
+            {id === 'pii'
+              ? '3 active violations'
+              : 'No active violations for this policy'}
+          </p>
           <ul className="hybridActivity">
-            {[
-              'Customer Service Agent — email exposed',
-              'Sales Assistant — phone exposed',
-              'Customer Service Agent — CPF detected',
-            ].map((v) => (
+            {(id === 'pii'
+              ? [
+                  'Customer Service Agent — email exposed',
+                  'Sales Assistant — phone exposed',
+                  'Customer Service Agent — CPF detected',
+                ]
+              : []
+            ).map((v) => (
               <li key={v}>{v}</li>
             ))}
           </ul>

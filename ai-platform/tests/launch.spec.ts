@@ -52,6 +52,12 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
   await expect(
     page.getByRole('meter', { name: 'Evaluation score' }),
   ).toBeVisible();
+  await page
+    .getByRole('button', { name: 'Apply recommended fixes and rerun preview' })
+    .click();
+  await expect(
+    page.getByRole('meter', { name: 'Evaluation score' }),
+  ).toHaveAttribute('aria-valuenow', '96');
   await next(page);
   await expect(
     page.getByRole('button', { name: 'Deploy to environment' }),
@@ -60,12 +66,35 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
     .getByRole('radio', { name: /Production Live for end users/ })
     .check();
   await page
+    .getByRole('checkbox', {
+      name: 'I reviewed the manifest and approve this production preview',
+    })
+    .check();
+  await page
     .getByRole('button', { name: 'Deploy to Production', exact: true })
     .click();
   await expect(
     page.getByRole('heading', { name: 'Your agent is live!', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/No live deployment/)).toBeVisible();
+  await page
+    .getByRole('button', { name: 'View Deployment', exact: false })
+    .click();
+  await expect(
+    page.getByRole('heading', {
+      name: 'IT Support Agent — Deployment preview',
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Claude 3.5 Sonnet', { exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: '← Back to confirmation' }).click();
+  await page.getByRole('button', { name: 'View Agent →' }).click();
+  await expect(page.getByRole('tab')).toHaveCount(8);
+  await page.getByRole('tab', { name: 'Knowledge', exact: true }).click();
+  await expect(
+    page.getByRole('region', { name: 'Version knowledge' }),
+  ).toContainText('Confluence');
 });
 test('evaluation errors retry and configuration edits invalidate reference receipt', async ({
   page,

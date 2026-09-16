@@ -36,10 +36,12 @@ export function Table({
   headers,
   rows,
   caption,
+  emptyMessage,
 }: {
   headers: string[];
   rows: ReactNode[][];
   caption: string;
+  emptyMessage?: string;
 }) {
   return (
     <div
@@ -69,7 +71,8 @@ export function Table({
       </table>
       {!rows.length && (
         <p className="hybridEmpty">
-          No matching records. Clear your filters to see all results.
+          {emptyMessage ??
+            'No matching records. Clear your filters to see all results.'}
         </p>
       )}
     </div>

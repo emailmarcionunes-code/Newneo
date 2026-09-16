@@ -95,6 +95,7 @@ export function Evaluations() {
   );
 }
 export function Deployments() {
+  const [environment, setEnvironment] = useState('All');
   const [edit, setEdit] = useState(false);
   if (edit)
     return (
@@ -121,9 +122,24 @@ export function Deployments() {
         ]}
       />
       <section className="panel">
-        <h2>Deployment history</h2>
+        <div className="surfaceHeading">
+          <h2>Deployment history</h2>
+          <label>
+            Environment
+            <select
+              aria-label="Environment"
+              value={environment}
+              onChange={(e) => setEnvironment(e.target.value)}
+            >
+              {['All', 'Production', 'Staging', 'Development'].map((v) => (
+                <option key={v}>{v}</option>
+              ))}
+            </select>
+          </label>
+        </div>
         <Table
           caption="Deployment history"
+          emptyMessage="No deployments in this environment. Request a promotion when an evaluated version is ready."
           headers={[
             'Agent',
             'Version',
@@ -140,21 +156,25 @@ export function Deployments() {
             'sales-assistant',
             'knowledge-assistant',
             'customer-service',
-          ].map((id, i) => [
-            <DetailLink key={i} href={`/deployments/${id}`}>
-              {hybridAgents.find((a) => a.id === id)?.name}
-            </DetailLink>,
-            ['v2.4', 'v1.8', 'v1.3', 'v1.2', 'v3.1', 'v2.3'][i],
-            i === 2 ? 'Staging' : 'Production',
-            ['j.silva', 't.ferreira', 'a.costa', 'a.costa', 'r.lima', 'auto'][
-              i
-            ],
-            ['Today 12:04', 'Aug 28', 'Sep 14', 'Sep 5', 'Jul 15', 'Aug 20'][i],
-            ['1m12s', '0m58s', '2m04s', '1m08s', '0m45s', '0m40s'][i],
-            <Status key="s">
-              {i === 2 ? 'Failed' : i === 5 ? 'Rolled back' : 'Success'}
-            </Status>,
-          ])}
+          ]
+            .map((id, i) => [
+              <DetailLink key={i} href={`/deployments/${id}`}>
+                {hybridAgents.find((a) => a.id === id)?.name}
+              </DetailLink>,
+              ['v2.4', 'v1.8', 'v1.3', 'v1.2', 'v3.1', 'v2.3'][i],
+              i === 2 ? 'Staging' : 'Production',
+              ['j.silva', 't.ferreira', 'a.costa', 'a.costa', 'r.lima', 'auto'][
+                i
+              ],
+              ['Today 12:04', 'Aug 28', 'Sep 14', 'Sep 5', 'Jul 15', 'Aug 20'][
+                i
+              ],
+              ['1m12s', '0m58s', '2m04s', '1m08s', '0m45s', '0m40s'][i],
+              <Status key="s">
+                {i === 2 ? 'Failed' : i === 5 ? 'Rolled back' : 'Success'}
+              </Status>,
+            ])
+            .filter((row) => environment === 'All' || row[2] === environment)}
         />
       </section>
       <DataNote />
@@ -162,6 +182,7 @@ export function Deployments() {
   );
 }
 export function AgentOps() {
+  const [incidentStatus, setIncidentStatus] = useState('Open');
   const names = ['Health', 'Incidents', 'Logs'];
   const [tab, setTab] = useState('Health');
   return (
@@ -218,28 +239,51 @@ export function AgentOps() {
             ))}
           </div>
         ) : tab === 'Incidents' ? (
-          <Table
-            caption="Incidents"
-            headers={['Incident', 'Agent', 'Severity', 'Status']}
-            rows={[
-              [
-                <DetailLink key="incident" href="/agentops/incidents/inc-001">
-                  INC-001 · High latency detected
-                </DetailLink>,
-                'Sales Assistant',
-                <Status key="s">High</Status>,
-                'Open',
-              ],
-              [
-                <DetailLink key="incident" href="/agentops/incidents/inc-002">
-                  INC-002 · Tool execution failed
-                </DetailLink>,
-                'Sales Assistant',
-                'Medium',
-                'Investigating',
-              ],
-            ]}
-          />
+          <>
+            <label className="journeyField">
+              Incident status
+              <select
+                value={incidentStatus}
+                onChange={(e) => setIncidentStatus(e.target.value)}
+              >
+                <option>Open</option>
+                <option>Resolved</option>
+              </select>
+            </label>
+            <Table
+              emptyMessage="No incidents match this status. There are no resolved incidents in the reference window."
+              caption="Incidents"
+              headers={['Incident', 'Agent', 'Severity', 'Status']}
+              rows={
+                incidentStatus === 'Resolved'
+                  ? []
+                  : [
+                      [
+                        <DetailLink
+                          key="incident"
+                          href="/agentops/incidents/inc-001"
+                        >
+                          INC-001 · High latency detected
+                        </DetailLink>,
+                        'Sales Assistant',
+                        <Status key="s">High</Status>,
+                        'Open',
+                      ],
+                      [
+                        <DetailLink
+                          key="incident"
+                          href="/agentops/incidents/inc-002"
+                        >
+                          INC-002 · Tool execution failed
+                        </DetailLink>,
+                        'Sales Assistant',
+                        'Medium',
+                        'Investigating',
+                      ],
+                    ]
+              }
+            />
+          </>
         ) : (
           <section className="panel">
             <h2>Execution log</h2>

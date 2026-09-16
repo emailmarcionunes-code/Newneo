@@ -80,7 +80,7 @@ export function AgentCard({
       ],
     ],
   ] as const;
-  const [complexity, tagline, metrics] = details[Math.max(0, index)];
+  const [complexity, tagline, metrics] = index>=0 ? details[index] : [agent.complexity ?? 'Medium',agent.tagline ?? agent.description,[['Scoped','Permissions'],['Review','Approvals'],['Demo','Template']]];
   return (
     <article className="agentCard hybridCatalogCard">
       <Link

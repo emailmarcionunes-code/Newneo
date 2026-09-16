@@ -3,8 +3,10 @@ import { launchSteps } from '@/lib/launch';
 export function LaunchStepper({
   current,
   onStep,
+  completed,
 }: {
   current: number;
+  completed?: boolean[];
   onStep: (step: number) => void;
 }) {
   const navigation = useRef<HTMLElement>(null);
@@ -33,18 +35,24 @@ export function LaunchStepper({
           <li
             key={label}
             className={
-              index < current ? 'complete' : index === current ? 'current' : ''
+              (completed?.[index] ?? index < current) && index !== current
+                ? 'complete'
+                : index === current
+                  ? 'current'
+                  : ''
             }
           >
             <button
               type="button"
               aria-current={index === current ? 'step' : undefined}
-              aria-label={`${label}${index < current ? ', completed' : index === current ? ', current step' : ', upcoming'}`}
+              aria-label={`${label}${(completed?.[index] ?? index < current) && index !== current ? ', completed' : index === current ? ', current step' : ', upcoming'}`}
               disabled={index > current}
               onClick={() => onStep(index)}
             >
               <span className="stepCircle" aria-hidden="true">
-                {index < current ? '✓' : index + 1}
+                {(completed?.[index] ?? index < current) && index !== current
+                  ? '✓'
+                  : index + 1}
               </span>
               <span>{label}</span>
             </button>

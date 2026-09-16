@@ -2,6 +2,13 @@ import { environments, type Environment } from './preview';
 import { getTemplate } from './catalog';
 import {
   defaultRuntime,
+  defaultInfrastructure,
+  defaultModel,
+  parseInfrastructure,
+  parseModel,
+  splitLegacyRuntime,
+  type InfrastructureSelection,
+  type ModelSelection,
   defaultGovernance,
   parseRuntime,
   parseGovernance,
@@ -245,7 +252,13 @@ export type LaunchDraft = {
   criticality?: string;
   knowledge: string[];
   tools: Record<string, string[]>;
-  runtime: RuntimeSelection;
+  infrastructure: InfrastructureSelection;
+  model: ModelSelection;
+  reviewedStages: number[];
+  knowledgeNotNeeded?: boolean;
+  toolsNotNeeded?: boolean;
+  evaluationRemediation?: boolean;
+  productionApproved?: boolean;
   governance: GovernanceSelection;
   savedAt?: string;
 };
@@ -264,7 +277,13 @@ export function createDraft(templateId?: string | null): LaunchDraft {
     description: template.objective,
     targetUsers: template.targetUsers,
     industry: 'Technology',
-    runtime: defaultRuntime(),
+    infrastructure: defaultInfrastructure(),
+    model: defaultModel(),
+    reviewedStages: [],
+    knowledgeNotNeeded: false,
+    toolsNotNeeded: false,
+    evaluationRemediation: false,
+    productionApproved: false,
     governance: defaultGovernance(),
     knowledge: service ? ['sharepoint', 'servicenow', 'confluence'] : [],
     tools: service
@@ -327,6 +346,15 @@ export function parseDraft(
       value.runtime === undefined
         ? defaultRuntime()
         : parseRuntime(value.runtime);
+    const split = splitLegacyRuntime(runtime ?? defaultRuntime());
+    const infrastructure =
+      value.infrastructure === undefined
+        ? split.infrastructure
+        : parseInfrastructure(value.infrastructure);
+    const model =
+      value.model === undefined
+        ? parseModel(split.model)
+        : parseModel(value.model);
     const governance =
       value.governance === undefined
         ? defaultGovernance()
@@ -334,9 +362,12 @@ export function parseDraft(
     let step =
       value.step + (value.journeyVersion !== 2 && value.step > 3 ? 1 : 0);
     if (
-      !runtime ||
-      !runtimeIsReady(runtime) ||
-      (value.runtime === undefined && step > 3)
+      (value.runtime !== undefined && !runtime) ||
+      !infrastructure ||
+      !model ||
+      (value.infrastructure === undefined &&
+        value.runtime === undefined &&
+        step > 3)
     )
       step = Math.min(step, 3);
     if (!governance || (value.governance === undefined && step > 5))
@@ -346,7 +377,22 @@ export function parseDraft(
       environment: environments.some((item) => item.name === value.environment)
         ? value.environment
         : null,
-      runtime: runtime ?? defaultRuntime(),
+      infrastructure: infrastructure ?? defaultInfrastructure(),
+      model: model ?? defaultModel(),
+      reviewedStages: Array.isArray(value.reviewedStages)
+        ? [
+            ...new Set<number>(
+              value.reviewedStages.filter(
+                (n: unknown) =>
+                  Number.isInteger(n) && Number(n) >= 0 && Number(n) < 6,
+              ),
+            ),
+          ]
+        : [],
+      knowledgeNotNeeded: value.knowledgeNotNeeded === true,
+      toolsNotNeeded: value.toolsNotNeeded === true,
+      evaluationRemediation: value.evaluationRemediation === true,
+      productionApproved: false,
       governance: governance ?? defaultGovernance(),
       name: value.name,
       description: value.description,

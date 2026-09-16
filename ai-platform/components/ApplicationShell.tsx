@@ -4,6 +4,7 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AssetIcon } from './Assets';
+import {HeaderSearch,HeaderNotifications,HelpIcon} from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
 
 export const navigation = [
@@ -211,13 +212,11 @@ export function Topbar({
         <span aria-hidden="true">/</span>
         <strong>{title}</strong>
       </div>
+      <HeaderSearch/>
       <div className="topActions">
+        <HeaderNotifications/>
         <details className="topbarMenu">
-          <summary aria-label="Notifications">○</summary>
-          <div className="topbarPopover">No new notifications.</div>
-        </details>
-        <details className="topbarMenu">
-          <summary aria-label="Help">?</summary>
+          <summary aria-label="Help"><HelpIcon/></summary>
           <div className="topbarPopover">
             <strong>Agent Launch Guide</strong>
             <p>
@@ -236,7 +235,7 @@ export function Topbar({
           </summary>
           <div className="topbarPopover">
             <strong>Ana Martinez</strong>
-            <p>Demo workspace · AI Engineer</p>
+            <p>Demo workspace · AI Engineer</p><Link href="/settings#team">Team & Roles</Link><p><Link href="/settings">Workspace settings</Link></p><Link href="/login">Sign out of preview</Link>
           </div>
         </details>
       </div>

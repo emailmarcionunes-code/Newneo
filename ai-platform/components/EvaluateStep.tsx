@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { evaluationScenarios } from '@/lib/readiness';
 import { Button } from './UI';
 import {
   previewRequest,
@@ -12,10 +13,12 @@ export function EvaluateStep({
   draft,
   result,
   onResult,
+  onRemediate,
 }: {
   draft: LaunchDraft;
   result: ReferenceEvaluation | null;
   onResult: (value: ReferenceEvaluation) => void;
+  onRemediate: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
@@ -31,7 +34,7 @@ export function EvaluateStep({
     // Each visit loads a fresh reference if configuration changes cleared it.
     if (!result) void evaluate();
     return () => requests.current.forEach((request) => request.abort());
-  }, []);
+  }, [draft.evaluationRemediation]);
   async function evaluate() {
     const controller = new AbortController();
     requests.current.push(controller);
@@ -111,9 +114,21 @@ export function EvaluateStep({
               {result.score}%
             </div>
             <div>
-              <h3>Agent needs attention</h3>
-              <p>5 passed · 2 warnings · 1 failed</p>
-              <small>3 scenarios require action before Production.</small>
+              <h3>
+                {draft.evaluationRemediation
+                  ? 'Production checks passed'
+                  : 'Agent needs attention'}
+              </h3>
+              <p>
+                {draft.evaluationRemediation
+                  ? '8 passed · 0 warnings · 0 failed'
+                  : '5 passed · 2 warnings · 1 failed'}
+              </p>
+              <small>
+                {draft.evaluationRemediation
+                  ? 'Recommended controls verified in this simulation.'
+                  : '3 scenarios require action before Production.'}
+              </small>
             </div>
           </div>
           <div className="evaluationRows">
@@ -121,7 +136,18 @@ export function EvaluateStep({
               <div key={metric.name}>
                 <span>
                   <strong>{metric.name}</strong>
-                  <small>{notes[index]}</small>
+                  <small>
+                    {draft.evaluationRemediation
+                      ? [
+                          'Reference tasks completed safely',
+                          'Approved answers remain grounded',
+                          'Extended PII rules verified',
+                          'Tool actions and approvals verified',
+                          'Response caching meets the cost target',
+                          'Timeout retry and human fallback verified',
+                        ][index]
+                      : notes[index]}
+                  </small>
                 </span>
                 <progress
                   aria-label={metric.name}
@@ -151,6 +177,39 @@ export function EvaluateStep({
         <p className="requestError" role="alert">
           {error}
         </p>
+      )}
+      {result && (
+        <section className="evaluationScenarios">
+          <h3>Representative scenarios</h3>
+          {evaluationScenarios.map((s) => (
+            <details key={s.id}>
+              <summary>
+                <strong>{s.name}</strong>
+                <span className="modelPill">
+                  {draft.evaluationRemediation ? 'Passed' : s.status}
+                </span>
+              </summary>
+              <p>
+                {draft.evaluationRemediation && s.status !== 'Passed'
+                  ? 'Recommended control verified; safe outcome observed.'
+                  : s.output}
+              </p>
+              <p>
+                <strong>Recommendation:</strong> {s.recommendation}
+              </p>
+              <code>
+                {draft.evaluationRemediation && s.status !== 'Passed'
+                  ? `${s.id === 'pii' ? 'Extended PII detection → full mask' : s.id === 'budget' ? 'Cache hit → reduced tokens → within target' : 'Timeout → bounded retry → circuit breaker → human fallback'}`
+                  : s.trace}
+              </code>
+            </details>
+          ))}
+          {!draft.evaluationRemediation && (
+            <Button onClick={onRemediate}>
+              Apply recommended fixes and rerun preview
+            </Button>
+          )}
+        </section>
       )}
       <p className="hybridDataNote">
         Approved design reference · simulated results, not a production

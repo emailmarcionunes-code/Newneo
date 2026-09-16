@@ -4,7 +4,7 @@ test('agent detail opens source, tool, evaluation and deployment details', async
 }) => {
   await page.goto('/agents/customer-service');
   await page.getByRole('tab', { name: 'Knowledge', exact: true }).click();
-  await page.getByRole('link', { name: 'Open connected source →' }).click();
+  await page.getByRole('link', { name: 'Confluence →' }).click();
   await expect(
     page.getByRole('heading', { name: 'Confluence', exact: true }),
   ).toBeVisible();

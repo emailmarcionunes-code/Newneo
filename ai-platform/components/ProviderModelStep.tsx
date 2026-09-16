@@ -1,13 +1,13 @@
 import { hybridModels } from '@/lib/hybrid-models';
-import type { RuntimeSelection } from '@/lib/configuration';
+import type { ModelSelection } from '@/lib/configuration';
 export function ProviderModelStep({
   value,
   onChange,
 }: {
-  value: RuntimeSelection;
-  onChange: (v: RuntimeSelection) => void;
+  value: ModelSelection;
+  onChange: (v: ModelSelection) => void;
 }) {
-  const selected = hybridModels.find((m) => m.id === value.endpointId);
+  const selected = hybridModels.find((m) => m.id === value.modelId);
   return (
     <section aria-label="Foundation model selection">
       <div className="hybridModels">
@@ -17,7 +17,7 @@ export function ProviderModelStep({
             key={m.id}
             className={`hybridModel ${selected?.id === m.id ? 'selected' : ''}`}
             aria-pressed={selected?.id === m.id}
-            onClick={() => onChange({ ...value, endpointId: m.id })}
+            onClick={() => onChange({ ...value, modelId: m.id })}
           >
             <span className="modelIdentity">
               <strong>{m.name}</strong>

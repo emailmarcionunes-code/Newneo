@@ -1,3 +1,4 @@
+import { productionBlockers } from '@/lib/readiness';
 import { approvedEndpoints, executionModels } from '@/lib/configuration';
 import { environments, type ReferenceEvaluation } from '@/lib/preview';
 import type { LaunchDraft } from '@/lib/launch';
@@ -8,26 +9,24 @@ export function DeployStep({
   evaluation,
   disabled,
   onEnvironment,
+  onApprove,
 }: {
   draft: LaunchDraft;
   evaluation: ReferenceEvaluation;
   disabled: boolean;
   onEnvironment: (value: LaunchDraft['environment']) => void;
+  onApprove: (value: boolean) => void;
 }) {
   const rows = [
     ['Use Case', draft.name],
     [
       'Infrastructure',
-      draft.runtime.executionModel === 'organization-default'
-        ? 'Cloud · Organization Default'
-        : executionModels.find(
-            (item) => item.id === draft.runtime.executionModel,
-          )?.name,
+      executionModels.find((item) => item.id === draft.infrastructure.kind)
+        ?.name,
     ],
     [
       'Model',
-      approvedEndpoints.find((item) => item.id === draft.runtime.endpointId)
-        ?.name,
+      approvedEndpoints.find((item) => item.id === draft.model.modelId)?.name,
     ],
     ['Knowledge sources', `${draft.knowledge.length} connected`],
     ['Tools', `${Object.keys(draft.tools).length} connected`],
@@ -81,6 +80,30 @@ export function DeployStep({
           promote a live agent.
         </p>
       </fieldset>
+      <section className="deploymentApproval">
+        <label className="notificationChoice">
+          <input
+            type="checkbox"
+            checked={!!draft.productionApproved}
+            onChange={(e) => onApprove(e.target.checked)}
+          />
+          I reviewed the manifest and approve this production preview
+        </label>
+        <p className="hybridDataNote">
+          Demo approval only; no live release or permission is granted.
+        </p>
+        {draft.environment === 'Production' &&
+          productionBlockers(draft, evaluation).length > 0 && (
+            <div role="status">
+              <strong>Production blocked</strong>
+              <ul>
+                {productionBlockers(draft, evaluation).map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+      </section>
     </section>
   );
 }

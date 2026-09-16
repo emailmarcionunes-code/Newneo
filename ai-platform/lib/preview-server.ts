@@ -1,3 +1,4 @@
+import { productionBlockers } from './readiness';
 import { getTemplate } from './catalog';
 import {
   createHash,
@@ -6,7 +7,12 @@ import {
   timingSafeEqual,
 } from 'node:crypto';
 import { parseDraft, type LaunchDraft } from './launch';
-import { parseGovernance, parseRuntime, runtimeIsReady } from './configuration';
+import {
+  parseGovernance,
+  parseRuntime,
+  parseInfrastructure,
+  parseModel,
+} from './configuration';
 import { environments, sampleAnswer, sampleQuestion } from './preview';
 
 // Preview-only signing key. Restarting the process expires preview receipts.
@@ -18,6 +24,8 @@ function fingerprint(draft: LaunchDraft) {
     step: _step,
     savedAt: _savedAt,
     environment: _environment,
+    productionApproved: _approval,
+    reviewedStages: _reviewed,
     ...configuration
   } = draft;
   return createHash('sha256')
@@ -62,7 +70,10 @@ function validDraft(value: unknown) {
   if (
     typeof raw.templateId !== 'string' ||
     getTemplate(raw.templateId).id !== raw.templateId ||
-    !parseRuntime(raw.runtime) ||
+    !(
+      (parseInfrastructure(raw.infrastructure) && parseModel(raw.model)) ||
+      parseRuntime((raw as unknown as { runtime: unknown }).runtime)
+    ) ||
     !parseGovernance(raw.governance)
   )
     return null;
@@ -73,7 +84,7 @@ function validDraft(value: unknown) {
     !draft.description.trim() ||
     draft.name.length > 120 ||
     draft.description.length > 2000 ||
-    !runtimeIsReady(draft.runtime)
+    !parseModel(draft.model)
   )
     return null;
   // Reject invalid resource IDs instead of silently treating them as approved.
@@ -108,19 +119,40 @@ export function handlePreview(body: unknown, now = Date.now()) {
       data: {
         mode: 'preview',
         token: receipt(draft, now),
-        score: 78,
+        score: draft.evaluationRemediation ? 96 : 78,
         metrics: [
-          { name: 'Task success', value: 94 },
-          { name: 'Answer relevance', value: 91 },
-          { name: 'Safety & policy', value: 72 },
-          { name: 'Tool execution', value: 85 },
-          { name: 'Cost per task', value: 60 },
-          { name: 'Failure handling', value: 45 },
+          {
+            name: 'Task success',
+            value: draft.evaluationRemediation ? 98 : 94,
+          },
+          {
+            name: 'Answer relevance',
+            value: draft.evaluationRemediation ? 96 : 91,
+          },
+          {
+            name: 'Safety & policy',
+            value: draft.evaluationRemediation ? 100 : 72,
+          },
+          {
+            name: 'Tool execution',
+            value: draft.evaluationRemediation ? 98 : 85,
+          },
+          {
+            name: 'Cost per task',
+            value: draft.evaluationRemediation ? 91 : 60,
+          },
+          {
+            name: 'Failure handling',
+            value: draft.evaluationRemediation ? 93 : 45,
+          },
         ],
         cases: [
-          { status: 'Passed', count: 46 },
-          { status: 'Needs review', count: 3 },
-          { status: 'Failed', count: 1 },
+          { status: 'Passed', count: draft.evaluationRemediation ? 50 : 46 },
+          {
+            status: 'Needs review',
+            count: draft.evaluationRemediation ? 0 : 3,
+          },
+          { status: 'Failed', count: draft.evaluationRemediation ? 0 : 1 },
         ],
       },
     };
@@ -149,6 +181,21 @@ export function handlePreview(body: unknown, now = Date.now()) {
       409,
       'Load the reference evaluation again. Your configuration changed or the preview expired.',
     );
+  if (input.environment === 'Production') {
+    const candidate = {
+      ...draft,
+      productionApproved:
+        (input.draft as LaunchDraft).productionApproved === true,
+    };
+    const blockers = productionBlockers(candidate, {
+      mode: 'preview',
+      token: String(input.token),
+      score: draft.evaluationRemediation ? 96 : 78,
+      metrics: [],
+      cases: [{ status: 'Failed', count: draft.evaluationRemediation ? 0 : 1 }],
+    });
+    if (blockers.length) return fail(409, blockers.join(' '));
+  }
   // No runtime adapter is called. A preview receipt is NEVER a production approval.
   return {
     status: 200,

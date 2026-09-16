@@ -17,9 +17,11 @@ import { HybridResourcesStep } from './HybridResourcesStep';
 import { AgentAssembly } from './AgentAssembly';
 import { ModelRuntimeStep } from './ModelRuntimeStep';
 import { GovernanceStep } from './GovernanceStep';
-import { runtimeIsReady } from '@/lib/configuration';
+import { productionBlockers, readiness } from '@/lib/readiness';
+import { parseModel } from '@/lib/configuration';
 import { EvaluateStep } from './EvaluateStep';
 import { DeployStep } from './DeployStep';
+import LaunchRecord from './LaunchRecord';
 import { LaunchSuccess } from './LaunchSuccess';
 import ServerDrafts from './ServerDrafts';
 import {
@@ -43,7 +45,7 @@ export default function LaunchGuide({
   );
   const [deployment, setDeployment] = useState<PreviewDeployment | null>(null);
   const [deploying, setDeploying] = useState(false);
-  const [overview, setOverview] = useState(false);
+  const [overview, setOverview] = useState<'agent' | 'deployment' | null>(null);
   const [notice, setNotice] = useState('');
   const form = useRef<HTMLFormElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -69,10 +71,36 @@ export default function LaunchGuide({
   }, [template.id]);
   const update = (changes: Partial<LaunchDraft>) => {
     if (
-      Object.keys(changes).some((key) => !['step', 'environment'].includes(key))
+      Object.keys(changes).some(
+        (key) =>
+          ![
+            'step',
+            'environment',
+            'productionApproved',
+            'reviewedStages',
+          ].includes(key),
+      )
     )
       setEvaluation(null);
-    setDraft((current) => ({ ...current, ...changes }));
+    setDraft((current) => ({
+      ...current,
+      ...changes,
+      ...(!Object.keys(changes).every((k) =>
+        [
+          'step',
+          'environment',
+          'productionApproved',
+          'reviewedStages',
+        ].includes(k),
+      )
+        ? {
+            productionApproved: false,
+            reviewedStages: current.reviewedStages.filter(
+              (s) => s !== current.step,
+            ),
+          }
+        : {}),
+    }));
     setNotice('');
   };
   const goTo = (step: number) => {
@@ -100,9 +128,16 @@ export default function LaunchGuide({
         !draft.description.trim())
     )
       return;
-    if (draft.step === 4 && !runtimeIsReady(draft.runtime)) return;
+    if (draft.step === 4 && !parseModel(draft.model)) return;
     if (draft.step === 6 && !evaluation) return;
-    if (draft.step < 7) goTo(draft.step + 1);
+    if (draft.step < 7) {
+      setDraft((d) => ({
+        ...d,
+        step: d.step + 1,
+        reviewedStages: [...new Set([...d.reviewedStages, d.step])],
+      }));
+      requestAnimationFrame(() => heading.current?.focus());
+    }
   };
   const titles = [
     'Launch a New Agent',
@@ -125,7 +160,14 @@ export default function LaunchGuide({
     'Review your configuration and choose the environment.',
   ];
   const deploy = async () => {
-    if (!evaluation || !draft.environment || deploying) return;
+    if (
+      !evaluation ||
+      !draft.environment ||
+      deploying ||
+      (draft.environment === 'Production' &&
+        productionBlockers(draft, evaluation).length)
+    )
+      return;
     setDeploying(true);
     setNotice('');
     try {
@@ -166,24 +208,28 @@ export default function LaunchGuide({
       <div className="launchGuide" aria-busy={false}>
         {previewBanner}
         {overview ? (
-          <section className="previewOverview">
-            <h1>{draft.name}</h1>
-            <ContextPanel title="Agent Overview">
-              <p>
-                Your configuration is ready for review. Live performance and
-                user feedback are not available in this preview.
-              </p>
-              <p>{draft.description}</p>
-              <p>Preview environment: {deployment.environment}</p>
-            </ContextPanel>
-            <Button variant="secondary" onClick={() => setOverview(false)}>
-              ← Back to confirmation
-            </Button>
-          </section>
+          <LaunchRecord
+            draft={draft}
+            receipt={deployment}
+            evaluation={evaluation!}
+            view={overview}
+            onBack={() => setOverview(null)}
+            onIterate={() => {
+              setOverview(null);
+              setDeployment(null);
+              setEvaluation(null);
+              update({
+                step: 0,
+                productionApproved: false,
+                reviewedStages: [],
+              });
+            }}
+          />
         ) : (
           <LaunchSuccess
             receipt={deployment}
-            onOverview={() => setOverview(true)}
+            onOverview={() => setOverview('agent')}
+            onDeployment={() => setOverview('deployment')}
             onIterate={() => {
               setDeployment(null);
               setEvaluation(null);
@@ -206,7 +252,11 @@ export default function LaunchGuide({
           setNotice('Server draft restored.');
         }}
       />
-      <LaunchStepper current={draft.step} onStep={goTo} />
+      <LaunchStepper
+        current={draft.step}
+        onStep={goTo}
+        completed={readiness(draft, evaluation).stages.map((s) => s.complete)}
+      />
       <div className="hybridWorkarea">
         <div className="hybridStage">
           <p className="stageEyebrow">
@@ -333,14 +383,14 @@ export default function LaunchGuide({
           )}
           {draft.step === 3 && (
             <ModelRuntimeStep
-              value={draft.runtime}
-              onChange={(runtime) => update({ runtime })}
+              value={draft.infrastructure}
+              onChange={(infrastructure) => update({ infrastructure })}
             />
           )}
           {draft.step === 4 && (
             <ProviderModelStep
-              value={draft.runtime}
-              onChange={(runtime) => update({ runtime })}
+              value={draft.model}
+              onChange={(model) => update({ model })}
             />
           )}
           {draft.step === 5 && (
@@ -355,6 +405,9 @@ export default function LaunchGuide({
               draft={draft}
               result={evaluation}
               onResult={setEvaluation}
+              onRemediate={() => {
+                update({ evaluationRemediation: true });
+              }}
             />
           )}
           {draft.step === 7 && evaluation && (
@@ -363,6 +416,7 @@ export default function LaunchGuide({
               evaluation={evaluation}
               disabled={deploying}
               onEnvironment={(environment) => update({ environment })}
+              onApprove={(productionApproved) => update({ productionApproved })}
             />
           )}
           {draft.step >= 6 && previewBanner}
@@ -395,7 +449,7 @@ export default function LaunchGuide({
                   onClick={next}
                   disabled={
                     !ready ||
-                    (draft.step === 4 && !runtimeIsReady(draft.runtime)) ||
+                    (draft.step === 4 && !parseModel(draft.model)) ||
                     (draft.step === 6 && !evaluation)
                   }
                 >
@@ -410,7 +464,13 @@ export default function LaunchGuide({
               ) : (
                 <Button
                   onClick={deploy}
-                  disabled={!draft.environment || !evaluation || deploying}
+                  disabled={
+                    !draft.environment ||
+                    !evaluation ||
+                    deploying ||
+                    (draft.environment === 'Production' &&
+                      productionBlockers(draft, evaluation).length > 0)
+                  }
                 >
                   {deploying
                     ? 'Previewing deployment…'
@@ -423,7 +483,7 @@ export default function LaunchGuide({
             {notice}
           </p>
         </div>
-        <AgentAssembly draft={draft} />
+        <AgentAssembly draft={draft} evaluation={evaluation} />
       </div>
     </div>
   );

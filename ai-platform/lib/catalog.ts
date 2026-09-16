@@ -10,6 +10,8 @@ export type AgentTemplate = {
   tags: string[];
   categories: string[];
   outcomes: string[];
+  complexity?: string;
+  tagline?: string;
 };
 export const catalogFilters = [
   'All',
@@ -63,7 +65,7 @@ export const agentTemplates: AgentTemplate[] = [
     objective: 'Find and summarize information across your enterprise.',
     targetUsers: 'Employees (internal)',
     tags: ['Search', 'RAG', 'Enterprise'],
-    categories: [],
+    categories: ['Operations'],
     outcomes: [
       'Find trusted enterprise information',
       'Respect source permissions',
@@ -103,10 +105,141 @@ export const agentTemplates: AgentTemplate[] = [
       'Analyze data, surface insights and generate structured reports.',
     targetUsers: 'Employees (internal)',
     tags: ['Research', 'Analytics', 'Reports'],
-    categories: [],
+    categories: ['Operations'],
     outcomes: ['Surface insights', 'Generate structured reports'],
   },
 ];
+const broaderCatalog: [string, AgentType, string, string, string, string][] = [
+  [
+    'customer-feedback',
+    'service',
+    'Voice of Customer Agent',
+    'Customer Service',
+    'Analyze feedback and route product signals.',
+    'Medium',
+  ],
+  [
+    'customer-onboarding',
+    'service',
+    'Customer Onboarding Agent',
+    'Customer Service',
+    'Guide customers through approved onboarding steps.',
+    'Medium',
+  ],
+  [
+    'incident-response',
+    'it',
+    'Incident Response Agent',
+    'IT',
+    'Triage incidents and recommend approved runbooks.',
+    'High',
+  ],
+  [
+    'access-requests',
+    'it',
+    'Access Request Agent',
+    'IT',
+    'Prepare access requests for human approval.',
+    'High',
+  ],
+  [
+    'revenue-intelligence',
+    'sales',
+    'Revenue Intelligence Agent',
+    'Sales',
+    'Surface at-risk deals and pipeline insights.',
+    'High',
+  ],
+  [
+    'sales-enablement',
+    'sales',
+    'Sales Enablement Agent',
+    'Sales',
+    'Find approved answers and content for opportunities.',
+    'Low',
+  ],
+  [
+    'employee-onboarding',
+    'assistant',
+    'Employee Onboarding Agent',
+    'HR',
+    'Guide new hires through tasks and policy questions.',
+    'Medium',
+  ],
+  [
+    'employee-self-service',
+    'assistant',
+    'Employee Self-Service Agent',
+    'HR',
+    'Answer HR policy questions with source citations.',
+    'Low',
+  ],
+  [
+    'procurement',
+    'automation',
+    'Procurement Agent',
+    'Finance',
+    'Prepare purchase requests and vendor comparisons.',
+    'High',
+  ],
+  [
+    'invoice-review',
+    'research',
+    'Invoice Review Agent',
+    'Finance',
+    'Identify invoice exceptions for finance review.',
+    'Medium',
+  ],
+  [
+    'compliance-monitor',
+    'research',
+    'Compliance Monitor',
+    'Finance',
+    'Review transactions against approved controls.',
+    'High',
+  ],
+  [
+    'operations-planning',
+    'automation',
+    'Operations Planning Agent',
+    'Operations',
+    'Summarize capacity and flag workflow bottlenecks.',
+    'Medium',
+  ],
+  [
+    'marketing-insights',
+    'research',
+    'Marketing Insights Agent',
+    'Marketing',
+    'Summarize campaign performance and customer themes.',
+    'Low',
+  ],
+  [
+    'content-review',
+    'assistant',
+    'Content Review Agent',
+    'Marketing',
+    'Review campaign content against brand and policy.',
+    'Medium',
+  ],
+];
+agentTemplates.push(
+  ...broaderCatalog.map(
+    ([id, type, name, category, objective, complexity]) => ({
+      id,
+      type,
+      name,
+      description: objective,
+      objective,
+      targetUsers: 'Employees (internal)',
+      tags: [category, 'Governed', 'Demo'],
+      categories: [category],
+      outcomes: [objective, 'Preserve approvals and auditability'],
+      complexity,
+      tagline: objective,
+    }),
+  ),
+);
 export const customTemplate: AgentTemplate = {
   id: 'custom',
   type: 'automation',
