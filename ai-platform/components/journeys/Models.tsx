@@ -42,7 +42,7 @@ export default function Models() {
     setMessage('Endpoint saved in this preview.');
   }
   return (
-    <div className="surfacePage">
+    <div className="surfacePage hybridPage operationalEditor">
       <JourneyHeader
         title="Models"
         description="Configure approved endpoints and choose organization and workspace defaults."
@@ -59,18 +59,63 @@ export default function Models() {
       </JourneyHeader>
       <Feedback message={message} />
       <div className="surfaceColumns">
-        <div className="surfaceCards">
-          {state.endpoints.map((e) => (
-            <article className="agentCard" key={e.id}>
-              <span className="tag">{e.runtime}</span>
-              <h2>{e.name}</h2>
-              <p>{e.provider}</p>
-              <strong>{e.status}</strong>
-              <Button variant="link" onClick={() => setSelected(e.id)}>
-                View {e.name}
-              </Button>
-            </article>
-          ))}
+        <div className="modelPrimaryColumn">
+          <div className="surfaceCards">
+            {state.endpoints.map((e) => (
+              <article className="agentCard" key={e.id}>
+                <span className="tag">{e.runtime}</span>
+                <h2>{e.name}</h2>
+                <p>{e.provider}</p>
+                <strong>{e.status}</strong>
+                <Button variant="link" onClick={() => setSelected(e.id)}>
+                  View {e.name}
+                </Button>
+              </article>
+            ))}
+          </div>
+          <section className="panel">
+            <h2>Model defaults</h2>
+            <Field label="Organization default">
+              <select
+                value={state.defaultModel}
+                onChange={(e) =>
+                  update((s) => ({ ...s, defaultModel: e.target.value }))
+                }
+              >
+                {state.endpoints.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Customer Service workspace override">
+              <select
+                value={state.workspaceModel}
+                onChange={(e) =>
+                  update((s) => ({ ...s, workspaceModel: e.target.value }))
+                }
+              >
+                <option value="">Inherit organization default</option>
+                {state.endpoints.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <p>
+              Effective endpoint:{' '}
+              {
+                state.endpoints.find(
+                  (e) => e.id === (state.workspaceModel || state.defaultModel),
+                )?.name
+              }
+            </p>
+            <Link className="button outline" href="/evaluations">
+              Continue to Evaluations →
+            </Link>
+          </section>
         </div>
         <aside className="panel surfaceAside">
           <h2>Endpoint details</h2>
@@ -138,49 +183,6 @@ export default function Models() {
           )}
         </aside>
       </div>
-      <section className="panel">
-        <h2>Model defaults</h2>
-        <Field label="Organization default">
-          <select
-            value={state.defaultModel}
-            onChange={(e) =>
-              update((s) => ({ ...s, defaultModel: e.target.value }))
-            }
-          >
-            {state.endpoints.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Customer Service workspace override">
-          <select
-            value={state.workspaceModel}
-            onChange={(e) =>
-              update((s) => ({ ...s, workspaceModel: e.target.value }))
-            }
-          >
-            <option value="">Inherit organization default</option>
-            {state.endpoints.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <p>
-          Effective endpoint:{' '}
-          {
-            state.endpoints.find(
-              (e) => e.id === (state.workspaceModel || state.defaultModel),
-            )?.name
-          }
-        </p>
-        <Link className="button outline" href="/evaluations">
-          Continue to Evaluations →
-        </Link>
-      </section>
       {form && (
         <Dialog
           title={review ? 'Review endpoint' : 'Configure endpoint'}

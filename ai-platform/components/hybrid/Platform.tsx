@@ -1,4 +1,5 @@
 'use client';
+import ReportSchedule from './ReportSchedule';
 import { useState } from 'react';
 import Link from 'next/link';
 import { hybridAgents, auditRows } from '@/lib/hybrid-data';
@@ -93,6 +94,7 @@ export function Reports() {
           )}
         />
       </section>
+      <ReportSchedule />
       <DataNote />
     </div>
   );

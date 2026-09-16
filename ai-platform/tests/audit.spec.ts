@@ -81,7 +81,7 @@ test('agent versions isolate changes from Production and all eight tabs have con
   await page.getByRole('tab', { name: 'Versions', exact: true }).click();
   await expect(
     page.getByRole('region', { name: 'Agent versions' }),
-  ).toContainText('v2.5');
+  ).toContainText('v1.9');
   for (const name of [
     'Overview',
     'Configuration',

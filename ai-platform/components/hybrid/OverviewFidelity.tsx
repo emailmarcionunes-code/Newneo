@@ -1,5 +1,13 @@
 'use client';
 import Link from 'next/link';
+import { hybridAgents } from '@/lib/hybrid-data';
+import {
+  incidentRecords,
+  workspaceSpend,
+  workspaceTasks,
+  workspaceReadiness,
+} from '@/lib/preview-records';
+import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import { useState } from 'react';
 import {
   Activity,
@@ -11,62 +19,22 @@ import {
 } from 'lucide-react';
 
 // Overview snapshot supplied by the user on 2026-09-16 supersedes frame 2:2.
-const agents = [
-  [
-    'customer-service',
-    'Customer Service Agent',
-    'GPT-4o',
-    '4.821',
-    '97.3%',
-    '1.2s',
-    'healthy',
-  ],
-  [
-    'it-support',
-    'IT Support Agent',
-    'Claude 3.5',
-    '2.103',
-    '99.1%',
-    '0.9s',
-    'healthy',
-  ],
-  [
-    'sales-assistant',
-    'Sales Assistant',
-    'GPT-4o',
-    '1.284',
-    '94.8%',
-    '1.8s',
-    'warning',
-  ],
-  [
-    'knowledge-assistant',
-    'Knowledge Assistant',
-    'Gemini Pro',
-    '832',
-    '88.2%',
-    '3.1s',
-    'danger',
-  ],
-  [
-    'research-assistant',
-    'Research Assistant',
-    'Claude 3.5',
-    '541',
-    '96.5%',
-    '2.1s',
-    'healthy',
-  ],
-];
+const agents = hybridAgents
+  .filter((a) => a.status !== 'Staging')
+  .slice(0, 5)
+  .map((a) => [
+    a.id,
+    a.name,
+    a.model,
+    a.tasks,
+    a.success,
+    a.latency,
+    a.status === 'Degraded' ? 'warning' : 'healthy',
+  ]);
 const events = [
+  ['Sales Assistant degraded — latency spike', '09:42', 'danger', '/agentops'],
   [
-    'Knowledge Assistant degraded — latency spike',
-    '09:42',
-    'danger',
-    '/agentops',
-  ],
-  [
-    'IT Support Agent v2.3 deployed to production',
+    'IT Support Agent v1.8 deployed to production',
     '09:18',
     'blue',
     '/deployments/it-support',
@@ -78,7 +46,7 @@ const events = [
     '/evaluations',
   ],
   [
-    'Confluence sync completed — 2,841 docs updated',
+    'Confluence sync completed — 8,247 docs indexed',
     '08:30',
     'healthy',
     '/knowledge/confluence',
@@ -97,7 +65,20 @@ const events = [
   ],
 ];
 export default function OverviewFidelity() {
-  const [refreshed, setRefreshed] = useState(false);
+  const { state } = usePreview();
+  const [enabled] = usePreviewValue('policies:enabled', [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+  ]);
+  const [org] = usePreviewValue('settings:org', 'Acme Corp');
+  const incidents = incidentRecords.filter(
+    (r) => (state.incidentStates[r.id] || r.status) !== 'Resolved',
+  ).length;
+  const [refreshed, setRefreshed] = useState(0);
   return (
     <div
       className="overviewFidelity"
@@ -106,26 +87,49 @@ export default function OverviewFidelity() {
       <header className="overviewTitle">
         <div>
           <h1>Command Center</h1>
-          <p>Live platform health · Acme Corp · Mon 15 Sep 2025</p>
+          <p>Platform health · {org} · Preview workspace</p>
         </div>
-        <button className="overviewRefresh" onClick={() => setRefreshed(true)}>
+        <button
+          className="overviewRefresh"
+          onClick={() => setRefreshed((v) => v + 1)}
+        >
           <RefreshCw size={15} aria-hidden="true" />
           Refresh
         </button>
       </header>
-      <span className="srOnly" role="status">
+      <span className={refreshed ? 'refreshFeedback' : 'srOnly'} role="status">
         {refreshed
-          ? 'Reference workspace refreshed. Demo data is up to date.'
+          ? `Preview refreshed (${refreshed}). Demo data is up to date.`
           : ''}
       </span>
       <section className="overviewReferenceMetrics" aria-label="Key metrics">
         {[
-          ['Agents live', '24', 'of 26 total', 'blue'],
-          ['Tasks today', '14,302', '+12% vs yesterday', 'neutral'],
+          [
+            'Agents live',
+            String(hybridAgents.filter((a) => a.status === 'Live').length),
+            `of ${hybridAgents.length} total`,
+            'blue',
+          ],
+          [
+            'Tasks today',
+            workspaceTasks.toLocaleString('en-US'),
+            'Workspace sample',
+            'neutral',
+          ],
           ['Success rate', '99.2%', 'last 24h', 'healthy'],
           ['Avg latency', '1.4s', 'P95: 3.2s', 'neutral'],
-          ['AI spend', '$1,240', '$42k budget · 3% used', 'neutral'],
-          ['Incidents', '1', '1 open, 0 critical', 'danger'],
+          [
+            'AI spend',
+            `$${workspaceSpend.toLocaleString('en-US')}`,
+            `${(state.budget / 1000).toFixed(1)}k budget · ${Math.round((workspaceSpend / state.budget) * 100)}% used`,
+            'neutral',
+          ],
+          [
+            'Incidents',
+            String(incidents),
+            `${incidents} active, 0 critical`,
+            incidents ? 'danger' : 'healthy',
+          ],
         ].map(([label, value, note, tone]) => (
           <article key={label}>
             <h2>{label}</h2>
@@ -151,10 +155,8 @@ export default function OverviewFidelity() {
               <li key={id}>
                 <span
                   role="img"
-                  className={`overviewHealthDot ${id === 'knowledge-assistant' ? 'warning' : 'healthy'}`}
-                  aria-label={
-                    id === 'knowledge-assistant' ? 'Degraded' : 'Healthy'
-                  }
+                  className={`overviewHealthDot ${id === 'sales-assistant' ? 'warning' : 'healthy'}`}
+                  aria-label={id === 'sales-assistant' ? 'Degraded' : 'Healthy'}
                 />
                 <Link className="overviewAgentIdentity" href={`/agents/${id}`}>
                   <strong>{name}</strong>
@@ -210,16 +212,16 @@ export default function OverviewFidelity() {
           </h2>
           <div className="overviewProgressLabel">
             <span>Compliance score</span>
-            <strong className="healthy">96%</strong>
+            <strong className="healthy">78%</strong>
           </div>
           <progress
             aria-label="Compliance score"
-            value={96}
+            value={78}
             max={100}
             className="healthy"
           />
           <div className="overviewProgressFoot">
-            <span>18 active policies</span>
+            <span>{enabled.filter(Boolean).length} active policies</span>
             <span>2 open violations</span>
           </div>
           <Link href="/governance">View governance →</Link>
@@ -231,11 +233,11 @@ export default function OverviewFidelity() {
           </h2>
           <div className="overviewProgressLabel">
             <span>Avg readiness</span>
-            <strong className="blue">91%</strong>
+            <strong className="blue">{workspaceReadiness}%</strong>
           </div>
           <progress
             aria-label="Average readiness"
-            value={91}
+            value={workspaceReadiness}
             max={100}
             className="blue"
           />
@@ -253,7 +255,7 @@ export default function OverviewFidelity() {
           <Link className="overviewInsight" href="/agentops">
             <span aria-hidden="true">N</span>
             <p>
-              Knowledge Assistant latency spike may be linked to Confluence
+              Sales Assistant latency spike may be linked to Confluence
               re-indexing. Review agent health and source sync.
             </p>
           </Link>

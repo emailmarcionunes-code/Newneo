@@ -25,11 +25,9 @@ test('Overview matches the supplied Command Center composition', async ({
   await expect(page.locator('.overviewAgentList li')).toHaveCount(5);
   await expect(page.locator('.overviewActivityPanel li')).toHaveCount(6);
   await expect(page.locator('.overviewSummaryPanels > section')).toHaveCount(3);
-  await expect(metrics.first()).toContainText('24');
+  await expect(metrics.first()).toContainText('4');
   await page.getByRole('button', { name: 'Refresh', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText(
-    'Reference workspace refreshed',
-  );
+  await expect(page.getByRole('status')).toContainText('Preview refreshed');
   await page.screenshot({
     path: info.outputPath('overview-design.png'),
     fullPage: true,

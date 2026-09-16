@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { workspaceSpend } from '@/lib/preview-records';
 import { incidents } from '@/lib/surfaces';
 import { Button } from '../UI';
 import { usePreview } from './PreviewState';
@@ -26,7 +27,7 @@ export default function Operations({ finops }: { finops: boolean }) {
     Number(alert) >= 1 &&
     Number(alert) <= 100;
   const day = Number(days);
-  const forecast = day >= 1 && day <= 30 ? (240 / day) * 30 : null;
+  const forecast = day >= 1 && day <= 30 ? (workspaceSpend / day) * 30 : null;
   return (
     <section className="panel">
       <h2>
@@ -77,8 +78,8 @@ export default function Operations({ finops }: { finops: boolean }) {
             </Button>
           </form>
           <p>
-            Sample spend: $240 ·{' '}
-            {(240 / state.budget) * 100 >= state.alert
+            Sample spend: ${workspaceSpend} ·{' '}
+            {(workspaceSpend / state.budget) * 100 >= state.alert
               ? 'Alert threshold reached'
               : 'Below alert threshold'}{' '}
             ({state.alert}%).
@@ -94,7 +95,7 @@ export default function Operations({ finops }: { finops: boolean }) {
           </Field>
           <p>
             {forecast
-              ? `Illustrative forecast: $${forecast.toFixed(2)} = $240 ÷ ${day} days × 30. ${forecast > state.budget ? 'Above saved budget.' : 'Within saved budget.'}`
+              ? `Illustrative forecast: $${forecast.toFixed(2)} = $${workspaceSpend} ÷ ${day} days × 30. ${forecast > state.budget ? 'Above saved budget.' : 'Within saved budget.'}`
               : 'Enter a day from 1 to 30.'}
           </p>
           <details>

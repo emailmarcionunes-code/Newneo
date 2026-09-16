@@ -1,23 +1,52 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { hybridAgents } from '@/lib/hybrid-data';
+import { agentConfiguration } from '@/lib/preview-records';
 import { Button } from '../UI';
 import { usePreview, identifier, suiteTypes, type Suite } from './PreviewState';
 import { JourneyHeader, Dialog, Field, Feedback } from './Shared';
 export default function Evaluations() {
   const { state, update, ready } = usePreview();
-  const [suiteId, setSuiteId] = useState('regression');
+  const query = useSearchParams();
+  const agentId = query.get('agent') || 'customer-service';
+  const agent = hybridAgents.find((a) => a.id === agentId) ?? hybridAgents[0];
+  const contextualId =
+    agent.id === 'customer-service' ? 'regression' : `regression-${agent.id}`;
+  const contextualSuite: Suite = {
+    id: contextualId,
+    name: `${agent.name} regression`,
+    category: 'Regression',
+    question: `Complete a representative ${agent.name.toLowerCase()} request using approved knowledge and actions.`,
+    expected:
+      'Use authorized sources, respect policy boundaries and explain the outcome.',
+    mandatory: true,
+  };
+  const suites =
+    agent.id === 'customer-service'
+      ? state.suites.filter((s) => !s.id.startsWith('regression-'))
+      : [
+          state.suites.find((s) => s.id === contextualId) || contextualSuite,
+          ...state.suites.filter(
+            (s) => s.id !== 'regression' && !s.id.startsWith('regression-'),
+          ),
+        ];
+  const [suiteId, setSuiteId] = useState(contextualId);
   const [form, setForm] = useState<Suite | null>(null);
   const [scenario, setScenario] = useState('pass');
-  const [version, setVersion] = useState('v1.3');
+  const [version, setVersion] = useState(query.get('version') || 'v1.3');
   const [message, setMessage] = useState('');
   const [runId, setRunId] = useState('');
-  const suite = state.suites.find((s) => s.id === suiteId);
-  const runs = state.runs.filter((r) => r.suiteId === suiteId);
+  const suite = suites.find((s) => s.id === suiteId);
+  const runs = state.runs.filter(
+    (r) =>
+      r.suiteId === suiteId && (r.agentId ?? 'customer-service') === agent.id,
+  );
   const run = runs.find((r) => r.id === runId) ?? runs[0];
   const previous = run ? runs[runs.indexOf(run) + 1] : undefined;
   return (
-    <div className="surfacePage">
+    <div className="surfacePage hybridPage operationalEditor">
       <JourneyHeader
         title="Evaluations"
         description="Build reusable suites and inspect evidence before promoting a version."
@@ -40,7 +69,7 @@ export default function Evaluations() {
       </JourneyHeader>
       <Feedback message={message} />
       <div className="surfaceCards">
-        {state.suites.map((s) => (
+        {suites.map((s) => (
           <article className="agentCard" key={s.id}>
             <span className="tag">{s.category}</span>
             <h2>{s.name}</h2>
@@ -76,7 +105,7 @@ export default function Evaluations() {
             </div>
             <div>
               <dt>Assigned agent</dt>
-              <dd>Customer Service Agent · sample</dd>
+              <dd>{agent.name} · preview</dd>
             </div>
           </dl>
           <div className="journeyFormGrid">
@@ -103,6 +132,8 @@ export default function Evaluations() {
             onClick={() => {
               const result = {
                 id: identifier(),
+                agentId: agent.id,
+                configuration: agentConfiguration(state.ui, agent.id),
                 suiteId: suite.id,
                 category: suite.category,
                 question: suite.question,
@@ -185,7 +216,10 @@ export default function Evaluations() {
             <p>Expected at run time: {run.expected}</p>
           </details>
           {run.passed ? (
-            <Link className="button primary" href="/deployments">
+            <Link
+              className="button primary"
+              href={`/deployments?agent=${agent.id}&run=${run.id}`}
+            >
               Review for deployment →
             </Link>
           ) : (

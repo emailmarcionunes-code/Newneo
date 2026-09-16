@@ -43,6 +43,8 @@ export type Suite = {
   mandatory: boolean;
 };
 export type Run = {
+  agentId?: string;
+  configuration?: string;
   id: string;
   suiteId: string;
   category: string;
@@ -54,6 +56,7 @@ export type Run = {
   score: number;
 };
 export type Release = {
+  agentId?: string;
   id: string;
   runId: string;
   version: string;
@@ -78,6 +81,7 @@ export type Policy = {
 };
 export type PreviewState = {
   version: 1;
+  ui?: Record<string, unknown>;
   endpoints: Endpoint[];
   defaultModel: string;
   workspaceModel: string;
@@ -139,7 +143,7 @@ const initial: PreviewState = {
     },
   ],
   audit: [],
-  budget: 300,
+  budget: 2800,
   alert: 80,
   incidentStates: {},
 };
@@ -154,6 +158,8 @@ function valid(value: unknown): value is PreviewState {
   const s = value as PreviewState;
   if (
     s.version !== 1 ||
+    (s.ui !== undefined &&
+      (!s.ui || typeof s.ui !== 'object' || Array.isArray(s.ui))) ||
     typeof s.defaultModel !== 'string' ||
     typeof s.workspaceModel !== 'string' ||
     !Number.isFinite(s.budget) ||
@@ -285,3 +291,34 @@ export function usePreview() {
   return context;
 }
 export const identifier = () => crypto.randomUUID();
+
+/** Persistent demo values share the root provider; no backend or credentials. */
+export function usePreviewValue<T>(
+  key: string,
+  fallback: T,
+): [T, (next: T | ((previous: T) => T)) => void] {
+  const { state, update } = usePreview();
+  const stored = state.ui?.[key];
+  const compatible = (value: unknown): value is T =>
+    value !== undefined &&
+    (Array.isArray(fallback)
+      ? Array.isArray(value)
+      : typeof value === typeof fallback &&
+        (fallback === null || value !== null));
+  const value = compatible(stored) ? stored : fallback;
+  function setValue(next: T | ((previous: T) => T)) {
+    update((current) => {
+      const previous = current.ui?.[key];
+      const resolved = compatible(previous) ? previous : fallback;
+      return {
+        ...current,
+        ui: {
+          ...current.ui,
+          [key]:
+            typeof next === 'function' ? (next as (v: T) => T)(resolved) : next,
+        },
+      };
+    });
+  }
+  return [value, setValue];
+}

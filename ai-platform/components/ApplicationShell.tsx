@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { AssetIcon } from './Assets';
 import { HeaderSearch, HeaderNotifications, HelpIcon } from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
+import { usePreviewValue } from './journeys/PreviewState';
 import { useSidebarState } from './SidebarState';
 
 export const navigation = [
@@ -73,6 +74,7 @@ export function ApplicationSidebar({
   onClose: () => void;
   onToggleCollapsed: () => void;
 }) {
+  const [org] = usePreviewValue('settings:org', 'Acme Corp');
   const path = usePathname();
   return (
     <aside
@@ -147,12 +149,12 @@ export function ApplicationSidebar({
             : undefined
         }
       >
-        <summary title={collapsed ? 'Acme Corp' : undefined}>
+        <summary title={collapsed ? org : undefined}>
           <span className="organizationAvatar">AC</span>
-          {!collapsed && <span>Acme Corp</span>}
+          {!collapsed && <span>{org}</span>}
         </summary>
         <div className="workspacePopover">
-          <strong>Acme Corp</strong>
+          <strong>{org}</strong>
           <p>Customer Service workspace</p>
           <small>Demo organization</small>
         </div>
@@ -195,7 +197,8 @@ export function Topbar({
         href === '/'
           ? path === '/'
           : path === href || path.startsWith(href + '/'),
-      )?.[0] ?? 'Workspace');
+      )?.[0] ?? (path === '/models' ? 'Model endpoints' : 'Workspace'));
+  const [org] = usePreviewValue('settings:org', 'Acme Corp');
   return (
     <header className="topbar">
       <button
@@ -209,7 +212,7 @@ export function Topbar({
         ☰
       </button>
       <div className="shellBreadcrumb">
-        <span>Acme Corp</span>
+        <span>{org}</span>
         <span aria-hidden="true">/</span>
         <strong>{title}</strong>
       </div>
@@ -233,7 +236,7 @@ export function Topbar({
             <span className="avatar">AM</span>
             <span className="userContext">
               <strong>Ana Martinez</strong>
-              <small>Acme Corp</small>
+              <small>{org}</small>
             </span>
           </summary>
           <div className="topbarPopover">

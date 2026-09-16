@@ -1,4 +1,6 @@
 'use client';
+import { agentConfiguration } from '@/lib/preview-records';
+import { hybridAgents } from '@/lib/hybrid-data';
 import { useState } from 'react';
 import { Button } from '../UI';
 import { usePreview, identifier, roles, type Policy } from './PreviewState';
@@ -24,7 +26,7 @@ export default function Governance({
   const [note, setNote] = useState('');
   const [message, setMessage] = useState('');
   return (
-    <div className="surfacePage">
+    <div className="surfacePage hybridPage operationalEditor">
       <JourneyHeader
         title="Governance"
         description="Explore access, policy decisions and approval evidence in one workspace."
@@ -124,7 +126,14 @@ export default function Governance({
                     <h3>
                       {r.version} → {r.target}
                     </h3>
-                    <p>Customer Service Agent · passed evaluation</p>
+                    <p>
+                      {
+                        hybridAgents.find(
+                          (a) => a.id === (r.agentId || 'customer-service'),
+                        )?.name
+                      }{' '}
+                      · {r.runId}
+                    </p>
                     <p>Reviewer: you · simulated role</p>
                     {(['Active', 'Rejected'] as const).map((next) => (
                       <Button
@@ -132,13 +141,39 @@ export default function Governance({
                         variant={next === 'Active' ? 'primary' : 'outline'}
                         disabled={!note.trim()}
                         onClick={() => {
+                          const run = state.runs.find((v) => v.id === r.runId);
+                          if (
+                            next === 'Active' &&
+                            (!run?.passed ||
+                              (run.configuration &&
+                                run.configuration !==
+                                  agentConfiguration(
+                                    state.ui,
+                                    r.agentId || 'customer-service',
+                                  )))
+                          ) {
+                            setMessage(
+                              'Configuration changed. Run a new evaluation before approving this release.',
+                            );
+                            return;
+                          }
                           update((s) => ({
                             ...s,
+                            ui:
+                              next === 'Active' && r.target === 'Production'
+                                ? {
+                                    ...s.ui,
+                                    [`agent:${r.agentId || 'customer-service'}:draft`]: false,
+                                    [`agent:${r.agentId || 'customer-service'}:saved`]: false,
+                                  }
+                                : s.ui,
                             releases: s.releases.map((v) =>
                               v.id === r.id
                                 ? { ...v, state: next, reason: note.trim() }
                                 : v.state === 'Active' &&
                                     v.target === r.target &&
+                                    (v.agentId || 'customer-service') ===
+                                      (r.agentId || 'customer-service') &&
                                     next === 'Active'
                                   ? { ...v, state: 'Rolled back' }
                                   : v,

@@ -1,6 +1,13 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { usePreview, usePreviewValue } from '../journeys/PreviewState';
+import {
+  deploymentRecords,
+  incidentRecords,
+  workspaceSpend,
+} from '@/lib/preview-records';
 import { hybridAgents, activity } from '@/lib/hybrid-data';
 import { Button } from '../UI';
 import { Tabs, Panel } from '../journeys/Shared';
@@ -28,7 +35,9 @@ const scenarios: [string, number][] = [
   ['Latency P95', 91],
 ];
 export function Evaluations() {
-  const [edit, setEdit] = useState(false);
+  const { state } = usePreview();
+  const query = useSearchParams();
+  const [edit, setEdit] = useState(query.get('edit') === '1');
   if (edit)
     return (
       <>
@@ -61,39 +70,58 @@ export function Evaluations() {
           <Table
             caption="Evaluation runs"
             headers={['Agent', 'Suite', 'Score', 'Passed', 'Status']}
-            rows={hybridAgents.map((a, i) => [
-              <DetailLink key={a.id} href={`/evaluations/${a.id}`}>
-                {a.name}
-              </DetailLink>,
-              [
-                'Tier-1 Support Suite',
-                'IT Automation Suite',
-                'RAG Quality Suite',
-                'CRM Interaction Suite',
-                'Workflow Orchestration',
-                'Intelligence Synthesis',
-              ][i],
-              <strong
-                key="score"
-                className={
-                  a.score >= 90
-                    ? 'successText'
+            rows={[
+              ...state.runs.map((r) => [
+                <DetailLink
+                  key={r.id}
+                  href={`/evaluations/${r.agentId || 'customer-service'}?run=${r.id}`}
+                >
+                  {
+                    hybridAgents.find(
+                      (a) => a.id === (r.agentId || 'customer-service'),
+                    )?.name
+                  }{' '}
+                  · {r.version}
+                </DetailLink>,
+                r.name,
+                `${r.score}%`,
+                r.passed ? '1/1' : '0/1',
+                <Status key="s">{r.passed ? 'Passed' : 'Failed'}</Status>,
+              ]),
+              ...hybridAgents.map((a, i) => [
+                <DetailLink key={a.id} href={`/evaluations/${a.id}`}>
+                  {a.name}
+                </DetailLink>,
+                [
+                  'Tier-1 Support Suite',
+                  'IT Automation Suite',
+                  'RAG Quality Suite',
+                  'CRM Interaction Suite',
+                  'Workflow Orchestration',
+                  'Intelligence Synthesis',
+                ][i],
+                <strong
+                  key="score"
+                  className={
+                    a.score >= 90
+                      ? 'successText'
+                      : a.score >= 80
+                        ? 'hybridWarning'
+                        : 'hybridDanger'
+                  }
+                >
+                  {a.score}%
+                </strong>,
+                `${Math.round(a.score / 2)}/50`,
+                <Status key="s">
+                  {a.score >= 90
+                    ? 'Passed'
                     : a.score >= 80
-                      ? 'hybridWarning'
-                      : 'hybridDanger'
-                }
-              >
-                {a.score}%
-              </strong>,
-              `${Math.round(a.score / 2)}/50`,
-              <Status key="s">
-                {a.score >= 90
-                  ? 'Passed'
-                  : a.score >= 80
-                    ? 'Warning'
-                    : 'Failed'}
-              </Status>,
-            ])}
+                      ? 'Warning'
+                      : 'Failed'}
+                </Status>,
+              ]),
+            ]}
           />
         </section>
         <section className="panel">
@@ -106,6 +134,8 @@ export function Evaluations() {
   );
 }
 export function Deployments() {
+  const { state } = usePreview();
+  const query = useSearchParams();
   const [environment, setEnvironment] = useState('All');
   const [edit, setEdit] = useState(false);
   if (edit)
@@ -184,31 +214,40 @@ export function Deployments() {
             'Status',
           ]}
           rows={[
-            'customer-service',
-            'it-support',
-            'sales-assistant',
-            'sales-assistant',
-            'knowledge-assistant',
-            'customer-service',
+            ...state.releases.map((r) => ({
+              id: r.id,
+              agentId: r.agentId || 'customer-service',
+              version: r.version,
+              environment: r.target,
+              by: 'You',
+              when: 'This session',
+              duration: 'Preview',
+              status: r.state,
+            })),
+            ...deploymentRecords.map((r) => ({
+              ...r,
+              status: String(
+                state.ui?.[`deployment:${r.id}:status`] ?? r.status,
+              ),
+            })),
           ]
-            .map((id, i) => [
-              <DetailLink key={i} href={`/deployments/${id}`}>
-                {hybridAgents.find((a) => a.id === id)?.name}
+            .filter(
+              (r) => environment === 'All' || r.environment === environment,
+            )
+            .map((r) => [
+              <DetailLink
+                key={r.id}
+                href={`/deployments/${r.agentId}?release=${r.id}`}
+              >
+                {hybridAgents.find((a) => a.id === r.agentId)?.name}
               </DetailLink>,
-              ['v2.4', 'v1.8', 'v1.3', 'v1.2', 'v3.1', 'v2.3'][i],
-              i === 2 ? 'Staging' : 'Production',
-              ['j.silva', 't.ferreira', 'a.costa', 'a.costa', 'r.lima', 'auto'][
-                i
-              ],
-              ['Today 12:04', 'Aug 28', 'Sep 14', 'Sep 5', 'Jul 15', 'Aug 20'][
-                i
-              ],
-              ['1m12s', '0m58s', '2m04s', '1m08s', '0m45s', '0m40s'][i],
-              <Status key="s">
-                {i === 2 ? 'Failed' : i === 5 ? 'Rolled back' : 'Success'}
-              </Status>,
-            ])
-            .filter((row) => environment === 'All' || row[2] === environment)}
+              r.version,
+              r.environment,
+              r.by,
+              r.when,
+              r.duration,
+              <Status key="status">{r.status}</Status>,
+            ])}
         />
       </section>
       <DataNote />
@@ -216,6 +255,7 @@ export function Deployments() {
   );
 }
 export function AgentOps() {
+  const { state } = usePreview();
   const [incidentStatus, setIncidentStatus] = useState('Open');
   const names = ['Health', 'Incidents', 'Logs'];
   const [tab, setTab] = useState('Health');
@@ -230,7 +270,15 @@ export function AgentOps() {
           ['Tasks today', '6,912', 'across all agents'],
           ['Success rate', '96.8%', 'last 1h average'],
           ['Avg P95 latency', '1.4s', 'vs 1.6s yesterday'],
-          ['Active incidents', '2', 'open right now'],
+          [
+            'Active incidents',
+            String(
+              incidentRecords.filter(
+                (r) => state.incidentStates[r.id] !== 'Resolved',
+              ).length,
+            ),
+            'open right now',
+          ],
         ]}
       />
       <Tabs names={names} current={tab} onChange={setTab} />
@@ -277,7 +325,15 @@ export function AgentOps() {
                 </dl>
                 {a.status === 'Degraded' && (
                   <p className="hybridDanger">
-                    High latency & error rate · 2 open incidents
+                    High latency & error rate ·{' '}
+                    {
+                      incidentRecords.filter(
+                        (r) =>
+                          r.agentId === a.id &&
+                          state.incidentStates[r.id] !== 'Resolved',
+                      ).length
+                    }{' '}
+                    open incidents
                   </p>
                 )}
               </Link>
@@ -296,37 +352,27 @@ export function AgentOps() {
               </select>
             </label>
             <Table
-              emptyMessage="No incidents match this status. There are no resolved incidents in the reference window."
+              emptyMessage="No incidents match this status."
               caption="Incidents"
               headers={['Incident', 'Agent', 'Severity', 'Status']}
-              rows={
-                incidentStatus === 'Resolved'
-                  ? []
-                  : [
-                      [
-                        <DetailLink
-                          key="incident"
-                          href="/agentops/incidents/inc-001"
-                        >
-                          INC-001 · High latency detected
-                        </DetailLink>,
-                        'Sales Assistant',
-                        <Status key="s">High</Status>,
-                        'Open',
-                      ],
-                      [
-                        <DetailLink
-                          key="incident"
-                          href="/agentops/incidents/inc-002"
-                        >
-                          INC-002 · Tool execution failed
-                        </DetailLink>,
-                        'Process Automation',
-                        'Medium',
-                        'Investigating',
-                      ],
-                    ]
-              }
+              rows={incidentRecords
+                .map((r) => ({
+                  ...r,
+                  status: state.incidentStates[r.id] || r.status,
+                }))
+                .filter((r) =>
+                  incidentStatus === 'Resolved'
+                    ? r.status === 'Resolved'
+                    : r.status !== 'Resolved',
+                )
+                .map((r) => [
+                  <DetailLink key={r.id} href={`/agentops/incidents/${r.id}`}>
+                    {r.id.toUpperCase()} · {r.title}
+                  </DetailLink>,
+                  hybridAgents.find((a) => a.id === r.agentId)?.name,
+                  <Status key="severity">{r.severity}</Status>,
+                  <Status key="status">{r.status}</Status>,
+                ])}
             />
           </>
         ) : (
@@ -346,6 +392,7 @@ export function AgentOps() {
   );
 }
 export function FinOps() {
+  const { state } = usePreview();
   const [budget, setBudget] = useState(false);
   return (
     <div className="surfacePage hybridPage finOpsPage">
@@ -355,7 +402,11 @@ export function FinOps() {
       />
       <Metrics
         items={[
-          ['Spend this month', '$2,140', 'of $2,800 budget'],
+          [
+            'Spend this month',
+            `$${workspaceSpend.toLocaleString('en-US')}`,
+            `of $${state.budget.toLocaleString('en-US')} budget`,
+          ],
           ['Cost per task', '$0.08', 'avg across all agents'],
           ['vs. baseline', '−34%', 'savings vs manual'],
           ['Sales Agent overage', '$48', 'above budget'],
@@ -418,10 +469,10 @@ export function FinOps() {
             <h2>Cost by model</h2>
             <dl className="surfaceFacts modelCostFacts">
               {[
-                ['Azure GPT-4o', '$841'],
+                ['Azure GPT-4o', '$1,030'],
                 ['Claude 3.5', '$541'],
-                ['Managed GPT-4o', '$389'],
-                ['Hybrid AI', '$247'],
+                ['Managed GPT-4o', '$247'],
+                ['Hybrid AI', '$389'],
                 ['Private Llama 3', '$83'],
               ].map(([k, v]) => (
                 <div key={k}>
@@ -459,10 +510,18 @@ export function FinOps() {
   );
 }
 export function Governance() {
+  const { state } = usePreview();
   const names = ['Policies', 'Violations', 'Audit'];
   const [tab, setTab] = useState('Policies');
   const [edit, setEdit] = useState(false);
-  const [enabled, setEnabled] = useState([true, true, true, true, true, false]);
+  const [enabled, setEnabled] = usePreviewValue('policies:enabled', [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+  ]);
   const policies = [
     'Audit Logging',
     'PII Data Protection',
@@ -491,7 +550,11 @@ export function Governance() {
       <Metrics
         items={[
           ['Compliance score', '78%', 'SOC 2 Type II'],
-          ['Active policies', '7', '2 inactive'],
+          [
+            'Active policies',
+            String(enabled.filter(Boolean).length),
+            `${enabled.filter((v) => !v).length} inactive`,
+          ],
           ['Open violations', '2', 'require resolution'],
           ['Agents compliant', '5 / 6', 'Sales Assistant at risk'],
         ]}
@@ -516,7 +579,9 @@ export function Governance() {
                 <DetailLink
                   href={`/governance/policies/${i === 1 ? 'pii' : i}`}
                 >
-                  {p}
+                  {String(
+                    state.ui?.[`policy:${i === 1 ? 'pii' : i}:name`] ?? p,
+                  )}
                 </DetailLink>
                 <span>
                   {
@@ -531,16 +596,17 @@ export function Governance() {
                   }
                 </span>
                 <small>
-                  {
-                    [
-                      'Every agent action logged with context.',
-                      'Detect, mask and handle personal data.',
-                      'Restrict interaction to authorized roles.',
-                      'Require approval for sensitive actions.',
-                      'Processing and storage remain in EU.',
-                      'Cap usage per user and department.',
-                    ][i]
-                  }
+                  {String(
+                    state.ui?.[`policy:${i === 1 ? 'pii' : i}:description`] ??
+                      [
+                        'Every agent action logged with context.',
+                        'Detect, mask and handle personal data.',
+                        'Restrict interaction to authorized roles.',
+                        'Require approval for sensitive actions.',
+                        'Processing and storage remain in EU.',
+                        'Cap usage per user and department.',
+                      ][i],
+                  )}
                 </small>
                 <small className="policyAudience">
                   {i === 3

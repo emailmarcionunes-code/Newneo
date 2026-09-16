@@ -1,10 +1,21 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { NewneoWordmark } from '../NewneoLogo';
 import { Button, FormField } from '../UI';
 export default function Login() {
   const [message, setMessage] = useState('');
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const reason = query.get('reason') || query.get('login');
+    const messages: Record<string, string> = {
+      unavailable:
+        'Enterprise sign-in is not available in this preview. You can explore the workspace below.',
+      failed: 'Sign-in failed. Please try again or explore the preview.',
+      expired: 'Your session expired. Sign in again to continue.',
+    };
+    if (reason && messages[reason]) setMessage(messages[reason]);
+  }, []);
   return (
     <main className="hybridLogin">
       <section>

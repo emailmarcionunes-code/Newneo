@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
 import { Button, FormField } from '../UI';
 import { Tabs, Panel, Feedback } from '../journeys/Shared';
@@ -25,15 +26,18 @@ export default function SettingsWorkspace() {
   const [tab, setTab] = useState(names[0]);
   const [message, setMessage] = useState('');
   const [editingProfile, setEditingProfile] = useState(false);
-  const [billing, setBilling] = useState('billing@acme.example');
+  const [billing, setBilling] = usePreviewValue(
+    'settings:billing',
+    'billing@acme.example',
+  );
   const [teamView, setTeamView] = useState('Members');
   const [apiView, setApiView] = useState('API Keys');
   const [inviteOpen, setInviteOpen] = useState(false);
   const [keyOpen, setKeyOpen] = useState(false);
-  const [org, setOrg] = useState('Acme Corp');
+  const [org, setOrg] = usePreviewValue('settings:org', 'Acme Corp');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('Viewer');
-  const [users, setUsers] = useState([
+  const [users, setUsers] = usePreviewValue('settings:users', [
     ['Ana Martinez', 'ana@acme.example', 'Admin', 'Active'],
     ['João Silva', 'joao@acme.example', 'AI Engineer', 'Active'],
     ['Taylor Ferreira', 'taylor@acme.example', 'Reviewer', 'Active'],
@@ -42,7 +46,7 @@ export default function SettingsWorkspace() {
     ['Thiago Ferreira', 'thiago@acme.example', 'AI Engineer', 'Active'],
     ['Lucas Rodrigues', 'lucas@acme.example', 'Viewer', 'Pending'],
   ]);
-  const [keys, setKeys] = useState([
+  const [keys, setKeys] = usePreviewValue('settings:keys', [
     ['prod-key-001', 'Production', '•••• DEMO 4a2f', 'Active'],
     ['prod-key-002', 'Production', '•••• DEMO 9c8d', 'Active'],
     ['prod-key-003', 'Production', '•••• DEMO 3b1e', 'Active'],
@@ -51,8 +55,9 @@ export default function SettingsWorkspace() {
   ]);
   const [keyName, setKeyName] = useState('');
   const [hook, setHook] = useState('');
-  const [hooks, setHooks] = useState<string[]>([]);
-  const [alerts, setAlerts] = useState([
+  const [digest, setDigest] = usePreviewValue('settings:digest', 'Daily');
+  const [hooks, setHooks] = usePreviewValue<string[]>('settings:hooks', []);
+  const [alerts, setAlerts] = usePreviewValue('settings:alerts', [
     true,
     true,
     true,
@@ -61,7 +66,7 @@ export default function SettingsWorkspace() {
     false,
     false,
   ]);
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = usePreviewValue('settings:tasks', [
     true,
     true,
     true,
@@ -82,11 +87,15 @@ export default function SettingsWorkspace() {
     };
     read();
     window.addEventListener('hashchange', read);
-    return () => window.removeEventListener('hashchange', read);
+    window.addEventListener('popstate', read);
+    return () => {
+      window.removeEventListener('hashchange', read);
+      window.removeEventListener('popstate', read);
+    };
   }, []);
   function choose(n: string) {
     setTab(n);
-    history.replaceState(null, '', `#${hashes[names.indexOf(n)]}`);
+    history.pushState(null, '', `#${hashes[names.indexOf(n)]}`);
     setMessage('');
   }
   return (
@@ -172,7 +181,7 @@ export default function SettingsWorkspace() {
                 {[
                   ['Agents deployed', 6, 20],
                   ['Monthly tasks', 6912, 50000],
-                  ['Knowledge sources', 8, 25],
+                  ['Knowledge sources', 7, 25],
                   [
                     'Team members',
                     users.filter((u) => u[3] === 'Active').length,
@@ -458,6 +467,8 @@ export default function SettingsWorkspace() {
                       variant="link"
                       disabled={k[3] === 'Revoked'}
                       onClick={() => {
+                        if (!window.confirm(`Revoke ${k[0]} in this preview?`))
+                          return;
                         setKeys((v) =>
                           v.map((x, j) =>
                             j === i ? [x[0], x[1], x[2], 'Revoked'] : x,
@@ -603,7 +614,10 @@ export default function SettingsWorkspace() {
             ))}
             <label className="journeyField">
               Digest frequency
-              <select defaultValue="Daily">
+              <select
+                value={digest}
+                onChange={(e) => setDigest(e.target.value)}
+              >
                 <option>Immediately</option>
                 <option>Daily</option>
                 <option>Weekly</option>
@@ -660,7 +674,7 @@ export default function SettingsWorkspace() {
                   ['Invite your team', 'team'],
                   ['Review audit log', '/audit-log'],
                   ['Create a production API key', 'api'],
-                  ['Schedule a weekly report', '/reports'],
+                  ['Schedule a weekly report', '/reports?schedule=1'],
                   ['Set a cost budget alert', '/finops'],
                 ].map(([n, to], i) => (
                   <div className="onboardingTask" key={n}>
@@ -697,11 +711,11 @@ export default function SettingsWorkspace() {
                 <section className="panel learningResources">
                   <h2>Learning resources</h2>
                   {[
-                    ['Agent design guide', '/agents/catalog'],
-                    ['Governance playbook', '/governance'],
-                    ['Evaluation framework', '/evaluations'],
-                    ['API reference', '#api'],
-                    ['FinOps for AI teams', '/finops'],
+                    ['Browse agent templates', '/agents/catalog'],
+                    ['Review governance policies', '/governance'],
+                    ['Manage evaluations', '/evaluations'],
+                    ['API keys & webhooks', '#api'],
+                    ['Review AI costs', '/finops'],
                     ['Enterprise integrations', '#integrations'],
                   ].map(([label, to]) => (
                     <a key={label} href={to}>

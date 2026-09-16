@@ -1,7 +1,16 @@
 'use client';
 import { useState } from 'react';
+import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
-import { hybridAgents, sourceRows, actionRows } from '@/lib/hybrid-data';
+import {
+  evaluationRecords,
+  productionVersion,
+  nextVersion,
+  agentConfiguration,
+  incidentRecords,
+} from '@/lib/preview-records';
+import { previewSourceRows, sourceAgents } from '@/lib/source-preview';
+import { hybridAgents, actionRows } from '@/lib/hybrid-data';
 import { Button, FormField } from '../UI';
 import { Tabs, Panel, Feedback } from '../journeys/Shared';
 import { PageTitle, Metrics, Table, Status, DataNote, Bars } from './UI';
@@ -10,6 +19,22 @@ export default function AgentWorkspace({
 }: {
   agent: (typeof hybridAgents)[number];
 }) {
+  const { state } = usePreview();
+  const sourceRows = previewSourceRows(state.ui).filter((r) =>
+    sourceAgents[r[0]]?.includes(agent.id),
+  );
+  const productionRelease = state.releases.find(
+    (r) =>
+      r.agentId === agent.id &&
+      r.target === 'Production' &&
+      r.state === 'Active',
+  );
+  const currentVersion =
+    productionRelease?.version || productionVersion(agent.id);
+  const [draftVersion, setDraftVersion] = usePreviewValue(
+    `agent:${agent.id}:draftVersion`,
+    nextVersion(agent.id),
+  );
   const names = [
     'Overview',
     'Configuration',
@@ -20,35 +45,48 @@ export default function AgentWorkspace({
     'Activity',
     'AgentOps',
   ];
-  const [tab, setTab] = useState('Overview');
-  const [draft, setDraft] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [mission, setMission] = useState(
+  const [tab, setTab] = usePreviewValue(`agent:${agent.id}:tab`, 'Overview');
+  const [draft, setDraft] = usePreviewValue(`agent:${agent.id}:draft`, false);
+  const [saved, setSaved] = usePreviewValue(`agent:${agent.id}:saved`, false);
+  const [mission, setMission] = usePreviewValue(
+    `agent:${agent.id}:mission`,
     `Operate ${agent.name.toLowerCase()} within approved enterprise policies.`,
   );
-  const [model, setModel] = useState(agent.model);
-  const [owner, setOwner] = useState('CX Operations');
+  const [model, setModel] = usePreviewValue(
+    `agent:${agent.id}:model`,
+    agent.model,
+  );
+  const [owner, setOwner] = usePreviewValue(
+    `agent:${agent.id}:owner`,
+    'CX Operations',
+  );
   const [message, setMessage] = useState('');
-  const [events, setEvents] = useState([
-    'v2.4 promoted to Production after approval',
+  const [events, setEvents] = usePreviewValue(`agent:${agent.id}:events`, [
+    `${currentVersion} promoted to Production after approval`,
     'Evaluation suite completed: 94% readiness',
     'Knowledge configuration reviewed',
-    'PII policy applied to version v2.4',
+    `PII policy applied to version ${currentVersion}`,
   ]);
   function newVersion() {
+    setDraftVersion(
+      `v${currentVersion.slice(1).split('.')[0]}.${Number(currentVersion.split('.')[1]) + 1}`,
+    );
     setDraft(true);
     setSaved(false);
     setTab('Configuration');
     setMessage(
-      'Draft v2.5 created from Production v2.4. Production is unchanged.',
+      `Draft ${draftVersion} created from Production ${currentVersion}. Production is unchanged.`,
     );
-    setEvents((e) => ['Draft v2.5 created from Production v2.4', ...e]);
+    setEvents((e) => [
+      `Draft ${draftVersion} created from Production ${currentVersion}`,
+      ...e,
+    ]);
   }
   return (
     <div className="surfacePage hybridPage agentWorkspace">
       <PageTitle
         title={agent.name}
-        description={`${agent.model} · ${agent.status} · Version v2.4`}
+        description={`${agent.model} · ${agent.status} · Version ${currentVersion}`}
       >
         <Button onClick={newVersion} disabled={draft}>
           Create New Version
@@ -126,7 +164,11 @@ export default function AgentWorkspace({
           </>
         ) : tab === 'Configuration' ? (
           <section className="panel">
-            <h2>{draft ? 'Draft version v2.5' : 'Production version v2.4'}</h2>
+            <h2>
+              {draft
+                ? `Draft version ${draftVersion}`
+                : `Production version ${currentVersion}`}
+            </h2>
             <p className="intelligenceNote">
               Never edit Production directly. Changes are saved in a new Agent
               Version and require evaluation and promotion.
@@ -136,9 +178,12 @@ export default function AgentWorkspace({
                 e.preventDefault();
                 setSaved(true);
                 setMessage(
-                  'Draft v2.5 saved. Evaluate this version before promotion.',
+                  `Draft ${draftVersion} saved. Evaluate this version before promotion.`,
                 );
-                setEvents((v) => ['Configuration saved in draft v2.5', ...v]);
+                setEvents((v) => [
+                  `Configuration saved in draft ${draftVersion}`,
+                  ...v,
+                ]);
               }}
             >
               <fieldset disabled={!draft}>
@@ -148,13 +193,19 @@ export default function AgentWorkspace({
                   label="Business mission"
                   value={mission}
                   required
-                  onChange={(e) => setMission(e.target.value)}
+                  onChange={(e) => {
+                    setMission(e.target.value);
+                    setSaved(false);
+                  }}
                 />
                 <label className="journeyField">
                   Foundation model
                   <select
                     value={model}
-                    onChange={(e) => setModel(e.target.value)}
+                    onChange={(e) => {
+                      setModel(e.target.value);
+                      setSaved(false);
+                    }}
                   >
                     <option>{agent.model}</option>
                     <option>Claude 3.5 Sonnet</option>
@@ -165,7 +216,10 @@ export default function AgentWorkspace({
                   id="agent-owner"
                   label="Business owner"
                   value={owner}
-                  onChange={(e) => setOwner(e.target.value)}
+                  onChange={(e) => {
+                    setOwner(e.target.value);
+                    setSaved(false);
+                  }}
                   required
                 />
                 <Button type="submit">Save draft version</Button>
@@ -174,7 +228,7 @@ export default function AgentWorkspace({
             {saved && (
               <Link
                 className="button secondary"
-                href={`/evaluations/${agent.id}`}
+                href={`/evaluations?agent=${agent.id}&version=${draftVersion}&edit=1`}
               >
                 Review evaluation requirements
               </Link>
@@ -182,7 +236,7 @@ export default function AgentWorkspace({
           </section>
         ) : tab === 'Knowledge' ? (
           <section className="panel">
-            <h2>Knowledge bound to v2.4</h2>
+            <h2>Knowledge bound to {currentVersion}</h2>
             <Table
               caption="Agent knowledge"
               headers={['Source', 'Type', 'Documents', 'Status', 'Permissions']}
@@ -219,7 +273,11 @@ export default function AgentWorkspace({
           <section className="panel">
             <div className="surfaceHeading">
               <h2>Evaluation history</h2>
-              <Link href="/evaluations">Run evaluation</Link>
+              <Link
+                href={`/evaluations?agent=${agent.id}&version=${saved ? draftVersion : currentVersion}&edit=1`}
+              >
+                Run evaluation
+              </Link>
             </div>
             <Table
               caption="Agent evaluation history"
@@ -232,23 +290,26 @@ export default function AgentWorkspace({
                 'When',
               ]}
               rows={[
-                ['EV-204', 'v2.4', '50 / 50', '94%', 'Passed', 'Today 10:42'],
-                [
-                  'EV-198',
-                  'v2.4-rc1',
-                  '47 / 50',
-                  '78%',
-                  'Needs review',
-                  'Yesterday',
-                ],
-                ['EV-181', 'v2.3', '49 / 50', '91%', 'Passed', 'Sep 10'],
+                ...state.runs
+                  .filter((r) => r.agentId === agent.id)
+                  .map((r) => ({
+                    id: r.id,
+                    version: r.version,
+                    score: r.score,
+                    when: 'This session',
+                  })),
+                ...evaluationRecords(agent.id),
               ].map((r) => [
-                <Link key={r[0]} href={`/evaluations/${agent.id}`}>
-                  {r[0]} →
+                <Link key={r.id} href={`/evaluations/${agent.id}?run=${r.id}`}>
+                  {r.id} →
                 </Link>,
-                ...r.slice(1, 4),
-                <Status key="s">{r[4]}</Status>,
-                r[5],
+                r.version,
+                `${Math.round(r.score / 2)}/50`,
+                `${r.score}%`,
+                <Status key="status">
+                  {r.score >= 90 ? 'Passed' : 'Needs review'}
+                </Status>,
+                r.when,
               ])}
             />
             <Bars
@@ -263,8 +324,8 @@ export default function AgentWorkspace({
           <section className="panel">
             <h2>Agent Versions</h2>
             <p>
-              Production v2.4 is immutable. Evaluate and promote a reviewed
-              version to change it.
+              Production {currentVersion} is immutable. Evaluate and promote a
+              reviewed version to change it.
             </p>
             <Table
               caption="Agent versions"
@@ -273,10 +334,19 @@ export default function AgentWorkspace({
                 ...(draft
                   ? [
                       [
-                        'v2.5',
+                        draftVersion,
                         saved ? 'Draft saved' : 'Draft',
                         'Mission/configuration update',
-                        'Pending',
+                        state.runs.some(
+                          (r) =>
+                            r.agentId === agent.id &&
+                            r.version === draftVersion &&
+                            r.passed &&
+                            r.configuration ===
+                              agentConfiguration(state.ui, agent.id),
+                        )
+                          ? 'Passed'
+                          : 'Pending',
                         <Button
                           key="edit"
                           variant="link"
@@ -288,23 +358,26 @@ export default function AgentWorkspace({
                     ]
                   : []),
                 [
-                  'v2.4',
+                  currentVersion,
                   <Status key="s">Production</Status>,
                   'PII rules and knowledge refresh',
                   '94%',
-                  <Link key="deploy" href={`/deployments/${agent.id}`}>
+                  <Link
+                    key="deploy"
+                    href={`/deployments/${agent.id}${productionRelease ? `?release=${productionRelease.id}` : ''}`}
+                  >
                     View deployment →
                   </Link>,
                 ],
                 [
-                  'v2.3',
+                  `v${currentVersion.slice(1).split('.')[0]}.${Math.max(0, Number(currentVersion.split('.')[1]) - 1)}`,
                   'Archived',
                   'Tool timeout handling',
                   '91%',
                   'Retained for rollback',
                 ],
                 [
-                  'v2.2',
+                  `v${currentVersion.slice(1).split('.')[0]}.${Math.max(0, Number(currentVersion.split('.')[1]) - 2)}`,
                   'Archived',
                   'Initial approved configuration',
                   '89%',
@@ -336,12 +409,22 @@ export default function AgentWorkspace({
                 ['Health', agent.status],
                 ['Success', agent.success],
                 ['Latency', agent.latency],
-                ['Open incidents', agent.status === 'Degraded' ? '1' : '0'],
+                [
+                  'Open incidents',
+                  String(
+                    incidentRecords.filter(
+                      (r) =>
+                        r.agentId === agent.id &&
+                        state.incidentStates[r.id] !== 'Resolved',
+                    ).length,
+                  ),
+                ],
               ]}
             />
             <section className="panel">
               <h2>Operational signals</h2>
-              {agent.status === 'Degraded' ? (
+              {agent.status === 'Degraded' &&
+              state.incidentStates['inc-001'] !== 'Resolved' ? (
                 <Link href="/agentops/incidents/inc-001">
                   INC-001 · High latency detected →
                 </Link>

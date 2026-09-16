@@ -55,8 +55,8 @@ export default function AccountSettings() {
     <div className="surfacePage">
       <div className="pageHead">
         <div>
-          <h1>Settings</h1>
-          <p>Account access and server workspace configuration.</p>
+          <h2>Account connection</h2>
+          <p>Manage sign-in and workspace access.</p>
         </div>
       </div>
       <section className="panel">

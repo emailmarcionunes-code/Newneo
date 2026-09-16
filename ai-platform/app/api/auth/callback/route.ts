@@ -49,7 +49,7 @@ export async function GET(request: Request) {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: `${appOrigin()}/settings?login=failed`,
+        Location: `${appOrigin()}/login?reason=failed`,
         'Cache-Control': 'no-store',
       },
     });

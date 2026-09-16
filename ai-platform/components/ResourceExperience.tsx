@@ -4,6 +4,8 @@ import { surfaces, type SurfaceRecord } from '@/lib/surfaces';
 import { knowledgeSources, toolConnectors } from '@/lib/launch';
 import { Button, FilterChip } from './UI';
 import { ProviderLogo } from './Assets';
+import { usePreview } from './journeys/PreviewState';
+import { sourceRows } from '@/lib/hybrid-data';
 
 type Resource = SurfaceRecord & {
   provider: string;
@@ -39,7 +41,9 @@ function initialResources(surface: string): Resource[] {
   return surfaces[surface].records.map((record) => ({
     ...record,
     provider: record.id,
-    connected: false,
+    connected:
+      surface === 'knowledge' &&
+      sourceRows.some((r) => r[0] === record.id && r[5] === 'Live'),
     owner: 'Ana Martinez',
     scope: 'Customer Service workspace',
     environment: 'Development',
@@ -47,7 +51,11 @@ function initialResources(surface: string): Resource[] {
     authentication: 'OAuth',
     selectedActions: [],
     approval: true,
-    sync: 'Not synchronized',
+    sync:
+      surface === 'knowledge' &&
+      sourceRows.some((r) => r[0] === record.id && r[5] === 'Live')
+        ? 'Ready'
+        : 'Not synchronized',
     events: [],
   }));
 }
@@ -68,6 +76,7 @@ export default function ResourceExperience({
 }: {
   surface: 'knowledge' | 'tools';
 }) {
+  const { update } = usePreview();
   const knowledge = surface === 'knowledge';
   const noun = knowledge ? 'source' : 'connector';
   const providers = knowledge ? knowledgeSources : toolConnectors;
@@ -146,6 +155,10 @@ export default function ResourceExperience({
   }, [key]);
   useEffect(() => {
     if (!loaded) return;
+    update((s) => ({
+      ...s,
+      ui: { ...s.ui, [`resources:${surface}`]: records },
+    }));
     try {
       sessionStorage.setItem(key, JSON.stringify(records));
     } catch {

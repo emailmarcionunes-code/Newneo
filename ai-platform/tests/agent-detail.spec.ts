@@ -17,6 +17,7 @@ test('agent detail opens source, tool, evaluation and deployment details', async
   await page.getByRole('button', { name: 'Test tool' }).click();
   await expect(page.getByRole('status')).toContainText('no external action');
   await page.goto('/deployments/customer-service');
+  page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Rollback', exact: true }).click();
   await expect(
     page.getByRole('button', { name: 'Rollback', exact: true }),

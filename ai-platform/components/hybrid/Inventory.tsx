@@ -1,8 +1,10 @@
 'use client';
 import { useState } from 'react';
+import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
 import { hybridAgents, sourceRows, actionRows } from '@/lib/hybrid-data';
 import { Button, FilterChip } from '../UI';
+import { previewSourceRows } from '@/lib/source-preview';
 import ResourceExperience from '../ResourceExperience';
 import {
   PageTitle,
@@ -14,8 +16,8 @@ import {
   Bars,
 } from './UI';
 export function Agents() {
-  const [filter, setFilter] = useState('All');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter] = usePreviewValue('agents:filter', 'All');
+  const [search, setSearch] = usePreviewValue('agents:search', '');
   return (
     <div className="surfacePage hybridPage agentsPage">
       <PageTitle
@@ -101,8 +103,13 @@ export function Agents() {
 }
 export { default as Overview } from './OverviewFidelity';
 export function Resources({ tools = false }: { tools?: boolean }) {
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('All');
+  const { state } = usePreview();
+  const sourceRows = previewSourceRows(state.ui);
+  const [search, setSearch] = usePreviewValue(`inventory:${tools}:search`, '');
+  const [filter, setFilter] = usePreviewValue(
+    `inventory:${tools}:filter`,
+    'All',
+  );
   const [manage, setManage] = useState(false);
   if (manage)
     return (
@@ -135,10 +142,31 @@ export function Resources({ tools = false }: { tools?: boolean }) {
                 ['MCP servers', '4', '3 running'],
               ]
             : [
-                ['Sources connected', '7', '8 total'],
-                ['Documents indexed', '83,708', 'across all sources'],
-                ['Index coverage', '91%', 'active sources'],
-                ['Sync errors', '1', 'requires attention'],
+                [
+                  'Sources connected',
+                  String(sourceRows.filter((r) => r[5] === 'Live').length),
+                  `${sourceRows.length} total`,
+                ],
+                [
+                  'Documents indexed',
+                  sourceRows
+                    .reduce(
+                      (sum, r) => sum + (Number(r[3].replaceAll(',', '')) || 0),
+                      0,
+                    )
+                    .toLocaleString('en-US'),
+                  'across all sources',
+                ],
+                [
+                  'Index coverage',
+                  `${Math.round(sourceRows.reduce((sum, r) => sum + (parseFloat(r[7]) || 0), 0) / sourceRows.length)}%`,
+                  'all sources',
+                ],
+                [
+                  'Sync errors',
+                  String(sourceRows.filter((r) => r[5] === 'Error').length),
+                  'requires attention',
+                ],
               ]
         }
       />

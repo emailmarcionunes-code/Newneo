@@ -7,7 +7,7 @@ import {
   oidcConfiguration,
 } from '@/server/auth';
 import { seal } from '@/server/session-token';
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const config = await oidcConfiguration();
     const verifier = oidc.randomPKCECodeVerifier();
@@ -31,12 +31,9 @@ export async function GET() {
       headers: { Location: url.href, 'Cache-Control': 'no-store' },
     });
   } catch {
-    return Response.json(
-      {
-        error:
-          'Login is not available. Configure the OIDC provider and database.',
-      },
-      { status: 503, headers: { 'Cache-Control': 'no-store' } },
+    return Response.redirect(
+      new URL('/login?reason=unavailable', request.url),
+      303,
     );
   }
 }

@@ -1,15 +1,27 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { hybridAgents } from '@/lib/hybrid-data';
+import { agentConfiguration } from '@/lib/preview-records';
 import { Button } from '../UI';
 import { usePreview, identifier, type Release } from './PreviewState';
 import { JourneyHeader, Field, Feedback } from './Shared';
 export default function Deployments() {
   const { state, update } = usePreview();
-  const [runId, setRunId] = useState('');
+  const query = useSearchParams();
+  const agentId = query.get('agent');
+  const [runId, setRunId] = useState(query.get('run') || '');
   const [target, setTarget] = useState('Test');
   const [message, setMessage] = useState('');
-  const passed = state.runs.filter((r) => r.passed);
+  const passed = state.runs.filter(
+    (r) =>
+      r.passed &&
+      (!agentId || r.agentId === agentId) &&
+      (!r.configuration ||
+        r.configuration ===
+          agentConfiguration(state.ui, r.agentId || 'customer-service')),
+  );
   const run = passed.find((r) => r.id === runId) ?? passed[0];
   function transition(id: string, next: Release['state']) {
     update((s) => ({
@@ -22,7 +34,7 @@ export default function Deployments() {
     setMessage(`Deployment ${next.toLowerCase()} in this preview.`);
   }
   return (
-    <div className="surfacePage">
+    <div className="surfacePage hybridPage operationalEditor">
       <JourneyHeader
         title="Deployments"
         description="Review evaluated versions and explore controlled environment changes."
@@ -56,9 +68,13 @@ export default function Deployments() {
               </Field>
             </div>
             <p>
-              Customer Service Agent ·{' '}
-              {target === 'Test' ? 'Development → Test' : 'Test → Production'}.
-              Every promotion in this preview requires review.
+              {
+                hybridAgents.find(
+                  (a) => a.id === (run.agentId || 'customer-service'),
+                )?.name
+              }{' '}
+              · {target === 'Test' ? 'Development → Test' : 'Test → Production'}
+              . Every promotion in this preview requires review.
             </p>
             <Button
               disabled={
@@ -83,6 +99,7 @@ export default function Deployments() {
                     {
                       id: identifier(),
                       runId: run.id,
+                      agentId: run.agentId || 'customer-service',
                       version: run.version,
                       source: target === 'Test' ? 'Development' : 'Test',
                       target,
@@ -131,7 +148,14 @@ export default function Deployments() {
         {state.releases.map((r) => (
           <article className="agentCard" key={r.id}>
             <span className="tag">{r.state}</span>
-            <h3>Customer Service · {r.version}</h3>
+            <h3>
+              {
+                hybridAgents.find(
+                  (a) => a.id === (r.agentId || 'customer-service'),
+                )?.name
+              }{' '}
+              · {r.version}
+            </h3>
             <p>
               {r.source} → {r.target}
             </p>

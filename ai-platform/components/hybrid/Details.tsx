@@ -1,14 +1,24 @@
 'use client';
 import AgentWorkspace from './AgentWorkspace';
 import { evaluationScenarios } from '@/lib/readiness';
+import {
+  previewSourceRows,
+  sourceAgents,
+  sourceDocuments,
+} from '@/lib/source-preview';
 import { sourceProfiles } from '@/lib/resource-profiles';
 import { useState } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useSearchParams } from 'next/navigation';
+import {
+  deploymentRecords,
+  evaluationRecords,
+  productionVersion,
+} from '@/lib/preview-records';
 import { hybridAgents, sourceRows, actionRows } from '@/lib/hybrid-data';
 import { Button, FormField } from '../UI';
 import { Tabs, Panel, Feedback } from '../journeys/Shared';
-import { usePreview } from '../journeys/PreviewState';
+import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import { PageTitle, Metrics, Table, Status, DataNote, Bars } from './UI';
 export default function HybridDetail({
   kind,
@@ -17,10 +27,55 @@ export default function HybridDetail({
   kind: string;
   id: string;
 }) {
-  const { update } = usePreview();
+  const { state, update, ready } = usePreview();
+  const query = useSearchParams();
+  const sourceRows = previewSourceRows(state.ui);
+  const releaseId = query.get('release');
+  const runId = query.get('run');
+  const referenceRelease = deploymentRecords.find(
+    (r) => r.agentId === id && (!releaseId || r.id === releaseId),
+  );
+  const currentRelease = state.releases.find(
+    (r) => r.id === releaseId && (r.agentId || 'customer-service') === id,
+  );
+  const releaseVersion =
+    currentRelease?.version ||
+    referenceRelease?.version ||
+    productionVersion(id);
+  const releaseEnvironment =
+    currentRelease?.target || referenceRelease?.environment || 'Production';
+  const recordId = releaseId || referenceRelease?.id || id;
+  const run =
+    state.runs.find(
+      (r) => r.id === runId && (r.agentId || 'customer-service') === id,
+    ) || evaluationRecords(id).find((r) => !runId || r.id === runId);
+
   const [tab, setTab] = useState('Overview');
   const [message, setMessage] = useState('');
-  const [status, setStatus] = useState('Success');
+  const [storedStatus, setStoredStatus] = usePreviewValue(
+    `deployment:${recordId}:status`,
+    referenceRelease?.status || 'Success',
+  );
+  const status =
+    kind === 'incidents'
+      ? state.incidentStates[id] ||
+        (id === 'inc-002' ? 'Investigating' : 'Open')
+      : currentRelease?.state || storedStatus;
+  function setStatus(value: string) {
+    if (kind === 'incidents')
+      update((s) => ({
+        ...s,
+        incidentStates: { ...s.incidentStates, [id]: value },
+      }));
+    else if (currentRelease)
+      update((s) => ({
+        ...s,
+        releases: s.releases.map((r) =>
+          r.id === recordId ? { ...r, state: value as typeof r.state } : r,
+        ),
+      }));
+    else setStoredStatus(value);
+  }
   const [syncing, setSyncing] = useState(false);
   const policyNames: Record<string, string> = {
     '0': 'Audit Logging',
@@ -30,8 +85,12 @@ export default function HybridDetail({
     '4': 'Data Residency (EU)',
     '5': 'Rate Limiting',
   };
-  const [policy, setPolicy] = useState(policyNames[id] ?? '');
-  const [description, setDescription] = useState(
+  const [policy, setPolicy] = usePreviewValue(
+    `policy:${id}:name`,
+    policyNames[id] ?? '',
+  );
+  const [description, setDescription] = usePreviewValue(
+    `policy:${id}:description`,
     id === 'pii'
       ? 'Detect, mask and handle personal data according to GDPR / LGPD policy.'
       : id === '0'
@@ -44,17 +103,30 @@ export default function HybridDetail({
               ? 'Keep processing and storage inside approved EU regions.'
               : 'Limit per-user request volume within approved quotas.',
   );
-  const [mode, setMode] = useState('Enforce');
+  const [mode, setMode] = usePreviewValue(`policy:${id}:mode`, 'Enforce');
   if (
     (['agents', 'evaluations', 'deployments'].includes(kind) &&
       !hybridAgents.some((a) => a.id === id)) ||
-    (kind === 'knowledge' && !sourceRows.some((r) => r[0] === id)) ||
+    (ready && kind === 'knowledge' && !sourceRows.some((r) => r[0] === id)) ||
     (kind === 'tools' && !actionRows.some((r) => r[0] === id)) ||
     (kind === 'policies' && !policyNames[id]) ||
     (kind === 'incidents' && !['inc-001', 'inc-002'].includes(id))
   )
     notFound();
-  const agent = hybridAgents.find((a) => a.id === id) ?? hybridAgents[0];
+  const baseAgent = hybridAgents.find((a) => a.id === id) ?? hybridAgents[0];
+  const agent =
+    kind === 'evaluations' && run
+      ? { ...baseAgent, score: run.score }
+      : baseAgent;
+  if (
+    ready &&
+    ((kind === 'evaluations' && runId && !run) ||
+      (kind === 'deployments' &&
+        releaseId &&
+        !currentRelease &&
+        !referenceRelease))
+  )
+    notFound();
   function act(text: string) {
     setMessage(`${text} · preview only.`);
     update((s) => ({ ...s, audit: [`${text} · preview`, ...s.audit] }));
@@ -63,11 +135,14 @@ export default function HybridDetail({
   if (kind === 'knowledge') {
     const r = sourceRows.find((r) => r[0] === id) ?? sourceRows[0];
     const names = ['Overview', 'Documents', 'Sync'];
+    const linkedAgents = sourceAgents[id] || [];
+    const documents =
+      r[5] === 'Live' ? sourceDocuments[id] || [`${r[1]} sample document`] : [];
     return (
       <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
           title={r[1]}
-          description={`Last synced ${r[4]} · ${r[3]} documents · 2 agents`}
+          description={`Last synced ${r[4]} · ${r[3]} documents · ${linkedAgents.length} agents`}
         >
           <Status>{r[5]}</Status>
         </PageTitle>
@@ -80,7 +155,7 @@ export default function HybridDetail({
                 items={[
                   ['Documents indexed', r[3]],
                   ['Knowledge coverage', r[7]],
-                  ['Agents using', '2'],
+                  ['Agents using', String(linkedAgents.length)],
                   ['Sync frequency', '15 min'],
                 ]}
               />
@@ -107,16 +182,17 @@ export default function HybridDetail({
                 </section>
                 <section className="panel">
                   <h2>Agents using this source</h2>
-                  <p>
-                    <Link href="/agents/customer-service">
-                      Customer Service Agent →
-                    </Link>
-                  </p>
-                  <p>
-                    <Link href="/agents/knowledge-assistant">
-                      Knowledge Assistant →
-                    </Link>
-                  </p>
+                  {linkedAgents.length ? (
+                    linkedAgents.map((agentId) => (
+                      <p key={agentId}>
+                        <Link href={`/agents/${agentId}`}>
+                          {hybridAgents.find((a) => a.id === agentId)?.name} →
+                        </Link>
+                      </p>
+                    ))
+                  ) : (
+                    <p>No agents use this source yet.</p>
+                  )}
                 </section>
               </div>
               <section className="panel">
@@ -138,11 +214,12 @@ export default function HybridDetail({
             <Table
               caption="Indexed documents"
               headers={['Document', 'Status', 'Updated']}
-              rows={[
-                'Support policy',
-                'Product handbook',
-                'Escalation procedure',
-              ].map((d) => [d, 'Indexed', 'Today'])}
+              emptyMessage={
+                r[5] === 'Error'
+                  ? 'Source needs attention. Restore access and synchronize before documents are available.'
+                  : 'No indexed documents. Synchronize this source first.'
+              }
+              rows={documents.map((d) => [d, 'Indexed', r[4]])}
             />
           ) : (
             <section className="panel">
@@ -157,6 +234,16 @@ export default function HybridDetail({
                   setMessage('Sync in progress — indexing approved documents.');
                   await new Promise((resolve) => setTimeout(resolve, 700));
                   setSyncing(false);
+                  if (r[5] === 'Error') {
+                    setMessage(
+                      'Sync could not complete: restore source access in Manage sources and retry.',
+                    );
+                    return;
+                  }
+                  update((s) => ({
+                    ...s,
+                    ui: { ...s.ui, [`source:${id}:synced`]: true },
+                  }));
                   act(`${r[1]} synchronization completed`);
                 }}
               >
@@ -271,7 +358,7 @@ export default function HybridDetail({
               ? 'Tier-1 Support Suite'
               : `${agent.name} evaluation`
           }
-          description={`${agent.name} · Today 14:00 · 4m 12s · ${agent.model}`}
+          description={`${agent.name} · ${run?.id || 'EV-204'} · ${run?.version || productionVersion(id)} · ${agent.model}`}
         >
           <Status>{agent.score >= 90 ? 'Passed' : 'Warning'}</Status>
         </PageTitle>
@@ -294,12 +381,21 @@ export default function HybridDetail({
               ['Duration', '4m 12s'],
               ['Model', id === 'customer-service' ? 'GPT-4o' : agent.model],
               ['Pass rate', `${agent.score}%`],
-              ['Run date', 'Today'],
+              ['Run date', run && 'when' in run ? run.when : 'This session'],
             ]}
           />
         </div>
         <section className="panel">
           <h2>Scenario results</h2>
+          {run && 'question' in run && (
+            <div>
+              <h3>{run.name}</h3>
+              <p>{run.question}</p>
+              <p>Expected: {run.expected}</p>
+              <Status>{run.passed ? 'Passed' : 'Failed'}</Status>
+            </div>
+          )}
+          <p>Illustrative scenario breakdown for this preview.</p>
           <div className="scenarioResults">
             {[
               ['Task completion', '48/50 scenarios resolved', 96],
@@ -359,13 +455,15 @@ export default function HybridDetail({
     return (
       <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
-          title={`${agent.name} — v2.4`}
-          description="Production · Today 12:04 · 2m 14s · Deployed by j.silva"
+          title={`${agent.name} — ${releaseVersion}`}
+          description={`${releaseEnvironment} · ${recordId} · ${referenceRelease?.when || 'This session'} · ${referenceRelease?.by || 'You'}`}
         >
           <Button
             variant="outline"
             disabled={status === 'Rolled back'}
             onClick={() => {
+              if (!window.confirm('Roll back this deployment in the preview?'))
+                return;
               setStatus('Rolled back');
               act('Deployment rolled back to baseline');
             }}
@@ -376,9 +474,9 @@ export default function HybridDetail({
         <Feedback message={message} />
         <Metrics
           items={[
-            ['Environment', 'Production'],
-            ['Duration', '2m 14s'],
-            ['Deployed by', 'j.silva'],
+            ['Environment', releaseEnvironment],
+            ['Duration', referenceRelease?.duration || 'Preview'],
+            ['Deployed by', referenceRelease?.by || 'You'],
             ['Status', status],
           ]}
         />
@@ -449,10 +547,16 @@ export default function HybridDetail({
       <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
         <PageTitle
           title={`${id.toUpperCase()} · ${id === 'inc-002' ? 'Tool execution failed' : 'High latency detected'}`}
-          description={`${id === 'inc-002' ? 'Process Automation' : 'Sales Assistant'} · Started 14:30 · 45 min ongoing`}
+          description={`${id === 'inc-002' ? 'Process Automation' : 'Sales Assistant'} · ${status} · Started 14:30`}
         >
           <div className="resourceFooter">
-            <Button variant="outline" onClick={() => act('Incident escalated')}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setStatus('Escalated');
+                act('Incident escalated');
+              }}
+            >
               Escalate
             </Button>
             <Button
@@ -557,7 +661,7 @@ export default function HybridDetail({
     <div className={`surfacePage hybridPage detailPage ${kind}Detail`}>
       <PageTitle
         title={`Edit: ${policy}`}
-        description="Last modified Sep 12, 2026 · Actively enforced"
+        description={`Workspace policy · ${mode}`}
       />
       <Feedback message={message} />
       <div className="hybridSplit">
