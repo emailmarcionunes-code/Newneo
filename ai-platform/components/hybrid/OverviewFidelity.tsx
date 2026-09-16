@@ -1,4 +1,5 @@
 'use client';
+import { workspaceSummary, percent } from '@/lib/workspace-summary';
 import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import Link from 'next/link';
 import { hybridAgents } from '@/lib/hybrid-data';
@@ -19,19 +20,6 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-// Overview snapshot supplied by the user on 2026-09-16 supersedes frame 2:2.
-const agents = hybridAgents
-  .filter((a) => a.status !== 'Staging')
-  .slice(0, 5)
-  .map((a) => [
-    a.id,
-    a.name,
-    a.model,
-    a.tasks,
-    a.success,
-    a.latency,
-    a.status === 'Degraded' ? 'warning' : 'healthy',
-  ]);
 const events = [
   ['Sales Assistant degraded — latency spike', '09:42', 'danger', '/agentops'],
   [
@@ -67,10 +55,22 @@ const events = [
 ];
 export default function OverviewFidelity() {
   const hybridAgents = useWorkspaceAgents();
-  const workspaceTasks = hybridAgents.reduce(
-    (sum, a) => sum + (Number(a.tasks.replaceAll(',', '')) || 0),
-    0,
-  );
+  const summary = workspaceSummary(hybridAgents);
+  const workspaceTasks = summary.tasks;
+  const workspaceSpend = summary.spend;
+  const workspaceReadiness = Math.round(summary.readiness ?? 0);
+  // Overview snapshot supplied by the user on 2026-09-16 supersedes frame 2:2.
+  const agents = hybridAgents
+    .filter((a) => a.status !== 'Staging' || a.id.startsWith('preview-'))
+    .map((a) => [
+      a.id,
+      a.name,
+      a.model,
+      a.tasks,
+      a.success,
+      a.latency,
+      a.status === 'Degraded' ? 'warning' : 'healthy',
+    ]);
   const { state } = usePreview();
   const [enabled] = usePreviewValue('policies:enabled', [
     true,
@@ -122,7 +122,12 @@ export default function OverviewFidelity() {
             'Workspace sample',
             'neutral',
           ],
-          ['Success rate', '99.2%', 'last 24h', 'healthy'],
+          [
+            'Success rate',
+            percent(summary.successRate),
+            'Task-weighted sample',
+            'healthy',
+          ],
           ['Avg latency', '1.4s', 'P95: 3.2s', 'neutral'],
           [
             'AI spend',
@@ -248,8 +253,14 @@ export default function OverviewFidelity() {
             className="blue"
           />
           <div className="overviewProgressFoot">
-            <span>42 runs this week</span>
-            <span>3 failing scenarios</span>
+            <span>{hybridAgents.length + state.runs.length} preview runs</span>
+            <span>
+              {hybridAgents.reduce(
+                (sum, a) => sum + 50 - Math.round(a.score / 2),
+                0,
+              ) + state.runs.filter((r) => !r.passed).length}{' '}
+              failing cases
+            </span>
           </div>
           <Link href="/evaluations">View evaluations →</Link>
         </section>

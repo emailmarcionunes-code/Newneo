@@ -610,7 +610,7 @@ export default function HybridDetail({
           items={[
             ['Tasks affected', '54'],
             ['Users impacted', '~40'],
-            ['SLA breach risk', 'Yes'],
+            ['SLA breach risk', status === 'Resolved' ? 'Resolved' : 'Yes'],
             ['Duration', '45 min'],
           ]}
         />

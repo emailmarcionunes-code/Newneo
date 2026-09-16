@@ -22,7 +22,17 @@ export function useWorkspaceAgents() {
       (r) =>
         r.agentId === a.id && r.target === 'Production' && r.state === 'Active',
     );
-    if (!a.id.startsWith('preview-')) return a;
+    if (!a.id.startsWith('preview-')) {
+      const production = state.releases.find(
+        (r) =>
+          r.agentId === a.id &&
+          r.target === 'Production' &&
+          ['Active', 'Paused'].includes(r.state),
+      );
+      return production
+        ? { ...a, status: production.state === 'Active' ? 'Live' : 'Paused' }
+        : a;
+    }
     const other = state.releases.find(
       (r) => r.agentId === a.id && r.state === 'Active',
     );

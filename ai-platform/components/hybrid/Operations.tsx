@@ -1,4 +1,5 @@
 'use client';
+import { workspaceSummary, percent } from '@/lib/workspace-summary';
 import { Progress, IconLabel, Tag } from './UI';
 import { useDemoAccess } from '../journeys/DemoExperience';
 import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
@@ -39,6 +40,7 @@ const scenarios: [string, number][] = [
 ];
 export function Evaluations() {
   const hybridAgents = useWorkspaceAgents();
+  const summary = workspaceSummary(hybridAgents);
   const { state } = usePreview();
   const query = useSearchParams();
   const [edit, setEdit] = useState(query.get('edit') === '1');
@@ -68,10 +70,36 @@ export function Evaluations() {
                 ['Releases', String(state.releases.length)],
               ]
             : [
-                ['Avg readiness score', '89%', 'across all agents'],
-                ['Runs this month', '142', '16 scheduled'],
-                ['Pass rate', '50%', 'of evaluation suites'],
-                ['Failing scenarios', '8', 'across 3 agents'],
+                [
+                  'Avg readiness score',
+                  percent(summary.readiness),
+                  'across all agents',
+                ],
+                [
+                  'Evaluation runs',
+                  String(hybridAgents.length + state.runs.length),
+                  'displayed preview runs',
+                ],
+                [
+                  'Pass rate',
+                  percent(
+                    ((hybridAgents.filter((a) => a.score >= 90).length +
+                      state.runs.filter((r) => r.passed).length) /
+                      Math.max(1, hybridAgents.length + state.runs.length)) *
+                      100,
+                  ),
+                  'of displayed suites',
+                ],
+                [
+                  'Failing scenarios',
+                  String(
+                    hybridAgents.reduce(
+                      (sum, a) => sum + 50 - Math.round(a.score / 2),
+                      0,
+                    ) + state.runs.filter((r) => !r.passed).length,
+                  ),
+                  'displayed preview cases',
+                ],
               ]
         }
       />
@@ -178,6 +206,7 @@ export function Evaluations() {
 }
 export function Deployments() {
   const hybridAgents = useWorkspaceAgents();
+  const summary = workspaceSummary(hybridAgents);
   const { state } = usePreview();
   const query = useSearchParams();
   const [environment, setEnvironment] = useState('All');
@@ -315,6 +344,7 @@ export function Deployments() {
 }
 export function AgentOps() {
   const hybridAgents = useWorkspaceAgents();
+  const summary = workspaceSummary(hybridAgents);
   const { state } = usePreview();
   const [incidentStatus, setIncidentStatus] = useState('All');
   const names = ['Incidents', 'Logs', 'Health'];
@@ -334,10 +364,26 @@ export function AgentOps() {
                 ['Releases', String(state.releases.length)],
               ]
             : [
-                ['Tasks today', '6,912', 'across all agents'],
-                ['Success rate', '96.8%', 'last 1h average'],
+                [
+                  'Tasks today',
+                  summary.tasks.toLocaleString('en-US'),
+                  'current preview snapshot',
+                ],
+                [
+                  'Success rate',
+                  percent(summary.successRate),
+                  'task-weighted preview snapshot',
+                ],
                 ['Avg P95 latency', '1.4s', 'vs 1.6s yesterday'],
-                ['Error rate', '3.2%', 'of sample tasks'],
+                [
+                  'Error rate',
+                  percent(
+                    summary.successRate === null
+                      ? null
+                      : 100 - summary.successRate,
+                  ),
+                  'of measured sample tasks',
+                ],
                 [
                   'Degraded agents',
                   String(
@@ -350,8 +396,10 @@ export function AgentOps() {
                     (state.ui?.['demo:dataset'] === 'empty'
                       ? []
                       : incidentRecords
-                    ).filter((r) => state.incidentStates[r.id] !== 'Resolved')
-                      .length,
+                    ).filter(
+                      (r) =>
+                        (state.incidentStates[r.id] ?? r.status) !== 'Resolved',
+                    ).length,
                   ),
                   'open right now',
                 ],
@@ -512,7 +560,9 @@ export function AgentOps() {
 }
 export function FinOps() {
   const hybridAgents = useWorkspaceAgents();
+  const summary = workspaceSummary(hybridAgents);
   const { state } = usePreview();
+  const workspaceSpend = summary.spend;
   const [budget, setBudget] = useState(false);
   return (
     <div className="surfacePage hybridPage finOpsPage">
@@ -632,7 +682,7 @@ export function FinOps() {
               )
               .map((a) => [
                 a.name,
-                Math.min(100, (100 * a.cost) / a.budget),
+                a.budget > 0 ? (100 * a.cost) / a.budget : 0,
                 `$${a.cost} / $${a.budget}`,
               ])}
           />
@@ -690,6 +740,7 @@ export function FinOps() {
 export function Governance() {
   const { can } = useDemoAccess();
   const hybridAgents = useWorkspaceAgents();
+  const summary = workspaceSummary(hybridAgents);
   const { state } = usePreview();
   const names = ['Policies', 'Violations', 'Audit'];
   const [tab, setTab] = useState('Policies');

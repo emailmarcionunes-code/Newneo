@@ -1,4 +1,5 @@
 'use client';
+import { workspaceSummary, percent } from '@/lib/workspace-summary';
 import { Progress, Tag } from './UI';
 import { Terminal, Trash2, Send } from 'lucide-react';
 import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
@@ -11,6 +12,7 @@ import { usePreview } from '../journeys/PreviewState';
 import { PageTitle, Metrics, Table, Status, DataNote, exportCsv } from './UI';
 export function Reports() {
   const agents = useWorkspaceAgents();
+  const summary = workspaceSummary(agents);
   const [period, setPeriod] = useState('Last 7 days');
   const [start, setStart] = useState('2026-09-01');
   const [end, setEnd] = useState('2026-09-16');
@@ -105,10 +107,7 @@ export function Reports() {
             'Total Tasks',
             rows.reduce((sum, a) => sum + a.total, 0).toLocaleString('en-US'),
           ],
-          [
-            'Avg Success Rate',
-            `${avg(agents.filter((a) => Number.isFinite(parseFloat(a.success))).map((a) => parseFloat(a.success)))}%`,
-          ],
+          ['Avg Success Rate', percent(summary.successRate)],
           [
             'Total AI Spend',
             `$${agents.reduce((sum, a) => sum + a.cost, 0).toLocaleString('en-US')}`,

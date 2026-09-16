@@ -221,7 +221,9 @@ export function DetailLink({
 }
 export function DataNote() {
   return (
-    <p className="hybridDataNote">Reference workspace · interactive preview</p>
+    <p className="hybridDataNote">
+      Interactive demo · sample data · no live execution
+    </p>
   );
 }
 export function exportCsv(name: string, rows: string[][]) {
