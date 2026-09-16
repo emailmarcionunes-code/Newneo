@@ -1,4 +1,5 @@
 'use client';
+import { Progress, IconLabel, Tag } from './UI';
 import { useDemoAccess } from '../journeys/DemoExperience';
 import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import { useState } from 'react';
@@ -53,9 +54,11 @@ export function Evaluations() {
   return (
     <div className="surfacePage hybridPage evaluationsPage">
       <PageTitle
-        title="Production Confidence"
-        description="Run evaluation suites and compare readiness across agents."
-      />
+        title="Evaluations"
+        description="Production readiness assessments for all agents"
+      >
+        <Button onClick={() => setEdit(true)}>Run evaluation</Button>
+      </PageTitle>
       <Metrics
         items={
           state.ui?.['demo:dataset'] === 'empty'
@@ -72,15 +75,23 @@ export function Evaluations() {
               ]
         }
       />
-      <div className="hybridSplit">
+      <div className="referenceEvaluationLayout">
         <section className="panel">
           <div className="surfaceHeading">
             <h2>Evaluation runs</h2>
-            <Button onClick={() => setEdit(true)}>Run evaluation</Button>
           </div>
           <Table
             caption="Evaluation runs"
-            headers={['Agent', 'Suite', 'Score', 'Passed', 'Status']}
+            headers={[
+              'Agent',
+              'Eval Suite',
+              'Date',
+              'Readiness',
+              'Pass',
+              'Warning',
+              'Fail',
+              'Status',
+            ]}
             rows={[
               ...state.runs.map((r) => [
                 <DetailLink
@@ -95,13 +106,29 @@ export function Evaluations() {
                   · {r.version}
                 </DetailLink>,
                 r.name,
-                `${r.score}%`,
-                r.passed ? '1/1' : '0/1',
+                <span key="date" className="referenceMono">
+                  This session
+                </span>,
+                <Progress
+                  key="score"
+                  value={r.score}
+                  label={`${r.name} readiness`}
+                  tone={
+                    r.score >= 90 ? 'green' : r.score >= 80 ? 'amber' : 'red'
+                  }
+                />,
+                <span key="pass" className="successText">
+                  {r.passed ? '1' : '0'}
+                </span>,
+                '—',
+                <span key="fail" className="hybridDanger">
+                  {r.passed ? '—' : '1'}
+                </span>,
                 <Status key="s">{r.passed ? 'Passed' : 'Failed'}</Status>,
               ]),
               ...hybridAgents.map((a, i) => [
                 <DetailLink key={a.id} href={`/evaluations/${a.id}`}>
-                  {a.name}
+                  <IconLabel kind="evaluation">{a.name}</IconLabel>
                 </DetailLink>,
                 [
                   'Tier-1 Support Suite',
@@ -110,20 +137,25 @@ export function Evaluations() {
                   'CRM Interaction Suite',
                   'Workflow Orchestration',
                   'Intelligence Synthesis',
-                ][i],
-                <strong
+                ][i] ?? 'Agent readiness suite',
+                <span key="date" className="referenceMono">
+                  Today 10:42
+                </span>,
+                <Progress
                   key="score"
-                  className={
-                    a.score >= 90
-                      ? 'successText'
-                      : a.score >= 80
-                        ? 'hybridWarning'
-                        : 'hybridDanger'
+                  value={a.score}
+                  label={`${a.name} readiness`}
+                  tone={
+                    a.score >= 90 ? 'green' : a.score >= 80 ? 'amber' : 'red'
                   }
-                >
-                  {a.score}%
-                </strong>,
-                `${Math.round(a.score / 2)}/50`,
+                />,
+                <span key="pass" className="successText">
+                  {Math.round(a.score / 2)}
+                </span>,
+                '—',
+                <span key="fail" className="hybridDanger">
+                  {50 - Math.round(a.score / 2)}
+                </span>,
                 <Status key="s">
                   {a.score >= 90
                     ? 'Passed'
@@ -135,10 +167,10 @@ export function Evaluations() {
             ]}
           />
         </section>
-        <section className="panel">
-          <h2>Scenario categories</h2>
+        <details className="panel referenceScenarioDetails">
+          <summary>Scenario categories</summary>
           <Bars items={scenarios} semantics="quality" />
-        </section>
+        </details>
       </div>
       <DataNote />
     </div>
@@ -162,8 +194,8 @@ export function Deployments() {
   return (
     <div className="surfacePage hybridPage deploymentsPage">
       <PageTitle
-        title="Versions & Releases"
-        description="Manage environments, releases, failures and rollback history."
+        title="Deployments"
+        description="Agent deployment history and environment status"
       >
         <Button onClick={() => setEdit(true)}>Request promotion</Button>
       </PageTitle>
@@ -192,40 +224,34 @@ export function Deployments() {
               <h2>{name}</h2>
               <span>{count}</span>
             </header>
-            <div className="environmentHealth">
-              <div>
-                <strong>{healthy}</strong>
-                <small>Healthy</small>
-              </div>
-              {degraded !== '0' && (
-                <div className="danger">
-                  <strong>{degraded}</strong>
-                  <small>Degraded</small>
-                </div>
-              )}
-            </div>
-            <footer>
-              <span>Latest: {version}</span>
-              <span>{when}</span>
-            </footer>
+            <p
+              className={
+                degraded === '0'
+                  ? 'referenceEnvironmentHealthy'
+                  : 'referenceEnvironmentWarning'
+              }
+            >
+              {degraded === '0'
+                ? '● All systems operational'
+                : `● ${degraded} agent needs attention`}
+            </p>
           </article>
         ))}
       </div>
       <section className="panel">
         <div className="surfaceHeading">
           <h2>Deployment history</h2>
-          <label>
-            Environment
-            <select
-              aria-label="Environment"
-              value={environment}
-              onChange={(e) => setEnvironment(e.target.value)}
-            >
-              {['All', 'Production', 'Staging', 'Development'].map((v) => (
-                <option key={v}>{v}</option>
-              ))}
-            </select>
-          </label>
+          <div className="referenceSegments" aria-label="Environment">
+            {['All', 'Production', 'Staging', 'Development'].map((env) => (
+              <button
+                key={env}
+                aria-pressed={environment === env}
+                onClick={() => setEnvironment(env)}
+              >
+                {env === 'Staging' ? 'Staging / Test' : env}
+              </button>
+            ))}
+          </div>
         </div>
         <Table
           caption="Deployment history"
@@ -268,10 +294,14 @@ export function Deployments() {
                 key={r.id}
                 href={`/deployments/${r.agentId}?release=${r.id}`}
               >
-                {hybridAgents.find((a) => a.id === r.agentId)?.name}
+                <IconLabel kind="deployment">
+                  {hybridAgents.find((a) => a.id === r.agentId)?.name}
+                </IconLabel>
               </DetailLink>,
-              r.version,
-              r.environment,
+              <span className="referenceMono" key="version">
+                {r.version}
+              </span>,
+              <Tag key="environment">{r.environment}</Tag>,
               r.by,
               r.when,
               r.duration,
@@ -286,14 +316,14 @@ export function Deployments() {
 export function AgentOps() {
   const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
-  const [incidentStatus, setIncidentStatus] = useState('Open');
-  const names = ['Health', 'Incidents', 'Logs'];
-  const [tab, setTab] = useState('Health');
+  const [incidentStatus, setIncidentStatus] = useState('All');
+  const names = ['Incidents', 'Logs', 'Health'];
+  const [tab, setTab] = useState('Incidents');
   return (
     <div className="surfacePage hybridPage agentOpsPage">
       <PageTitle
-        title="Operational Health"
-        description="Live view of task success, latency, incidents and execution signals."
+        title="AgentOps"
+        description="Real-time operational health across all agents"
       />
       <Metrics
         items={
@@ -307,6 +337,13 @@ export function AgentOps() {
                 ['Tasks today', '6,912', 'across all agents'],
                 ['Success rate', '96.8%', 'last 1h average'],
                 ['Avg P95 latency', '1.4s', 'vs 1.6s yesterday'],
+                ['Error rate', '3.2%', 'of sample tasks'],
+                [
+                  'Degraded agents',
+                  String(
+                    hybridAgents.filter((a) => a.status === 'Degraded').length,
+                  ),
+                ],
                 [
                   'Active incidents',
                   String(
@@ -384,12 +421,24 @@ export function AgentOps() {
           </div>
         ) : tab === 'Incidents' ? (
           <>
-            <label className="journeyField">
+            <div className="intelligenceNote">
+              <strong>NEWNEO</strong>
+              {
+                incidentRecords.filter(
+                  (r) =>
+                    (state.incidentStates[r.id] ?? r.status) !== 'Resolved',
+                ).length
+              }{' '}
+              active incidents. Review degraded agents and affected tool
+              executions before retrying.
+            </div>
+            <label className="journeyField referenceIncidentFilter">
               Incident status
               <select
                 value={incidentStatus}
                 onChange={(e) => setIncidentStatus(e.target.value)}
               >
+                <option>All</option>
                 <option>Open</option>
                 <option>Resolved</option>
               </select>
@@ -397,7 +446,16 @@ export function AgentOps() {
             <Table
               emptyMessage="No incidents match this status."
               caption="Incidents"
-              headers={['Incident', 'Agent', 'Severity', 'Status']}
+              headers={[
+                'Incident',
+                'Agent',
+                'Severity',
+                'Users affected',
+                'Tasks affected',
+                'Started',
+                'SLA',
+                'Status',
+              ]}
               rows={(state.ui?.['demo:dataset'] === 'empty'
                 ? []
                 : incidentRecords
@@ -407,9 +465,11 @@ export function AgentOps() {
                   status: state.incidentStates[r.id] || r.status,
                 }))
                 .filter((r) =>
-                  incidentStatus === 'Resolved'
-                    ? r.status === 'Resolved'
-                    : r.status !== 'Resolved',
+                  incidentStatus === 'All'
+                    ? true
+                    : incidentStatus === 'Resolved'
+                      ? r.status === 'Resolved'
+                      : r.status !== 'Resolved',
                 )
                 .map((r) => [
                   <DetailLink key={r.id} href={`/agentops/incidents/${r.id}`}>
@@ -417,6 +477,19 @@ export function AgentOps() {
                   </DetailLink>,
                   hybridAgents.find((a) => a.id === r.agentId)?.name,
                   <Status key="severity">{r.severity}</Status>,
+                  '~40',
+                  '54',
+                  <span key="started" className="referenceMono">
+                    14:30 today
+                  </span>,
+                  <span
+                    key="sla"
+                    className={
+                      r.status === 'Resolved' ? 'successText' : 'hybridDanger'
+                    }
+                  >
+                    {r.status === 'Resolved' ? 'Resolved' : 'At risk'}
+                  </span>,
                   <Status key="status">{r.status}</Status>,
                 ])}
             />
@@ -444,7 +517,7 @@ export function FinOps() {
   return (
     <div className="surfacePage hybridPage finOpsPage">
       <PageTitle
-        title="AI Economics"
+        title="FinOps"
         description="Understand cost per task, budgets, model spend and optimization opportunities."
       />
       <Metrics
@@ -461,7 +534,42 @@ export function FinOps() {
                   `$${workspaceSpend.toLocaleString('en-US')}`,
                   `of $${state.budget.toLocaleString('en-US')} budget`,
                 ],
-                ['Cost per task', '$0.08', 'avg across all agents'],
+                [
+                  'Budget used',
+                  `${Math.round((workspaceSpend / state.budget) * 100)}%`,
+                ],
+                [
+                  'Cost per task',
+                  `$${(
+                    workspaceSpend /
+                    Math.max(
+                      1,
+                      hybridAgents.reduce(
+                        (sum, a) =>
+                          sum + (Number(a.tasks.replaceAll(',', '')) || 0),
+                        0,
+                      ),
+                    )
+                  ).toFixed(3)}`,
+                  'sample workspace',
+                ],
+                [
+                  'Cost per success',
+                  `$${(
+                    workspaceSpend /
+                    Math.max(
+                      1,
+                      hybridAgents.reduce(
+                        (sum, a) =>
+                          sum +
+                          ((Number(a.tasks.replaceAll(',', '')) || 0) *
+                            (parseFloat(a.success) || 0)) /
+                            100,
+                        0,
+                      ),
+                    )
+                  ).toFixed(3)}`,
+                ],
                 ['vs. baseline', '−34%', 'savings vs manual'],
                 ['Sales Agent overage', '$48', 'above budget'],
               ]
@@ -535,20 +643,22 @@ export function FinOps() {
         <aside>
           <section className="panel">
             <h2>Cost by model</h2>
-            <dl className="surfaceFacts modelCostFacts">
-              {[
-                ['Azure GPT-4o', '$1,030'],
-                ['Claude 3.5', '$541'],
-                ['Managed GPT-4o', '$247'],
-                ['Hybrid AI', '$389'],
-                ['Private Llama 3', '$83'],
-              ].map(([k, v]) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
+            <Bars
+              items={Object.entries(
+                hybridAgents.reduce<Record<string, number>>((totals, a) => {
+                  totals[a.model] = (totals[a.model] ?? 0) + a.cost;
+                  return totals;
+                }, {}),
+              ).map(([name, cost]) => [
+                name,
+                (100 * cost) /
+                  Math.max(
+                    1,
+                    hybridAgents.reduce((sum, a) => sum + a.cost, 0),
+                  ),
+                `$${cost}`,
+              ])}
+            />
           </section>
           <div className="intelligenceNote">
             <strong>COST RECOMMENDATIONS</strong>
@@ -612,8 +722,8 @@ export function Governance() {
   return (
     <div className="surfacePage hybridPage governancePage">
       <PageTitle
-        title="Policies & Controls"
-        description="Manage organization policy, violations and auditability."
+        title="Governance"
+        description="Active policies protecting your enterprise AI agents"
       >
         <Button onClick={() => setEdit(true)}>Review approvals</Button>
       </PageTitle>
@@ -640,66 +750,64 @@ export function Governance() {
       <Tabs names={names} current={tab} onChange={setTab} />
       <Panel names={names} current={tab}>
         {tab === 'Policies' ? (
-          <div className="hybridPolicyList">
-            {policies.map((p, i) => (
-              <div key={p}>
-                <input
-                  type="checkbox"
-                  role="switch"
-                  aria-label={p}
-                  checked={enabled[i]}
-                  disabled={!can('admin')}
-                  onChange={(e) =>
-                    setEnabled((v) =>
-                      v.map((b, j) => (j === i ? e.target.checked : b)),
-                    )
-                  }
-                />
-                <DetailLink
-                  href={`/governance/policies/${i === 1 ? 'pii' : i}`}
-                >
-                  {String(
-                    state.ui?.[`policy:${i === 1 ? 'pii' : i}:name`] ?? p,
-                  )}
-                </DetailLink>
-                <span>
-                  {
-                    [
-                      'Compliance',
-                      'Privacy',
-                      'Access',
-                      'Safety',
-                      'Compliance',
-                      'Operations',
-                    ][i]
-                  }
-                </span>
-                <small>
-                  {String(
-                    state.ui?.[`policy:${i === 1 ? 'pii' : i}:description`] ??
-                      [
-                        'Every agent action logged with context.',
-                        'Detect, mask and handle personal data.',
-                        'Restrict interaction to authorized roles.',
-                        'Require approval for sensitive actions.',
-                        'Processing and storage remain in EU.',
-                        'Cap usage per user and department.',
-                      ][i],
-                  )}
-                </small>
-                <small className="policyAudience">
-                  {i === 3
-                    ? 'High-risk tools'
-                    : i === 4
-                      ? '2 agents'
-                      : 'All agents'}
-                </small>
-                <Status>
-                  {i < 3 ? 'Required' : i === 5 ? 'Optional' : 'Recommended'}
-                </Status>
-              </div>
-            ))}
-          </div>
+          <Table
+            caption="Policies"
+            headers={[
+              'Policy',
+              'Scope',
+              'Severity',
+              'Enforcement',
+              'Violations',
+              'Status',
+              'Enabled',
+              'Action',
+            ]}
+            rows={policies.map((p, i) => [
+              <DetailLink
+                key="name"
+                href={`/governance/policies/${i === 1 ? 'pii' : i}`}
+              >
+                {String(state.ui?.[`policy:${i === 1 ? 'pii' : i}:name`] ?? p)}
+              </DetailLink>,
+              i === 3 ? 'High-risk tools' : i === 4 ? '2 agents' : 'All Agents',
+              <Status key="severity">
+                {i === 4 ? 'Medium' : i === 5 ? 'Low' : 'High'}
+              </Status>,
+              [
+                'Log',
+                'Block',
+                'Enforce',
+                'Require Approval',
+                'Block',
+                'Enforce',
+              ][i],
+              <span key="violations" className={i === 1 ? 'hybridWarning' : ''}>
+                {i === 1 ? 2 : 0}
+              </span>,
+              <Status key="status">
+                {enabled[i] ? 'Active' : 'Inactive'}
+              </Status>,
+              <input
+                key="switch"
+                type="checkbox"
+                role="switch"
+                aria-label={p}
+                checked={enabled[i]}
+                disabled={!can('admin')}
+                onChange={(e) =>
+                  setEnabled((v) =>
+                    v.map((b, j) => (j === i ? e.target.checked : b)),
+                  )
+                }
+              />,
+              <DetailLink
+                key="edit"
+                href={`/governance/policies/${i === 1 ? 'pii' : i}`}
+              >
+                Edit
+              </DetailLink>,
+            ])}
+          />
         ) : tab === 'Violations' ? (
           <section className="panel">
             <h2>Open violations</h2>

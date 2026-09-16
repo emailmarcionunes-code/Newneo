@@ -56,7 +56,9 @@ export default function HybridDetail({
       (r) => r.id === runId && (r.agentId || 'customer-service') === id,
     ) || evaluationRecords(id).find((r) => !runId || r.id === runId);
 
-  const [tab, setTab] = useState('Overview');
+  const [tab, setTab] = useState(
+    kind === 'knowledge' && query.get('tab') === 'Sync' ? 'Sync' : 'Overview',
+  );
   const [message, setMessage] = useState('');
   const [storedStatus, setStoredStatus] = usePreviewValue(
     `deployment:${recordId}:status`,

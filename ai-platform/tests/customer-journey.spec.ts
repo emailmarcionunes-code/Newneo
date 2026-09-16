@@ -81,6 +81,7 @@ test('launch creates a persistent workspace agent, release and monitoring record
     .click();
   await expect(page).toHaveURL(new RegExp(href!));
   await page.goto('/agentops');
+  await page.getByRole('tab', {name: 'Health', exact: true}).click();
   await expect(
     page.getByRole('heading', { name: 'IT Journey Demo', exact: true }),
   ).toBeVisible();
@@ -119,7 +120,7 @@ test('launch creates a persistent workspace agent, release and monitoring record
     .getByRole('link', { name: 'Reconnect and synchronize sources →' })
     .click();
   await expect(
-    page.getByRole('heading', { name: 'Knowledge Sources', exact: true }),
+    page.getByRole('heading', { name: 'Knowledge', exact: true }),
   ).toBeVisible();
 });
 

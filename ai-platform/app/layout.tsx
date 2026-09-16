@@ -10,6 +10,7 @@ import './hybrid-v4.css';
 import './hybrid-audit.css';
 import './visual-fidelity.css';
 import './experience-quality.css';
+import './make-refinement.css';
 import { SidebarStateProvider } from '@/components/SidebarState';
 import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 

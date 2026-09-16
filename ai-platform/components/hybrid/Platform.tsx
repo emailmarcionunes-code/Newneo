@@ -1,4 +1,7 @@
 'use client';
+import { Progress, Tag } from './UI';
+import { Terminal, Trash2, Send } from 'lucide-react';
+import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import ReportSchedule from './ReportSchedule';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -7,93 +10,165 @@ import { Button } from '../UI';
 import { usePreview } from '../journeys/PreviewState';
 import { PageTitle, Metrics, Table, Status, DataNote, exportCsv } from './UI';
 export function Reports() {
+  const agents = useWorkspaceAgents();
+  const [period, setPeriod] = useState('Last 7 days');
+  const [start, setStart] = useState('2026-09-01');
+  const [end, setEnd] = useState('2026-09-16');
+  const days =
+    period === 'Last 7 days'
+      ? 7
+      : period === 'Last 30 days'
+        ? 30
+        : period === 'Last 90 days'
+          ? 90
+          : Math.max(
+              1,
+              Math.floor((Date.parse(end) - Date.parse(start)) / 86400000) + 1,
+            );
+  const rows = agents.map((a) => ({
+    ...a,
+    total: (Number(a.tasks.replaceAll(',', '')) || 0) * days,
+  }));
+  const avg = (values: number[]) =>
+    (values.reduce((s, v) => s + v, 0) / Math.max(1, values.length)).toFixed(1);
   return (
     <div className="surfacePage hybridPage reportsPage">
       <PageTitle
         title="Reports"
-        description="Executive trends across tasks, cost, quality and compliance."
-      />
+        description="Aggregated performance, cost, and compliance summaries"
+      >
+        <div className="referenceActions">
+          <Button
+            variant="outline"
+            onClick={() =>
+              exportCsv('newneo-performance-preview.csv', [
+                [
+                  'Agent',
+                  'Total tasks',
+                  'Success rate',
+                  'AI spend',
+                  'Eval score',
+                ],
+                ...rows.map((a) => [
+                  a.name,
+                  String(a.total),
+                  a.success,
+                  String(a.cost),
+                  String(a.score),
+                ]),
+              ])
+            }
+          >
+            Export CSV
+          </Button>
+          <Button variant="outline" onClick={() => window.print()}>
+            Export PDF
+          </Button>
+        </div>
+      </PageTitle>
+      <div className="referenceSegments" aria-label="Report period">
+        {['Last 7 days', 'Last 30 days', 'Last 90 days', 'Custom'].map((p) => (
+          <button
+            key={p}
+            aria-pressed={p === period}
+            onClick={() => setPeriod(p)}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+      {period === 'Custom' && (
+        <div className="referenceActions">
+          <label>
+            From{' '}
+            <input
+              type="date"
+              value={start}
+              max={end}
+              onChange={(e) => setStart(e.target.value)}
+            />
+          </label>
+          <label>
+            To{' '}
+            <input
+              type="date"
+              value={end}
+              min={start}
+              onChange={(e) => setEnd(e.target.value)}
+            />
+          </label>
+        </div>
+      )}
       <Metrics
         items={[
-          ['Total tasks (6m)', '106K'],
-          ['Total cost (6m)', '$10.2K'],
-          ['Avg success rate', '94%'],
-          ['Avg eval score', '80/100'],
+          [
+            'Total Tasks',
+            rows.reduce((sum, a) => sum + a.total, 0).toLocaleString('en-US'),
+          ],
+          [
+            'Avg Success Rate',
+            `${avg(agents.filter((a) => Number.isFinite(parseFloat(a.success))).map((a) => parseFloat(a.success)))}%`,
+          ],
+          [
+            'Total AI Spend',
+            `$${agents.reduce((sum, a) => sum + a.cost, 0).toLocaleString('en-US')}`,
+          ],
+          ['Avg Eval Score', `${avg(agents.map((a) => a.score))}%`],
         ]}
       />
-      <div className="hybridSplit">
-        <section className="panel">
-          <h2>Task volume — Monthly</h2>
-          <div
-            className="hybridChart"
-            aria-label="Monthly task volume: April 11K, May 13K, June 15K, July 17K, August 22K, September 28K"
-          >
-            {[11, 13, 15, 17, 22, 28].map((n, i) => (
-              <div key={i}>
-                <span style={{ height: n * 4 }} />
-                <small>{['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'][i]}</small>
-              </div>
-            ))}
-          </div>
-        </section>
-        <section className="panel">
-          <h2>Compliance</h2>
-          <dl className="surfaceFacts">
-            {[
-              ['Policy violations', '14'],
-              ['Auto-resolved', '11'],
-              ['Requiring action', '3'],
-              ['HITL approvals', '28'],
-              ['Audit events', '1.2K'],
-            ].map(([k, v]) => (
-              <div key={k} data-fact={k}>
-                <dt>{k}</dt>
-                <dd>{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      </div>
       <section className="panel">
-        <h2>Agent performance breakdown</h2>
+        <h2>Agent Performance</h2>
         <Table
           caption="Agent performance breakdown"
           headers={[
             'Agent',
-            'Tasks',
-            'Success',
-            'Latency',
-            'Cost',
-            'Eval',
-            'Trend',
+            'Total Tasks',
+            'Success Rate',
+            'AI Spend',
+            'Eval Score',
           ]}
-          rows={[hybridAgents[0], hybridAgents[1], hybridAgents[3]].map(
-            (a, i) => [
-              <Link key={a.id} href={`/agents/${a.id}`}>
-                {a.name}
-              </Link>,
-              ['18.4K', '6.3K', '4.1K'][i],
-              <span
-                key="success"
-                className={
-                  a.status === 'Degraded' ? 'hybridDanger' : 'successText'
-                }
-              >
-                {a.success}
-              </span>,
-              a.latency,
-              `$${a.cost}`,
-              `${a.score}%`,
-              <span
-                key="trend"
-                className={i === 2 ? 'hybridDanger' : 'successText'}
-              >
-                {['+4%', '+1%', '−6%'][i]}
-              </span>,
-            ],
-          )}
+          rows={rows.map((a) => [
+            <Link key="agent" href={`/agents/${a.id}`}>
+              {a.name}
+            </Link>,
+            a.total.toLocaleString('en-US'),
+            <Progress
+              key="success"
+              label={`${a.name} success rate`}
+              value={parseFloat(a.success)}
+              tone={parseFloat(a.success) >= 95 ? 'green' : 'amber'}
+            />,
+            `$${a.cost}`,
+            <Progress
+              key="score"
+              label={`${a.name} evaluation score`}
+              value={a.score}
+              tone={a.score >= 90 ? 'green' : 'amber'}
+            />,
+          ])}
         />
       </section>
+      <section className="panel">
+        <h2>Compliance Summary</h2>
+        <div className="referenceCompliance">
+          <div>
+            <strong>78%</strong>
+            <span>Average Compliance Score</span>
+          </div>
+          <div>
+            <strong>2</strong>
+            <span>Open Policy Violations</span>
+          </div>
+          <div>
+            <strong>5 / 6</strong>
+            <span>Agents Compliant</span>
+          </div>
+        </div>
+      </section>
+      <p className="hybridDataNote">
+        Preview period totals are simulated from the sample daily task volume;
+        spend is the current workspace snapshot.
+      </p>
       <ReportSchedule />
       <DataNote />
     </div>
@@ -127,16 +202,29 @@ export function AuditLog() {
     <div className="surfacePage hybridPage auditLogPage">
       <PageTitle
         title="Audit Log"
-        description="Immutable record of deployments, policy changes and system events."
-      />
-      <Metrics
-        items={[
-          ['Events today', '15'],
-          ['Deployments', '3'],
-          ['Policy changes', '2'],
-          ['Incidents', '4'],
-        ]}
-      />
+        description="Full platform activity trail with search and export"
+      >
+        {' '}
+        <Button
+          variant="outline"
+          onClick={() =>
+            exportCsv('newneo-audit-preview.csv', [
+              [
+                'Timestamp',
+                'User',
+                'Role',
+                'Action',
+                'Resource',
+                'Environment',
+                'Result',
+              ],
+              ...rows,
+            ])
+          }
+        >
+          Export CSV
+        </Button>
+      </PageTitle>
       <section className="panel">
         <div className="hybridControls">
           <input
@@ -145,58 +233,60 @@ export function AuditLog() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {[
-            [
-              'User',
-              user,
-              setUser,
-              ['j.silva', 'system', 'a.costa', 'r.lima', 'You'],
-            ],
-            [
-              'Action',
-              action,
-              setAction,
-              [
-                'deploy',
-                'incident.open',
-                'policy.edit',
-                'eval.run',
-                'preview.change',
-              ],
-            ],
-            ['Result', result, setResult, ['Success', 'Info', 'Rollback']],
-          ].map(([label, val, set, options]) => (
-            <label key={String(label)}>
-              {String(label)}
-              <select
-                value={String(val)}
-                onChange={(e) => (set as (v: string) => void)(e.target.value)}
+          <div className="referenceSegments" aria-label="Audit action">
+            {[
+              ['All', 'All'],
+              ['Create', 'create'],
+              ['Update', 'policy.edit'],
+              ['Delete', 'delete'],
+              ['Deploy', 'deploy'],
+              ['Login', 'login'],
+            ].map(([label, value]) => (
+              <button
+                key={value}
+                aria-pressed={action === value}
+                onClick={() => setAction(value)}
               >
-                {['All', ...(options as string[])].map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </label>
-          ))}
-          <Button
-            variant="link"
-            onClick={() =>
-              exportCsv('newneo-audit-preview.csv', [
+                {label}
+              </button>
+            ))}
+          </div>
+          <details className="referenceAuditFilters">
+            <summary>More filters</summary>
+            {[
+              [
+                'User',
+                user,
+                setUser,
+                ['j.silva', 'system', 'a.costa', 'r.lima', 'You'],
+              ],
+              [
+                'Action',
+                action,
+                setAction,
                 [
-                  'Timestamp',
-                  'User',
-                  'Role',
-                  'Action',
-                  'Resource',
-                  'Environment',
-                  'Result',
+                  'deploy',
+                  'incident.open',
+                  'policy.edit',
+                  'eval.run',
+                  'preview.change',
                 ],
-                ...rows,
-              ])
-            }
-          >
-            Export CSV
-          </Button>
+              ],
+              ['Result', result, setResult, ['Success', 'Info', 'Rollback']],
+            ].map(([label, val, set, options]) => (
+              <label key={String(label)}>
+                {String(label)}
+                <select
+                  value={String(val)}
+                  onChange={(e) => (set as (v: string) => void)(e.target.value)}
+                >
+                  {['All', ...(options as string[])].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </details>
         </div>
         <Table
           caption="Audit events"
@@ -210,7 +300,16 @@ export function AuditLog() {
             'Result',
           ]}
           rows={rows.map((r) => [
-            ...r.slice(0, 6),
+            <span key="time" className="referenceMono">
+              {r[0]}
+            </span>,
+            <span key="user" className="referenceMono">
+              {r[1]}
+            </span>,
+            <Tag key="role">{r[2]}</Tag>,
+            <Tag key="action">{r[3]}</Tag>,
+            r[4],
+            r[5],
             <Status key="s">{r[6]}</Status>,
           ])}
         />
@@ -224,41 +323,22 @@ export function AuditLog() {
 }
 export function Playground() {
   const [agent, setAgent] = useState(hybridAgents[0].id);
-  const [temperature, setTemperature] = useState('0.4');
+  const [temperature, setTemperature] = useState('0.2');
   const [tokens, setTokens] = useState('2048');
   const [show, setShow] = useState(true);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<{ role: string; text: string }[]>([
-    { role: 'user', text: 'Preciso cancelar meu pedido #78234' },
-    {
-      role: 'assistant',
-      text: 'Consultei seu pedido. Ele está em transporte. Posso criar um ticket de devolução quando chegar.',
-    },
-  ]);
+  const [messages, setMessages] = useState<{ role: string; text: string }[]>(
+    [],
+  );
   return (
     <div className="surfacePage hybridPage playgroundPage">
       <PageTitle
-        title="Agent Playground"
-        description="Test conversations and tool calls safely before production."
+        title="Playground"
+        description="Interactive agent sandbox — no production actions"
       />
       <div className="playgroundLayout">
         <section className="panel">
-          <h2>AGENT</h2>
-          <div className="playgroundAgents">
-            {hybridAgents.map((a) => (
-              <button
-                aria-pressed={agent === a.id}
-                key={a.id}
-                onClick={() => {
-                  setAgent(a.id);
-                  setMessages([]);
-                }}
-              >
-                {a.name}
-              </button>
-            ))}
-          </div>
-          <h3>PARAMETERS</h3>
+          <h2>PARAMETERS</h2>
           <label>
             Temperature · {temperature}
             <input
@@ -289,10 +369,35 @@ export function Playground() {
             />{' '}
             Show tool calls
           </label>
+          <div className="intelligenceNote">
+            <strong>Sandbox mode</strong>No real production actions are
+            executed. Test any flow with sample responses.
+          </div>
         </section>
         <section className="panel playgroundChat">
-          <h2>{hybridAgents.find((a) => a.id === agent)?.name} · Sandbox</h2>
-          <Status>Sandbox — no real actions are executed</Status>
+          <div className="referenceChatHeader">
+            <Terminal size={17} aria-hidden="true" />
+            <select
+              aria-label="Agent"
+              value={agent}
+              onChange={(e) => {
+                setAgent(e.target.value);
+                setMessages([]);
+              }}
+            >
+              {hybridAgents.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+            <Status>
+              {hybridAgents.find((a) => a.id === agent)?.status ?? 'Sandbox'}
+            </Status>
+            <Button variant="link" onClick={() => setMessages([])}>
+              <Trash2 size={15} aria-hidden="true" /> Clear
+            </Button>
+          </div>
           <div
             className="playgroundMessages"
             role="log"
@@ -310,9 +415,24 @@ export function Playground() {
                 </div>
               ))
             ) : (
-              <p className="hybridDataNote">
-                Type a test message to explore the sample conversation.
-              </p>
+              <div className="referenceChatEmpty">
+                <span>
+                  <Terminal size={24} aria-hidden="true" />
+                </span>
+                <h2>{hybridAgents.find((a) => a.id === agent)?.name}</h2>
+                <p>Send a message to start testing</p>
+                <div>
+                  {[
+                    'Reset my password',
+                    'VPN not working',
+                    'Request software access',
+                  ].map((prompt) => (
+                    <button key={prompt} onClick={() => setInput(prompt)}>
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
           <form
@@ -342,7 +462,7 @@ export function Playground() {
               disabled={!input.trim()}
               aria-label="Send test message"
             >
-              →
+              <Send size={18} aria-hidden="true" />
             </Button>
           </form>
         </section>

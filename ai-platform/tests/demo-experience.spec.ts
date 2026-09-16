@@ -60,7 +60,7 @@ test('empty workspace, onboarding and sample restore are explicit and repeatable
   );
   await page.goto('/knowledge');
   await expect(page.getByRole('link', { name: /Confluence/ })).toHaveCount(0);
-  await page.getByRole('button', { name: '+ Connect Source' }).click();
+  await page.getByRole('button', { name: '+ Add Source' }).click();
   await expect(page.locator('.resourceCard')).toHaveCount(0);
   await page.goto('/reports');
   await expect(page.locator('main')).toContainText('No historical sample data');

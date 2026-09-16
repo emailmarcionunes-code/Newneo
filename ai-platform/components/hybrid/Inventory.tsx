@@ -1,33 +1,25 @@
 'use client';
+import { RefreshCw } from 'lucide-react';
+import { deploymentRecords } from '@/lib/preview-records';
+import { IconLabel, Tag, Progress } from './UI';
 import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import { useState } from 'react';
 import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
-import {
-  hybridAgents,
-  sourceRows,
-  actionRows as fixtureActions,
-} from '@/lib/hybrid-data';
+import { actionRows as fixtureActions } from '@/lib/hybrid-data';
 import { Button, FilterChip } from '../UI';
 import { previewSourceRows } from '@/lib/source-preview';
 import ResourceExperience from '../ResourceExperience';
-import {
-  PageTitle,
-  Metrics,
-  Table,
-  Status,
-  DetailLink,
-  DataNote,
-  Bars,
-} from './UI';
+import { PageTitle, Metrics, Table, Status, DetailLink, DataNote } from './UI';
 export function Agents() {
+  const { state } = usePreview();
   const hybridAgents = useWorkspaceAgents();
   const [filter, setFilter] = usePreviewValue('agents:filter', 'All');
   const [search, setSearch] = usePreviewValue('agents:search', '');
   return (
     <div className="surfacePage hybridPage agentsPage">
       <PageTitle
-        title="All Agents"
+        title="Agents"
         description={`${hybridAgents.filter((a) => a.status === 'Live').length} live · ${hybridAgents.filter((a) => a.status === 'Staging').length} staging · ${hybridAgents.filter((a) => a.status === 'Degraded').length} degraded`}
       >
         <Link className="button primary" href="/agents/catalog">
@@ -52,7 +44,7 @@ export function Agents() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="filterRow">
-          {['All', 'Live', 'Degraded', 'Staging'].map((v) => (
+          {['All', 'Live', 'Degraded', 'Paused', 'Staging'].map((v) => (
             <FilterChip
               key={v}
               active={filter === v}
@@ -68,10 +60,13 @@ export function Agents() {
         headers={[
           'Agent',
           'Status',
+          'Version',
           'Tasks/day',
           'Success',
           'Latency',
           'Model',
+          'Owner',
+          'Deployed',
         ]}
         rows={hybridAgents
           .filter(
@@ -81,21 +76,21 @@ export function Agents() {
           )
           .map((a) => [
             <DetailLink key={a.id} href={`/agents/${a.id}`}>
-              <span className="agentNameWithStatus">
-                <i
-                  className={
-                    a.status === 'Degraded'
-                      ? 'hybridDanger'
-                      : a.status === 'Live'
-                        ? 'successText'
-                        : 'blueText'
-                  }
-                  aria-hidden="true"
-                />
-                {a.name}
-              </span>
+              <IconLabel>{a.name}</IconLabel>
             </DetailLink>,
             <Status key="s">{a.status}</Status>,
+            <span className="referenceMono" key="version">
+              {String(
+                state.releases.find(
+                  (r) => r.agentId === a.id && r.state === 'Active',
+                )?.version ??
+                  state.ui?.[`agent:${a.id}:version`] ??
+                  deploymentRecords.find(
+                    (r) => r.agentId === a.id && r.status === 'Success',
+                  )?.version ??
+                  '—',
+              )}
+            </span>,
             a.tasks,
             <span
               key="success"
@@ -110,7 +105,15 @@ export function Agents() {
               {a.success}
             </span>,
             a.latency,
-            a.model,
+            <Tag key="model">{a.model}</Tag>,
+            String(state.ui?.[`agent:${a.id}:owner`] ?? 'Ops Team'),
+            <span className="referenceMono" key="deployed">
+              {a.id.startsWith('preview-')
+                ? 'This session'
+                : (deploymentRecords.find(
+                    (r) => r.agentId === a.id && r.status === 'Success',
+                  )?.when ?? '—')}
+            </span>,
           ])}
       />
       <DataNote />
@@ -124,11 +127,8 @@ export function Resources({ tools = false }: { tools?: boolean }) {
   const actionRows =
     state.ui?.['demo:dataset'] === 'empty' ? [] : fixtureActions;
   const [search, setSearch] = usePreviewValue(`inventory:${tools}:search`, '');
-  const [filter, setFilter] = usePreviewValue(
-    `inventory:${tools}:filter`,
-    'All',
-  );
   const [manage, setManage] = useState(false);
+  const [toolTab, setToolTab] = useState('Tools');
   if (manage)
     return (
       <>
@@ -143,77 +143,86 @@ export function Resources({ tools = false }: { tools?: boolean }) {
       className={`surfacePage hybridPage ${tools ? 'toolsPage' : 'knowledgePage'}`}
     >
       <PageTitle
-        title={tools ? 'Tools & Actions' : 'Knowledge Sources'}
+        title={tools ? 'Tools & MCP' : 'Knowledge'}
         description={
           tools
-            ? 'Manage what agents can do, their permissions, risk and MCP execution layer.'
-            : 'Monitor organization knowledge, sync health, coverage and agent usage.'
+            ? 'Actions available to your enterprise agents'
+            : 'Enterprise data sources powering your agents'
         }
-      />
-      <Metrics
-        items={
-          tools
-            ? [
-                [
-                  'Actions available',
-                  String(actionRows.length),
-                  'across systems',
-                ],
-                [
-                  'Active actions',
-                  String(actionRows.filter((r) => r.includes('Active')).length),
-                  'in use by agents',
-                ],
-                [
-                  'High-risk actions',
-                  state.ui?.['demo:dataset'] === 'empty' ? '0' : '2',
-                  'human approval',
-                ],
-                [
-                  'MCP servers',
-                  state.ui?.['demo:dataset'] === 'empty' ? '0' : '4',
-                  state.ui?.['demo:dataset'] === 'empty'
-                    ? 'None connected'
-                    : '3 running',
-                ],
-              ]
-            : [
-                [
-                  'Sources connected',
-                  String(sourceRows.filter((r) => r[5] === 'Live').length),
-                  `${sourceRows.length} total`,
-                ],
-                [
-                  'Documents indexed',
-                  sourceRows
-                    .reduce(
-                      (sum, r) => sum + (Number(r[3].replaceAll(',', '')) || 0),
-                      0,
-                    )
-                    .toLocaleString('en-US'),
-                  'across all sources',
-                ],
-                [
-                  'Index coverage',
-                  `${Math.round(sourceRows.reduce((sum, r) => sum + (parseFloat(r[7]) || 0), 0) / Math.max(1, sourceRows.length))}%`,
-                  'all sources',
-                ],
-                [
-                  'Sync errors',
-                  String(sourceRows.filter((r) => r[5] === 'Error').length),
-                  'requires attention',
-                ],
-              ]
-        }
-      />
+      >
+        <Button variant="outline" onClick={() => setManage(true)}>
+          {tools ? '+ Add Tool' : '+ Add Source'}
+        </Button>
+      </PageTitle>
+      {!tools && (
+        <Metrics
+          items={
+            tools
+              ? [
+                  [
+                    'Actions available',
+                    String(actionRows.length),
+                    'across systems',
+                  ],
+                  [
+                    'Active actions',
+                    String(
+                      actionRows.filter((r) => r.includes('Active')).length,
+                    ),
+                    'in use by agents',
+                  ],
+                  [
+                    'High-risk actions',
+                    state.ui?.['demo:dataset'] === 'empty' ? '0' : '2',
+                    'human approval',
+                  ],
+                  [
+                    'MCP servers',
+                    state.ui?.['demo:dataset'] === 'empty' ? '0' : '4',
+                    state.ui?.['demo:dataset'] === 'empty'
+                      ? 'None connected'
+                      : '3 running',
+                  ],
+                ]
+              : [
+                  [
+                    'Sources connected',
+                    String(sourceRows.filter((r) => r[5] === 'Live').length),
+                    `${sourceRows.length} total`,
+                  ],
+                  [
+                    'Documents indexed',
+                    sourceRows
+                      .reduce(
+                        (sum, r) =>
+                          sum + (Number(r[3].replaceAll(',', '')) || 0),
+                        0,
+                      )
+                      .toLocaleString('en-US'),
+                    'across all sources',
+                  ],
+                  [
+                    'Index coverage',
+                    `${Math.round(sourceRows.reduce((sum, r) => sum + (parseFloat(r[7]) || 0), 0) / Math.max(1, sourceRows.length))}%`,
+                    'all sources',
+                  ],
+                  [
+                    'Sync errors',
+                    String(sourceRows.filter((r) => r[5] === 'Error').length),
+                    'requires attention',
+                  ],
+                ]
+          }
+        />
+      )}
       <div className="hybridControls">
         {tools ? (
           <div className="filterRow">
-            {['All', 'Active', 'Restricted', 'Pending'].map((f) => (
+            {['Tools', 'MCP Servers'].map((f) => (
               <FilterChip
                 key={f}
-                active={filter === f}
-                onClick={() => setFilter(f)}
+                active={toolTab === f}
+                onClick={() => setToolTab(f)}
               >
                 {f}
               </FilterChip>
@@ -227,74 +236,68 @@ export function Resources({ tools = false }: { tools?: boolean }) {
             onChange={(e) => setSearch(e.target.value)}
           />
         )}
-        <Button onClick={() => setManage(true)}>
-          {tools ? '+ Add Tool' : '+ Connect Source'}
-        </Button>
       </div>
       {tools ? (
-        <div className="hybridSplit">
-          <Table
-            caption="Tool actions"
-            emptyMessage="No tools match your filters. Clear the search or add an approved tool."
-            headers={[
-              'Action',
-              'System',
-              'Permission',
-              'Risk',
-              'Agents',
-              'Status',
-            ]}
-            rows={actionRows
-              .filter((r) => filter === 'All' || r[6] === filter)
-              .map((r) => [
+        <div className="referenceToolContent">
+          {toolTab === 'Tools' ? (
+            <Table
+              caption="Tool actions"
+              emptyMessage="No tools match your filters. Clear the search or add an approved tool."
+              headers={[
+                'Action',
+                'System',
+                'Permission',
+                'Risk',
+                'Agents',
+                'Calls Today',
+                'Last Used',
+                'Status',
+              ]}
+              rows={actionRows.map((r) => [
                 <DetailLink key={r[0]} href={`/tools/${r[0]}`}>
-                  {r[1]}
+                  <IconLabel kind="tool">{r[1]}</IconLabel>
                 </DetailLink>,
-                r[2],
-                r[3],
+                <Tag key="system">{r[2]}</Tag>,
+                <span className="referenceMono" key="permission">
+                  {r[3]}
+                </span>,
                 <Status key="risk">{r[4]}</Status>,
                 r[5],
+                r[6] === 'Active' ? '287' : '—',
+                <span key="used" className="referenceMono">
+                  —
+                </span>,
                 <Status key="s">{r[6]}</Status>,
               ])}
-          />
-          <aside>
-            <section className="panel">
-              <div className="surfaceHeading">
-                <h2>MCP Servers</h2>
-                <span className="modelPill">3/4 online</span>
-              </div>
-              <ul className="mcpServers">
-                {[
-                  'filesystem-mcp',
-                  'github-mcp',
-                  'slack-mcp',
-                  'postgres-mcp',
-                ].map((x, i) => (
-                  <li key={x}>
-                    <span
-                      className={i === 3 ? 'hybridDanger' : 'successText'}
-                      aria-label={i === 3 ? 'Offline' : 'Online'}
-                    >
-                      ●
+            />
+          ) : (
+            <div className="referenceServers">
+              {(state.ui?.['demo:dataset'] === 'empty'
+                ? []
+                : [
+                    'Internal MCP Gateway',
+                    'Salesforce MCP Adapter',
+                    'ITSM MCP Bridge',
+                  ]
+              ).map((name, i) => (
+                <section className="panel" key={name}>
+                  <IconLabel kind="server">
+                    <span>
+                      <strong>{name}</strong>{' '}
+                      <Tag>{['v1.4', 'v2.1', 'v1.0'][i]}</Tag>
+                      <small>{[12, 6, 8][i]} tools registered</small>
                     </span>
-                    <span>{x}</span>
-                    <small>{['4ms', '32ms', '18ms', '—'][i]}</small>
-                  </li>
-                ))}
-              </ul>
-            </section>
-            <section className="panel permissionBreakdown">
-              <h2>Permission breakdown</h2>
-              <Bars
-                items={[
-                  ['Read', 40, '2'],
-                  ['Write', 80, '4'],
-                  ['Execute', 40, '2'],
-                  ['Admin', 20, '1'],
-                ]}
-              />
-            </section>
-          </aside>
+                  </IconLabel>
+                  <Status>{i === 2 ? 'Degraded' : 'Online'}</Status>
+                </section>
+              ))}
+              <div className="intelligenceNote">
+                <strong>NEWNEO</strong>ITSM MCP Bridge is degraded — latency
+                increased 3× in the last hour. This may affect IT Support Agent
+                tool execution.
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <>
@@ -309,6 +312,8 @@ export function Resources({ tools = false }: { tools?: boolean }) {
               'Status',
               'Agents using',
               'Coverage',
+              'Region',
+              'Sync',
             ]}
             rows={sourceRows
               .filter((r) =>
@@ -316,23 +321,31 @@ export function Resources({ tools = false }: { tools?: boolean }) {
               )
               .map((r) => [
                 <DetailLink key={r[0]} href={`/knowledge/${r[0]}`}>
-                  {r[1]}
+                  <IconLabel kind="source">{r[1]}</IconLabel>
                 </DetailLink>,
-                ...r.slice(2, 5),
+                <Tag key="type">{r[2]}</Tag>,
+                r[3],
+                <span key="sync" className="referenceMono">
+                  {r[4]}
+                </span>,
                 <Status key="s">{r[5]}</Status>,
                 r[6],
-                <span
+                <Progress
                   key="coverage"
-                  className={
-                    parseInt(r[7]) >= 85
-                      ? 'successText'
-                      : parseInt(r[7]) === 0
-                        ? 'hybridDanger'
-                        : 'warningText'
-                  }
-                >
-                  {r[7]}
+                  value={parseFloat(r[7])}
+                  label={`${r[1]} coverage`}
+                />,
+                <span key="region" className="referenceMono">
+                  EU (Frankfurt)
                 </span>,
+                <Link
+                  key="refresh"
+                  className="referenceSync"
+                  href={`/knowledge/${r[0]}?tab=Sync`}
+                  aria-label={`Manage synchronization for ${r[1]}`}
+                >
+                  <RefreshCw size={15} aria-hidden="true" />
+                </Link>,
               ])}
           />
           <div className="intelligenceNote">

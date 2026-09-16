@@ -1,3 +1,11 @@
+import {
+  Bot,
+  BookOpen,
+  Wrench,
+  FlaskConical,
+  Rocket,
+  Server,
+} from 'lucide-react';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 export function PageTitle({
@@ -27,6 +35,14 @@ export function Metrics({ items }: { items: [string, string, string?][] }) {
           <span>{label}</span>
           <strong>{value}</strong>
           {note && <small>{note}</small>}
+          {/readiness|compliance score/i.test(label) && value.endsWith('%') && (
+            <Progress
+              value={parseFloat(value)}
+              label={label}
+              tone={/compliance/i.test(label) ? 'green' : 'blue'}
+              compact
+            />
+          )}
         </article>
       ))}
     </div>
@@ -78,14 +94,67 @@ export function Table({
     </div>
   );
 }
-export function Status({ children }: { children: string }) {
+export function IconLabel({
+  children,
+  kind = 'agent',
+}: {
+  children: ReactNode;
+  kind?: 'agent' | 'source' | 'tool' | 'evaluation' | 'deployment' | 'server';
+}) {
+  const Icon = {
+    agent: Bot,
+    source: BookOpen,
+    tool: Wrench,
+    evaluation: FlaskConical,
+    deployment: Rocket,
+    server: Server,
+  }[kind];
   return (
-    <span
-      className={`hybridStatus ${/Paused|Archived|Revoked|Inactive|Optional/.test(children) ? 'muted' : /Live|Success|Passed|Active|Approved|Resolved|Enforced|Low/.test(children) ? 'healthy' : /Error|Failed|Degraded|High|Rejected/.test(children) ? 'danger' : /Warning|Needs review|Pending|Medium|Escalated|Rollback|Rolled back/.test(children) ? 'warning' : 'neutral'}`}
-    >
+    <span className={`referenceIconLabel ${kind}`}>
+      <span className="referenceIcon">
+        <Icon size={17} strokeWidth={1.7} aria-hidden="true" />
+      </span>
       {children}
     </span>
   );
+}
+export function Tag({ children }: { children: ReactNode }) {
+  return <span className="referenceTag">{children}</span>;
+}
+export function Progress({
+  value,
+  label,
+  tone = 'blue',
+  compact = false,
+}: {
+  value: number;
+  label: string;
+  tone?: 'blue' | 'green' | 'amber' | 'red' | 'cyan';
+  compact?: boolean;
+}) {
+  const safe = Number.isFinite(value) ? Math.max(0, value) : 0;
+  return (
+    <span className={`referenceProgress ${tone} ${compact ? 'compact' : ''}`}>
+      <progress aria-label={label} value={Math.min(safe, 100)} max={100} />
+      {!compact && <span>{Number(safe.toFixed(1))}%</span>}
+    </span>
+  );
+}
+export function Status({ children }: { children: string }) {
+  const tone = /paused|archived|revoked|inactive|optional/i.test(children)
+    ? 'muted'
+    : /live|success|passed|active|approved|resolved|enforced|low|synced|online|complete/i.test(
+          children,
+        )
+      ? 'healthy'
+      : /error|failed|high|rejected/i.test(children)
+        ? 'danger'
+        : /warning|degraded|needs review|pending|medium|escalated|rollback|rolled back/i.test(
+              children,
+            )
+          ? 'warning'
+          : 'neutral';
+  return <span className={`hybridStatus ${tone}`}>{children}</span>;
 }
 export function Bars({
   items,
@@ -119,7 +188,19 @@ export function Bars({
             <span>{name}</span>
             <strong>{note ?? `${value}%`}</strong>
           </div>
-          <progress aria-label={name} max={100} value={value} />
+          <Progress
+            label={name}
+            value={value}
+            tone={
+              semantics === 'quality'
+                ? value < 80
+                  ? 'red'
+                  : value < 90
+                    ? 'amber'
+                    : 'green'
+                : 'blue'
+            }
+          />
         </div>
       ))}
     </div>

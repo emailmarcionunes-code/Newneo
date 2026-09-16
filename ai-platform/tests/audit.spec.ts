@@ -159,9 +159,7 @@ test('empty operational states and login entry remain navigable', async ({
   await page.getByLabel('Incident status').selectOption('Resolved');
   await expect(page.getByText(/No incidents match/)).toBeVisible();
   await page.goto('/deployments');
-  await page
-    .getByLabel('Environment', { exact: true })
-    .selectOption('Development');
+  await page.getByRole('button', { name: 'Development', exact: true }).click();
   await expect(
     page.getByText(/No deployments in this environment/),
   ).toBeVisible();
