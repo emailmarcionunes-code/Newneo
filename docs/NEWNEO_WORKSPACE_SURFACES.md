@@ -1,5 +1,7 @@
 # Workspace surfaces and implementation status
 
+> **Superseded visual/status snapshot.** Hybrid v4 now supplies approved customer workspace/detail frames, canonical navigation and an eight-stage journey. See [current implementation and verification](HYBRID_V4_IMPLEMENTATION.md). Backend integration limitations below still apply.
+
 ## Frontend
 
 All eleven sidebar destinations now render useful content: Overview, Agents, Knowledge, Tools & MCP, Models, Evaluations, Deployments, AgentOps, FinOps, Governance and Settings. Agent Detail has eight navigable tabs. The Launch Guide still supports the complete seven-step demonstration flow.
