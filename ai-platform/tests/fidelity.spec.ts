@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('Overview keeps Design composition and shell-relative spacing', async ({
+test('Overview matches the supplied Command Center composition', async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -10,17 +10,26 @@ test('Overview keeps Design composition and shell-relative spacing', async ({
   const first = await metrics.first().boundingBox();
   const last = await metrics.last().boundingBox();
   const content = await page.locator('main').boundingBox();
-  expect(first!.y).toBe(102);
-  expect(first!.x - content!.x).toBe(32);
+  await expect(
+    page.getByRole('heading', { name: 'Command Center' }),
+  ).toBeVisible();
+  expect(first!.y).toBeGreaterThan(140);
+  expect(first!.y).toBeLessThan(170);
+  expect(first!.x - content!.x).toBe(24);
   expect(last!.y).toBe(first!.y);
-  expect(first!.height).toBe(128);
+  expect(first!.height).toBeLessThanOrEqual(112);
   const health = await page.locator('.overviewHealthPanel').boundingBox();
   const activity = await page.locator('.overviewActivityPanel').boundingBox();
   expect(health!.y).toBe(activity!.y);
-  expect(health!.width / activity!.width).toBeCloseTo(826 / 314, 1);
-  await expect(
-    page.getByRole('columnheader', { name: 'Trend', exact: true }),
-  ).toBeVisible();
+  expect(health!.width / activity!.width).toBeCloseTo(2.05, 1);
+  await expect(page.locator('.overviewAgentList li')).toHaveCount(5);
+  await expect(page.locator('.overviewActivityPanel li')).toHaveCount(6);
+  await expect(page.locator('.overviewSummaryPanels > section')).toHaveCount(3);
+  await expect(metrics.first()).toContainText('24');
+  await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText(
+    'Reference workspace refreshed',
+  );
   await page.screenshot({
     path: info.outputPath('overview-design.png'),
     fullPage: true,

@@ -1,12 +1,14 @@
 # Hybrid v4 — final frontend fidelity audit (2026-09-16)
 
-Status: **HYBRID V4 IMPLEMENTATION COMPLETE** for the requested visual, navigable customer frontend. This supersedes the intermediate review status. All required route families, eight launch stages, eight Agent tabs and six Settings tabs have implemented content and interactions. Backend/cloud integration is not part of this completion claim.
+Status: **VISUAL REVIEW REOPENED** after the user's direct comparison on 2026-09-16. The earlier complete designation overstated visual acceptance. Functional route coverage and tests remain valid, but do not establish fidelity to the user's expected composition.
+
+The Overview has now been rebuilt against the supplied Command Center screenshot: title and refresh, reference metrics, five agent rows with secondary model names, six activity events and the Governance / Evaluations / NEWNEO Insights panels. Its 2.05:1 main panel ratio and compact three-column summaries replace the prior frame 2:2 composition. The screenshot is the latest explicit Overview reference. Other surfaces retain their existing Design mappings; they are not newly certified by this correction.
 
 ## Authority
 
 The user explicitly reconfirmed [Hybrid v4 Design](https://www.figma.com/design/7NFyk2kxLzbWsFWF8zWKNO/Newneo-Product-Design-Hybrid-Exploration?node-id=47-502) as visual authority and [Interactive Make](https://www.figma.com/make/YMlofUTw6w1GY4PasnJ0MD/Hybrid-v4) as behavior-only. Design wins conflicts. Node 47:502 is the journey consolidation reference, not an Overview frame. Supporting screens are in the same Design file. Current v4 shell, branding, color semantics and eight stages override obsolete navigation in those supporting frames.
 
-The supplied Command Center image differs materially from Design Overview 2:2: 24 versus 6 agents, 14,302 versus 7,112 tasks, a visible Command Center heading and bottom governance/evaluation/insights panels versus a six-column health table with Trend. This implementation follows Design 2:2 under the user's explicit precedence rule. It does not claim to reproduce the supplied image.
+The earlier audit treated the supplied Command Center image as conflicting with Design Overview 2:2 and implemented that older frame instead. The user's repeated comparison makes the expected Overview explicit. This correction follows the supplied image for Overview rather than continuing to defend the prior mapping. Existing brand component geometry and the working account/search/notification controls remain reused.
 
 ## Gaps found and corrected
 
@@ -27,7 +29,7 @@ All rows below have navigable implementations and rendered review evidence. The 
 
 | Surface | Design node | Review disposition |
 | --- | --- | --- |
-| Overview `/` | 2:2 | Composition corrected; geometry regression added |
+| Overview `/` | User Command Center screenshot (2026-09-16) | Rebuilt composition, metric values, agent rows, activity and lower panels; screenshot reviewed |
 | All Agents `/agents` | 8:2 | Reviewed; content, navigation and responsive checks passed |
 | Catalog `/agents/catalog` | 4:2 | Desktop grid corrected; expanded catalog retained |
 | Use Case | 47:2 | Reviewed against v4 frame; validation and navigation passed |
@@ -67,7 +69,7 @@ PLAYWRIGHT_PORT=3115 npm run test:e2e -- --workers=2
 
 ## Remaining differences and scope
 
-No blocking frontend gaps or heading-only placeholder routes remain in the audited scope. No additional screen construction is required before trying the complete customer journey.
+The routes are populated and navigable. This is not a blanket visual acceptance claim for all screens; the present correction covers the Overview composition the user explicitly challenged.
 
 Intentional differences from static supporting frames are the current 224/60px v4 shell, official N, eight stages, eight Agent tabs, six Settings tabs, 20-template catalog, blue action/selection hierarchy, accessible contrast, responsive reflow, explicit preview labels and validation-driven readiness. These follow the approved contract. Third-party icons use existing exported assets, with documented Zendesk asset provenance. No approved pixel-difference baseline exists; exact raster equality across fonts, browsers and viewport sizes is not asserted.
 

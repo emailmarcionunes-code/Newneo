@@ -1,26 +1,61 @@
-/* Visual source: Hybrid Overview 2:2. Canonical shell/semantics use v4 47:657. */
+/* Overview: user-supplied Command Center screenshot, 2026-09-16. */
+.content:has(.overviewFidelity) {
+  max-width: none;
+  padding: 24px;
+}
 .overviewFidelity {
-  padding: 18px 0 0;
+  color: #0f172a;
+}
+.overviewTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 21px;
+}
+.overviewTitle h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.025em;
+}
+.overviewTitle p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 20px;
+}
+.overviewRefresh {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #dce4ef;
+  border-radius: 8px;
+  background: white;
+  color: #475569;
+  font-size: 14px;
 }
 .overviewReferenceMetrics {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 .overviewReferenceMetrics article {
-  height: 128px;
-  padding: 17px 15px;
-  background: white;
-  border: 1px solid #e2e8f0;
+  min-height: 106px;
+  padding: 14px 16px;
+  border: 1px solid #dce4ef;
   border-radius: 12px;
+  background: white;
 }
-.overviewReferenceMetrics h2 {
+.overviewFidelity .overviewReferenceMetrics h2 {
   font-size: 12px;
   line-height: 16px;
   font-weight: 500;
   color: #64748b;
-  margin: 0 0 16px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
 }
 .overviewReferenceMetrics strong {
   font-size: 25px;
@@ -28,10 +63,10 @@
   font-weight: 700;
 }
 .overviewReferenceMetrics p {
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 16px;
   color: #64748b;
-  margin: 12px 0 0;
-  line-height: 14px;
+  margin: 6px 0 0;
 }
 .overviewFidelity .healthy {
   color: #15803d;
@@ -42,117 +77,244 @@
 .overviewFidelity .blue {
   color: #2563eb;
 }
+.overviewFidelity .warning {
+  color: #b45309;
+}
 .overviewReferencePanels {
   display: grid;
-  grid-template-columns: minmax(0, 826fr) minmax(0, 314fr);
+  grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr);
   gap: 16px;
+  align-items: start;
 }
-.overviewReferencePanels > section {
-  border: 1px solid #e2e8f0;
+.overviewReferencePanels > section,
+.overviewSummaryPanels > section {
+  border: 1px solid #dce4ef;
   border-radius: 12px;
-  background: #fff;
-  min-height: 520px;
+  background: white;
   overflow: hidden;
 }
 .overviewReferencePanels header {
-  height: 58px;
-  padding: 18px 19px;
+  height: 54px;
+  padding: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #f0f3f8;
 }
-.overviewReferencePanels h2 {
-  font-size: 14px;
-  font-weight: 600;
+.overviewFidelity h2 {
   margin: 0;
 }
-.overviewReferencePanels header > a {
-  font-size: 12px;
-  color: #2563eb;
-}
-.overviewHealthPanel .hybridTable {
-  border: 0;
-  border-radius: 0;
-  margin: 0;
-}
-.overviewHealthPanel th {
-  height: 38px;
-  font-size: 10px;
-  font-weight: 500;
-  background: white;
-}
-.overviewHealthPanel td {
-  height: 58px;
-  font-size: 13px;
-}
-.overviewHealthPanel th:not(:first-child),
-.overviewHealthPanel td:not(:first-child) {
-  text-align: right;
-  padding-left: 6px;
-  padding-right: 18px;
-}
-.overviewHealthPanel th:first-child,
-.overviewHealthPanel td:first-child {
-  padding-left: 19px;
-  width: 48%;
-}
-.overviewHealthPanel td:first-child a {
+.overviewReferencePanels h2,
+.overviewSummaryPanels h2 {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #1e293b;
+}
+.overviewReferencePanels h2 svg,
+.overviewSummaryPanels h2 svg {
+  width: 16px;
+  height: 16px;
+  color: #7c91ad;
+  flex-shrink: 0;
+}
+.overviewReferencePanels header > a {
+  color: #2563eb;
+  font-size: 12px;
+}
+.overviewAgentList,
+.overviewActivityPanel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.overviewAgentList li {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) 58px 64px 54px;
+  gap: 16px;
+  align-items: center;
+  min-height: 61px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f7fa;
+}
+.overviewAgentList li:last-child {
+  border: 0;
+}
+.overviewAgentList li:hover {
+  background: #f8fafc;
+}
+.overviewAgentList li > div {
+  text-align: right;
+}
+.overviewAgentList strong {
+  display: block;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: #475569;
+}
+.overviewAgentList .overviewAgentIdentity strong {
+  color: #1e293b;
   font-weight: 500;
 }
-.overviewHealthDot {
-  display: inline-block;
+.overviewAgentList small {
+  display: block;
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 16px;
+}
+.overviewHealthDot,
+.overviewEventDot {
   width: 8px;
   height: 8px;
-  border-radius: 9999px;
+  border-radius: 50%;
   background: currentColor;
   flex-shrink: 0;
 }
 .overviewActivityPanel ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+  padding: 8px 16px 10px;
 }
 .overviewActivityPanel li {
   display: flex;
+  gap: 12px;
   align-items: flex-start;
-  gap: 14px;
-  padding: 17px;
-  border-bottom: 1px solid #e2e8f0;
-  min-height: 86px;
+  padding: 7px 0;
   font-size: 12px;
-  line-height: 17px;
+  line-height: 18px;
+  color: #52627a;
 }
-.overviewActivityPanel li:last-child {
-  border: 0;
+.overviewEventDot {
+  width: 6px;
+  height: 6px;
+  margin-top: 7px;
 }
-.overviewEventIcon {
+.overviewActivityPanel time {
+  display: block;
+  margin-top: 2px;
+  font-family: ui-monospace, monospace;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 16px;
+}
+.overviewSummaryPanels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.overviewSummaryPanels > section {
+  padding: 16px;
+}
+.overviewSummaryPanels h2 {
+  margin-bottom: 16px;
+}
+.overviewProgressLabel,
+.overviewProgressFoot {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #64748b;
+  font-size: 14px;
+}
+.overviewProgressFoot {
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.overviewSummaryPanels progress {
+  display: block;
+  appearance: none;
+  border: 0;
+  border-radius: 4px;
+  width: 100%;
+  height: 5px;
+  margin: 10px 0;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+.overviewSummaryPanels progress::-webkit-progress-bar {
+  background: #e2e8f0;
+}
+.overviewSummaryPanels progress::-webkit-progress-value {
+  background: currentColor;
+  border-radius: 4px;
+}
+.overviewSummaryPanels progress::-moz-progress-bar {
+  background: currentColor;
+  border-radius: 4px;
+}
+.overviewSummaryPanels > section > a {
+  font-size: 12px;
+  color: #2563eb;
+}
+.overviewSummaryPanels .overviewInsight {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 16px 14px;
+  color: #1d4ed8;
+}
+.overviewInsight > span {
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 4px 7px;
+  font-size: 12px;
+}
+.overviewInsight p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 22px;
+}
+.overviewDemoNote {
+  margin: 24px 0 0;
+  color: #64748b;
+  font-size: 11px;
+}
+/* Reference Overview has no creation CTA; creation remains available under Agents. */
+body:has(.overviewFidelity) .sidebarCreate {
+  display: none;
+}
+body:has(.overviewFidelity) .sidebar .brand {
+  margin-bottom: 18px;
+}
+body:has(.overviewFidelity) .navGroup {
+  border: 0;
+  padding: 0 0 16px;
+}
+body:has(.overviewFidelity) .navGroup h2 {
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  font-size: 11px;
+  margin: 0 12px 8px;
+}
+body:has(.overviewFidelity) .sidebar .navItem {
+  font-weight: 400;
+  height: 30px;
+  margin: 2px 0;
+  font-size: 14px;
+  gap: 12px;
+}
+body:has(.overviewFidelity) .sidebar .navItem.active {
+  background: #111f43;
+  color: #60a5fa;
+}
+body:has(.overviewFidelity) .sidebar .brand svg {
   width: 36px;
   height: 36px;
-  flex-shrink: 0;
-  border-radius: 9px;
-  background: #eff6ff;
 }
-.overviewEventIcon.healthy {
-  background: #ecfdf5;
+body:has(.overviewFidelity) .sidebar .brand > span > span > span:last-child {
+  margin-left: 6px;
 }
-.overviewEventIcon.danger {
-  background: #fef2f2;
-}
-.overviewActivityPanel small {
-  display: block;
-  color: #64748b;
-  font-size: 10px;
-  margin-top: 13px;
-}
-.overviewFidelity > .hybridDataNote {
-  margin-top: 24px;
+body:has(.overviewFidelity) .shellBreadcrumb {
+  font-size: 14px;
 }
 @media (max-width: 1100px) {
   .overviewReferenceMetrics {
@@ -161,20 +323,45 @@
   .overviewReferencePanels {
     grid-template-columns: 1fr;
   }
-  .overviewReferencePanels > section {
-    min-height: 0;
+  .overviewSummaryPanels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .overviewSummaryPanels > section:last-child {
+    grid-column: 1 / -1;
   }
 }
 @media (max-width: 600px) {
-  .overviewFidelity {
-    padding: 0;
+  .content:has(.overviewFidelity) {
+    padding: 20px 16px;
+  }
+  .overviewTitle {
+    align-items: flex-start;
+  }
+  .overviewTitle h1 {
+    font-size: 20px;
+  }
+  .overviewTitle p {
+    font-size: 12px;
   }
   .overviewReferenceMetrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .overviewHealthPanel th:first-child,
-  .overviewHealthPanel td:first-child {
-    min-width: 190px;
+  .overviewAgentList li {
+    grid-template-columns: 8px minmax(0, 1fr) 50px 48px;
+    gap: 8px;
+    padding: 12px;
+  }
+  .overviewAgentList li > div:last-child {
+    display: none;
+  }
+  .overviewAgentList strong {
+    font-size: 12px;
+  }
+  .overviewAgentList small {
+    font-size: 11px;
+  }
+  .overviewSummaryPanels {
+    grid-template-columns: 1fr;
   }
 }
 /* Compact label/value layout is shared by Hybrid detail frames 22:* and 29:*. */
@@ -1175,4 +1362,8 @@
   background: #eff6ff;
   color: #1d4ed8;
   border: 1px solid #bfdbfe;
+}
+
+body:has(.overviewFidelity) .notificationCount {
+  background: #dc2626;
 }

@@ -1,20 +1,131 @@
 'use client';
 import Link from 'next/link';
-import { Check, Diamond, AlertCircle } from 'lucide-react';
-import { hybridAgents, activity } from '@/lib/hybrid-data';
-import { Table, DataNote } from './UI';
+import { useState } from 'react';
+import {
+  Activity,
+  Bot,
+  CheckCircle2,
+  Clock3,
+  RefreshCw,
+  TrendingUp,
+} from 'lucide-react';
+
+// Overview snapshot supplied by the user on 2026-09-16 supersedes frame 2:2.
+const agents = [
+  [
+    'customer-service',
+    'Customer Service Agent',
+    'GPT-4o',
+    '4.821',
+    '97.3%',
+    '1.2s',
+    'healthy',
+  ],
+  [
+    'it-support',
+    'IT Support Agent',
+    'Claude 3.5',
+    '2.103',
+    '99.1%',
+    '0.9s',
+    'healthy',
+  ],
+  [
+    'sales-assistant',
+    'Sales Assistant',
+    'GPT-4o',
+    '1.284',
+    '94.8%',
+    '1.8s',
+    'warning',
+  ],
+  [
+    'knowledge-assistant',
+    'Knowledge Assistant',
+    'Gemini Pro',
+    '832',
+    '88.2%',
+    '3.1s',
+    'danger',
+  ],
+  [
+    'research-assistant',
+    'Research Assistant',
+    'Claude 3.5',
+    '541',
+    '96.5%',
+    '2.1s',
+    'healthy',
+  ],
+];
+const events = [
+  [
+    'Knowledge Assistant degraded — latency spike',
+    '09:42',
+    'danger',
+    '/agentops',
+  ],
+  [
+    'IT Support Agent v2.3 deployed to production',
+    '09:18',
+    'blue',
+    '/deployments/it-support',
+  ],
+  [
+    'Tier-1 Eval Suite completed — 94% readiness',
+    '08:55',
+    'warning',
+    '/evaluations',
+  ],
+  [
+    'Confluence sync completed — 2,841 docs updated',
+    '08:30',
+    'healthy',
+    '/knowledge/confluence',
+  ],
+  [
+    'PII policy applied to Sales Assistant',
+    '07:45',
+    'healthy',
+    '/governance/policies/pii',
+  ],
+  [
+    'Customer Service Agent processed 1,000th task',
+    '07:12',
+    'healthy',
+    '/agents/customer-service',
+  ],
+];
 export default function OverviewFidelity() {
+  const [refreshed, setRefreshed] = useState(false);
   return (
-    <div className="overviewFidelity" data-reference="2:2">
-      <h1 className="srOnly">Overview</h1>
+    <div
+      className="overviewFidelity"
+      data-reference="user-command-center-2026-09-16"
+    >
+      <header className="overviewTitle">
+        <div>
+          <h1>Command Center</h1>
+          <p>Live platform health · Acme Corp · Mon 15 Sep 2025</p>
+        </div>
+        <button className="overviewRefresh" onClick={() => setRefreshed(true)}>
+          <RefreshCw size={15} aria-hidden="true" />
+          Refresh
+        </button>
+      </header>
+      <span className="srOnly" role="status">
+        {refreshed
+          ? 'Reference workspace refreshed. Demo data is up to date.'
+          : ''}
+      </span>
       <section className="overviewReferenceMetrics" aria-label="Key metrics">
         {[
-          ['Agents live', '6', '+1 this week', 'healthy'],
-          ['Tasks today', '7,112', '+18% vs yesterday', 'blue'],
-          ['Success rate', '95.4%', '↑ 0.6% vs last week', 'healthy'],
-          ['Avg latency', '1.2s', 'P50 across all agents', 'neutral'],
-          ['AI spend', '$1,840', '82% monthly budget', 'neutral'],
-          ['Incidents', '1', 'Sales Agent degraded', 'danger'],
+          ['Agents live', '24', 'of 26 total', 'blue'],
+          ['Tasks today', '14,302', '+12% vs yesterday', 'neutral'],
+          ['Success rate', '99.2%', 'last 24h', 'healthy'],
+          ['Avg latency', '1.4s', 'P95: 3.2s', 'neutral'],
+          ['AI spend', '$1,240', '$42k budget · 3% used', 'neutral'],
+          ['Incidents', '1', '1 open, 0 critical', 'danger'],
         ].map(([label, value, note, tone]) => (
           <article key={label}>
             <h2>{label}</h2>
@@ -24,95 +135,133 @@ export default function OverviewFidelity() {
         ))}
       </section>
       <div className="overviewReferencePanels">
-        <section className="overviewHealthPanel">
+        <section
+          className="overviewHealthPanel"
+          aria-labelledby="overview-health-heading"
+        >
           <header>
-            <h2>Agent Health</h2>
+            <h2 id="overview-health-heading">
+              <Bot aria-hidden="true" />
+              Agent Health
+            </h2>
             <Link href="/agents">View all →</Link>
           </header>
-          <Table
-            caption="Agent health"
-            headers={[
-              'Agent',
-              'Status',
-              'Tasks/day',
-              'Success',
-              'Latency',
-              'Trend',
-            ]}
-            rows={hybridAgents.slice(0, 5).map((a, i) => [
-              <Link key={a.id} href={`/agents/${a.id}`}>
+          <ul className="overviewAgentList">
+            {agents.map(([id, name, model, tasks, success, latency, tone]) => (
+              <li key={id}>
                 <span
-                  className={`overviewHealthDot ${a.status === 'Degraded' ? 'danger' : 'healthy'}`}
+                  role="img"
+                  className={`overviewHealthDot ${id === 'knowledge-assistant' ? 'warning' : 'healthy'}`}
+                  aria-label={
+                    id === 'knowledge-assistant' ? 'Degraded' : 'Healthy'
+                  }
                 />
-                {a.name}
-              </Link>,
-              <span
-                key="s"
-                className={a.status === 'Degraded' ? 'danger' : 'healthy'}
-              >
-                {a.status}
-              </span>,
-              a.tasks,
-              <strong
-                key="success"
-                className={a.status === 'Degraded' ? 'danger' : 'healthy'}
-              >
-                {a.success}
-              </strong>,
-              a.latency,
-              <strong key="trend" className={i === 3 ? 'danger' : 'healthy'}>
-                {['+4%', '+1%', '+2%', '-6%', '+3%'][i]}
-              </strong>,
-            ])}
-          />
+                <Link className="overviewAgentIdentity" href={`/agents/${id}`}>
+                  <strong>{name}</strong>
+                  <small>{model}</small>
+                </Link>
+                <div>
+                  <strong>{tasks}</strong>
+                  <small>tasks</small>
+                </div>
+                <div>
+                  <strong className={tone}>{success}</strong>
+                  <small>success</small>
+                </div>
+                <div>
+                  <strong>{latency}</strong>
+                  <small>latency</small>
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
-        <section className="overviewActivityPanel">
+        <section
+          className="overviewActivityPanel"
+          aria-labelledby="overview-activity-heading"
+        >
           <header>
-            <h2>Activity</h2>
+            <h2 id="overview-activity-heading">
+              <Activity aria-hidden="true" />
+              Activity
+            </h2>
           </header>
           <ul>
-            {activity.map((text, i) => {
-              const Icon = i === 1 ? AlertCircle : i === 4 ? Diamond : Check;
-              return (
-                <li key={text}>
-                  <span
-                    className={`overviewEventIcon ${i === 1 ? 'danger' : i === 2 || i === 4 ? 'blue' : 'healthy'}`}
-                  >
-                    <Icon size={16} aria-hidden="true" />
-                  </span>
-                  <div>
-                    <Link
-                      href={
-                        [
-                          '/deployments/customer-service',
-                          '/agentops/incidents/inc-001',
-                          '/evaluations/customer-service',
-                          '/deployments',
-                          '/governance',
-                        ][i]
-                      }
-                    >
-                      {text}
-                    </Link>
-                    <small>
-                      {
-                        [
-                          '8 min ago',
-                          '23 min ago',
-                          '1h ago',
-                          '2h ago',
-                          '3h ago',
-                        ][i]
-                      }
-                    </small>
-                  </div>
-                </li>
-              );
-            })}
+            {events.map(([text, time, tone, href]) => (
+              <li key={text}>
+                <span
+                  className={`overviewEventDot ${tone}`}
+                  aria-hidden="true"
+                />
+                <div>
+                  <Link href={href}>{text}</Link>
+                  <time>{time}</time>
+                </div>
+              </li>
+            ))}
           </ul>
         </section>
       </div>
-      <DataNote />
+      <div className="overviewSummaryPanels">
+        <section>
+          <h2>
+            <CheckCircle2 className="healthy" aria-hidden="true" />
+            Governance
+          </h2>
+          <div className="overviewProgressLabel">
+            <span>Compliance score</span>
+            <strong className="healthy">96%</strong>
+          </div>
+          <progress
+            aria-label="Compliance score"
+            value={96}
+            max={100}
+            className="healthy"
+          />
+          <div className="overviewProgressFoot">
+            <span>18 active policies</span>
+            <span>2 open violations</span>
+          </div>
+          <Link href="/governance">View governance →</Link>
+        </section>
+        <section>
+          <h2>
+            <TrendingUp className="blue" aria-hidden="true" />
+            Evaluations
+          </h2>
+          <div className="overviewProgressLabel">
+            <span>Avg readiness</span>
+            <strong className="blue">91%</strong>
+          </div>
+          <progress
+            aria-label="Average readiness"
+            value={91}
+            max={100}
+            className="blue"
+          />
+          <div className="overviewProgressFoot">
+            <span>42 runs this week</span>
+            <span>3 failing scenarios</span>
+          </div>
+          <Link href="/evaluations">View evaluations →</Link>
+        </section>
+        <section>
+          <h2>
+            <Clock3 aria-hidden="true" />
+            NEWNEO Insights
+          </h2>
+          <Link className="overviewInsight" href="/agentops">
+            <span aria-hidden="true">N</span>
+            <p>
+              Knowledge Assistant latency spike may be linked to Confluence
+              re-indexing. Review agent health and source sync.
+            </p>
+          </Link>
+        </section>
+      </div>
+      <p className="overviewDemoNote">
+        Reference workspace · interactive preview
+      </p>
     </div>
   );
 }
