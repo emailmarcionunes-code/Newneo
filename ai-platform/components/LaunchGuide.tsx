@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { Rocket } from 'lucide-react';
 import { useDemoAccess } from './journeys/DemoExperience';
 import { usePreview, identifier } from './journeys/PreviewState';
 import { approvedEndpoints } from '@/lib/configuration';
@@ -148,23 +149,23 @@ export default function LaunchGuide({
   };
   const titles = [
     'Launch a New Agent',
-    'Connect knowledge sources',
-    'Define tools & actions',
+    'What does this agent need to know?',
+    'What can this agent do?',
     'Choose where the agent runs',
-    'Select the intelligence layer',
-    'Governance & controls',
-    'Production evaluation',
-    'Deploy to production',
+    'Select a foundation model',
+    'Protection & Compliance',
+    'Production Readiness',
+    'Deploy Agent',
   ];
   const subtitles = [
     'Turn a business outcome into a production-ready AI mission.',
-    'Define what the agent knows. NEWNEO estimates whether the connected knowledge can support the business outcome.',
-    'Define what the agent can do. Actions carry permission scope, business impact and approval requirements.',
-    'Infrastructure is a deployment decision — separate from the model. Optimize sovereignty, latency, operations and cost.',
-    'Select the foundation model independently from infrastructure. Compare context, reasoning, latency, governance fit and cost.',
-    'Define how this agent is controlled. Active protections create confidence without adding unnecessary bureaucracy.',
-    'Review confidence, warnings and failures from representative scenarios before deployment.',
-    'Review the deployment manifest, select the environment and deliberately promote this agent into service.',
+    'Connect enterprise data sources to power your agent’s knowledge.',
+    '',
+    'Architecture decision — independent of model selection.',
+    'Independent of infrastructure. Choose based on capability, cost, and organizational approval.',
+    'Review the active policies from your organization’s governance framework.',
+    'Is this agent ready for production?',
+    'Review and confirm your configuration before creating the deployment preview.',
   ];
   const deploy = async () => {
     if (
@@ -285,7 +286,7 @@ export default function LaunchGuide({
   );
   if (deployment)
     return (
-      <div className="launchGuide" aria-busy={false}>
+      <div className="launchGuide journeyComplete" aria-busy={false}>
         {previewBanner}
         <div className="resourceFooter">
           <Link className="button outline" href={`/agents/${workspaceAgentId}`}>
@@ -329,7 +330,7 @@ export default function LaunchGuide({
     );
   return (
     <div
-      className={`launchGuide hybridJourney step-${draft.step}`}
+      className={`launchGuide hybridJourney journeyReference step-${draft.step}`}
       aria-busy={!ready}
     >
       <ServerDrafts
@@ -340,6 +341,11 @@ export default function LaunchGuide({
           setNotice('Server draft restored.');
         }}
       />
+      <div className="journeyBreadcrumb">
+        <Link href="/agents/catalog">← Catalog</Link>
+        <span>/</span>
+        <strong>Create Agent</strong>
+      </div>
       <LaunchStepper
         current={draft.step}
         onStep={goTo}
@@ -350,31 +356,30 @@ export default function LaunchGuide({
           <p className="stageEyebrow">
             {draft.step === 0
               ? '01 / LAUNCH MISSION'
-              : `STAGE ${draft.step + 1} / ${launchSteps[draft.step].toUpperCase()}`}
+              : `${String(draft.step + 1).padStart(2, '0')} / ${launchSteps[draft.step].toUpperCase()}`}
           </p>
           <div
             className={`stepHeading ${draft.step === 0 ? 'missionHeading' : ''}`}
           >
-            {draft.step === 0 && (
-              <span className="missionArrow" aria-hidden="true">
-                ↗
-              </span>
-            )}
             <h2 ref={heading} tabIndex={-1}>
               {titles[draft.step]}
             </h2>
-            <p>{subtitles[draft.step]}</p>
+            {subtitles[draft.step] && <p>{subtitles[draft.step]}</p>}
+            {draft.step === 0 && (
+              <details className="missionHelp">
+                <summary>
+                  <Rocket size={16} /> Mission Control
+                </summary>
+                <p>
+                  Define the business outcome, then assemble knowledge, tools,
+                  infrastructure, a model and governance. Evaluate the
+                  configuration before creating a deployment preview.
+                </p>
+              </details>
+            )}
           </div>
           {draft.step === 0 && (
             <>
-              <section className="missionControl">
-                <strong>MISSION CONTROL</strong>
-                <h3>What should this agent accomplish for the business?</h3>
-                <p>
-                  NEWNEO will translate the mission into knowledge, tools,
-                  infrastructure, model, governance and production readiness.
-                </p>
-              </section>
               <form
                 id="use-case-form"
                 ref={form}
@@ -384,80 +389,103 @@ export default function LaunchGuide({
                   next();
                 }}
               >
-                <div className="missionRow">
-                  <FormField
-                    id="agent-name"
-                    label="Agent name"
-                    value={draft.name}
-                    required
-                    maxLength={120}
-                    onChange={(e) => update({ name: e.target.value })}
-                  />
-                  <FormField
-                    id="business-owner"
-                    label="Business owner"
-                    placeholder="e.g. VP Customer Experience"
-                    value={draft.businessOwner ?? ''}
-                    maxLength={200}
-                    onChange={(e) => update({ businessOwner: e.target.value })}
-                  />
-                </div>
-                <div className="field">
-                  <label htmlFor="agent-description">
-                    Business purpose / mission
-                  </label>
-                  <textarea
-                    id="agent-description"
-                    required
-                    maxLength={2000}
-                    value={draft.description}
-                    onChange={(e) => update({ description: e.target.value })}
-                    placeholder="Describe the outcome, who it serves, and what success looks like…"
-                  />
-                </div>
-                <div>
-                  <label>Suggested missions</label>
-                  <div className="missionSuggestions">
-                    {[
-                      'Resolve tier-1 support autonomously',
-                      'Automate IT request routing',
-                      'Qualify sales opportunities',
-                      'Synthesize executive research',
-                    ].map((m) => (
-                      <button
-                        type="button"
-                        key={m}
-                        onClick={() => update({ description: m })}
-                      >
-                        {m}
-                      </button>
-                    ))}
+                <section className="missionSection">
+                  <header>
+                    <span>IDENTITY</span>
+                    <h3>What is this agent called and what does it do?</h3>
+                  </header>
+                  <div className="missionIdentity">
+                    <div>
+                      <FormField
+                        id="agent-name"
+                        label="Agent name"
+                        value={draft.name}
+                        required
+                        maxLength={120}
+                        onChange={(e) => update({ name: e.target.value })}
+                      />
+                      <p className="identityHint">
+                        The agent name is how it appears across the platform —
+                        in dashboards, logs, and notifications.
+                      </p>
+                    </div>
+                    <div className="field missionPurpose">
+                      <label htmlFor="agent-description">
+                        Business purpose / mission
+                      </label>
+                      <div className="missionSuggestions">
+                        {[
+                          'Resolve tier-1 support autonomously',
+                          'Automate IT request routing',
+                          'Qualify sales opportunities',
+                          'Synthesize executive research',
+                        ].map((m) => (
+                          <button
+                            type="button"
+                            key={m}
+                            onClick={() => update({ description: m })}
+                          >
+                            {m}
+                          </button>
+                        ))}
+                      </div>
+                      <textarea
+                        id="agent-description"
+                        required
+                        maxLength={2000}
+                        value={draft.description}
+                        onChange={(e) =>
+                          update({ description: e.target.value })
+                        }
+                        placeholder="Describe the outcome, who it serves, and what success looks like…"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="missionRow three">
-                  <FormField
-                    id="target-users"
-                    label="Target users"
-                    value={draft.targetUsers}
-                    onChange={(e) => update({ targetUsers: e.target.value })}
-                  />
-                  <FormField
-                    id="success-metric"
-                    label="Success metric"
-                    placeholder="e.g. 70% autonomous"
-                    value={draft.successMetric ?? ''}
-                    onChange={(e) => update({ successMetric: e.target.value })}
-                  />
-                  <SelectField
-                    id="criticality"
-                    label="Business criticality"
-                    value={draft.criticality ?? 'Standard'}
-                    onChange={(e) => update({ criticality: e.target.value })}
-                  >
-                    <option>Standard</option>
-                    <option>Critical</option>
-                  </SelectField>
-                </div>
+                </section>
+                <section className="missionSection">
+                  <header>
+                    <span>BUSINESS CONTEXT</span>
+                    <h3>
+                      Who uses this agent and how will success be measured?
+                    </h3>
+                  </header>
+                  <div className="missionContext">
+                    <FormField
+                      id="business-owner"
+                      label="Business owner"
+                      placeholder="e.g. Customer Operations"
+                      value={draft.businessOwner ?? ''}
+                      maxLength={200}
+                      onChange={(e) =>
+                        update({ businessOwner: e.target.value })
+                      }
+                    />
+                    <FormField
+                      id="target-users"
+                      label="Target users"
+                      value={draft.targetUsers}
+                      onChange={(e) => update({ targetUsers: e.target.value })}
+                    />
+                    <FormField
+                      id="success-metric"
+                      label="Success metric"
+                      placeholder="e.g. Resolution rate"
+                      value={draft.successMetric ?? ''}
+                      onChange={(e) =>
+                        update({ successMetric: e.target.value })
+                      }
+                    />
+                    <SelectField
+                      id="criticality"
+                      label="Business criticality"
+                      value={draft.criticality ?? 'Standard'}
+                      onChange={(e) => update({ criticality: e.target.value })}
+                    >
+                      <option>Standard</option>
+                      <option>Critical</option>
+                    </SelectField>
+                  </div>
+                </section>
                 <div className="intelligenceNote">
                   <strong>✦ NEWNEO Intelligence</strong>Expected complexity:
                   Medium · likely needs CRM/ITSM data · Cloud or Hybrid
@@ -541,13 +569,7 @@ export default function LaunchGuide({
                     (draft.step === 6 && !evaluation)
                   }
                 >
-                  {draft.step === 0
-                    ? 'Continue to Knowledge →'
-                    : draft.step === 3
-                      ? 'Select Model →'
-                      : draft.step === 4
-                        ? 'Configure Governance →'
-                        : 'Next →'}
+                  {`Continue to ${launchSteps[draft.step + 1]} →`}
                 </Button>
               ) : (
                 <Button

@@ -1,0 +1,1343 @@
+/* Launch journey: the supplied Hybrid v4 screenshots, scoped to this flow. */
+.journeyReference {
+  --journey-muted: #64748b;
+  background: #f8fafc;
+}
+.journeyBreadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 28px 12px;
+  background: white;
+  font-size: 13px;
+}
+.journeyBreadcrumb a {
+  color: #64748b;
+  text-decoration: none;
+}
+.journeyBreadcrumb > span {
+  color: #cbd5e1;
+}
+.journeyBreadcrumb strong {
+  font-weight: 600;
+  color: #334155;
+}
+.journeyReference .launchStepper {
+  padding: 12px 24px 18px;
+  background: white;
+}
+.journeyReference .launchStepper ol {
+  display: flex;
+  gap: 0;
+  min-width: 740px;
+}
+.journeyReference .launchStepper li {
+  flex: 1;
+  position: relative;
+}
+.journeyReference .launchStepper li:not(:last-child)::after {
+  content: '';
+  display: block;
+  position: absolute;
+  height: 2px;
+  background: #e2e8f0;
+  left: calc(50% + 34px);
+  right: calc(-50% + 34px);
+  top: 15px;
+  width: auto;
+  z-index: 0;
+}
+.journeyReference .launchStepper li.complete:not(:last-child)::after {
+  background: #16a34a;
+}
+.journeyReference .launchStepper button {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 500;
+  min-height: 54px;
+  color: #64748b;
+  position: relative;
+  z-index: 1;
+}
+.journeyReference .launchStepper button:disabled {
+  opacity: 1;
+  color: #64748b;
+}
+.journeyReference .launchStepper .stepCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: #e2e8f0;
+  color: #64748b;
+  border-radius: 50%;
+}
+.journeyReference .launchStepper .current button {
+  background: none;
+  color: #2563eb;
+  font-weight: 600;
+}
+.journeyReference .launchStepper .current .stepCircle {
+  color: white;
+  background: #2563eb;
+  box-shadow: 0 0 0 4px #dbeafe;
+}
+.journeyReference .launchStepper .complete button {
+  color: #15803d;
+  background: none;
+}
+.journeyReference .launchStepper .complete .stepCircle {
+  background: #16a34a;
+  color: white;
+}
+.journeyReference .hybridWorkarea {
+  grid-template-columns: minmax(0, 1fr) 230px;
+  align-items: stretch;
+}
+.journeyReference .hybridStage {
+  padding: 30px 32px;
+}
+.journeyReference .stageEyebrow {
+  display: table;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 3px 9px;
+  border-radius: 4px;
+  letter-spacing: 0.1em;
+  font:
+    600 12px/1.4 ui-monospace,
+    monospace;
+  margin: 0 0 12px;
+}
+.journeyReference .stepHeading {
+  position: relative;
+  display: block;
+  margin: 0 0 24px;
+  padding: 0;
+}
+.journeyReference .stepHeading h2 {
+  color: #0f172a;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.7px;
+  margin: 0 0 8px;
+}
+.journeyReference .stepHeading p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #64748b;
+  max-width: none;
+}
+.journeyReference .missionHeading {
+  padding-right: 165px;
+}
+.missionHelp {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 3;
+}
+.missionHelp summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  list-style: none;
+}
+.missionHelp summary svg {
+  color: #2563eb;
+}
+.journeyReference .missionHelp p {
+  width: 280px;
+  position: absolute;
+  top: 52px;
+  right: 0;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px #0f172a12;
+}
+.journeyReference .missionForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: none;
+}
+.missionSection {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.missionSection header {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 18px 24px;
+}
+.missionSection header span {
+  color: #64748b;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 600;
+}
+.missionSection h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 5px 0 0;
+}
+.missionIdentity {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 22px 24px;
+}
+.missionIdentity > div {
+  min-width: 0;
+}
+.journeyReference .field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.journeyReference .field input,
+.journeyReference .field textarea,
+.journeyReference .field select {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 14px;
+  width: 100%;
+  min-width: 0;
+  color: #1e293b;
+}
+.journeyReference .field textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+.identityHint {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  min-height: 140px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.5;
+}
+.journeyReference .missionSuggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 12px;
+}
+.journeyReference .missionSuggestions button {
+  background: white;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.missionContext {
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.journeyReference .hybridAssembly {
+  padding: 18px 12px;
+  top: 0;
+  align-self: start;
+  position: sticky;
+  min-height: calc(100dvh - 180px);
+  height: auto;
+  background: white;
+}
+.assemblyCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+  margin-bottom: 10px;
+}
+.journeyReference .hybridAssembly h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: white;
+  padding: 12px 14px;
+  margin: 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+.journeyReference .assemblyStages {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 12px 14px;
+  list-style: none;
+}
+.journeyReference .assemblyStages li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 45px;
+  padding: 0;
+  color: #64748b;
+  font-size: 12px;
+}
+.journeyReference .assemblyStages li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 34px;
+  bottom: -11px;
+  width: 1px;
+  left: 9px;
+  background: #e2e8f0;
+}
+.journeyReference .assemblyStages li.complete:not(:last-child)::after {
+  background: #16a34a;
+}
+.journeyReference .assemblyStages b {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 50%;
+  z-index: 1;
+}
+.journeyReference .assemblyStages .complete b {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.journeyReference .assemblyStages .current b {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+.journeyReference .assemblyStages .current {
+  color: #2563eb;
+}
+.journeyReference .assemblyStages li > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+.journeyReference .assemblyStages small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 84px;
+  color: inherit;
+  font-size: 11px;
+  margin: 0;
+}
+.journeyReference .assemblyStages .current small {
+  font-weight: 500;
+}
+.assemblyReadiness h2 {
+  justify-content: space-between;
+}
+.assemblyReadiness h2 span {
+  color: #2563eb;
+  letter-spacing: 0;
+}
+.journeyReference .assemblyScore {
+  text-align: left;
+  padding: 14px;
+  margin: 0;
+}
+.journeyReference .assemblyScore > strong {
+  display: block;
+  font-size: 38px;
+  color: #2563eb;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.journeyReference .assemblyScore progress {
+  display: block;
+  width: 100%;
+  height: 6px;
+  margin: 0 0 14px;
+  accent-color: #2563eb;
+}
+.journeyReference .assemblyScore p {
+  font-size: 12px;
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+.journeyReference .assemblyScore small {
+  font-size: 11px;
+  color: #64748b;
+}
+.journeyReference .assemblyScore small b {
+  color: #2563eb;
+}
+.journeyReference .assemblyScore .readinessHint {
+  color: #64748b;
+  margin: 9px 0 0;
+}
+.journeyReference .readinessIssues {
+  margin: 0;
+  padding: 0 14px 14px;
+  font-size: 11px;
+  color: #64748b;
+}
+.journeyReference .readinessIssues li {
+  margin: 8px 0;
+}
+.assemblyReadiness.ready .assemblyScore > strong,
+.assemblyReadiness.ready h2 span {
+  color: #15803d;
+}
+.journeyReference .hybridSourceGrid,
+.journeyReference .hybridToolRows,
+.journeyReference .infraOptions,
+.journeyReference .hybridModels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.journeyReference .hybridSourceGrid button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px;
+  min-height: 76px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  box-shadow: none;
+  text-align: left;
+}
+.journeyReference .hybridSourceGrid button[aria-pressed='true'] {
+  border-color: #93c5fd;
+  background: #fafcff;
+}
+.journeyReference .sourceIdentity {
+  flex: 1;
+  min-width: 0;
+}
+.journeyReference .sourceIdentity strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: #1e293b;
+  font-size: 14px;
+}
+.journeyReference .sourceIdentity em {
+  font-size: 11px;
+  color: #1d4ed8;
+  background: #dbeafe;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-style: normal;
+  font-weight: 500;
+}
+.journeyReference .hybridSourceGrid small {
+  color: #64748b;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.sourceCoverage {
+  text-align: right;
+}
+.sourceCoverage b {
+  color: #15803d;
+  font-size: 14px;
+}
+.selectionCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #cbd5e1;
+  background: white;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+[aria-pressed='true'] .selectionCircle {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+.journeyInsight {
+  margin: 16px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #eff6ff;
+  padding: 16px;
+  color: #1d4ed8;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.journeyInsight > span {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: white;
+  background: #2563eb;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.journeyInsight p {
+  margin: 0;
+}
+.toolsExplainer {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  color: #64748b;
+  margin: 0 0 20px;
+  font-size: 12px;
+}
+.toolsExplainer strong {
+  color: #334155;
+}
+.toolsExplainer > span {
+  margin: 0 16px;
+  color: #cbd5e1;
+}
+.journeyReference .hybridToolRows label {
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  min-width: 0;
+  min-height: 76px;
+}
+.journeyReference .hybridToolRows label.selected {
+  border-color: #93c5fd;
+  background: white;
+}
+.journeyReference .hybridToolRows strong {
+  font-size: 14px;
+  color: #1e293b;
+  line-height: 1.5;
+}
+.journeyReference .hybridToolRows small {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+  margin-top: 3px;
+}
+.journeyReference .hybridToolRows .toolIdentity {
+  flex: 1;
+  min-width: 0;
+}
+.journeyReference .hybridToolRows input[role='switch'] {
+  order: 3;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 2px solid #cbd5e1;
+  background: white;
+  border-radius: 50%;
+  margin: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.journeyReference .hybridToolRows input[role='switch']::before {
+  content: '✓';
+  position: static;
+  transform: none;
+  display: none;
+  background: none;
+  color: white;
+  width: auto;
+  height: auto;
+  font-size: 13px;
+  line-height: 1;
+  box-shadow: none;
+}
+.journeyReference .hybridToolRows input[role='switch']:checked {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+.journeyReference .hybridToolRows input[role='switch']:checked::before {
+  display: block;
+  transform: none;
+}
+.riskBadge {
+  display: inline-block;
+  width: fit-content;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  font-style: normal;
+  line-height: 1.4;
+}
+.riskBadge.low {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.riskBadge.medium {
+  color: #a34d00;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.riskBadge.high {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.toolIdentity em {
+  margin-top: 6px;
+  white-space: normal;
+}
+.journeyReference .notificationChoice {
+  font-size: 12px;
+  margin: 14px 0;
+  color: #64748b;
+}
+.journeyReference .infraOption {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: none;
+  padding: 20px;
+  background: white;
+  text-align: left;
+  min-height: 130px;
+}
+.journeyReference .infraOption.selected {
+  border-color: #93c5fd;
+  background: white;
+}
+.journeyReference .infraTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.journeyReference .infraTitle > span {
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+}
+.journeyReference .infraTitle > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.journeyReference .infraTitle strong {
+  color: #1e293b;
+  font-size: 14px;
+}
+.journeyReference .infraTitle small {
+  display: inline;
+  background: #eff6ff;
+  border-radius: 999px;
+  color: #2563eb;
+  padding: 3px 8px;
+  font-size: 11px;
+  margin: 0;
+}
+.journeyReference .infraOption p {
+  color: #64748b;
+  font-size: 12px;
+  margin: 8px 0 16px 34px;
+}
+.journeyReference .infraOption dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 0 34px;
+}
+.journeyReference .infraOption dl > div {
+  display: block;
+  min-width: 0;
+}
+.journeyReference .infraOption dt {
+  font-size: 10px;
+  color: #64748b;
+}
+.journeyReference .infraOption dd {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: #15803d;
+}
+.journeyReference .infraRecommendation,
+.journeyReference .modelStrengths,
+.journeyReference .intelligenceNote {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 16px;
+  color: #1d4ed8;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.journeyReference .infraRecommendation p,
+.journeyReference .modelStrengths p {
+  color: #1d4ed8;
+  line-height: 1.6;
+}
+.journeyReference .infraRecommendation .tags {
+  display: none;
+}
+.journeyReference .hybridModel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px 12px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  min-height: 136px;
+  text-align: left;
+}
+.journeyReference .hybridModel::before {
+  display: none;
+}
+.journeyReference .hybridModel.selected {
+  background: white;
+  border-color: #93c5fd;
+}
+.journeyReference .modelIdentity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.journeyReference .hybridModel strong {
+  font-size: 14px;
+  color: #1e293b;
+}
+.journeyReference .modelIdentity small {
+  margin: 0;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 3px 7px;
+  border-radius: 4px;
+  color: #475569;
+}
+.journeyReference .hybridModel > .modelPill {
+  grid-column: 2;
+  width: fit-content;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  font-size: 11px;
+}
+.journeyReference .modelProfile,
+.journeyReference .modelSpecs {
+  grid-column: 2;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.6;
+}
+.modelSpecs > span {
+  margin-left: 8px;
+}
+.modelSpecs b {
+  color: #475569;
+  font-weight: 600;
+}
+.journeyReference .hybridGovernance .hybridToolRows input[role='switch'] {
+  order: 0;
+}
+.journeyReference
+  .hybridGovernance
+  .hybridToolRows
+  input[role='switch']:checked {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+.journeyReference .hybridGovernance .hybridToolRows label.selected {
+  border-color: #e2e8f0;
+}
+.journeyReference .hybridGovernance .hybridToolRows small {
+  font-size: 11px;
+}
+.policyState {
+  font-size: 11px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  color: #475569;
+}
+.policyState.active {
+  background: #dcfce7;
+  color: #15803d;
+}
+.journeyReference .readinessBanner {
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.journeyReference .readinessBanner .progressRing {
+  background: none !important;
+  width: auto;
+  height: auto;
+  min-width: 105px;
+}
+.journeyReference .progressRing > div {
+  position: static;
+  width: auto;
+  height: auto;
+  background: none;
+}
+.journeyReference .progressRing strong {
+  font-size: 48px;
+  letter-spacing: -2px;
+  color: #15803d;
+}
+.journeyReference .needsReview .progressRing strong {
+  color: #a34d00;
+}
+.journeyReference .progressRing small {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 6px;
+}
+.journeyReference .readinessBanner h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+.journeyReference .readinessBanner p,
+.journeyReference .readinessBanner small {
+  font-size: 12px;
+  color: #64748b;
+}
+.journeyReference .evaluationRows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.journeyReference .evaluationRows > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 52px;
+  gap: 8px 12px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 12px;
+  padding: 14px;
+}
+.journeyReference .evaluationRows strong {
+  color: #334155;
+  font-size: 13px;
+}
+.journeyReference .evaluationRows small {
+  font-size: 11px;
+}
+.journeyReference .evaluationRows progress {
+  grid-row: 2;
+  grid-column: 1/-1;
+  width: 100%;
+  height: 5px;
+}
+.journeyReference .evaluationRows b {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 15px;
+  color: #15803d;
+}
+.journeyReference .evaluationRows [data-outcome='warning'] b {
+  color: #a34d00;
+}
+.journeyReference .evaluationRows [data-outcome='failed'] b {
+  color: #b91c1c;
+}
+.journeyReference .evaluationScenarios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.journeyReference .evaluationScenarios > h3,
+.journeyReference .evaluationScenarios > button {
+  grid-column: 1/-1;
+}
+.journeyReference .evaluationScenarios details {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  margin: 0;
+  background: white;
+  min-width: 0;
+}
+.journeyReference .evaluationScenarios code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.journeyReference .deployColumns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.journeyReference .deploymentSummary {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 22px;
+  background: white;
+}
+.journeyReference .deploymentSummary h3 {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+.journeyReference .deploymentSummary dl {
+  margin: 0;
+}
+.journeyReference .deploymentSummary dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.journeyReference .deploymentSummary dl > div:last-child {
+  border-bottom: 0;
+}
+.journeyReference .deploymentSummary dt {
+  color: #64748b;
+  font-size: 14px;
+}
+.journeyReference .deploymentSummary dd {
+  text-align: right;
+  color: #1e293b;
+  font-size: 14px;
+  max-width: 65%;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.journeyReference .environmentSelection {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.journeyReference .environmentSelection legend {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.journeyReference .environmentOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px;
+  margin: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: transparent;
+}
+.journeyReference .environmentOption.selected {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+.journeyReference .environmentOption strong {
+  font-size: 14px;
+}
+.journeyReference .environmentOption small {
+  font-size: 11px;
+}
+.journeyReference .environmentSelection > .callout,
+.journeyReference .environmentSelection > p {
+  grid-column: 1/-1;
+  margin: 0;
+}
+.deploymentChecks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.deploymentChecks > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid #dcfce7;
+  background: #f0fdf4;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #166534;
+}
+.deploymentChecks .pending {
+  color: #a34d00;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.deploymentChecks span {
+  margin-left: auto;
+  font-size: 11px;
+}
+.journeyReference .wizardActions {
+  padding: 0;
+  border: 0;
+  background: none;
+  margin-top: 32px;
+  box-shadow: none;
+  position: static;
+}
+.journeyReference .wizardActions .button {
+  min-height: 38px;
+  font-size: 14px;
+  border-radius: 9px;
+}
+.journeyReference .wizardActions > div {
+  gap: 10px;
+}
+.journeyReference .previewBanner {
+  font-size: 11px;
+  margin-top: 20px;
+}
+.journeyReference .draftNotice {
+  font-size: 12px;
+}
+.journeyComplete {
+  display: flex;
+  flex-direction: column;
+}
+.journeyComplete > .previewBanner {
+  order: 2;
+}
+.journeyComplete > .resourceFooter {
+  order: 3;
+  justify-content: center;
+}
+.journeyComplete .missionSuccess {
+  min-height: calc(100dvh - 220px);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  text-align: center;
+}
+.salutingRobot {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  animation: mission-ready 0.6s ease-out both;
+}
+.missionSuccess h1 {
+  font-size: 32px;
+  letter-spacing: -0.8px;
+  margin: 0 0 14px;
+}
+.missionSuccess p {
+  color: #64748b;
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+.missionSuccess .successPreviewNote {
+  font-size: 12px;
+}
+.missionSuccess .successActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+.missionSuccess .successActions .button {
+  font-size: 14px;
+}
+@keyframes mission-ready {
+  from {
+    opacity: 1;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .salutingRobot {
+    animation: none;
+  }
+}
+@media (max-width: 1250px) {
+  .journeyReference .hybridStage {
+    padding: 24px;
+  }
+  .journeyReference .missionHeading {
+    padding-right: 0;
+  }
+  .missionHelp {
+    position: relative;
+    margin-top: 14px;
+    width: fit-content;
+  }
+  .journeyReference .hybridToolRows label {
+    flex-wrap: wrap;
+  }
+  .journeyReference .hybridToolRows .toolIdentity {
+    flex-basis: 65%;
+  }
+  .journeyReference
+    .hybridGovernance
+    .hybridToolRows
+    label
+    > span:nth-child(2) {
+    flex-basis: 70%;
+  }
+  .missionContext {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .journeyReference .infraOption dl {
+    margin-left: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1000px) {
+  .journeyReference .hybridWorkarea {
+    grid-template-columns: minmax(0, 1fr) 210px;
+  }
+  .journeyReference .hybridSourceGrid,
+  .journeyReference .hybridModels,
+  .journeyReference .hybridToolRows,
+  .journeyReference .infraOptions {
+    grid-template-columns: 1fr;
+  }
+  .missionIdentity {
+    grid-template-columns: 1fr;
+  }
+  .identityHint {
+    min-height: 0;
+  }
+  .journeyReference .assemblyStages li > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .journeyReference .assemblyStages small {
+    max-width: 140px;
+  }
+  .journeyReference .evaluationRows,
+  .journeyReference .evaluationScenarios {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .journeyReference .hybridWorkarea {
+    display: flex;
+    flex-direction: column;
+  }
+  .journeyReference .hybridStage {
+    padding: 22px 16px;
+  }
+  .journeyReference .hybridAssembly {
+    position: static;
+    width: 100%;
+    min-height: 0;
+    border-left: 0;
+    border-top: 1px solid #e2e8f0;
+    padding: 16px;
+  }
+  .journeyReference .assemblyStages li > div {
+    flex-direction: row;
+    align-items: center;
+  }
+  .journeyReference .stepHeading h2 {
+    font-size: 24px;
+  }
+  .missionIdentity,
+  .missionContext {
+    padding: 18px;
+    grid-template-columns: 1fr;
+  }
+  .missionSection header {
+    padding: 18px;
+  }
+  .journeyReference .environmentSelection,
+  .deploymentChecks {
+    grid-template-columns: 1fr;
+  }
+  .journeyReference .readinessBanner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .journeyReference .wizardActions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .journeyReference .wizardActions > div {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .journeyReference .sourceCoverage {
+    display: none;
+  }
+  .journeyReference .missionHelp p {
+    right: auto;
+    left: 0;
+    max-width: 75vw;
+  }
+  .missionSuccess .successActions {
+    flex-direction: column;
+  }
+  .journeyReference .modelSpecs > span {
+    display: block;
+    margin-left: 0;
+  }
+}
+/* Reset legacy row/grid rules that otherwise leak into this journey. */
+.hybridJourney.journeyReference
+  .launchStepper
+  li.complete:not(:last-child)::after {
+  width: auto;
+  top: 15px;
+  left: calc(50% + 34px);
+  right: calc(-50% + 34px);
+}
+.journeyReference .hybridResourceStage,
+.journeyReference .hybridGovernance {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.journeyReference .field input,
+.journeyReference .field select {
+  height: 46px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.journeyReference .evaluationRows > div {
+  grid-template-columns: 8px minmax(0, 1fr) auto auto;
+  min-width: 0;
+  padding: 16px;
+  gap: 10px;
+}
+.journeyReference .evaluationRows > div > span {
+  display: block;
+  min-width: 0;
+}
+.journeyReference .evaluationRows small {
+  display: none;
+}
+.journeyReference .evaluationRows progress {
+  display: none;
+}
+.journeyReference .evaluationRows b {
+  grid-column: auto;
+  grid-row: auto;
+}
+.journeyReference .evaluationRows .metricOutcome {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+}
+.journeyReference .evaluationRows [data-outcome='warning'] .metricOutcome {
+  background: #fef3c7;
+  color: #a34d00;
+}
+.journeyReference .evaluationRows [data-outcome='failed'] .metricOutcome {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.journeyReference .environmentSelection {
+  order: 0;
+  width: 100%;
+}
+.journeyReference .deploymentSummary {
+  width: 100%;
+  order: 0;
+}
+.journeyReference .deploymentSummary dl {
+  gap: 0;
+}
+.journeyReference .deploymentChecks,
+.journeyReference .deploymentApproval {
+  width: 100%;
+}
+.journeyReference .scenarioDetails {
+  margin: 18px 0;
+}
+.journeyReference .scenarioDetails > summary {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  padding: 12px 0;
+}
+.journeyReference .evaluationActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.journeyReference .sourceCoverage small {
+  display: block;
+}
+.journeyReference .moreJourneyOptions {
+  margin-top: 16px;
+}
+.journeyReference .moreJourneyOptions > summary {
+  padding: 10px 0;
+  color: #64748b;
+  font-size: 12px;
+  cursor: pointer;
+}

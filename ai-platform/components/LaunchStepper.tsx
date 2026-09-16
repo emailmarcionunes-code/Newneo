@@ -1,5 +1,26 @@
+import {
+  Rocket,
+  BookOpen,
+  Wrench,
+  Server,
+  Cpu,
+  Shield,
+  FlaskConical,
+  Zap,
+  Check,
+} from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { launchSteps } from '@/lib/launch';
+const icons = [
+  Rocket,
+  BookOpen,
+  Wrench,
+  Server,
+  Cpu,
+  Shield,
+  FlaskConical,
+  Zap,
+];
 export function LaunchStepper({
   current,
   onStep,
@@ -50,9 +71,15 @@ export function LaunchStepper({
               onClick={() => onStep(index)}
             >
               <span className="stepCircle" aria-hidden="true">
-                {(completed?.[index] ?? index < current) && index !== current
-                  ? '✓'
-                  : index + 1}
+                {(completed?.[index] ?? index < current) &&
+                index !== current ? (
+                  <Check size={16} />
+                ) : (
+                  (() => {
+                    const Icon = icons[index];
+                    return <Icon size={16} />;
+                  })()
+                )}
               </span>
               <span>{label}</span>
             </button>

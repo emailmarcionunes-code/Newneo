@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react';
 import { sourceProfiles } from '@/lib/resource-profiles';
 import { ProviderLogo } from './Assets';
 import {
@@ -12,35 +13,61 @@ export function HybridResourcesStep({
   draft: LaunchDraft;
   onChange: (v: Partial<LaunchDraft>) => void;
 }) {
-  if (draft.step === 1)
+  if (draft.step === 1) {
+    const coverage = Math.round(
+      draft.knowledge.reduce(
+        (sum, id) => sum + (sourceProfiles[id]?.coverage ?? 0),
+        0,
+      ) / Math.max(1, draft.knowledge.length),
+    );
     return (
       <section className="hybridResourceStage">
-        <div className="knowledgeCoverage">
-          <div>
-            Knowledge coverage for this use case{' '}
-            <strong>
-              {Math.round(
-                draft.knowledge.reduce(
-                  (sum, id) => sum + (sourceProfiles[id]?.coverage ?? 0),
-                  0,
-                ) / Math.max(1, draft.knowledge.length),
-              )}
-              %
-            </strong>
-          </div>
-          <progress
-            max={100}
-            value={Math.round(
-              draft.knowledge.reduce(
-                (sum, id) => sum + (sourceProfiles[id]?.coverage ?? 0),
-                0,
-              ) / Math.max(1, draft.knowledge.length),
-            )}
-            aria-label="Knowledge coverage"
-          />
+        <div className="hybridSourceGrid">
+          {knowledgeSources.map((s) => {
+            const selected = draft.knowledge.includes(s.id);
+            const profile = sourceProfiles[s.id];
+            return (
+              <button
+                type="button"
+                key={s.id}
+                aria-label={`${s.name} ${selected ? 'Connected source' : 'Approved organization source'}`}
+                aria-pressed={selected}
+                onClick={() =>
+                  onChange({
+                    knowledgeNotNeeded: false,
+                    knowledge: selected
+                      ? draft.knowledge.filter((id) => id !== s.id)
+                      : [...draft.knowledge, s.id],
+                  })
+                }
+              >
+                <ProviderLogo provider={s.id} size={24} />
+                <span className="sourceIdentity">
+                  <strong>
+                    {s.name} {selected && <em>Connected</em>}
+                  </strong>
+                  <small>
+                    {profile?.type} ·{' '}
+                    {(profile?.docs ?? 0).toLocaleString('en-US')} docs
+                  </small>
+                </span>
+                <span className="sourceCoverage">
+                  <b>{profile?.coverage ?? 0}%</b>
+                  <small>coverage</small>
+                </span>
+                <span className="selectionCircle" aria-hidden="true">
+                  {selected && <Check size={13} />}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="journeyInsight">
+          <span aria-hidden="true">N</span>
           <p>
-            Recommendation: connect approved CRM knowledge to improve coverage.
-            Preview estimate.
+            Your current sources cover <strong>{coverage}%</strong> on average
+            in this preview. Connect approved enterprise sources to support this
+            mission.
           </p>
         </div>
         <label className="notificationChoice">
@@ -56,78 +83,20 @@ export function HybridResourcesStep({
           />
           No knowledge sources needed for this mission
         </label>
-        {!draft.knowledge.length && (
-          <p className="hybridEmpty">
-            No knowledge sources selected. Choose an approved source or confirm
-            none are needed.
-          </p>
-        )}
-        <div className="hybridSourceGrid">
-          {knowledgeSources.map((s) => (
-            <button
-              type="button"
-              key={s.id}
-              aria-pressed={draft.knowledge.includes(s.id)}
-              onClick={() =>
-                onChange({
-                  knowledgeNotNeeded: false,
-                  knowledge: draft.knowledge.includes(s.id)
-                    ? draft.knowledge.filter((id) => id !== s.id)
-                    : [...draft.knowledge, s.id],
-                })
-              }
-            >
-              <ProviderLogo provider={s.id} size={24} />
-              <span>
-                <strong>{s.name}</strong>
-                <small>
-                  {draft.knowledge.includes(s.id)
-                    ? 'Connected source'
-                    : 'Approved organization source'}
-                </small>
-                <small>
-                  {sourceProfiles[s.id]?.type} ·{' '}
-                  {(sourceProfiles[s.id]?.docs ?? 0).toLocaleString('en-US')}{' '}
-                  docs
-                </small>
-                <small>
-                  {sourceProfiles[s.id]?.coverage ?? 0}% coverage ·{' '}
-                  {sourceProfiles[s.id]?.permission}
-                </small>
-              </span>
-              {draft.knowledge.includes(s.id) && (
-                <span className="statusDot" aria-label="Selected" />
-              )}
-            </button>
-          ))}
-        </div>
       </section>
     );
+  }
+  const highRisk = toolConnectors.flatMap((t) =>
+    (t.actions ?? []).filter(
+      (a) => draft.tools[t.id]?.includes(a.id) && a.requiresApproval,
+    ),
+  ).length;
   return (
     <section aria-label="Tool actions">
-      <p className="intelligenceNote">
-        <strong>Knowledge = what the agent knows</strong>Tools = what the agent
-        can do. Permissions and human approval constrain each action.
+      <p className="toolsExplainer">
+        <strong>Knowledge</strong> = what the agent knows <span>·</span>{' '}
+        <strong>Tools</strong> = what the agent can do
       </p>
-      <label className="notificationChoice">
-        <input
-          type="checkbox"
-          checked={!!draft.toolsNotNeeded}
-          onChange={(e) =>
-            onChange({
-              toolsNotNeeded: e.target.checked,
-              tools: e.target.checked ? {} : draft.tools,
-            })
-          }
-        />
-        No tools needed for this mission
-      </label>
-      {!Object.values(draft.tools).flat().length && (
-        <p className="hybridEmpty">
-          No tools selected. Add an action or confirm this agent only answers
-          questions.
-        </p>
-      )}
       <div className="hybridToolRows">
         {toolConnectors.flatMap((t) =>
           (t.actions ?? []).map((a) => (
@@ -150,25 +119,51 @@ export function HybridResourcesStep({
                   onChange({ tools, toolsNotNeeded: false });
                 }}
               />
-              <span>
+              <span className="toolIdentity">
                 <strong>{a.name}</strong>
+                {a.requiresApproval && (
+                  <em className="riskBadge medium">Requires human approval</em>
+                )}
                 <small>
-                  {t.name}
+                  {t.name} · {a.access} permission
                   {!a.approved ? ' · Organization approval required' : ''}
                 </small>
               </span>
-              <span className="modelPill">{a.access}</span>
-              <span className="modelPill">
+              <span
+                className={`riskBadge ${a.requiresApproval ? 'high' : a.access === 'Write' ? 'medium' : 'low'}`}
+              >
                 {a.requiresApproval
-                  ? 'High risk · Human approval required'
+                  ? 'high'
                   : a.access === 'Write'
-                    ? 'Medium risk · Policy approval'
-                    : 'Low risk · Approved'}
+                    ? 'medium'
+                    : 'low'}{' '}
+                risk
               </span>
             </label>
           )),
         )}
       </div>
+      <div className="journeyInsight">
+        <span aria-hidden="true">N</span>
+        <p>
+          {highRisk
+            ? `${highRisk} high-risk actions selected require human approval. Review the human-in-the-loop control in Governance.`
+            : 'Selected actions stay within their configured permission scopes. High-risk actions require human approval.'}
+        </p>
+      </div>
+      <label className="notificationChoice">
+        <input
+          type="checkbox"
+          checked={!!draft.toolsNotNeeded}
+          onChange={(e) =>
+            onChange({
+              toolsNotNeeded: e.target.checked,
+              tools: e.target.checked ? {} : draft.tools,
+            })
+          }
+        />
+        No tools needed for this mission
+      </label>
     </section>
   );
 }

@@ -4,7 +4,7 @@ async function next(page: import('@playwright/test').Page) {
   await page
     .locator('.wizardActions')
     .getByRole('button', {
-      name: /Next →|Continue to Knowledge|Select Model|Configure Governance/,
+      name: /Continue to/,
     })
     .click();
 }
@@ -74,10 +74,24 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
     .getByRole('button', { name: 'Deploy to Production', exact: true })
     .click();
   await expect(
-    page.getByRole('heading', { name: 'Your agent is live!', exact: true }),
+    page.getByRole('heading', { name: 'Ready for the mission', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/No live deployment/)).toBeVisible();
+  await expect(
+    page.getByRole('img', {
+      name: 'Friendly robot saluting, ready for the mission',
+    }),
+  ).toBeVisible();
+  await expect(page.locator('.salutingRobot')).toHaveJSProperty(
+    'complete',
+    true,
+  );
+  await expect(page.locator('.salutingRobot')).not.toHaveJSProperty(
+    'naturalWidth',
+    0,
+  );
   await page.screenshot({
+    animations: 'disabled',
     path: info.outputPath('launch-success.png'),
     fullPage: true,
   });
@@ -119,7 +133,7 @@ test('evaluation errors retry and configuration edits invalidate reference recei
   await expect(
     page
       .locator('.wizardActions')
-      .getByRole('button', { name: 'Next →', exact: true }),
+      .getByRole('button', { name: 'Continue to Deploy →', exact: true }),
   ).toBeDisabled();
   fail = false;
   await page
@@ -166,6 +180,10 @@ for (const width of [1440, 1180, 768, 390])
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/agents/launch');
     for (let i = 0; i < 8; i++) {
+      if (i === 6)
+        await expect(
+          page.getByRole('meter', { name: 'Evaluation score' }),
+        ).toBeVisible();
       await expect(
         page.locator('.launchStepper [aria-current=step]'),
       ).toBeVisible();

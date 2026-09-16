@@ -4,7 +4,7 @@ async function next(page: import('@playwright/test').Page) {
   await page
     .locator('.wizardActions')
     .getByRole('button', {
-      name: /Next →|Continue to Knowledge|Select Model|Configure Governance/,
+      name: /Continue to/,
     })
     .click();
 }
@@ -81,7 +81,7 @@ test('launch creates a persistent workspace agent, release and monitoring record
     .click();
   await expect(page).toHaveURL(new RegExp(href!));
   await page.goto('/agentops');
-  await page.getByRole('tab', {name: 'Health', exact: true}).click();
+  await page.getByRole('tab', { name: 'Health', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'IT Journey Demo', exact: true }),
   ).toBeVisible();

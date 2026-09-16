@@ -157,7 +157,14 @@ export function EvaluateStep({
                   max={100}
                   value={metric.value}
                 />
-                <b>{metric.value}</b>
+                <b>{metric.value}%</b>
+                <span className="metricOutcome">
+                  {metric.value >= 85
+                    ? 'pass'
+                    : metric.value >= 60
+                      ? 'warning'
+                      : 'fail'}
+                </span>
               </div>
             ))}
           </div>
@@ -169,51 +176,66 @@ export function EvaluateStep({
             : 'Reference results could not be loaded. Use the button below to try again.'}
         </p>
       )}
-      <Button variant="secondary" onClick={evaluate} disabled={loading}>
-        {loading
-          ? 'Loading reference…'
-          : result
-            ? 'Reload reference evaluation'
-            : 'Load reference evaluation'}
-      </Button>
       {error && (
         <p className="requestError" role="alert">
           {error}
         </p>
       )}
       {result && (
-        <section className="evaluationScenarios">
-          <h3>Representative scenarios</h3>
-          {evaluationScenarios.map((s) => (
-            <details key={s.id}>
-              <summary>
-                <strong>{s.name}</strong>
-                <span className="modelPill">
-                  {draft.evaluationRemediation ? 'Passed' : s.status}
-                </span>
-              </summary>
-              <p>
-                {draft.evaluationRemediation && s.status !== 'Passed'
-                  ? 'Recommended control verified; safe outcome observed.'
-                  : s.output}
-              </p>
-              <p>
-                <strong>Recommendation:</strong> {s.recommendation}
-              </p>
-              <code>
-                {draft.evaluationRemediation && s.status !== 'Passed'
-                  ? `${s.id === 'pii' ? 'Extended PII detection → full mask' : s.id === 'budget' ? 'Cache hit → reduced tokens → within target' : 'Timeout → bounded retry → circuit breaker → human fallback'}`
-                  : s.trace}
-              </code>
-            </details>
-          ))}
-          {!draft.evaluationRemediation && (
-            <Button onClick={onRemediate}>
-              Apply recommended fixes and rerun preview
-            </Button>
-          )}
-        </section>
+        <details className="scenarioDetails">
+          <summary>Scenario details & recommendations</summary>
+          <section className="evaluationScenarios">
+            <h3>Representative scenarios</h3>
+            {evaluationScenarios.map((s) => (
+              <details key={s.id}>
+                <summary>
+                  <strong>{s.name}</strong>
+                  <span className="modelPill">
+                    {draft.evaluationRemediation ? 'Passed' : s.status}
+                  </span>
+                </summary>
+                <p>
+                  {draft.evaluationRemediation && s.status !== 'Passed'
+                    ? 'Recommended control verified; safe outcome observed.'
+                    : s.output}
+                </p>
+                <p>
+                  <strong>Recommendation:</strong> {s.recommendation}
+                </p>
+                <code>
+                  {draft.evaluationRemediation && s.status !== 'Passed'
+                    ? `${s.id === 'pii' ? 'Extended PII detection → full mask' : s.id === 'budget' ? 'Cache hit → reduced tokens → within target' : 'Timeout → bounded retry → circuit breaker → human fallback'}`
+                    : s.trace}
+                </code>
+              </details>
+            ))}
+          </section>
+        </details>
       )}
+      {result && (
+        <div className="journeyInsight">
+          <span aria-hidden="true">N</span>
+          <p>
+            {draft.evaluationRemediation
+              ? 'The recommended controls passed this reference evaluation. Review the deployment summary to continue.'
+              : 'Personal data masking, task cost and tool timeout recovery need attention. Review the scenarios and apply the recommended fixes before Production.'}
+          </p>
+        </div>
+      )}
+      <div className="evaluationActions">
+        <Button variant="secondary" onClick={evaluate} disabled={loading}>
+          {loading
+            ? 'Loading reference…'
+            : result
+              ? 'Reload reference evaluation'
+              : 'Load reference evaluation'}
+        </Button>
+        {!draft.evaluationRemediation && (
+          <Button onClick={onRemediate}>
+            Apply recommended fixes and rerun preview
+          </Button>
+        )}
+      </div>
       <p className="hybridDataNote">
         Approved design reference · simulated results, not a production
         approval.

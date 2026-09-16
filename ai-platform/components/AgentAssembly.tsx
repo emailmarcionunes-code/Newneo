@@ -1,8 +1,9 @@
-import type { CSSProperties } from 'react';
+import { Check } from 'lucide-react';
 import { readiness } from '@/lib/readiness';
 import type { ReferenceEvaluation } from '@/lib/preview';
 import { launchSteps, type LaunchDraft } from '@/lib/launch';
 import { approvedEndpoints, executionModels } from '@/lib/configuration';
+import { NewneoMark } from './NewneoLogo';
 export function AgentAssembly({
   draft,
   evaluation,
@@ -11,91 +12,92 @@ export function AgentAssembly({
   evaluation?: ReferenceEvaluation | null;
 }) {
   const ready = readiness(draft, evaluation);
-  const progress = ready.percent;
+  const complete = ready.stages.filter((s) => s.complete).length;
   const summaries = [
-    'Mission defined',
+    draft.name,
     `${draft.knowledge.length} sources`,
-    `${Object.values(draft.tools).flat().length} actions`,
+    `${Object.values(draft.tools).flat().length} tools`,
     executionModels.find((x) => x.id === draft.infrastructure.kind)?.name ??
       'Cloud',
     approvedEndpoints.find((x) => x.id === draft.model.modelId)?.name ??
       'Model selected',
-    'Policies configured',
-    evaluation
-      ? `${evaluation.score}% · reference evaluation`
-      : 'Awaiting evaluation',
+    `${(['logInteractions', 'maskSensitive', 'roleBasedAccess', 'sensitiveApproval', 'dataResidency', 'retentionPolicy'] as const).filter((key) => draft.governance.controls[key]).length} policies`,
+    evaluation ? `${evaluation.score}% readiness` : 'Awaiting evaluation',
     draft.environment ?? 'Select environment',
   ];
   return (
     <aside className="hybridAssembly" aria-label="Agent Assembly">
-      <h2>AGENT ASSEMBLY</h2>
-      <div className="assemblyVisual" aria-hidden="true">
-        {launchSteps.map((_, i) => (
-          <span
-            key={i}
-            style={{ '--ring': i + 1 } as CSSProperties}
-            className={
-              ready.stages[i].complete
-                ? 'done'
-                : i === draft.step
+      <section className="assemblyCard">
+        <h2>
+          <NewneoMark size={15} /> AGENT ASSEMBLY
+        </h2>
+        <ol className="assemblyStages">
+          {launchSteps.map((name, i) => (
+            <li
+              key={name}
+              className={
+                i === draft.step
                   ? 'current'
-                  : ''
-            }
+                  : ready.stages[i].complete
+                    ? 'complete'
+                    : ''
+              }
+            >
+              <b aria-hidden="true">
+                {i !== draft.step && ready.stages[i].complete && (
+                  <Check size={12} />
+                )}
+              </b>
+              <div>
+                <span>{name}</span>
+                {i === draft.step ? (
+                  <small>In progress</small>
+                ) : ready.stages[i].complete ? (
+                  <small title={summaries[i]}>{summaries[i]}</small>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+      <section
+        className={`assemblyCard assemblyReadiness ${ready.percent >= 88 ? 'ready' : ''}`}
+      >
+        <h2>
+          READINESS <span>{ready.percent}%</span>
+        </h2>
+        <div className="assemblyScore">
+          <strong>{ready.percent}%</strong>
+          <progress
+            aria-label="Overall journey progress"
+            max={8}
+            value={complete}
           />
-        ))}
-        <i />
-      </div>
-      <div className="assemblyScore">
-        <strong>{progress}%</strong>
-        <p>production readiness</p>
-        <small>Current: {launchSteps[draft.step]}</small>
-        <progress
-          aria-label="Overall journey progress"
-          max={8}
-          value={ready.stages.filter((s) => s.complete).length}
-        />
-      </div>
-      <ol className="assemblyStages">
-        {launchSteps.map((name, i) => (
-          <li
-            key={name}
-            className={
-              ready.stages[i].complete
-                ? 'complete'
-                : i === draft.step
-                  ? 'current'
-                  : ''
-            }
-          >
-            <b aria-hidden="true">{ready.stages[i].complete ? '✓' : ''}</b>
-            <div>
-              {name}
-              {ready.stages[i].complete && <small>{summaries[i]}</small>}
-            </div>
-          </li>
-        ))}
-      </ol>
-      {(ready.blockers.length > 0 || ready.warnings.length > 0) && (
-        <details className="readinessIssues">
-          <summary>{ready.blockers.length} requirements remaining</summary>
-          <ul>
-            {[...ready.blockers, ...ready.warnings].map((b) => (
-              <li key={b}>{b}</li>
-            ))}
-          </ul>
-        </details>
-      )}
-      {ready.productionReady && (
-        <p className="successText">
-          Production requirements satisfied · preview
-        </p>
-      )}
-      <div className="intelligenceNote">
-        <strong>NEWNEO INTELLIGENCE</strong>
-        {draft.step === 0
-          ? 'Describe the mission. I’ll shape the architecture and recommend the next decisions.'
-          : 'Your current choices remain inside approved enterprise guardrails.'}
-      </div>
+          <p>
+            <b>{complete}</b> of 8 stages complete
+          </p>
+          <small>
+            Current: <b>{launchSteps[draft.step]}</b>
+          </small>
+          <p className="readinessHint">
+            {complete === 0
+              ? 'Define your use case to begin'
+              : ready.productionReady
+                ? 'Ready for deployment preview'
+                : 'Building production readiness'}
+          </p>
+        </div>
+        {(ready.blockers.length > 0 || ready.warnings.length > 0) && (
+          <details className="readinessIssues">
+            <summary>{ready.blockers.length} requirements remaining</summary>
+            <ul>
+              {[...ready.blockers, ...ready.warnings].map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          </details>
+        )}
+      </section>
     </aside>
   );
 }

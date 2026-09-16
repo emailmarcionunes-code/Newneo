@@ -1,4 +1,4 @@
-import { AssetIcon } from './Assets';
+import { Check } from 'lucide-react';
 import { type InfrastructureSelection } from '@/lib/configuration';
 const options = [
   {
@@ -55,8 +55,8 @@ export function ModelRuntimeStep({
             }
           >
             <div className="infraTitle">
-              <span>
-                <AssetIcon name={`runtime-${o.id}`} size={20} monochrome />
+              <span className="selectionCircle">
+                {selected === o.id && <Check size={14} />}
               </span>
               <div>
                 <strong>{o.name}</strong>
@@ -65,10 +65,26 @@ export function ModelRuntimeStep({
             </div>
             <p>{o.description}</p>
             <dl>
-              {['Perf', 'Cost', 'Privacy', 'Latency'].map((k, i) => (
+              {['Performance', 'Cost', 'Privacy', 'Latency'].map((k, i) => (
                 <div key={k}>
                   <dt>{k}</dt>
-                  <dd>{o.scores[i]}</dd>
+                  <dd>
+                    {
+                      (
+                        {
+                          managed: ['High', 'Medium', 'High', 'Low'],
+                          'customer-cloud': [
+                            'High',
+                            'High',
+                            'Very high',
+                            'Low',
+                          ],
+                          hybrid: ['Medium', 'Medium', 'Very high', 'Medium'],
+                          private: ['Medium', 'High', 'Maximum', 'Very low'],
+                        } as const
+                      )[o.id][i]
+                    }
+                  </dd>
                 </div>
               ))}
             </dl>

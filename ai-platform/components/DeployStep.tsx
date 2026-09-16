@@ -1,3 +1,4 @@
+import { CheckCircle2 } from 'lucide-react';
 import { useDemoAccess } from './journeys/DemoExperience';
 import { productionBlockers } from '@/lib/readiness';
 import { approvedEndpoints, executionModels } from '@/lib/configuration';
@@ -20,7 +21,8 @@ export function DeployStep({
 }) {
   const { can } = useDemoAccess();
   const rows = [
-    ['Use Case', draft.name],
+    ['Agent', draft.name],
+    ['Mission', draft.description],
     [
       'Infrastructure',
       executionModels.find((item) => item.id === draft.infrastructure.kind)
@@ -53,7 +55,7 @@ export function DeployStep({
       aria-label="Deployment preview configuration"
     >
       <section className="deploymentSummary">
-        <h3>Summary</h3>
+        <h3>DEPLOYMENT SUMMARY</h3>
         <dl>
           {rows.map(([label, value]) => (
             <div key={label}>
@@ -82,6 +84,43 @@ export function DeployStep({
           promote a live agent.
         </p>
       </fieldset>
+      <div className="deploymentChecks">
+        {[
+          [
+            'Identity & mission configured',
+            !!draft.name.trim() && !!draft.businessOwner?.trim(),
+          ],
+          [
+            'Governance policies applied',
+            [
+              'logInteractions',
+              'maskSensitive',
+              'roleBasedAccess',
+              'dataResidency',
+              'retentionPolicy',
+            ].every(
+              (k) =>
+                draft.governance.controls[
+                  k as keyof typeof draft.governance.controls
+                ],
+            ),
+          ],
+          [
+            'Evaluation scenarios passed',
+            !evaluation.cases.some((c) => c.status === 'Failed' && c.count > 0),
+          ],
+          [
+            'Infrastructure configuration selected',
+            !!draft.infrastructure.kind,
+          ],
+        ].map(([label, passed]) => (
+          <div key={String(label)} className={passed ? 'passed' : 'pending'}>
+            <CheckCircle2 size={17} />
+            {label}
+            <span>{passed ? 'Ready' : 'Review'}</span>
+          </div>
+        ))}
+      </div>
       <section className="deploymentApproval">
         {!can('approve') && (
           <p role="note">

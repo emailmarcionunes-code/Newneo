@@ -3,6 +3,11 @@ test('created sample telemetry stays consistent across overview, reports and Age
   page,
 }) => {
   await page.goto('/agents');
+  // Wait for the complete persisted state before adding the telemetry fixture.
+  await page.waitForFunction(() => {
+    const raw = sessionStorage.getItem('newneo:customer-journeys:v1');
+    return raw && JSON.parse(raw).version === 1;
+  });
   await page.evaluate(() => {
     const key = 'newneo:customer-journeys:v1';
     const state = JSON.parse(sessionStorage.getItem(key) || '{}');

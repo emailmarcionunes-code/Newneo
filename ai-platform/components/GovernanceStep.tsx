@@ -49,7 +49,7 @@ export function GovernanceStep({
   return (
     <section className="hybridGovernance">
       <div className="hybridToolRows">
-        {controls.map(([id, name, description, status]) => (
+        {controls.map(([id, name, description]) => (
           <label key={id} className={value.controls[id] ? 'selected' : ''}>
             <input
               type="checkbox"
@@ -66,8 +66,19 @@ export function GovernanceStep({
               <strong>{name}</strong>
               <small>{description}</small>
             </span>
-            <span className="modelPill">
-              {value.controls[id] ? status : 'Gap'}
+            <span
+              className={`riskBadge ${id === 'retentionPolicy' ? 'low' : id === 'dataResidency' ? 'medium' : 'high'}`}
+            >
+              {id === 'retentionPolicy'
+                ? 'Low'
+                : id === 'dataResidency'
+                  ? 'Medium'
+                  : 'High'}
+            </span>
+            <span
+              className={`policyState ${value.controls[id] ? 'active' : ''}`}
+            >
+              {value.controls[id] ? 'Active' : 'Inactive'}
             </span>
           </label>
         ))}
