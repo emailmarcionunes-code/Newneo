@@ -85,3 +85,44 @@ test('server routes continue to fail closed without identity', async ({
     (await request.post('/api/launch/deploy', { data: {} })).status(),
   ).toBe(503);
 });
+
+test('collapsed sidebar never expands during route transitions', async ({
+  page,
+}) => {
+  await page.goto('/knowledge');
+  await page
+    .getByRole('button', { name: 'Collapse sidebar', exact: true })
+    .click();
+  await expect(page.locator('.sidebar')).toHaveCSS('width', '60px');
+  await page.evaluate(() => {
+    const samples: number[] = [];
+    Object.assign(window, { sidebarWidthSamples: samples });
+    function sample() {
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) samples.push(sidebar.getBoundingClientRect().width);
+      requestAnimationFrame(sample);
+    }
+    sample();
+  });
+  for (const [name, route] of [
+    ['Tools & MCP', '/tools'],
+    ['Agents', '/agents'],
+    ['Overview', '/'],
+  ]) {
+    await page
+      .locator('.sidebar')
+      .getByRole('link', { name, exact: true })
+      .click();
+    await expect(page).toHaveURL(
+      new RegExp(`${route === '/' ? '/$' : route + '$'}`),
+    );
+    await expect(page.locator('.sidebar')).toHaveCSS('width', '60px');
+  }
+  const widths = await page.evaluate(
+    () =>
+      (window as unknown as { sidebarWidthSamples: number[] })
+        .sidebarWidthSamples,
+  );
+  expect(widths.length).toBeGreaterThan(0);
+  expect(widths.every((width) => Math.abs(width - 60) < 0.5)).toBe(true);
+});

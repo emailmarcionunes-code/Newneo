@@ -1,17 +1,12 @@
 'use client';
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AssetIcon } from './Assets';
 import { HeaderSearch, HeaderNotifications, HelpIcon } from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
+import { useSidebarState } from './SidebarState';
 
 export const navigation = [
   ['Overview', '/', 'overview'],
@@ -83,7 +78,7 @@ export function ApplicationSidebar({
     <aside
       id="application-sidebar"
       className={`sidebar${open ? ' isOpen' : ''}${collapsed ? ' isCollapsed' : ''}`}
-      style={{ width: collapsed ? 60 : 224, transition: 'width 180ms ease' }}
+      style={{ width: collapsed ? 60 : 224 }}
     >
       <Link
         href="/"
@@ -258,25 +253,7 @@ export function Topbar({
 
 export function ApplicationShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
-  useLayoutEffect(() => {
-    try {
-      setCollapsed(
-        sessionStorage.getItem('newneo-sidebar-collapsed') === 'true',
-      );
-    } catch {
-      /* Navigation remains available when storage is restricted. */
-    }
-  }, []);
-  function toggleCollapsed() {
-    const next = !collapsed;
-    setCollapsed(next);
-    try {
-      sessionStorage.setItem('newneo-sidebar-collapsed', String(next));
-    } catch {
-      /* The toggle still works for the current screen. */
-    }
-  }
+  const { collapsed, toggleCollapsed } = useSidebarState();
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;

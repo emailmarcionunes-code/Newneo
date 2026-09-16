@@ -10,6 +10,7 @@ import './hybrid-v4.css';
 import './hybrid-audit.css';
 import './visual-fidelity.css';
 import './experience-quality.css';
+import { SidebarStateProvider } from '@/components/SidebarState';
 import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 
 export const metadata: Metadata = {
@@ -30,7 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <PreviewStateProvider>{children}</PreviewStateProvider>
+        <SidebarStateProvider>
+          <PreviewStateProvider>{children}</PreviewStateProvider>
+        </SidebarStateProvider>
       </body>
     </html>
   );
