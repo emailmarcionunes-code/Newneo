@@ -13,6 +13,12 @@ for (const width of [1440, 390])
     await page
       .getByRole('button', { name: 'Create New Skill', exact: true })
       .click();
+    await expect(
+      page.getByRole('heading', {
+        name: 'Organization Skill Library',
+        exact: true,
+      }),
+    ).toHaveCount(0);
     const builder = page.getByRole('region', {
       name: 'Skill Builder',
       exact: true,
@@ -105,6 +111,9 @@ for (const width of [1440, 390])
     await validateSave();
     await page
       .getByRole('button', { name: '+ Add Skill', exact: true })
+      .click();
+    await page
+      .getByRole('button', { name: 'Select Existing Skill', exact: true })
       .click();
     await page
       .getByRole('button', {

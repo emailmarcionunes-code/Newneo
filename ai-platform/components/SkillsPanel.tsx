@@ -145,7 +145,7 @@ export function SkillsPanel({
         <Button
           disabled={!can('create')}
           onClick={() => {
-            setStep(0);
+            setStep(-1);
             setSuccess(null);
             setBuilder(false);
             setError('');
@@ -343,6 +343,42 @@ export function SkillsPanel({
           )}
         </>
       )}
+      {step === -1 && !builder && (
+        <section aria-label="Choose how to add a Skill">
+          <h3>How would you like to add a Skill?</h3>
+          <div className="skillLibraryGrid">
+            <article className="skillCard">
+              <h3>Create a new capability</h3>
+              <p>
+                Define your own Skill, its requirements and evaluation
+                scenarios.
+              </p>
+              <Button
+                disabled={!can('create')}
+                onClick={() => {
+                  setBuilderSource(null);
+                  setBuilder(true);
+                }}
+              >
+                Create New Skill
+              </Button>
+            </article>
+            <article className="skillCard">
+              <h3>Use an existing capability</h3>
+              <p>
+                Browse the organization library and configure a Skill for this
+                Agent.
+              </p>
+              <Button disabled={!can('create')} onClick={() => setStep(0)}>
+                Select Existing Skill
+              </Button>
+            </article>
+          </div>
+          <Button variant="secondary" onClick={() => setStep(null)}>
+            Cancel
+          </Button>
+        </section>
+      )}
       {builder && (
         <SkillBuilder
           key={
@@ -351,9 +387,13 @@ export function SkillsPanel({
               : 'new'
           }
           source={builderSource}
-          onClose={() => setBuilder(false)}
+          onClose={() => {
+            setBuilder(false);
+            setStep(-1);
+          }}
           onPublished={(s) => {
             setBuilder(false);
+            setStep(0);
             setSearch(s.name);
             setCategory('All');
             setMaturity('All');
@@ -364,7 +404,7 @@ export function SkillsPanel({
           }}
         />
       )}
-      {step !== null && !builder && (
+      {step !== null && step >= 0 && !builder && (
         <section aria-label="Add Skill journey">
           <ol className="skillSteps">
             {steps.map((name, i) => (
@@ -376,15 +416,8 @@ export function SkillsPanel({
           {step === 0 && (
             <>
               <h3>Organization Skill Library</h3>
-              <Button
-                variant="secondary"
-                disabled={!can('create')}
-                onClick={() => {
-                  setBuilderSource(null);
-                  setBuilder(true);
-                }}
-              >
-                Create New Skill
+              <Button variant="secondary" onClick={() => setStep(-1)}>
+                Back to Skill options
               </Button>
               <div className="skillFilters">
                 <label>
