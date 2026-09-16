@@ -354,3 +354,8 @@
     padding: 16px;
   }
 }
+
+/* Agent inventory rows open the same detail as their native name link. */
+.hybridTable tr.navigableRow { cursor: pointer; }
+.hybridTable tr.navigableRow:hover td,
+.hybridTable tr.navigableRow:focus-within td { background: #f0f6ff; }

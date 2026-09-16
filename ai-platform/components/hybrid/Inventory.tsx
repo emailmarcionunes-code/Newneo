@@ -6,6 +6,7 @@ import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import { useState } from 'react';
 import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { actionRows as fixtureActions } from '@/lib/hybrid-data';
 import { Button, FilterChip } from '../UI';
 import { previewSourceRows } from '@/lib/source-preview';
@@ -16,6 +17,12 @@ export function Agents() {
   const hybridAgents = useWorkspaceAgents();
   const [filter, setFilter] = usePreviewValue('agents:filter', 'All');
   const [search, setSearch] = usePreviewValue('agents:search', '');
+  const router = useRouter();
+  const visibleAgents = hybridAgents.filter(
+    (a) =>
+      (filter === 'All' || a.status === filter) &&
+      a.name.toLowerCase().includes(search.toLowerCase()),
+  );
   return (
     <div className="surfacePage hybridPage agentsPage">
       <PageTitle
@@ -68,53 +75,50 @@ export function Agents() {
           'Owner',
           'Deployed',
         ]}
-        rows={hybridAgents
-          .filter(
-            (a) =>
-              (filter === 'All' || a.status === filter) &&
-              a.name.toLowerCase().includes(search.toLowerCase()),
-          )
-          .map((a) => [
-            <DetailLink key={a.id} href={`/agents/${a.id}`}>
-              <IconLabel>{a.name}</IconLabel>
-            </DetailLink>,
-            <Status key="s">{a.status}</Status>,
-            <span className="referenceMono" key="version">
-              {String(
-                state.releases.find(
-                  (r) => r.agentId === a.id && r.state === 'Active',
+        onRowClick={(index) =>
+          router.push(`/agents/${visibleAgents[index].id}`)
+        }
+        rows={visibleAgents.map((a) => [
+          <DetailLink key={a.id} href={`/agents/${a.id}`}>
+            <IconLabel>{a.name}</IconLabel>
+          </DetailLink>,
+          <Status key="s">{a.status}</Status>,
+          <span className="referenceMono" key="version">
+            {String(
+              state.releases.find(
+                (r) => r.agentId === a.id && r.state === 'Active',
+              )?.version ??
+                state.ui?.[`agent:${a.id}:version`] ??
+                deploymentRecords.find(
+                  (r) => r.agentId === a.id && r.status === 'Success',
                 )?.version ??
-                  state.ui?.[`agent:${a.id}:version`] ??
-                  deploymentRecords.find(
-                    (r) => r.agentId === a.id && r.status === 'Success',
-                  )?.version ??
-                  '—',
-              )}
-            </span>,
-            a.tasks,
-            <span
-              key="success"
-              className={
-                a.status === 'Degraded'
-                  ? 'hybridDanger'
-                  : a.status === 'Live'
-                    ? 'successText'
-                    : ''
-              }
-            >
-              {a.success}
-            </span>,
-            a.latency,
-            <Tag key="model">{a.model}</Tag>,
-            String(state.ui?.[`agent:${a.id}:owner`] ?? 'Ops Team'),
-            <span className="referenceMono" key="deployed">
-              {a.id.startsWith('preview-')
-                ? 'This session'
-                : (deploymentRecords.find(
-                    (r) => r.agentId === a.id && r.status === 'Success',
-                  )?.when ?? '—')}
-            </span>,
-          ])}
+                '—',
+            )}
+          </span>,
+          a.tasks,
+          <span
+            key="success"
+            className={
+              a.status === 'Degraded'
+                ? 'hybridDanger'
+                : a.status === 'Live'
+                  ? 'successText'
+                  : ''
+            }
+          >
+            {a.success}
+          </span>,
+          a.latency,
+          <Tag key="model">{a.model}</Tag>,
+          String(state.ui?.[`agent:${a.id}:owner`] ?? 'Ops Team'),
+          <span className="referenceMono" key="deployed">
+            {a.id.startsWith('preview-')
+              ? 'This session'
+              : (deploymentRecords.find(
+                  (r) => r.agentId === a.id && r.status === 'Success',
+                )?.when ?? '—')}
+          </span>,
+        ])}
       />
       <DataNote />
     </div>

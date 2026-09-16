@@ -53,11 +53,13 @@ export function Table({
   rows,
   caption,
   emptyMessage,
+  onRowClick,
 }: {
   headers: string[];
   rows: ReactNode[][];
   caption: string;
   emptyMessage?: string;
+  onRowClick?: (index: number) => void;
 }) {
   return (
     <div
@@ -77,7 +79,24 @@ export function Table({
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={i}>
+            <tr
+              key={i}
+              className={onRowClick ? 'navigableRow' : undefined}
+              onClick={
+                onRowClick
+                  ? (event) => {
+                      if (
+                        (event.target as HTMLElement).closest(
+                          'a, button, input, select, textarea',
+                        )
+                      )
+                        return;
+                      if (window.getSelection()?.toString()) return;
+                      onRowClick(i);
+                    }
+                  : undefined
+              }
+            >
               {r.map((v, j) => (
                 <td key={j}>{v}</td>
               ))}
