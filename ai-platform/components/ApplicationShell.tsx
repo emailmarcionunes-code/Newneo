@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AssetIcon } from './Assets';
+import { NewneoWordmark } from './NewneoLogo';
 
 export const navigation = [
   ['Overview', '/', 'overview'],
@@ -58,7 +59,7 @@ export function ApplicationSidebar({
       className={`sidebar${open ? ' isOpen' : ''}`}
     >
       <Link href="/" className="brand" aria-label="Newneo home">
-        new<span>neo</span>
+        <NewneoWordmark />
       </Link>
       <button
         type="button"
