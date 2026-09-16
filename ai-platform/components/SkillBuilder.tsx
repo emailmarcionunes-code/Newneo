@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import { portfolioDomainId } from '@/lib/skill-portfolio';
+import { SkillReuseGuidance } from './SkillPortfolio';
 import { Button } from './UI';
 import { usePreview } from './journeys/PreviewState';
 import { useDemoAccess } from './journeys/DemoExperience';
@@ -99,7 +101,15 @@ export function SkillBuilder({
   );
   const fresh = evidence === definitionFingerprint(skill);
   function change(p: Partial<Skill>) {
-    setSkill((s) => ({ ...s, ...p }));
+    setSkill((s) => ({
+      ...s,
+      ...p,
+      ...(p.domain && s.reuse
+        ? {
+            reuse: { ...s.reuse, domainPatternId: portfolioDomainId(p.domain) },
+          }
+        : {}),
+    }));
     setEvidence('');
     setNotice('');
   }
@@ -198,6 +208,11 @@ export function SkillBuilder({
         <div className="skillFilters">
           {field('Skill name', 'name')}
           {field('Business outcome', 'description')}
+          <SkillReuseGuidance
+            skill={skill}
+            skills={allSkills(state.ui)}
+            onReuse={change}
+          />
           <label>
             Domain
             <select
@@ -213,6 +228,14 @@ export function SkillBuilder({
                 'Finance',
                 'Shared',
                 'Custom',
+                'Healthcare',
+                'IT Services',
+                'Financial Services',
+                'Retail',
+                'HR',
+                'Operations',
+                'Public Sector',
+                'Customer Service',
               ].map((v) => (
                 <option key={v}>{v}</option>
               ))}

@@ -15,8 +15,12 @@ for (const width of [1440, 390])
     await page
       .getByRole('textbox', { name: 'Search Skills', exact: true })
       .fill('Reset Password');
-    await expect(page.getByRole('table')).toContainText('Reset Password');
-    await expect(page.getByRole('table')).not.toContainText('Unlock User');
+    await expect(
+      page.getByRole('table', { name: 'Organization Skills', exact: true }),
+    ).toContainText('Reset Password');
+    await expect(
+      page.getByRole('table', { name: 'Organization Skills', exact: true }),
+    ).not.toContainText('Unlock User');
     await page
       .getByRole('combobox', { name: 'Risk', exact: true })
       .selectOption('High');
@@ -74,9 +78,9 @@ for (const width of [1440, 390])
     await page
       .getByRole('combobox', { name: 'Status', exact: true })
       .selectOption('Inactive');
-    await expect(page.getByRole('table')).toContainText(
-      'Create ServiceNow Ticket',
-    );
+    await expect(
+      page.getByRole('table', { name: 'Organization Skills', exact: true }),
+    ).toContainText('Create ServiceNow Ticket');
     await page.goto('/agents/it-support');
     await page.getByRole('tab', { name: 'Skills', exact: true }).click();
     await page

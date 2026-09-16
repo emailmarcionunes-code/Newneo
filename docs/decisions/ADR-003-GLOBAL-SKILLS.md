@@ -35,3 +35,17 @@ The existing SkillExecution domain carries organization/workspace, Agent/version
 ## Verification
 
 Production build passed. Unit suite: 33 passed, one optional native PostgreSQL test skipped. Browser regression: 58 passed initially; the remaining catalogue test used an obsolete category label without its count and passed after correcting the selector. All 59 scenarios therefore passed across the regression and targeted rerun. Seven focused Skills flows passed at desktop/mobile widths, including accessibility and overflow checks. Global library screenshots were visually inspected. Preview port 3117 was restarted and `/skills` returned HTTP 200.
+
+## Portfolio refinement — 2026-09-16
+
+The global Skills surface now expresses **Capability Core → Domain Pattern → Skill** through lightweight metadata (`skill-portfolio.ts`). CapabilityCore describes reusable logic, inputs/output contract, tool, governance and evaluation patterns. DomainPattern carries terminology, regulatory review requirements, data boundaries and domain evaluations. Skill-specific configuration and immutable Skill versions remain authoritative. Neither concept introduces a sidebar inventory.
+
+**Build vertically. Reuse horizontally.** The value of the NEWNEO portfolio increases as reusable capabilities improve across customer projects. A vertical implementation should contribute reusable horizontal intelligence whenever possible. Canonical question: **What did we build here that the next customer should not have to pay us to build again?**
+
+Portfolio KPIs include Cores reused across domains and distinct active Agents using Skills. Reuse describes breadth, not quality. Matrix cells reference real demo library definitions, open Skill Detail, expose maturity/version/use/telemetry on hover/focus, and distinguish Experimental (slate), Validated (light blue), Production Ready (blue), Proven at Scale (green). A representative view expands to all ten domain and capability axes with contained scrolling and sticky headers. Multiple Skills may occupy a cell. Empty cells report an opportunity and never create a Skill.
+
+Eight additional domain-adaptation demo definitions join the original ten without changing pinned Agent compositions. They have no measured execution or evaluation score. Portfolio Intelligence and Opportunities are derived from metadata, not fabricated comparative percentages or claims of regulatory compliance. Detail shows Built from, reuse breadth, components and related Skills sharing the same Core.
+
+Builder Step 1 searches similar Skills, capability descriptions, tool patterns and governance requirements. Explicitly choosing a pattern adds its metadata and merges tool/governance requirements for review; it does not copy executable logic, authorize tools or grant production readiness. The visible assembly percentage is an explicitly illustrative demo estimate, not an inferred measured match. Saving, evaluation invalidation and immutable publication retain composition metadata. Agent Detail remains the simple consumption/binding surface; the matrix is global only.
+
+Portfolio verification: production build passed; 35 unit tests passed, with one optional native PostgreSQL test skipped; all 61 Chromium browser tests passed. Matrix navigation, empty opportunities, related Skills, pattern reuse and saved draft recovery were checked at 1440px and 390px with accessibility and document-overflow assertions. Desktop/mobile screenshots were inspected. Preview 3117 serves the updated build.

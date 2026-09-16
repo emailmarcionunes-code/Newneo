@@ -16,6 +16,8 @@ import { useDemoAccess } from './journeys/DemoExperience';
 import { Tabs, Panel } from './journeys/Shared';
 import { PageTitle, Metrics, Table, Tag, Status, DataNote } from './hybrid/UI';
 import { Button } from './UI';
+import { SkillPortfolio, SkillReuseDetail } from './SkillPortfolio';
+import { capabilityCores, coreUsage } from '@/lib/skill-portfolio';
 import { SkillBuilder } from './SkillBuilder';
 
 // Clearly labeled historical demo aggregates, pinned to specific Skill versions.
@@ -207,20 +209,31 @@ export function GlobalSkills() {
             ),
           ],
           [
-            'Skills Used by Agents',
-            String(measurements.filter((m) => m.users.length).length),
+            'Reused Across Domains',
+            String(
+              capabilityCores.filter(
+                (c) => coreUsage(data.library, c.id).domains.length > 1,
+              ).length,
+            ),
           ],
           ['Executions (30d)', total ? number(total) : '—'],
           [
-            'Avg Success Rate',
-            total
-              ? percent(
-                  measurements.reduce(
-                    (n, m) => n + (m.executions || 0) * (m.success || 0),
-                    0,
-                  ) / total,
-                )
-              : '—',
+            'Active Agents Using Skills',
+            String(
+              new Set(
+                measurements.flatMap((m) =>
+                  m.users
+                    .filter((u) =>
+                      data.agents.some(
+                        (a) =>
+                          a.id === u.id &&
+                          ['Live', 'Degraded'].includes(a.status),
+                      ),
+                    )
+                    .map((u) => u.id),
+                ),
+              ).size,
+            ),
           ],
         ]}
       />
@@ -240,6 +253,7 @@ export function GlobalSkills() {
           </p>
         </section>
       )}
+      <SkillPortfolio skills={data.library} telemetry={data.telemetry} />
       <div className="skillFilters">
         <label>
           Search Skills
@@ -457,6 +471,11 @@ export function GlobalSkillDetail({ id }: { id: string }) {
         {tab === 'Overview' && (
           <>
             <p>{skill.description}</p>
+            <SkillReuseDetail
+              skill={skill}
+              skills={data.library}
+              telemetry={data.telemetry}
+            />
             <Metrics
               items={[
                 ['Agents Using', String(t.users.length)],

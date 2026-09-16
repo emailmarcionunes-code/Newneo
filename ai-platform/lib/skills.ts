@@ -1,3 +1,8 @@
+import {
+  portfolioSkills,
+  portfolioDomainId,
+  type SkillReuse,
+} from './skill-portfolio';
 /** Canonical Skill definitions and pinned Agent Version bindings. Demo only. */
 export const maturities = [
   'Experimental',
@@ -7,6 +12,7 @@ export const maturities = [
 ] as const;
 export type Skill = {
   id: string;
+  reuse?: SkillReuse;
   name: string;
   description: string;
   domain: string;
@@ -258,7 +264,8 @@ export function validateBinding(skill: Skill, b: SkillBinding, domain: string) {
     ],
     [
       'Mission / domain boundary',
-      skill.domain === 'Shared' || skill.domain === domain,
+      skill.domain === 'Shared' ||
+        portfolioDomainId(skill.domain) === portfolioDomainId(domain),
     ],
     [
       'Required tools connected',
@@ -399,6 +406,7 @@ export const builderKey = 'skills:builderDraft';
 export function allSkills(ui?: Record<string, unknown>): Skill[] {
   return [
     ...skillLibrary,
+    ...portfolioSkills,
     ...((ui?.[libraryKey] as Skill[] | undefined) || []),
   ];
 }

@@ -63,3 +63,7 @@ Principle:
 ## Skill lifecycle milestone
 
 [ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill now has a complete separate five-stage demo builder, immutable library publication, version upgrades and draft binding configuration/removal. Live persistence, execution and evidence are future prerequisites.
+
+## Portfolio reuse
+
+The Skills surface expresses Capability Core → Domain Pattern → Skill. Build vertically. Reuse horizontally. The global matrix, descriptive reuse metrics, related Skills and portfolio opportunities expose reusable intelligence without creating new inventories or complicating Agent Detail. Builder guidance checks existing patterns first; reuse never substitutes for domain evaluation or production approval. See ADR-003 for metadata and demonstration boundaries.

@@ -47,3 +47,5 @@ All sidebar routes now have frontend coverage, including AgentOps and FinOps. Se
 ## Global Skills
 
 `/skills` provides the organization library, reuse metrics and eight-tab detail. Create and version definitions at `/skills/new`; bind them from Agent Detail → Skills → Add Skill. Analytics and publication remain explicitly demo/session behavior until server integration. See [ADR-003](../docs/decisions/ADR-003-GLOBAL-SKILLS.md).
+
+The Skills portfolio includes a domain × capability matrix, reuse insights/opportunities, Built from and Related Skills. The first builder stage suggests reusable patterns and merges selected requirements for review. Portfolio/analytics fixtures and assembly estimates remain explicitly illustrative; the matrix does not create Skills or grant readiness.
