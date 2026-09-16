@@ -528,3 +528,7 @@ Animate only the vertical reveal when its value changes (650ms ease-in-out). No 
 Success shows Neo fully and immediately, without clipping, alongside “Agent Created”, a configuration summary and View Agent / Open AgentOps / View Deployment / Create New Version actions. Preview mode remains explicitly identified; never imply a live deployment has occurred. Success has concise accessible text naming Neo; other states use empty alt text because independent text communicates all functional information. The faint assembly silhouette is hidden from assistive technology.
 
 Implementation verification: production build passed; eight launch browser tests passed at 1440, 1180, 768 and 390 pixels, including accessibility scans, 0→13% reveal progression, reduced-motion behavior, full 100% success reveal, loaded image, seven summary items, persistence and preview approval gates. The assembly rail stacks below content on tablet/mobile to prevent action overlap.
+
+## Skill lifecycle milestone
+
+[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill remains a separate builder scaffold. Live persistence, execution and evidence are future prerequisites.

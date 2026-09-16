@@ -242,3 +242,7 @@ Process:
 - **PRODUCT SPECIFIED / FIGMA PENDING** = functionality is defined but final visual design is not
 - **DESIGN PENDING** = screen still needs canonical Figma treatment
 - **VISUAL ALIGNMENT PENDING** = existing artifact exists but must be brought into the family system
+
+## Skill lifecycle milestone
+
+[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill remains a separate builder scaffold. Live persistence, execution and evidence are future prerequisites.

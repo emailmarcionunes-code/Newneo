@@ -143,3 +143,7 @@ These gaps are not evidence that live production is currently being edited unsaf
 6. **Later:** broader reusable catalog, richer Skill maturity analytics, cross-workspace distribution, routing optimization and dedicated thinking/warning mascot poses. Their absence must not weaken initial permission or version gates.
 
 Architecture acceptance requires universal Neo experience with multiple specialized Agents, reusable Skills distinct from Tools, stable Agent identity across Skill additions, version-governed production changes, bounded permissions and attributable operations/costs. The documentation is accepted now; those runtime capabilities remain planned until implemented and verified.
+
+## Subsequent implementation
+
+[ADR-002](ADR-002-SKILL-LIFECYCLE.md) records the first Skill lifecycle demo: organization library, Agent Skills tab, version bindings and four-step extension flow. The audit above is the decision-time baseline; database migrations, real Skill execution and Neo routing remain unimplemented.

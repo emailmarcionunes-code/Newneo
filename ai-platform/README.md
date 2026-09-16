@@ -42,4 +42,4 @@ All sidebar routes now have frontend coverage, including AgentOps and FinOps. Se
 
 ## Canonical architecture
 
-[ADR-001: One Neo. Many Agents. Reusable Skills.](../docs/decisions/ADR-001-NEO-AGENTS-SKILLS.md) defines the product/runtime model and audits the current code. Existing preview flows do not yet implement first-class reusable Skills or Neo orchestration. Follow the ADR before adding these features; preserve Hybrid v4 and production version gates.
+[ADR-001: One Neo. Many Agents. Reusable Skills.](../docs/decisions/ADR-001-NEO-AGENTS-SKILLS.md) defines the product/runtime model and audits the current code. The [Skill lifecycle demo](../docs/decisions/ADR-002-SKILL-LIFECYCLE.md) now implements reusable Skill definitions and Agent-version bindings in session state. Live Skill persistence and Neo orchestration remain future work. Follow the ADR before adding these features; preserve Hybrid v4 and production version gates.

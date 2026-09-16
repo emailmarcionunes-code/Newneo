@@ -42,7 +42,7 @@ test('supporting frames retain recent tasks and environment summaries', async ({
   await expect(
     page.getByRole('heading', { name: 'Recent tasks', exact: true }),
   ).toBeVisible();
-  await expect(page.getByRole('tab')).toHaveCount(8);
+  await expect(page.getByRole('tab')).toHaveCount(9);
   await page.screenshot({
     path: info.outputPath('agent-detail.png'),
     fullPage: true,

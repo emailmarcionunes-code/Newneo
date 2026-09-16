@@ -1,3 +1,4 @@
+import { skillKey } from './skills';
 import { previewSourceRows } from './source-preview';
 import type { LaunchDraft } from './launch';
 import { hybridAgents } from './hybrid-data';
@@ -135,6 +136,15 @@ export function agentConfiguration(
           .map((r) => [r[0], r[5]]),
       }),
     );
+  const skillVersions = ui?.[skillKey(id)] as
+    Record<string, unknown> | undefined;
+  const draftVersion = ui?.[`agent:${id}:draftVersion`];
+  if (
+    skillVersions &&
+    typeof draftVersion === 'string' &&
+    skillVersions[draftVersion]
+  )
+    values.push(JSON.stringify(skillVersions[draftVersion]));
   return JSON.stringify(values);
 }
 

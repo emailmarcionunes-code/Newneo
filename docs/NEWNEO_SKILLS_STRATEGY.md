@@ -56,3 +56,7 @@ The long-term asset is broader than the skill library:
 
 Principle:
 **Skills are ingredients. Newneo is the operating system.**
+
+## Skill lifecycle milestone
+
+[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill remains a separate builder scaffold. Live persistence, execution and evidence are future prerequisites.

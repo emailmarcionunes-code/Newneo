@@ -64,11 +64,11 @@ test('catalog proves scale and every category has multiple working templates', a
     'Employee Onboarding Agent',
   );
 });
-test('agent versions isolate changes from Production and all eight tabs have content', async ({
+test('agent versions isolate changes from Production and all nine tabs have content', async ({
   page,
 }, info) => {
   await page.goto('/agents/it-support');
-  await expect(page.getByRole('tab')).toHaveCount(8);
+  await expect(page.getByRole('tab')).toHaveCount(9);
   await page.getByRole('tab', { name: 'Configuration', exact: true }).click();
   await expect(page.getByLabel('Business mission')).toBeDisabled();
   await page
@@ -87,6 +87,7 @@ test('agent versions isolate changes from Production and all eight tabs have con
     'Configuration',
     'Knowledge',
     'Tools',
+    'Skills',
     'Evaluations',
     'Versions',
     'Activity',

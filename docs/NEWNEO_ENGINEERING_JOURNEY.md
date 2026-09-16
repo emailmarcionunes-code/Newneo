@@ -205,3 +205,7 @@ and measures:
 - `NEWNEO_PLATFORM_OPERATING_MODEL.md`
 - `NEWNEO_RESPONSIBILITY_CHARTER.md`
 - `CODEX_READY_CHECKLIST.md`
+
+## Skill lifecycle milestone
+
+[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill remains a separate builder scaffold. Live persistence, execution and evidence are future prerequisites.

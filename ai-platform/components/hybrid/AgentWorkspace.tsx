@@ -1,4 +1,6 @@
 'use client';
+import { SkillsPanel } from '../SkillsPanel';
+import { composition, skillKey, type SkillVersions } from '@/lib/skills';
 import { useDemoAccess } from '../journeys/DemoExperience';
 import {
   type LaunchDraft,
@@ -64,6 +66,7 @@ export default function AgentWorkspace({
     'Configuration',
     'Knowledge',
     'Tools',
+    'Skills',
     'Evaluations',
     'Versions',
     'Activity',
@@ -92,6 +95,21 @@ export default function AgentWorkspace({
     `PII policy applied to version ${currentVersion}`,
   ]);
   function newVersion() {
+    const proposed = `v${currentVersion.slice(1).split('.')[0]}.${Number(currentVersion.split('.')[1]) + 1}`;
+    if (state.ui?.[skillKey(agent.id)])
+      update((s) => ({
+        ...s,
+        ui: {
+          ...s.ui,
+          [skillKey(agent.id)]: {
+            ...(s.ui?.[skillKey(agent.id)] as SkillVersions),
+            [proposed]: {
+              ...composition(s.ui, agent.id, currentVersion),
+              changes: [],
+            },
+          },
+        },
+      }));
     setDraftVersion(
       `v${currentVersion.slice(1).split('.')[0]}.${Number(currentVersion.split('.')[1]) + 1}`,
     );
@@ -266,6 +284,12 @@ export default function AgentWorkspace({
               />
             </section>
           </>
+        ) : tab === 'Skills' ? (
+          <SkillsPanel
+            agentId={agent.id}
+            agentName={agent.name}
+            currentVersion={currentVersion}
+          />
         ) : tab === 'Configuration' ? (
           <section className="panel">
             <h2>
@@ -473,7 +497,9 @@ export default function AgentWorkspace({
                       [
                         draftVersion,
                         saved ? 'Draft saved' : 'Draft',
-                        'Mission/configuration update',
+                        composition(state.ui, agent.id, draftVersion)
+                          .changes.map((c) => c.detail)
+                          .join('; ') || 'Mission/configuration update',
                         state.runs.some(
                           (r) =>
                             r.agentId === agent.id &&
@@ -497,9 +523,12 @@ export default function AgentWorkspace({
                 [
                   currentVersion,
                   <Status key="s">{environment}</Status>,
-                  launch
-                    ? 'Configured in Launch Guide'
-                    : 'PII rules and knowledge refresh',
+                  composition(state.ui, agent.id, currentVersion)
+                    .changes.map((c) => c.detail)
+                    .join('; ') ||
+                    (launch
+                      ? 'Configured in Launch Guide'
+                      : 'PII rules and knowledge refresh'),
                   `${agent.score}%`,
                   <Link
                     key="deploy"
