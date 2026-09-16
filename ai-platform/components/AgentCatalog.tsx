@@ -161,7 +161,7 @@ export default function AgentCatalog() {
             active={filter === category}
             onClick={() => setFilter(category)}
           >
-            {category}
+            {category} ({String(filterAgents(category).length).padStart(2, '0')})
           </FilterChip>
         ))}
       </div>
