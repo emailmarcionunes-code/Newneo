@@ -81,7 +81,7 @@ export function Table({
 export function Status({ children }: { children: string }) {
   return (
     <span
-      className={`hybridStatus ${/Live|Success|Passed|Active|Approved|Resolved|Enforced|Low/.test(children) ? 'healthy' : /Error|Failed|Degraded|High|Rejected/.test(children) ? 'danger' : /Warning|Pending|Medium|Rollback|Rolled back|Required|Optional|Recommended/.test(children) ? 'warning' : 'neutral'}`}
+      className={`hybridStatus ${/Paused|Archived|Revoked|Inactive/.test(children) ? 'muted' : /Live|Success|Passed|Active|Approved|Resolved|Enforced|Low/.test(children) ? 'healthy' : /Error|Failed|Degraded|High|Rejected/.test(children) ? 'danger' : /Warning|Needs review|Pending|Medium|Escalated|Rollback|Rolled back|Required|Optional|Recommended/.test(children) ? 'warning' : 'neutral'}`}
     >
       {children}
     </span>

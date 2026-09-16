@@ -29,7 +29,7 @@ Baseline: bfd0423, branch newneo-ai-platform-v1. Authority: Issue #3, approved H
 
 ## Verification / disposition
 
-Final frontend status: **FUNCTIONAL FRONTEND COMPLETE — VISUAL REVIEW REOPENED**. The [final visual audit](VISUAL_FIDELITY_AUDIT.md) supersedes the intermediate review status and records the completed visual correction pass. The functional evidence below remains applicable.
+Final frontend status: **FUNCTIONAL FRONTEND COMPLETE — SHARED VISUAL REFINEMENT READY FOR REVIEW**. The [final visual audit](VISUAL_FIDELITY_AUDIT.md) supersedes the intermediate review status and records the completed visual correction pass. The functional evidence below remains applicable.
 
 ### Corrections and evidence
 

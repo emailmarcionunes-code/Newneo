@@ -1,6 +1,6 @@
 # Hybrid v4 implementation — Issue #3
 
-Status: **FUNCTIONAL FRONTEND COMPLETE — VISUAL REVIEW REOPENED** for the visual, navigable customer frontend. See the [final visual audit](VISUAL_FIDELITY_AUDIT.md) for reference mapping, corrections, rendered review, test evidence and integration boundaries.
+Status: **FUNCTIONAL FRONTEND COMPLETE — SHARED VISUAL REFINEMENT READY FOR REVIEW** for the visual, navigable customer frontend. See the [final visual audit](VISUAL_FIDELITY_AUDIT.md) for reference mapping, corrections, rendered review, test evidence and integration boundaries.
 
 ## Authority and scope
 

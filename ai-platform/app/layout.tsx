@@ -9,6 +9,7 @@ import './journeys.css';
 import './hybrid-v4.css';
 import './hybrid-audit.css';
 import './visual-fidelity.css';
+import './experience-quality.css';
 import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 
 export const metadata: Metadata = {

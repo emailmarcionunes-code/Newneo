@@ -80,7 +80,18 @@ export function AgentCard({
       ],
     ],
   ] as const;
-  const [complexity, tagline, metrics] = index>=0 ? details[index] : [agent.complexity ?? 'Medium',agent.tagline ?? agent.description,[['Scoped','Permissions'],['Review','Approvals'],['Demo','Template']]];
+  const [complexity, tagline, metrics] =
+    index >= 0
+      ? details[index]
+      : [
+          agent.complexity ?? 'Medium',
+          agent.tagline ?? agent.description,
+          [
+            ['Scoped', 'Permissions'],
+            ['Review', 'Approvals'],
+            ['Demo', 'Template'],
+          ],
+        ];
   return (
     <article className="agentCard hybridCatalogCard">
       <Link
@@ -89,7 +100,9 @@ export function AgentCard({
       >
         <div className="catalogCardTop">
           <AgentIcon type={agent.type} />
-          <span className="modelPill">{complexity}</span>
+          <span className="modelPill" data-complexity={complexity}>
+            {complexity}
+          </span>
         </div>
         <h2>{agent.name}</h2>
         <p className="catalogTagline">{tagline}</p>

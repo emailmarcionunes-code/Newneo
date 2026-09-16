@@ -39,7 +39,7 @@ export function Evaluations() {
       </>
     );
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage evaluationsPage">
       <PageTitle
         title="Production Confidence"
         description="Run evaluation suites and compare readiness across agents."
@@ -73,7 +73,18 @@ export function Evaluations() {
                 'Workflow Orchestration',
                 'Intelligence Synthesis',
               ][i],
-              `${a.score}%`,
+              <strong
+                key="score"
+                className={
+                  a.score >= 90
+                    ? 'successText'
+                    : a.score >= 80
+                      ? 'hybridWarning'
+                      : 'hybridDanger'
+                }
+              >
+                {a.score}%
+              </strong>,
               `${Math.round(a.score / 2)}/50`,
               <Status key="s">
                 {a.score >= 90
@@ -107,7 +118,7 @@ export function Deployments() {
       </>
     );
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage deploymentsPage">
       <PageTitle
         title="Versions & Releases"
         description="Manage environments, releases, failures and rollback history."
@@ -209,7 +220,7 @@ export function AgentOps() {
   const names = ['Health', 'Incidents', 'Logs'];
   const [tab, setTab] = useState('Health');
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage agentOpsPage">
       <PageTitle
         title="Operational Health"
         description="Live view of task success, latency, incidents and execution signals."
@@ -337,7 +348,7 @@ export function AgentOps() {
 export function FinOps() {
   const [budget, setBudget] = useState(false);
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage finOpsPage">
       <PageTitle
         title="AI Economics"
         description="Understand cost per task, budgets, model spend and optimization opportunities."
@@ -405,7 +416,7 @@ export function FinOps() {
         <aside>
           <section className="panel">
             <h2>Cost by model</h2>
-            <dl className="surfaceFacts">
+            <dl className="surfaceFacts modelCostFacts">
               {[
                 ['Azure GPT-4o', '$841'],
                 ['Claude 3.5', '$541'],
@@ -422,10 +433,19 @@ export function FinOps() {
           </section>
           <div className="intelligenceNote">
             <strong>COST RECOMMENDATIONS</strong>
-            <ul>
-              <li>Switch Sales Assistant to Managed AI · $94/mo</li>
-              <li>Cache Knowledge Assistant responses · $68/mo</li>
-              <li>Right-size IT Agent to GPT-4o-mini · $42/mo</li>
+            <ul className="costRecommendations">
+              <li>
+                <span>Switch Sales Assistant to Managed AI</span>
+                <strong>$94/mo</strong>
+              </li>
+              <li>
+                <span>Cache Knowledge Assistant responses</span>
+                <strong>$68/mo</strong>
+              </li>
+              <li>
+                <span>Right-size IT Agent to GPT-4o-mini</span>
+                <strong>$42/mo</strong>
+              </li>
             </ul>
             <Link href="/evaluations">
               Validate quality before changing models →
@@ -461,7 +481,7 @@ export function Governance() {
       </>
     );
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage governancePage">
       <PageTitle
         title="Policies & Controls"
         description="Manage organization policy, violations and auditability."

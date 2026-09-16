@@ -7,7 +7,7 @@ import { usePreview } from '../journeys/PreviewState';
 import { PageTitle, Metrics, Table, Status, DataNote, exportCsv } from './UI';
 export function Reports() {
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage reportsPage">
       <PageTitle
         title="Reports"
         description="Executive trends across tasks, cost, quality and compliance."
@@ -45,7 +45,7 @@ export function Reports() {
               ['HITL approvals', '28'],
               ['Audit events', '1.2K'],
             ].map(([k, v]) => (
-              <div key={k}>
+              <div key={k} data-fact={k}>
                 <dt>{k}</dt>
                 <dd>{v}</dd>
               </div>
@@ -122,7 +122,7 @@ export function AuditLog() {
       (user === 'All' || r[1] === user),
   );
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage auditLogPage">
       <PageTitle
         title="Audit Log"
         description="Immutable record of deployments, policy changes and system events."
@@ -234,7 +234,7 @@ export function Playground() {
     },
   ]);
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage playgroundPage">
       <PageTitle
         title="Agent Playground"
         description="Test conversations and tool calls safely before production."

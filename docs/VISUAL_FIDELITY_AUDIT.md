@@ -1,8 +1,20 @@
 # Hybrid v4 — final frontend fidelity audit (2026-09-16)
 
-Status: **VISUAL REVIEW REOPENED** after the user's direct comparison on 2026-09-16. The earlier complete designation overstated visual acceptance. Functional route coverage and tests remain valid, but do not establish fidelity to the user's expected composition.
+Status: **SHARED VISUAL REFINEMENT COMPLETE — READY FOR REVIEW**. The user approved the corrected Command Center and requested the same quality across the remaining frontend. This pass applies a consistent type scale, spacing, surfaces, tables, controls and semantic statuses across the complete navigable inventory below. It preserves the approved Overview composition.
 
-The Overview has now been rebuilt against the supplied Command Center screenshot: title and refresh, reference metrics, five agent rows with secondary model names, six activity events and the Governance / Evaluations / NEWNEO Insights panels. Its 2.05:1 main panel ratio and compact three-column summaries replace the prior frame 2:2 composition. The screenshot is the latest explicit Overview reference. Other surfaces retain their existing Design mappings; they are not newly certified by this correction.
+This status records implementation and rendered review, not blanket user acceptance or pixel equality to every Figma frame. The earlier complete designation overstated visual acceptance and was reopened; the new pass addresses the remaining screens rather than relying on functional route coverage alone.
+
+## Latest quality pass (2026-09-16)
+
+- Catalog: three-column desktop layout, consistent card spacing and metric hierarchy, semantic complexity badges and accessible contrast.
+- Eight launch stages: readable source cards, tool rows, infrastructure/model choices, governance controls, evaluation results and deployment summary; top-aligned assembly rail retained.
+- Inventory and operations: consistent page headers, metric cards, table typography, panels, filters and action sizing across Agents, Knowledge, Tools, Evaluations, Deployments, AgentOps, FinOps, Governance, Reports, Playground and Audit Log.
+- Detail screens: aligned chart/configuration panels, compact source/tool facts, scenario rows, timelines and policy controls. All eight Agent tabs inherit the same shared scale.
+- Settings: six tabs reviewed, profile and usage panels aligned, readable member/key tables, switches and onboarding checklist.
+- State hierarchy: blue actions/selection, green healthy/completed, amber attention, red failures/incidents, neutral paused/revoked states. FinOps recommendations and model-cost values align cleanly.
+- Responsive review: the desktop layout reflows at tablet/mobile widths; tables retain contained horizontal scrolling and dialogs fit the viewport.
+
+Implementation is centralized in `ai-platform/app/experience-quality.css`, with small component changes for state semantics, complexity badges, cost recommendations and scoped screen styling. The existing route structure, preview interactions and design frame compositions are preserved.
 
 ## Authority
 
@@ -14,7 +26,7 @@ The earlier audit treated the supplied Command Center image as conflicting with 
 
 The earlier implementation covered routes but omitted reference composition and supporting content. The final pass corrected the following material differences:
 
-- Overview: six equal metric cards, Agent Health with Trend, narrower Activity panel, reference proportions and shell-relative spacing.
+- Overview: six equal metric cards, five Agent Health rows with tasks/success/latency, narrower Activity panel, reference proportions and shell-relative spacing.
 - Catalog and resources: fluid three-column desktop catalog; nine Knowledge source cards including Zendesk; top-aligned assembly rail; explicit permissions, coverage, risk and approval details.
 - Journey: separate Infrastructure and Model, readiness derived from validation, evaluation ring and semantic outcome rows, approved-action count in Deploy, contained Success panel with working current-record actions.
 - Agent Detail: Recent tasks, Cost today, compact configuration facts and eight populated tabs, with production-safe version editing.
@@ -53,6 +65,7 @@ All rows below have navigable implementations and rendered review evidence. The 
 ## Final validation
 
 - Production build and TypeScript validation: passed (`npm run build`).
+- Approved Overview regression: the final 1343×779 capture at device scale 2 is byte-identical to the pre-pass approved capture. This establishes preservation of that local baseline, not equality to the Figma raster.
 - Browser suite: **32 passed**, including all eight stages, final success/current-record navigation, 22 route surfaces, eight Agent tabs, six Settings tabs, evaluation recovery, permissions, promotion gates, dialogs, filtering and exports.
 - Responsive browser coverage: **390, 768, 1180 and 1440px**. Automated axe and horizontal overflow checks passed for the tested states.
 - Unit suite: **23 passed, 1 skipped**. The optional native PostgreSQL test requires `TEST_DATABASE_URL`; embedded database isolation tests passed.
@@ -69,10 +82,10 @@ PLAYWRIGHT_PORT=3115 npm run test:e2e -- --workers=2
 
 ## Remaining differences and scope
 
-The routes are populated and navigable. This is not a blanket visual acceptance claim for all screens; the present correction covers the Overview composition the user explicitly challenged.
+The routes are populated and navigable. The present pass covers the shared visual quality of the full frontend inventory, while preserving the user-approved Overview. Final aesthetic acceptance remains with the user; automated tests establish functionality, accessibility checks and layout constraints, not subjective visual equivalence.
 
 Intentional differences from static supporting frames are the current 224/60px v4 shell, official N, eight stages, eight Agent tabs, six Settings tabs, 20-template catalog, blue action/selection hierarchy, accessible contrast, responsive reflow, explicit preview labels and validation-driven readiness. These follow the approved contract. Third-party icons use existing exported assets, with documented Zendesk asset provenance. No approved pixel-difference baseline exists; exact raster equality across fonts, browsers and viewport sizes is not asserted.
 
-Make supplies behavior only. Previously inspected login/catalog/template behavior is retained; a fresh authenticated Make walkthrough was not completed. Visual decisions were checked against Design frames.
+Make supplies behavior only. In this pass, its source archive was downloaded through the Figma code panel and inspected locally, including screen, shared UI and navigation implementations. A fresh authenticated Make preview walkthrough was not completed. Design frames and the explicitly approved Command Center remain the visual authority; conflicting Make screen compositions were not substituted.
 
 The working demo deliberately uses reference/local data. Actual authentication, model execution, connectors, durable organization/version storage and deployment infrastructure remain a separate integration phase. No AWS resources, invitations, real API keys or external deployments were created.
