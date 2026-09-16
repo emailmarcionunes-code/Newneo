@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AssetIcon } from './Assets';
@@ -25,12 +25,14 @@ export function NavItem({
   href,
   icon,
   active,
+  compact = false,
   onNavigate,
 }: {
   label: string;
   href: string;
   icon: string;
   active: boolean;
+  compact?: boolean;
   onNavigate?: () => void;
 }) {
   return (
@@ -38,28 +40,42 @@ export function NavItem({
       href={href}
       className={`navItem${active ? ' active' : ''}`}
       aria-current={active ? 'page' : undefined}
+      aria-label={compact ? label : undefined}
+      title={compact ? label : undefined}
       onClick={onNavigate}
+      style={compact ? { justifyContent: 'center', paddingInline: 8 } : undefined}
     >
       <AssetIcon name={icon} />
-      <span>{label}</span>
+      {!compact && <span>{label}</span>}
     </Link>
   );
 }
+
 export function ApplicationSidebar({
   open,
+  collapsed,
   onClose,
+  onToggleCollapsed,
 }: {
   open: boolean;
+  collapsed: boolean;
   onClose: () => void;
+  onToggleCollapsed: () => void;
 }) {
   const path = usePathname();
   return (
     <aside
       id="application-sidebar"
       className={`sidebar${open ? ' isOpen' : ''}`}
+      style={{ width: collapsed ? 60 : 224, transition: 'width 180ms ease' }}
     >
-      <Link href="/" className="brand" aria-label="Newneo home">
-        <NewneoWordmark />
+      <Link
+        href="/"
+        className="brand"
+        aria-label="Newneo home"
+        style={{ display: 'flex', justifyContent: collapsed ? 'center' : 'flex-start', marginInline: collapsed ? 0 : 8 }}
+      >
+        <NewneoWordmark compact={collapsed} />
       </Link>
       <button
         type="button"
@@ -74,6 +90,7 @@ export function ApplicationSidebar({
           <NavItem
             key={href}
             {...{ label, href, icon }}
+            compact={collapsed}
             active={
               href === '/'
                 ? path === '/'
@@ -83,10 +100,13 @@ export function ApplicationSidebar({
           />
         ))}
       </nav>
-      <details className="workspaceMenu">
-        <summary>
+      <details
+        className="workspaceMenu"
+        style={collapsed ? { paddingInline: 0, display: 'grid', justifyItems: 'center' } : undefined}
+      >
+        <summary title={collapsed ? 'Acme Corp' : undefined}>
           <span className="organizationAvatar">AC</span>
-          <span>Acme Corp</span>
+          {!collapsed && <span>Acme Corp</span>}
         </summary>
         <div className="workspacePopover">
           <strong>Acme Corp</strong>
@@ -94,9 +114,30 @@ export function ApplicationSidebar({
           <small>Demo organization</small>
         </div>
       </details>
+      <button
+        type="button"
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        onClick={onToggleCollapsed}
+        style={{
+          width: 28,
+          height: 28,
+          margin: '12px auto 0',
+          borderRadius: 7,
+          border: '1px solid #334155',
+          background: '#131e32',
+          color: '#94a3b8',
+          display: 'grid',
+          placeItems: 'center',
+          lineHeight: 1,
+        }}
+      >
+        {collapsed ? '›' : '‹'}
+      </button>
     </aside>
   );
 }
+
 export function Topbar({
   open,
   onToggle,
@@ -148,8 +189,10 @@ export function Topbar({
     </header>
   );
 }
+
 export function ApplicationShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -179,12 +222,22 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
       previous?.focus();
     };
   }, [open]);
+
+  const shellStyle = {
+    '--sidebar-width': collapsed ? '60px' : '224px',
+  } as CSSProperties;
+
   return (
-    <div className="appShell">
+    <div className="appShell" style={shellStyle}>
       <a href="#main-content" className="skipLink">
         Skip to content
       </a>
-      <ApplicationSidebar open={open} onClose={() => setOpen(false)} />
+      <ApplicationSidebar
+        open={open}
+        collapsed={collapsed}
+        onClose={() => setOpen(false)}
+        onToggleCollapsed={() => setCollapsed((value) => !value)}
+      />
       {open && (
         <button
           type="button"
