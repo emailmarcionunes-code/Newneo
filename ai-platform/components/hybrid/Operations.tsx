@@ -1,4 +1,5 @@
 'use client';
+import { useDemoAccess } from '../journeys/DemoExperience';
 import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -56,12 +57,20 @@ export function Evaluations() {
         description="Run evaluation suites and compare readiness across agents."
       />
       <Metrics
-        items={[
-          ['Avg readiness score', '89%', 'across all agents'],
-          ['Runs this month', '142', '16 scheduled'],
-          ['Pass rate', '50%', 'of evaluation suites'],
-          ['Failing scenarios', '8', 'across 3 agents'],
-        ]}
+        items={
+          state.ui?.['demo:dataset'] === 'empty'
+            ? [
+                ['Agents', String(hybridAgents.length)],
+                ['Evaluation runs', String(state.runs.length)],
+                ['Releases', String(state.releases.length)],
+              ]
+            : [
+                ['Avg readiness score', '89%', 'across all agents'],
+                ['Runs this month', '142', '16 scheduled'],
+                ['Pass rate', '50%', 'of evaluation suites'],
+                ['Failing scenarios', '8', 'across 3 agents'],
+              ]
+        }
       />
       <div className="hybridSplit">
         <section className="panel">
@@ -159,11 +168,25 @@ export function Deployments() {
         <Button onClick={() => setEdit(true)}>Request promotion</Button>
       </PageTitle>
       <div className="environmentSummaryGrid">
-        {[
-          ['Production', '5 agents', '4', '1', 'v2.4', 'Updated 2 hr ago'],
-          ['Staging', '2 agents', '2', '0', 'v0.9', 'Updated 1 day ago'],
-          ['Development', '1 agent', '1', '0', 'v1.0', 'Updated 3 hr ago'],
-        ].map(([name, count, healthy, degraded, version, when]) => (
+        {(state.ui?.['demo:dataset'] === 'empty'
+          ? ['Production', 'Staging', 'Development'].map((env) => [
+              env,
+              `${state.releases.filter((r) => r.target === env && r.state === 'Active').length} agents`,
+              String(
+                state.releases.filter(
+                  (r) => r.target === env && r.state === 'Active',
+                ).length,
+              ),
+              '0',
+              state.releases.find((r) => r.target === env)?.version || '—',
+              'This session',
+            ])
+          : [
+              ['Production', '5 agents', '4', '1', 'v2.4', 'Updated 2 hr ago'],
+              ['Staging', '2 agents', '2', '0', 'v0.9', 'Updated 1 day ago'],
+              ['Development', '1 agent', '1', '0', 'v1.0', 'Updated 3 hr ago'],
+            ]
+        ).map(([name, count, healthy, degraded, version, when]) => (
           <article key={name}>
             <header>
               <h2>{name}</h2>
@@ -227,7 +250,10 @@ export function Deployments() {
               duration: 'Preview',
               status: r.state,
             })),
-            ...deploymentRecords.map((r) => ({
+            ...(state.ui?.['demo:dataset'] === 'empty'
+              ? []
+              : deploymentRecords
+            ).map((r) => ({
               ...r,
               status: String(
                 state.ui?.[`deployment:${r.id}:status`] ?? r.status,
@@ -270,20 +296,30 @@ export function AgentOps() {
         description="Live view of task success, latency, incidents and execution signals."
       />
       <Metrics
-        items={[
-          ['Tasks today', '6,912', 'across all agents'],
-          ['Success rate', '96.8%', 'last 1h average'],
-          ['Avg P95 latency', '1.4s', 'vs 1.6s yesterday'],
-          [
-            'Active incidents',
-            String(
-              incidentRecords.filter(
-                (r) => state.incidentStates[r.id] !== 'Resolved',
-              ).length,
-            ),
-            'open right now',
-          ],
-        ]}
+        items={
+          state.ui?.['demo:dataset'] === 'empty'
+            ? [
+                ['Agents', String(hybridAgents.length)],
+                ['Evaluation runs', String(state.runs.length)],
+                ['Releases', String(state.releases.length)],
+              ]
+            : [
+                ['Tasks today', '6,912', 'across all agents'],
+                ['Success rate', '96.8%', 'last 1h average'],
+                ['Avg P95 latency', '1.4s', 'vs 1.6s yesterday'],
+                [
+                  'Active incidents',
+                  String(
+                    (state.ui?.['demo:dataset'] === 'empty'
+                      ? []
+                      : incidentRecords
+                    ).filter((r) => state.incidentStates[r.id] !== 'Resolved')
+                      .length,
+                  ),
+                  'open right now',
+                ],
+              ]
+        }
       />
       <Tabs names={names} current={tab} onChange={setTab} />
       <Panel names={names} current={tab}>
@@ -331,7 +367,10 @@ export function AgentOps() {
                   <p className="hybridDanger">
                     High latency & error rate ·{' '}
                     {
-                      incidentRecords.filter(
+                      (state.ui?.['demo:dataset'] === 'empty'
+                        ? []
+                        : incidentRecords
+                      ).filter(
                         (r) =>
                           r.agentId === a.id &&
                           state.incidentStates[r.id] !== 'Resolved',
@@ -359,7 +398,10 @@ export function AgentOps() {
               emptyMessage="No incidents match this status."
               caption="Incidents"
               headers={['Incident', 'Agent', 'Severity', 'Status']}
-              rows={incidentRecords
+              rows={(state.ui?.['demo:dataset'] === 'empty'
+                ? []
+                : incidentRecords
+              )
                 .map((r) => ({
                   ...r,
                   status: state.incidentStates[r.id] || r.status,
@@ -406,16 +448,24 @@ export function FinOps() {
         description="Understand cost per task, budgets, model spend and optimization opportunities."
       />
       <Metrics
-        items={[
-          [
-            'Spend this month',
-            `$${workspaceSpend.toLocaleString('en-US')}`,
-            `of $${state.budget.toLocaleString('en-US')} budget`,
-          ],
-          ['Cost per task', '$0.08', 'avg across all agents'],
-          ['vs. baseline', '−34%', 'savings vs manual'],
-          ['Sales Agent overage', '$48', 'above budget'],
-        ]}
+        items={
+          state.ui?.['demo:dataset'] === 'empty'
+            ? [
+                ['Agents', String(hybridAgents.length)],
+                ['Evaluation runs', String(state.runs.length)],
+                ['Releases', String(state.releases.length)],
+              ]
+            : [
+                [
+                  'Spend this month',
+                  `$${workspaceSpend.toLocaleString('en-US')}`,
+                  `of $${state.budget.toLocaleString('en-US')} budget`,
+                ],
+                ['Cost per task', '$0.08', 'avg across all agents'],
+                ['vs. baseline', '−34%', 'savings vs manual'],
+                ['Sales Agent overage', '$48', 'above budget'],
+              ]
+        }
       />
       {workspaceSpend > state.budget && (
         <section className="panel" role="status">
@@ -528,6 +578,7 @@ export function FinOps() {
   );
 }
 export function Governance() {
+  const { can } = useDemoAccess();
   const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
   const names = ['Policies', 'Violations', 'Audit'];
@@ -567,16 +618,24 @@ export function Governance() {
         <Button onClick={() => setEdit(true)}>Review approvals</Button>
       </PageTitle>
       <Metrics
-        items={[
-          ['Compliance score', '78%', 'SOC 2 Type II'],
-          [
-            'Active policies',
-            String(enabled.filter(Boolean).length),
-            `${enabled.filter((v) => !v).length} inactive`,
-          ],
-          ['Open violations', '2', 'require resolution'],
-          ['Agents compliant', '5 / 6', 'Sales Assistant at risk'],
-        ]}
+        items={
+          state.ui?.['demo:dataset'] === 'empty'
+            ? [
+                ['Agents', String(hybridAgents.length)],
+                ['Evaluation runs', String(state.runs.length)],
+                ['Releases', String(state.releases.length)],
+              ]
+            : [
+                ['Compliance score', '78%', 'SOC 2 Type II'],
+                [
+                  'Active policies',
+                  String(enabled.filter(Boolean).length),
+                  `${enabled.filter((v) => !v).length} inactive`,
+                ],
+                ['Open violations', '2', 'require resolution'],
+                ['Agents compliant', '5 / 6', 'Sales Assistant at risk'],
+              ]
+        }
       />
       <Tabs names={names} current={tab} onChange={setTab} />
       <Panel names={names} current={tab}>
@@ -589,6 +648,7 @@ export function Governance() {
                   role="switch"
                   aria-label={p}
                   checked={enabled[i]}
+                  disabled={!can('admin')}
                   onChange={(e) =>
                     setEnabled((v) =>
                       v.map((b, j) => (j === i ? e.target.checked : b)),

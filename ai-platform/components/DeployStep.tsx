@@ -1,3 +1,4 @@
+import { useDemoAccess } from './journeys/DemoExperience';
 import { productionBlockers } from '@/lib/readiness';
 import { approvedEndpoints, executionModels } from '@/lib/configuration';
 import { environments, type ReferenceEvaluation } from '@/lib/preview';
@@ -17,6 +18,7 @@ export function DeployStep({
   onEnvironment: (value: LaunchDraft['environment']) => void;
   onApprove: (value: boolean) => void;
 }) {
+  const { can } = useDemoAccess();
   const rows = [
     ['Use Case', draft.name],
     [
@@ -81,10 +83,18 @@ export function DeployStep({
         </p>
       </fieldset>
       <section className="deploymentApproval">
+        {!can('approve') && (
+          <p role="note">
+            Creator preview: deploy to Staging first, then request a reviewed
+            promotion in Deployments. An Approver reviews the request in
+            Governance.
+          </p>
+        )}
         <label className="notificationChoice">
           <input
             type="checkbox"
             checked={!!draft.productionApproved}
+            disabled={!can('approve')}
             onChange={(e) => onApprove(e.target.checked)}
           />
           I reviewed the manifest and approve this production preview

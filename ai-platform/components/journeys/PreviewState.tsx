@@ -153,6 +153,29 @@ const initial: PreviewState = {
   alert: 80,
   incidentStates: {},
 };
+export function createDemoState(
+  mode: 'empty' | 'sample',
+  role = 'Administrator',
+): PreviewState {
+  const base = structuredClone(initial);
+  base.ui = {
+    'demo:dataset': mode,
+    'demo:role': role,
+    'demo:onboarding': mode === 'empty',
+    'workspace:agents': [],
+  };
+  if (mode === 'empty') {
+    base.endpoints = [];
+    base.defaultModel = '';
+    base.suites = [];
+    base.policies = [];
+    base.ui['settings:tasks'] = Array(8).fill(false);
+    base.ui['settings:org'] = 'My Workspace';
+    base.ui['settings:keys'] = [];
+    base.ui['settings:hooks'] = [];
+  }
+  return base;
+}
 const Context = createContext<{
   state: PreviewState;
   update: (action: (state: PreviewState) => PreviewState) => void;

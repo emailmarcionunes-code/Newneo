@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useDemoAccess } from './journeys/DemoExperience';
 import { usePreview, identifier } from './journeys/PreviewState';
 import { approvedEndpoints } from '@/lib/configuration';
 import { agentConfiguration } from '@/lib/preview-records';
@@ -38,6 +39,7 @@ export default function LaunchGuide({
 }: {
   templateId?: string;
 }) {
+  const { can } = useDemoAccess();
   const { update: updateWorkspace } = usePreview();
   const [workspaceAgentId, setWorkspaceAgentId] = useState('');
   const template = getTemplate(templateId);
@@ -170,7 +172,7 @@ export default function LaunchGuide({
       !draft.environment ||
       deploying ||
       (draft.environment === 'Production' &&
-        productionBlockers(draft, evaluation).length)
+        (!can('approve') || productionBlockers(draft, evaluation).length))
     )
       return;
     setDeploying(true);
@@ -555,7 +557,8 @@ export default function LaunchGuide({
                     !evaluation ||
                     deploying ||
                     (draft.environment === 'Production' &&
-                      productionBlockers(draft, evaluation).length > 0)
+                      (!can('approve') ||
+                        productionBlockers(draft, evaluation).length > 0))
                   }
                 >
                   {deploying

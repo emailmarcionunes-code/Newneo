@@ -5,7 +5,7 @@ export function useWorkspaceAgents() {
   const { state } = usePreview();
   const added = state.ui?.['workspace:agents'];
   const agents = [
-    ...hybridAgents,
+    ...(state.ui?.['demo:dataset'] === 'empty' ? [] : hybridAgents),
     ...(Array.isArray(added)
       ? added.filter(
           (a): a is (typeof hybridAgents)[number] =>

@@ -3,7 +3,11 @@ import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import { useState } from 'react';
 import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
-import { hybridAgents, sourceRows, actionRows } from '@/lib/hybrid-data';
+import {
+  hybridAgents,
+  sourceRows,
+  actionRows as fixtureActions,
+} from '@/lib/hybrid-data';
 import { Button, FilterChip } from '../UI';
 import { previewSourceRows } from '@/lib/source-preview';
 import ResourceExperience from '../ResourceExperience';
@@ -30,6 +34,16 @@ export function Agents() {
           + Create Agent
         </Link>
       </PageTitle>
+      {!hybridAgents.length && (
+        <section className="panel">
+          <h2>Create your first agent</h2>
+          <p>
+            Choose a template, define its mission and follow the eight-step
+            guide. No credentials are required for this demo.
+          </p>
+          <Link href="/agents/catalog">Browse templates →</Link>
+        </section>
+      )}
       <div className="hybridControls">
         <input
           aria-label="Search agents"
@@ -107,6 +121,8 @@ export { default as Overview } from './OverviewFidelity';
 export function Resources({ tools = false }: { tools?: boolean }) {
   const { state } = usePreview();
   const sourceRows = previewSourceRows(state.ui);
+  const actionRows =
+    state.ui?.['demo:dataset'] === 'empty' ? [] : fixtureActions;
   const [search, setSearch] = usePreviewValue(`inventory:${tools}:search`, '');
   const [filter, setFilter] = usePreviewValue(
     `inventory:${tools}:filter`,
@@ -138,10 +154,28 @@ export function Resources({ tools = false }: { tools?: boolean }) {
         items={
           tools
             ? [
-                ['Actions available', '10', 'across systems'],
-                ['Active actions', '8', 'in use by agents'],
-                ['High-risk actions', '2', 'human approval'],
-                ['MCP servers', '4', '3 running'],
+                [
+                  'Actions available',
+                  String(actionRows.length),
+                  'across systems',
+                ],
+                [
+                  'Active actions',
+                  String(actionRows.filter((r) => r.includes('Active')).length),
+                  'in use by agents',
+                ],
+                [
+                  'High-risk actions',
+                  state.ui?.['demo:dataset'] === 'empty' ? '0' : '2',
+                  'human approval',
+                ],
+                [
+                  'MCP servers',
+                  state.ui?.['demo:dataset'] === 'empty' ? '0' : '4',
+                  state.ui?.['demo:dataset'] === 'empty'
+                    ? 'None connected'
+                    : '3 running',
+                ],
               ]
             : [
                 [
@@ -161,7 +195,7 @@ export function Resources({ tools = false }: { tools?: boolean }) {
                 ],
                 [
                   'Index coverage',
-                  `${Math.round(sourceRows.reduce((sum, r) => sum + (parseFloat(r[7]) || 0), 0) / sourceRows.length)}%`,
+                  `${Math.round(sourceRows.reduce((sum, r) => sum + (parseFloat(r[7]) || 0), 0) / Math.max(1, sourceRows.length))}%`,
                   'all sources',
                 ],
                 [

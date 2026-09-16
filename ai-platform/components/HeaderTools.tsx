@@ -1,9 +1,12 @@
 'use client';
+import { usePreview, usePreviewValue } from './journeys/PreviewState';
+import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
+import { previewSourceRows } from '@/lib/source-preview';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Bell, Search, HelpCircle, CheckCheck } from 'lucide-react';
 import { hybridAgents, sourceRows, actionRows } from '@/lib/hybrid-data';
-const notices = [
+const sampleNotices = [
   [
     'Incident',
     'High latency on Sales Assistant',
@@ -41,12 +44,19 @@ const notices = [
   ],
 ];
 export function HeaderSearch() {
+  const hybridAgents = useWorkspaceAgents();
+  const { state } = usePreview();
+  const sourceRows = previewSourceRows(state.ui);
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const records = [
     ...hybridAgents.map((a) => [a.name, 'Agent', `/agents/${a.id}`]),
     ...sourceRows.map((s) => [s[1], 'Knowledge', `/knowledge/${s[0]}`]),
-    ...actionRows.map((a) => [a[1], 'Tool', `/tools/${a[0]}`]),
+    ...(state.ui?.['demo:dataset'] === 'empty' ? [] : actionRows).map((a) => [
+      a[1],
+      'Tool',
+      `/tools/${a[0]}`,
+    ]),
     ...[
       'Settings',
       'Reports',
@@ -104,7 +114,9 @@ export function HeaderSearch() {
   );
 }
 export function HeaderNotifications() {
-  const [read, setRead] = useState(false);
+  const { state } = usePreview();
+  const notices = state.ui?.['demo:dataset'] === 'empty' ? [] : sampleNotices;
+  const [read, setRead] = usePreviewValue('demo:notifications-read', false);
   return (
     <details
       className="topbarMenu notificationMenu"
@@ -117,7 +129,9 @@ export function HeaderNotifications() {
     >
       <summary aria-label="Notifications">
         <Bell size={18} />
-        {!read && <span className="notificationCount">5</span>}
+        {!read && notices.length > 0 && (
+          <span className="notificationCount">{notices.length}</span>
+        )}
       </summary>
       <div className="topbarPopover notificationPopover">
         <div className="notificationHeading">
@@ -131,7 +145,10 @@ export function HeaderNotifications() {
           </button>
         </div>
         <p className="hybridDataNote">
-          {read ? 'All caught up' : '5 unread'} · Reference workspace
+          {read || !notices.length
+            ? 'All caught up'
+            : `${notices.length} unread`}{' '}
+          · Reference workspace
         </p>
         {notices.map(([kind, title, body, time, url]) => (
           <Link href={url} key={kind}>

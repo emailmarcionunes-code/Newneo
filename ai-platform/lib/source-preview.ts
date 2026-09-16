@@ -31,7 +31,9 @@ export function previewSourceRows(ui?: Record<string, unknown>) {
     sync: string;
     provider: string;
   }[];
-  const result = sourceRows.map((r) => [...r]);
+  const result = (ui?.['demo:dataset'] === 'empty' ? [] : sourceRows).map(
+    (r) => [...r],
+  );
   for (const item of managed) {
     const index = result.findIndex((r) => r[0] === item.id);
     const base =

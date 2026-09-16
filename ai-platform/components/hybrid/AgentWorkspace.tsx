@@ -1,4 +1,5 @@
 'use client';
+import { useDemoAccess } from '../journeys/DemoExperience';
 import {
   type LaunchDraft,
   knowledgeSources,
@@ -24,6 +25,7 @@ export default function AgentWorkspace({
 }: {
   agent: (typeof hybridAgents)[number];
 }) {
+  const { can } = useDemoAccess();
   const { state, update } = usePreview();
   const launch = state.ui?.[`agent:${agent.id}:launch`] as
     LaunchDraft | undefined;
@@ -51,7 +53,8 @@ export default function AgentWorkspace({
   const currentVersion =
     displayedRelease?.version || productionVersion(agent.id);
   const environment =
-    displayedRelease?.target || (launch ? launch.environment || 'Development' : 'Production');
+    displayedRelease?.target ||
+    (launch ? launch.environment || 'Development' : 'Production');
   const [draftVersion, setDraftVersion] = usePreviewValue(
     `agent:${agent.id}:draftVersion`,
     nextVersion(agent.id),
@@ -109,7 +112,7 @@ export default function AgentWorkspace({
         title={agent.name}
         description={`${agent.model} · ${agent.status} · Version ${currentVersion}`}
       >
-        <Button onClick={newVersion} disabled={draft}>
+        <Button onClick={newVersion} disabled={draft || !can('create')}>
           Create New Version
         </Button>
       </PageTitle>
@@ -211,6 +214,7 @@ export default function AgentWorkspace({
                       );
                     }}
                     disabled={
+                      !can('operate') ||
                       !state.releases.some(
                         (r) => r.agentId === agent.id && r.state === 'Active',
                       )
@@ -286,7 +290,7 @@ export default function AgentWorkspace({
                 ]);
               }}
             >
-              <fieldset disabled={!draft}>
+              <fieldset disabled={!draft || !can('create')}>
                 <legend>Version configuration</legend>
                 <FormField
                   id="agent-mission"

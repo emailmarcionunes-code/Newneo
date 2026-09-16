@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { AssetIcon } from './Assets';
 import { HeaderSearch, HeaderNotifications, HelpIcon } from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
+import { DemoControls, DemoBoundary } from './journeys/DemoExperience';
 import { usePreviewValue } from './journeys/PreviewState';
 import { useSidebarState } from './SidebarState';
 
@@ -75,6 +76,7 @@ export function ApplicationSidebar({
   onToggleCollapsed: () => void;
 }) {
   const [org] = usePreviewValue('settings:org', 'Acme Corp');
+  const [demoRole] = usePreviewValue('demo:role', 'Administrator');
   const path = usePathname();
   return (
     <aside
@@ -199,8 +201,9 @@ export function Topbar({
           : path === href || path.startsWith(href + '/'),
       )?.[0] ?? (path === '/models' ? 'Model endpoints' : 'Workspace'));
   const [org] = usePreviewValue('settings:org', 'Acme Corp');
+  const [demoRole] = usePreviewValue('demo:role', 'Administrator');
   return (
-    <header className="topbar">
+    <header className="topbar" role="banner">
       <button
         className="menuToggle"
         type="button"
@@ -218,6 +221,7 @@ export function Topbar({
       </div>
       <HeaderSearch />
       <div className="topActions">
+        <DemoControls />
         <HeaderNotifications />
         <details className="topbarMenu">
           <summary aria-label="Help">
@@ -241,7 +245,7 @@ export function Topbar({
           </summary>
           <div className="topbarPopover">
             <strong>Ana Martinez</strong>
-            <p>Demo workspace · AI Engineer</p>
+            <p>Demo workspace · {demoRole}</p>
             <Link href="/settings#team">Team & Roles</Link>
             <p>
               <Link href="/settings">Workspace settings</Link>
@@ -313,7 +317,7 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
       <section className="mainArea">
         <Topbar open={open} onToggle={() => setOpen(!open)} />
         <main id="main-content" className="content">
-          {children}
+          <DemoBoundary>{children}</DemoBoundary>
         </main>
       </section>
     </div>

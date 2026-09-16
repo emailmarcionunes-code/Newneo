@@ -1,4 +1,5 @@
 'use client';
+import { useDemoAccess } from '../journeys/DemoExperience';
 import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import AgentWorkspace from './AgentWorkspace';
 import { evaluationScenarios } from '@/lib/readiness';
@@ -29,6 +30,7 @@ export default function HybridDetail({
   id: string;
 }) {
   const hybridAgents = useWorkspaceAgents();
+  const { can } = useDemoAccess();
   const { state, update, ready } = usePreview();
   const query = useSearchParams();
   const sourceRows = previewSourceRows(state.ui);
@@ -235,7 +237,7 @@ export default function HybridDetail({
                 Last sync: {r[4]} · {r[5]}
               </p>
               <Button
-                disabled={syncing}
+                disabled={syncing || !(can('operate') || can('create'))}
                 onClick={async () => {
                   setSyncing(true);
                   setMessage('Sync in progress — indexing approved documents.');
@@ -272,6 +274,7 @@ export default function HybridDetail({
           description={`${r[2]} · ${r[3]} permission · ${r[4]} risk · organization-approved endpoint`}
         >
           <Button
+            disabled={!can('operate')}
             onClick={() =>
               act('Tool test succeeded; no external action executed')
             }
@@ -467,7 +470,7 @@ export default function HybridDetail({
         >
           <Button
             variant="outline"
-            disabled={status === 'Rolled back'}
+            disabled={status === 'Rolled back' || !can('operate')}
             onClick={() => {
               if (!window.confirm('Roll back this deployment in the preview?'))
                 return;
@@ -580,7 +583,9 @@ export default function HybridDetail({
           <div className="resourceFooter">
             <Button
               variant="outline"
+              disabled={!can('operate')}
               onClick={() => {
+                if (!can('operate')) return;
                 setStatus('Escalated');
                 act('Incident escalated');
               }}
@@ -592,7 +597,7 @@ export default function HybridDetail({
                 setStatus('Resolved');
                 act('Incident resolved');
               }}
-              disabled={status === 'Resolved'}
+              disabled={status === 'Resolved' || !can('operate')}
             >
               {status === 'Resolved' ? 'Resolved' : 'Resolve'}
             </Button>
@@ -705,6 +710,7 @@ export default function HybridDetail({
           <FormField
             id="policy-name"
             label="Policy name"
+            disabled={!can('admin')}
             value={policy}
             required
             onChange={(e) => setPolicy(e.target.value)}
@@ -713,6 +719,7 @@ export default function HybridDetail({
             Description
             <textarea
               value={description}
+              disabled={!can('admin')}
               required
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -742,6 +749,7 @@ export default function HybridDetail({
                 <input
                   type="radio"
                   name="mode"
+                  disabled={!can('admin')}
                   value={m}
                   checked={mode === m}
                   onChange={() => setMode(m)}
@@ -783,7 +791,7 @@ export default function HybridDetail({
               </li>
             ))}
           </ul>
-          <Button type="submit" form="policy-form">
+          <Button type="submit" form="policy-form" disabled={!can('admin')}>
             Save changes
           </Button>
         </section>

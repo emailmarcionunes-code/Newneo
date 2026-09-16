@@ -884,3 +884,131 @@
   margin: 4px 0 0;
   font-size: 12px;
 }
+
+.demoControls {
+  position: relative;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.demoControls > details > summary {
+  cursor: pointer;
+  color: #52647d;
+  width: fit-content;
+  padding: 5px 0;
+}
+.demoControlsBody {
+  padding: 16px;
+  border: 1px solid #dce5f1;
+  background: white;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+.demoControlsBody label {
+  display: grid;
+  gap: 6px;
+  max-width: 320px;
+}
+.demoControlsBody select {
+  padding: 10px;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  background: white;
+}
+.demoRoleTable {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+}
+.demoRoleTable th,
+.demoRoleTable td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #edf1f7;
+}
+.demoRoleTable caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 8px;
+}
+.demoFieldset {
+  display: contents;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.demoPermission {
+  padding: 12px;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  background: #f0f5ff;
+}
+.gettingStarted ol {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.gettingStarted li {
+  border: 1px solid #dce5f1;
+  border-radius: 12px;
+  padding: 20px;
+}
+.gettingStarted h2 {
+  font-size: 16px;
+}
+@media (max-width: 650px) {
+  .gettingStarted ol {
+    grid-template-columns: 1fr;
+  }
+  .demoRoleTable th,
+  .demoRoleTable td {
+    padding: 6px;
+  }
+}
+.topbar .demoControls {
+  margin: 0;
+  flex-shrink: 0;
+}
+.topbar .demoControls summary {
+  padding: 6px 8px;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  background: white;
+}
+.topbar .demoControlsBody {
+  position: absolute;
+  z-index: 80;
+  top: 32px;
+  right: 0;
+  width: min(520px, calc(100vw - 32px));
+  box-shadow: 0 12px 32px #14203324;
+  max-height: 75vh;
+  overflow: auto;
+  color: #172337;
+  font-size: 13px;
+}
+@media (max-width: 650px) {
+  .topbar .demoControlsBody {
+    position: fixed;
+    top: 64px;
+    right: 16px;
+  }
+  .topbar .topActions {
+    gap: 6px;
+  }
+}
+.demoRoleTable > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  border-bottom: 1px solid #edf1f7;
+  padding: 8px 0;
+}
+.demoRoleTable dt {
+  font-weight: 600;
+}
+.demoRoleTable dd {
+  margin: 0;
+}

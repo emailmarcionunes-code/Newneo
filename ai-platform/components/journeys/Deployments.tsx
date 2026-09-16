@@ -1,4 +1,5 @@
 'use client';
+import { useDemoAccess } from './DemoExperience';
 import { useWorkspaceAgents } from './WorkspaceAgents';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ import { usePreview, identifier, type Release } from './PreviewState';
 import { JourneyHeader, Field, Feedback } from './Shared';
 export default function Deployments() {
   const hybridAgents = useWorkspaceAgents();
+  const { can } = useDemoAccess();
   const { state, update } = usePreview();
   const query = useSearchParams();
   const agentId = query.get('agent');
@@ -90,6 +92,7 @@ export default function Deployments() {
             </p>
             <Button
               disabled={
+                !can('create') ||
                 (target === 'Production' &&
                   !state.releases.some(
                     (r) =>
@@ -195,6 +198,7 @@ export default function Deployments() {
             {r.state === 'Active' && (
               <Button
                 variant="outline"
+                disabled={!can('operate')}
                 onClick={() => transition(r.id, 'Paused')}
               >
                 Pause preview
@@ -203,6 +207,7 @@ export default function Deployments() {
             {r.state === 'Paused' && (
               <Button
                 variant="outline"
+                disabled={!can('operate')}
                 onClick={() => transition(r.id, 'Active')}
               >
                 Resume preview
@@ -211,6 +216,7 @@ export default function Deployments() {
             {['Active', 'Paused'].includes(r.state) && (
               <Button
                 variant="secondary"
+                disabled={!can('operate')}
                 onClick={() => transition(r.id, 'Rolled back')}
               >
                 Roll back to baseline preview
