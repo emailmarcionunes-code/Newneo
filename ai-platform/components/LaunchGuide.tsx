@@ -28,6 +28,7 @@ import {
 } from './UI';
 import { LaunchStepper } from './LaunchStepper';
 import { IntegrationDialog } from './IntegrationDialog';
+import { ProviderModelStep } from './ProviderModelStep';
 import { ModelRuntimeStep } from './ModelRuntimeStep';
 import { GovernanceStep } from './GovernanceStep';
 import { runtimeIsReady } from '@/lib/configuration';
@@ -92,7 +93,7 @@ export default function LaunchGuide({
     setNotice('');
   };
   const goTo = (step: number) => {
-    if (deploying || (step === 6 && !evaluation)) return;
+    if (deploying || (step === 7 && !evaluation)) return;
     update({ step });
     setFilter('All');
     setDialog(null);
@@ -118,9 +119,9 @@ export default function LaunchGuide({
         !draft.description.trim())
     )
       return;
-    if (draft.step === 3 && !runtimeIsReady(draft.runtime)) return;
-    if (draft.step === 5 && !evaluation) return;
-    if (draft.step < 6) goTo(draft.step + 1);
+    if (draft.step === 4 && !runtimeIsReady(draft.runtime)) return;
+    if (draft.step === 6 && !evaluation) return;
+    if (draft.step < 7) goTo(draft.step + 1);
   };
   const isKnowledge = draft.step === 1;
   const integrations = isKnowledge ? knowledgeSources : toolConnectors;
@@ -132,7 +133,8 @@ export default function LaunchGuide({
     "Let's start with the fundamentals.",
     'Connect knowledge sources',
     'Add tools and actions',
-    'Choose model and runtime',
+    'Choose infrastructure',
+    'Choose your model',
     'Define governance settings',
     'Test your agent',
     'Ready to deploy',
@@ -141,7 +143,8 @@ export default function LaunchGuide({
     'Define what your agent will do and who will use it.',
     'Add the data your agent will use to find accurate answers.',
     'Connect the systems your agent can use and define what it can do.',
-    'Use your organization default or choose another approved execution model.',
+    'Choose where your agent will run.',
+    'Compare providers and select a model for your infrastructure.',
     'Keep your agent secure, compliant and aligned with company policies.',
     'Run sample queries and review production confidence before promotion.',
     'Review your configuration and choose the environment.',
@@ -196,7 +199,7 @@ export default function LaunchGuide({
       window.scrollTo(0, 0);
     } catch (error) {
       setEvaluation(null);
-      setDraft((current) => ({ ...current, step: 5 }));
+      setDraft((current) => ({ ...current, step: 6 }));
       setNotice(
         error instanceof Error
           ? error.message
@@ -269,7 +272,7 @@ export default function LaunchGuide({
           </div>
         </header>
       )}
-      {draft.step >= 5 && previewBanner}
+      {draft.step >= 6 && previewBanner}
       <ServerDrafts
         draft={draft}
         onLoad={(saved) => {
@@ -475,20 +478,26 @@ export default function LaunchGuide({
         />
       )}
       {draft.step === 4 && (
+        <ProviderModelStep
+          value={draft.runtime}
+          onChange={(runtime) => update({ runtime })}
+        />
+      )}
+      {draft.step === 5 && (
         <GovernanceStep
           value={draft.governance}
           draft={draft}
           onChange={(governance) => update({ governance })}
         />
       )}
-      {draft.step === 5 && (
+      {draft.step === 6 && (
         <EvaluateStep
           draft={draft}
           result={evaluation}
           onResult={setEvaluation}
         />
       )}
-      {draft.step === 6 && evaluation && (
+      {draft.step === 7 && evaluation && (
         <DeployStep
           draft={draft}
           evaluation={evaluation}
@@ -520,13 +529,13 @@ export default function LaunchGuide({
               Save draft
             </Button>
           )}
-          {draft.step < 6 ? (
+          {draft.step < 7 ? (
             <Button
               onClick={next}
               disabled={
                 !ready ||
-                (draft.step === 3 && !runtimeIsReady(draft.runtime)) ||
-                (draft.step === 5 && !evaluation)
+                (draft.step === 4 && !runtimeIsReady(draft.runtime)) ||
+                (draft.step === 6 && !evaluation)
               }
             >
               Next →

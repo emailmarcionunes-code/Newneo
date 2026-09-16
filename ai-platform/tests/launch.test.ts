@@ -33,7 +33,7 @@ test('saved drafts round-trip and do not cross organization, workspace or templa
     { organizationId: 'another-org' },
     { workspaceId: 'another-workspace' },
     { schemaVersion: 2 },
-    { step: 7 },
+    { step: 8 },
     { tools: [] },
     { name: null },
   ])
@@ -119,6 +119,22 @@ test('invalid governance settings resume at governance and restore safe defaults
     }),
     draft.templateId,
   );
-  assert.equal(restored?.step, 4);
+  assert.equal(restored?.step, 5);
   assert.equal(restored?.governance.controls.sensitiveApproval, true);
+});
+
+test('seven-step drafts migrate to matching eight-step screen', () => {
+  const { journeyVersion, ...old } = createDraft();
+  for (const [before, after] of [
+    [3, 3],
+    [4, 5],
+    [5, 6],
+    [6, 6],
+  ]) {
+    assert.equal(
+      parseDraft(JSON.stringify({ ...old, step: before }), old.templateId)
+        ?.step,
+      after,
+    );
+  }
 });

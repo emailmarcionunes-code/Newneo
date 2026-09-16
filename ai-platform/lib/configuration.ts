@@ -30,12 +30,33 @@ export type RuntimeSelection = {
 export const approvedEndpoints = [
   {
     id: 'acme-cloud-gpt4o',
+    provider: 'OpenAI',
     executionModel: 'customer-cloud' as ExecutionModel,
     name: 'GPT-4o · approved endpoint',
     region: 'US East',
     contextWindow: '128k',
     estimatedCost: '~ $0.02 / task',
     expectedLatency: '~ 1.2 s',
+  },
+  {
+    id: 'demo-cloud-claude',
+    provider: 'Anthropic',
+    executionModel: 'customer-cloud' as ExecutionModel,
+    name: 'Claude Sonnet · preview endpoint',
+    region: 'US East · sample',
+    contextWindow: 'Depends on approved version',
+    estimatedCost: 'Not measured',
+    expectedLatency: 'Not measured',
+  },
+  {
+    id: 'demo-cloud-gemini',
+    provider: 'Google',
+    executionModel: 'customer-cloud' as ExecutionModel,
+    name: 'Gemini Pro · preview endpoint',
+    region: 'US East · sample',
+    contextWindow: 'Depends on approved version',
+    estimatedCost: 'Not measured',
+    expectedLatency: 'Not measured',
   },
 ];
 export const defaultRuntime = (): RuntimeSelection => ({

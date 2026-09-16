@@ -56,7 +56,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
 }
 .launchStepper li {
   position: relative;
@@ -1358,9 +1358,110 @@ input[type='radio'] {
     height: 88px;
   }
 }
-.serverDrafts { margin: 16px 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-.serverDrafts summary { font-weight: 600; }
-.serverDrafts p { margin: 12px 0; }
-.serverDrafts label { display: grid; gap: 6px; max-width: 400px; }
-.serverDrafts select { min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
-.serverDraftActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.serverDrafts {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.serverDrafts summary {
+  font-weight: 600;
+}
+.serverDrafts p {
+  margin: 12px 0;
+}
+.serverDrafts label {
+  display: grid;
+  gap: 6px;
+  max-width: 400px;
+}
+.serverDrafts select {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.serverDraftActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Separate infrastructure and provider decisions; share catalog card dimensions. */
+.executionGrid,
+.providerCardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--card-gap);
+}
+.providerModelColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(200px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.providerModelColumns > * {
+  min-width: 0;
+}
+.providerDetails,
+.providerSelection {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  margin-top: 20px;
+}
+.providerSelection {
+  position: sticky;
+  top: 20px;
+  margin-top: 0;
+  overflow-wrap: anywhere;
+}
+.providerDetails {
+  display: grid;
+  gap: 16px;
+}
+.providerDetails a {
+  color: #1d4ed8;
+}
+.providerWordmark {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.modelPreviewNotice {
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.providerSelection dd {
+  margin: 8px 0 16px;
+  font-size: 13px;
+}
+.providerSelection p {
+  font-size: 13px;
+  color: var(--muted);
+}
+@media (max-width: 1100px) {
+  .providerModelColumns {
+    grid-template-columns: 1fr;
+  }
+  .providerSelection {
+    position: static;
+  }
+}
+@media (max-width: 700px) {
+  .executionGrid,
+  .providerCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .executionGrid,
+  .providerCardGrid {
+    grid-template-columns: 1fr;
+  }
+}

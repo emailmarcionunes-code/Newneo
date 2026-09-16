@@ -14,6 +14,7 @@ export const launchSteps = [
   'Use Case',
   'Knowledge',
   'Tools',
+  'Infra',
   'Model',
   'Governance',
   'Evaluate',
@@ -229,6 +230,7 @@ export const toolConnectors: Integration[] = [
 ];
 export type LaunchDraft = {
   schemaVersion: 1;
+  journeyVersion?: 2;
   organizationId: 'acme-demo';
   workspaceId: 'customer-service-demo';
   templateId: string;
@@ -249,6 +251,7 @@ export function createDraft(templateId?: string | null): LaunchDraft {
   const service = template.id === 'customer-service';
   return {
     schemaVersion: 1,
+    journeyVersion: 2,
     organizationId: 'acme-demo',
     workspaceId: 'customer-service-demo',
     templateId: template.id,
@@ -295,7 +298,7 @@ export function parseDraft(
       ) ||
       !Number.isInteger(value.step) ||
       value.step < 0 ||
-      value.step > 6
+      value.step > (value.journeyVersion === 2 ? 7 : 6)
     )
       return null;
     if (
@@ -325,15 +328,16 @@ export function parseDraft(
       value.governance === undefined
         ? defaultGovernance()
         : parseGovernance(value.governance);
-    let step = value.step;
+    let step =
+      value.step + (value.journeyVersion !== 2 && value.step > 3 ? 1 : 0);
     if (
       !runtime ||
       !runtimeIsReady(runtime) ||
       (value.runtime === undefined && step > 3)
     )
       step = Math.min(step, 3);
-    if (!governance || (value.governance === undefined && step > 4))
-      step = Math.min(step, 4);
+    if (!governance || (value.governance === undefined && step > 5))
+      step = Math.min(step, 5);
     return {
       ...createDraft(templateId),
       environment: environments.some((item) => item.name === value.environment)
@@ -347,7 +351,7 @@ export function parseDraft(
       industry: value.industry,
       // Evaluation receipts are session-only; reloading Deploy returns to Evaluate.
       step:
-        value.name.trim() && value.description.trim() ? Math.min(step, 5) : 0,
+        value.name.trim() && value.description.trim() ? Math.min(step, 6) : 0,
       knowledge: [...new Set<string>(value.knowledge)].filter((id) =>
         knowledgeSources.some((source) => source.id === id),
       ),

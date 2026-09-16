@@ -121,7 +121,7 @@ test('saved environment is restored but preview evaluation and success are not t
     deployed: true,
   };
   const restored = parseDraft(JSON.stringify(value), value.templateId);
-  assert.equal(restored?.step, 5);
+  assert.equal(restored?.step, 6);
   assert.equal(restored?.environment, 'Production');
   assert.equal('deployed' in restored!, false);
   assert.equal('evaluation' in restored!, false);

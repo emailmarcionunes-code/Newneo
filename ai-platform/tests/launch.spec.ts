@@ -264,6 +264,8 @@ for (const viewport of [
     await next(page);
     await check('tools');
     await next(page);
+    await check('infra');
+    await next(page);
     await check('model');
     await next(page);
     await check('governance');
@@ -317,28 +319,31 @@ test('model selection, approval settings and evaluation boundary preserve the dr
   await next(page);
   await next(page);
   await next(page);
-  await expect(page.getByLabel('Approved model')).toHaveValue(
-    'acme-cloud-gpt4o',
-  );
-  await page.getByRole('button', { name: 'Change execution model →' }).click();
   await expect(
-    page.getByRole('button', { name: /Managed AI Use leading/ }),
-  ).toBeFocused();
+    page.getByRole('heading', { name: 'Choose infrastructure', exact: true }),
+  ).toBeVisible();
   await page.getByRole('button', { name: /Private AI Run approved/ }).click();
+  await next(page);
   await expect(page.getByLabel('Approved model')).toBeDisabled();
   await expect(
     page.getByRole('button', { name: 'Next →', exact: true }),
   ).toBeDisabled();
+  await page.getByRole('button', { name: '← Back', exact: true }).click();
+  await page.getByRole('button', { name: 'Use organization default' }).click();
+  await next(page);
+  await expect(page.getByLabel('Approved model')).toHaveValue(
+    'acme-cloud-gpt4o',
+  );
+  await page.getByRole('button', { name: /Anthropic \/ Claude/ }).click();
+  await page.getByRole('button', { name: 'Select Claude preview' }).click();
+  await expect(page.getByLabel('Approved model')).toHaveValue(
+    'demo-cloud-claude',
+  );
   await page.getByRole('button', { name: 'Save draft', exact: true }).click();
   await page.reload();
-  await expect(
-    page.getByRole('button', { name: /Private AI Run approved/ }),
-  ).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Use organization default' }).click();
-  await page.getByText('Advanced settings (optional)', { exact: true }).click();
-  await expect(
-    page.getByText('Demo organization and workspace', { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByLabel('Approved model')).toHaveValue(
+    'demo-cloud-claude',
+  );
   await next(page);
   await expect(page.getByLabel('Who can use this agent?')).toHaveValue(
     'everyone',
@@ -410,7 +415,7 @@ test('evaluation retries, deliberate environment selection and simulated success
       }),
     { times: 1 },
   );
-  for (let step = 0; step < 5; step++) await next(page);
+  for (let step = 0; step < 6; step++) await next(page);
   await expect(page.locator('.evaluateStep').getByRole('alert')).toContainText(
     'Temporary preview failure',
   );
@@ -485,7 +490,7 @@ test('configuration changes automatically reload the preview evaluation', async 
     'aria-busy',
     'false',
   );
-  for (let step = 0; step < 5; step++) await next(page);
+  for (let step = 0; step < 6; step++) await next(page);
 
   await expect(
     page.getByRole('button', { name: 'Next →', exact: true }),

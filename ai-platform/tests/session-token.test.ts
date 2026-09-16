@@ -52,7 +52,7 @@ test('stored configuration does not preserve deployment state or arbitrary keys'
     secret: 'not permitted',
   });
   assert.equal(draft.environment, null);
-  assert.ok(draft.step <= 5);
+  assert.ok(draft.step <= 6);
   assert.equal('secret' in draft, false);
   assert.throws(() =>
     validatedDraft({ ...createDraft(), name: 'x'.repeat(121) }),
