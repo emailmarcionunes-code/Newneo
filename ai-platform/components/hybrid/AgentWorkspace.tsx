@@ -1,4 +1,9 @@
 'use client';
+import {
+  type LaunchDraft,
+  knowledgeSources,
+  toolConnectors,
+} from '@/lib/launch';
 import { useState } from 'react';
 import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
@@ -19,9 +24,13 @@ export default function AgentWorkspace({
 }: {
   agent: (typeof hybridAgents)[number];
 }) {
-  const { state } = usePreview();
+  const { state, update } = usePreview();
+  const launch = state.ui?.[`agent:${agent.id}:launch`] as
+    LaunchDraft | undefined;
   const sourceRows = previewSourceRows(state.ui).filter((r) =>
-    sourceAgents[r[0]]?.includes(agent.id),
+    launch
+      ? launch.knowledge.includes(r[0])
+      : sourceAgents[r[0]]?.includes(agent.id),
   );
   const productionRelease = state.releases.find(
     (r) =>
@@ -29,8 +38,20 @@ export default function AgentWorkspace({
       r.target === 'Production' &&
       r.state === 'Active',
   );
+  const missingSources = (launch?.knowledge || []).filter(
+    (id) => !sourceRows.some((r) => r[0] === id),
+  );
+  const displayedRelease =
+    productionRelease ||
+    (launch
+      ? state.releases.find(
+          (r) => r.agentId === agent.id && r.state === 'Active',
+        )
+      : undefined);
   const currentVersion =
-    productionRelease?.version || productionVersion(agent.id);
+    displayedRelease?.version || productionVersion(agent.id);
+  const environment =
+    displayedRelease?.target || (launch ? launch.environment || 'Development' : 'Production');
   const [draftVersion, setDraftVersion] = usePreviewValue(
     `agent:${agent.id}:draftVersion`,
     nextVersion(agent.id),
@@ -62,7 +83,7 @@ export default function AgentWorkspace({
   );
   const [message, setMessage] = useState('');
   const [events, setEvents] = usePreviewValue(`agent:${agent.id}:events`, [
-    `${currentVersion} promoted to Production after approval`,
+    `${currentVersion} created in ${launch?.environment || 'Production'} after review`,
     'Evaluation suite completed: 94% readiness',
     'Knowledge configuration reviewed',
     `PII policy applied to version ${currentVersion}`,
@@ -102,14 +123,17 @@ export default function AgentWorkspace({
                 ['Tasks today', agent.tasks],
                 ['Success rate', agent.success],
                 ['Latency P95', agent.latency],
-                ['Cost today', '$22.4'],
+                ['Cost today', launch ? '$0 · simulation' : '$22.4'],
               ]}
             />
             <div className="hybridSplit">
               <section className="panel">
                 <h2>Task volume — last 7 days</h2>
                 <div className="hybridChart">
-                  {[60, 72, 68, 84, 76, 88, 88].map((n, i) => (
+                  {(launch
+                    ? [0, 0, 0, 0, 0, 0, Number(agent.tasks) * 10]
+                    : [60, 72, 68, 84, 76, 88, 88]
+                  ).map((n, i) => (
                     <div key={i}>
                       <span style={{ height: n }} />
                       <small>
@@ -120,13 +144,19 @@ export default function AgentWorkspace({
                 </div>
               </section>
               <section className="panel">
-                <h2>Production configuration</h2>
+                <h2>{environment} configuration</h2>
                 <dl className="surfaceFacts">
                   {[
-                    ['Infrastructure', 'Cloud'],
+                    ['Infrastructure', launch?.infrastructure.kind || 'Cloud'],
                     ['Model', agent.model],
-                    ['Knowledge', '2 sources'],
-                    ['Tools', '3 approved actions'],
+                    [
+                      'Knowledge',
+                      `${launch?.knowledge.length ?? sourceRows.length} sources`,
+                    ],
+                    [
+                      'Tools',
+                      `${launch ? Object.values(launch.tools).flat().length : 3} approved actions`,
+                    ],
                     ['Policies', '4 active'],
                     ['Eval score', `${agent.score}%`],
                   ].map(([k, v]) => (
@@ -146,19 +176,89 @@ export default function AgentWorkspace({
             </div>
             <section className="panel">
               <h2>Recent tasks</h2>
+              {launch && (
+                <>
+                  <p>
+                    Run a sample task to experience monitoring. No model or tool
+                    will be called.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      update((s) => ({
+                        ...s,
+                        ui: {
+                          ...s.ui,
+                          ['workspace:agents']: (
+                            s.ui?.['workspace:agents'] as (typeof agent)[]
+                          ).map((a) =>
+                            a.id === agent.id
+                              ? {
+                                  ...a,
+                                  tasks: String(Number(a.tasks) + 1),
+                                  success: '100%',
+                                  latency: '1.1s',
+                                }
+                              : a,
+                          ),
+                        },
+                        audit: [
+                          `Sample task completed by ${agent.name} · preview`,
+                          ...s.audit,
+                        ],
+                      }));
+                      setMessage(
+                        'Sample task completed. Monitoring updated; no external system was contacted.',
+                      );
+                    }}
+                    disabled={
+                      !state.releases.some(
+                        (r) => r.agentId === agent.id && r.state === 'Active',
+                      )
+                    }
+                  >
+                    Run sample task
+                  </Button>
+                </>
+              )}
+
               <Table
                 caption="Recent agent tasks"
                 headers={['Task', 'When', 'Result']}
-                rows={[
-                  ['Resolved refund question', '2 min ago', 'Success'],
-                  ['Created ServiceNow Ticket #4832', '8 min ago', 'Success'],
-                  ['Escalated billing dispute', '14 min ago', 'Escalated'],
-                  ['Answered order-status request', '18 min ago', 'Success'],
-                ].map(([task, time, result]) => [
-                  task,
-                  time,
-                  <Status key={task}>{result}</Status>,
-                ])}
+                emptyMessage="No tasks yet. Run a sample task to populate monitoring."
+                rows={
+                  launch
+                    ? Number(agent.tasks)
+                      ? [
+                          [
+                            'Sample task completed',
+                            'This session',
+                            'Success · simulated',
+                          ],
+                        ]
+                      : []
+                    : [
+                        ['Resolved refund question', '2 min ago', 'Success'],
+                        [
+                          'Created ServiceNow Ticket #4832',
+                          '8 min ago',
+                          'Success',
+                        ],
+                        [
+                          'Escalated billing dispute',
+                          '14 min ago',
+                          'Escalated',
+                        ],
+                        [
+                          'Answered order-status request',
+                          '18 min ago',
+                          'Success',
+                        ],
+                      ].map(([task, time, result]) => [
+                        task,
+                        time,
+                        <Status key={task}>{result}</Status>,
+                      ])
+                }
               />
             </section>
           </>
@@ -237,10 +337,25 @@ export default function AgentWorkspace({
         ) : tab === 'Knowledge' ? (
           <section className="panel">
             <h2>Knowledge bound to {currentVersion}</h2>
+            {!!missingSources.length && (
+              <p>
+                Attached sources:{' '}
+                {missingSources
+                  .map(
+                    (id) =>
+                      knowledgeSources.find((s) => s.id === id)?.name || id,
+                  )
+                  .join(', ')}
+                .{' '}
+                <Link href="/knowledge">
+                  Review synchronization in Knowledge →
+                </Link>
+              </p>
+            )}
             <Table
               caption="Agent knowledge"
               headers={['Source', 'Type', 'Documents', 'Status', 'Permissions']}
-              rows={sourceRows.slice(0, 2).map((r) => [
+              rows={sourceRows.map((r) => [
                 <Link key={r[0]} href={`/knowledge/${r[0]}`}>
                   {r[1]} →
                 </Link>,
@@ -258,15 +373,33 @@ export default function AgentWorkspace({
             <Table
               caption="Agent tools"
               headers={['Action', 'System', 'Permission', 'Risk', 'Approval']}
-              rows={actionRows.slice(0, 3).map((r) => [
-                <Link key={r[0]} href={`/tools/${r[0]}`}>
-                  {r[1]} →
-                </Link>,
-                r[2],
-                r[3],
-                r[4],
-                r[4] === 'High' ? 'Required' : 'Policy enforced',
-              ])}
+              rows={
+                launch
+                  ? Object.entries(launch.tools).flatMap(([connector, ids]) =>
+                      ids.map((actionId) => {
+                        const c = toolConnectors.find(
+                          (c) => c.id === connector,
+                        );
+                        const a = c?.actions?.find((a) => a.id === actionId);
+                        return [
+                          a?.name || actionId,
+                          c?.name || connector,
+                          a?.access || 'Read',
+                          a?.requiresApproval ? 'High' : 'Low',
+                          a?.requiresApproval ? 'Required' : 'Policy enforced',
+                        ];
+                      }),
+                    )
+                  : actionRows.slice(0, 3).map((r) => [
+                      <Link key={r[0]} href={`/tools/${r[0]}`}>
+                        {r[1]} →
+                      </Link>,
+                      r[2],
+                      r[3],
+                      r[4],
+                      r[4] === 'High' ? 'Required' : 'Policy enforced',
+                    ])
+              }
             />
           </section>
         ) : tab === 'Evaluations' ? (
@@ -298,7 +431,7 @@ export default function AgentWorkspace({
                     score: r.score,
                     when: 'This session',
                   })),
-                ...evaluationRecords(agent.id),
+                ...(launch ? [] : evaluationRecords(agent.id)),
               ].map((r) => [
                 <Link key={r.id} href={`/evaluations/${agent.id}?run=${r.id}`}>
                   {r.id} →
@@ -359,30 +492,36 @@ export default function AgentWorkspace({
                   : []),
                 [
                   currentVersion,
-                  <Status key="s">Production</Status>,
-                  'PII rules and knowledge refresh',
-                  '94%',
+                  <Status key="s">{environment}</Status>,
+                  launch
+                    ? 'Configured in Launch Guide'
+                    : 'PII rules and knowledge refresh',
+                  `${agent.score}%`,
                   <Link
                     key="deploy"
-                    href={`/deployments/${agent.id}${productionRelease ? `?release=${productionRelease.id}` : ''}`}
+                    href={`/deployments/${agent.id}${displayedRelease ? `?release=${displayedRelease.id}` : ''}`}
                   >
                     View deployment →
                   </Link>,
                 ],
-                [
-                  `v${currentVersion.slice(1).split('.')[0]}.${Math.max(0, Number(currentVersion.split('.')[1]) - 1)}`,
-                  'Archived',
-                  'Tool timeout handling',
-                  '91%',
-                  'Retained for rollback',
-                ],
-                [
-                  `v${currentVersion.slice(1).split('.')[0]}.${Math.max(0, Number(currentVersion.split('.')[1]) - 2)}`,
-                  'Archived',
-                  'Initial approved configuration',
-                  '89%',
-                  'Audit retained',
-                ],
+                ...(launch
+                  ? []
+                  : [
+                      [
+                        `v${currentVersion.slice(1).split('.')[0]}.${Math.max(0, Number(currentVersion.split('.')[1]) - 1)}`,
+                        'Archived',
+                        'Tool timeout handling',
+                        '91%',
+                        'Retained for rollback',
+                      ],
+                      [
+                        `v${currentVersion.slice(1).split('.')[0]}.${Math.max(0, Number(currentVersion.split('.')[1]) - 2)}`,
+                        'Archived',
+                        'Initial approved configuration',
+                        '89%',
+                        'Audit retained',
+                      ],
+                    ]),
               ]}
             />
           </section>

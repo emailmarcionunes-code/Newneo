@@ -1,4 +1,5 @@
 'use client';
+import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import AgentWorkspace from './AgentWorkspace';
 import { evaluationScenarios } from '@/lib/readiness';
 import {
@@ -27,6 +28,7 @@ export default function HybridDetail({
   kind: string;
   id: string;
 }) {
+  const hybridAgents = useWorkspaceAgents();
   const { state, update, ready } = usePreview();
   const query = useSearchParams();
   const sourceRows = previewSourceRows(state.ui);
@@ -36,7 +38,9 @@ export default function HybridDetail({
     (r) => r.agentId === id && (!releaseId || r.id === releaseId),
   );
   const currentRelease = state.releases.find(
-    (r) => r.id === releaseId && (r.agentId || 'customer-service') === id,
+    (r) =>
+      (!releaseId || r.id === releaseId) &&
+      (r.agentId || 'customer-service') === id,
   );
   const releaseVersion =
     currentRelease?.version ||
@@ -105,7 +109,8 @@ export default function HybridDetail({
   );
   const [mode, setMode] = usePreviewValue(`policy:${id}:mode`, 'Enforce');
   if (
-    (['agents', 'evaluations', 'deployments'].includes(kind) &&
+    (ready &&
+      ['agents', 'evaluations', 'deployments'].includes(kind) &&
       !hybridAgents.some((a) => a.id === id)) ||
     (ready && kind === 'knowledge' && !sourceRows.some((r) => r[0] === id)) ||
     (kind === 'tools' && !actionRows.some((r) => r[0] === id)) ||
@@ -131,6 +136,8 @@ export default function HybridDetail({
     setMessage(`${text} · preview only.`);
     update((s) => ({ ...s, audit: [`${text} · preview`, ...s.audit] }));
   }
+  if (!ready && id.startsWith('preview-'))
+    return <p role="status">Loading agent…</p>;
   if (kind === 'agents') return <AgentWorkspace agent={agent} />;
   if (kind === 'knowledge') {
     const r = sourceRows.find((r) => r[0] === id) ?? sourceRows[0];
@@ -483,6 +490,21 @@ export default function HybridDetail({
         <div className="hybridSplit">
           <section className="panel">
             <h2>Deploy timeline</h2>
+            {currentRelease &&
+              ['Failed', 'Rejected', 'Pending approval'].includes(status) && (
+                <p role="status">
+                  {status === 'Failed'
+                    ? 'Health check failed. No traffic changed; the previous active release is preserved.'
+                    : status === 'Rejected'
+                      ? 'Review rejected. No deployment occurred.'
+                      : 'Awaiting review. No deployment occurred.'}{' '}
+                  <Link
+                    href={`/deployments?agent=${id}&run=${currentRelease.runId}&edit=1`}
+                  >
+                    Review release and recover →
+                  </Link>
+                </p>
+              )}
             <ol className="hybridTimeline">
               {[
                 'Deploy triggered',
@@ -490,7 +512,13 @@ export default function HybridDetail({
                 'Container build',
                 'Health check',
                 'Traffic cutover',
-                'Deploy complete',
+                status === 'Failed'
+                  ? 'Deployment stopped — health check failed'
+                  : status === 'Rejected'
+                    ? 'Deployment rejected'
+                    : status === 'Pending approval'
+                      ? 'Awaiting approval'
+                      : 'Deploy complete',
               ].map((v, i) => (
                 <li key={v}>
                   <time>

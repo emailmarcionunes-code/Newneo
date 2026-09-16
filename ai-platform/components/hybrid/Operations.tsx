@@ -1,4 +1,5 @@
 'use client';
+import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -35,6 +36,7 @@ const scenarios: [string, number][] = [
   ['Latency P95', 91],
 ];
 export function Evaluations() {
+  const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
   const query = useSearchParams();
   const [edit, setEdit] = useState(query.get('edit') === '1');
@@ -134,10 +136,11 @@ export function Evaluations() {
   );
 }
 export function Deployments() {
+  const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
   const query = useSearchParams();
   const [environment, setEnvironment] = useState('All');
-  const [edit, setEdit] = useState(false);
+  const [edit, setEdit] = useState(query.get('edit') === '1');
   if (edit)
     return (
       <>
@@ -255,6 +258,7 @@ export function Deployments() {
   );
 }
 export function AgentOps() {
+  const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
   const [incidentStatus, setIncidentStatus] = useState('Open');
   const names = ['Health', 'Incidents', 'Logs'];
@@ -392,6 +396,7 @@ export function AgentOps() {
   );
 }
 export function FinOps() {
+  const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
   const [budget, setBudget] = useState(false);
   return (
@@ -412,6 +417,19 @@ export function FinOps() {
           ['Sales Agent overage', '$48', 'above budget'],
         ]}
       />
+      {workspaceSpend > state.budget && (
+        <section className="panel" role="status">
+          <h2>Workspace budget exceeded</h2>
+          <p>
+            Sample spend exceeds the budget by $
+            {(workspaceSpend - state.budget).toLocaleString('en-US')}. No real
+            spending limit was applied.
+          </p>
+          <Button variant="outline" onClick={() => setBudget(true)}>
+            Review budget and recommendations
+          </Button>
+        </section>
+      )}
       <div className="hybridSplit">
         <section className="panel">
           <div className="surfaceHeading">
@@ -510,6 +528,7 @@ export function FinOps() {
   );
 }
 export function Governance() {
+  const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
   const names = ['Policies', 'Violations', 'Audit'];
   const [tab, setTab] = useState('Policies');

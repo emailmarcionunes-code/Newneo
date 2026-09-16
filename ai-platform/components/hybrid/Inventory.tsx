@@ -1,4 +1,5 @@
 'use client';
+import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import { useState } from 'react';
 import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
@@ -16,13 +17,14 @@ import {
   Bars,
 } from './UI';
 export function Agents() {
+  const hybridAgents = useWorkspaceAgents();
   const [filter, setFilter] = usePreviewValue('agents:filter', 'All');
   const [search, setSearch] = usePreviewValue('agents:search', '');
   return (
     <div className="surfacePage hybridPage agentsPage">
       <PageTitle
         title="All Agents"
-        description="4 live · 1 staging · 1 degraded"
+        description={`${hybridAgents.filter((a) => a.status === 'Live').length} live · ${hybridAgents.filter((a) => a.status === 'Staging').length} staging · ${hybridAgents.filter((a) => a.status === 'Degraded').length} degraded`}
       >
         <Link className="button primary" href="/agents/catalog">
           + Create Agent

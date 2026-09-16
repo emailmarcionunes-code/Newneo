@@ -1,4 +1,5 @@
 'use client';
+import { useWorkspaceAgents } from './WorkspaceAgents';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -8,11 +9,13 @@ import { Button } from '../UI';
 import { usePreview, identifier, type Release } from './PreviewState';
 import { JourneyHeader, Field, Feedback } from './Shared';
 export default function Deployments() {
+  const hybridAgents = useWorkspaceAgents();
   const { state, update } = usePreview();
   const query = useSearchParams();
   const agentId = query.get('agent');
   const [runId, setRunId] = useState(query.get('run') || '');
   const [target, setTarget] = useState('Test');
+  const [outcome, setOutcome] = useState('success');
   const [message, setMessage] = useState('');
   const passed = state.runs.filter(
     (r) =>
@@ -57,6 +60,15 @@ export default function Deployments() {
                   ))}
                 </select>
               </Field>
+              <Field label="Deployment simulation">
+                <select
+                  value={outcome}
+                  onChange={(e) => setOutcome(e.target.value)}
+                >
+                  <option value="success">Successful deployment</option>
+                  <option value="failure">Health check fails</option>
+                </select>
+              </Field>
               <Field label="Target environment">
                 <select
                   value={target}
@@ -93,11 +105,13 @@ export default function Deployments() {
                 )
               }
               onClick={() => {
+                const releaseId = identifier();
                 update((s) => ({
                   ...s,
+                  ui: { ...s.ui, [`release:${releaseId}:outcome`]: outcome },
                   releases: [
                     {
-                      id: identifier(),
+                      id: releaseId,
                       runId: run.id,
                       agentId: run.agentId || 'customer-service',
                       version: run.version,
@@ -161,6 +175,20 @@ export default function Deployments() {
             </p>
             <p>Requested by you · preview</p>
             {r.reason && <p>Review note: {r.reason}</p>}
+            {['Failed', 'Rejected', 'Rolled back'].includes(r.state) && (
+              <div>
+                <p>
+                  {r.state === 'Failed'
+                    ? 'Health check failed. Traffic was not switched. Correct the configuration and request another reviewed deployment.'
+                    : 'This release is not active. Review the decision and request another promotion when ready.'}
+                </p>
+                <Link
+                  href={`/evaluations?agent=${r.agentId || 'customer-service'}&version=${r.version}&edit=1`}
+                >
+                  Review configuration and rerun evaluation →
+                </Link>
+              </div>
+            )}
             {r.state === 'Pending approval' && (
               <Link href="/governance">Review request →</Link>
             )}

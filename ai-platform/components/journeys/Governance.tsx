@@ -1,4 +1,5 @@
 'use client';
+import { useWorkspaceAgents } from './WorkspaceAgents';
 import { agentConfiguration } from '@/lib/preview-records';
 import { hybridAgents } from '@/lib/hybrid-data';
 import { useState } from 'react';
@@ -17,6 +18,7 @@ export default function Governance({
 }: {
   initialTab?: string;
 }) {
+  const hybridAgents = useWorkspaceAgents();
   const { state, update } = usePreview();
   const [tab, setTab] = useState(initialTab);
   const [invite, setInvite] = useState(false);
@@ -157,10 +159,15 @@ export default function Governance({
                             );
                             return;
                           }
+                          const failed =
+                            next === 'Active' &&
+                            state.ui?.[`release:${r.id}:outcome`] === 'failure';
                           update((s) => ({
                             ...s,
                             ui:
-                              next === 'Active' && r.target === 'Production'
+                              next === 'Active' &&
+                              !failed &&
+                              r.target === 'Production'
                                 ? {
                                     ...s.ui,
                                     [`agent:${r.agentId || 'customer-service'}:draft`]: false,
@@ -169,8 +176,13 @@ export default function Governance({
                                 : s.ui,
                             releases: s.releases.map((v) =>
                               v.id === r.id
-                                ? { ...v, state: next, reason: note.trim() }
-                                : v.state === 'Active' &&
+                                ? {
+                                    ...v,
+                                    state: failed ? 'Failed' : next,
+                                    reason: note.trim(),
+                                  }
+                                : !failed &&
+                                    v.state === 'Active' &&
                                     v.target === r.target &&
                                     (v.agentId || 'customer-service') ===
                                       (r.agentId || 'customer-service') &&
@@ -184,9 +196,11 @@ export default function Governance({
                             ],
                           }));
                           setMessage(
-                            next === 'Active'
-                              ? 'Approved. The release is active in Deployments preview.'
-                              : 'Request rejected in the preview.',
+                            failed
+                              ? 'Approved, but the deployment health check failed. No traffic changed. Open Deployments to recover.'
+                              : next === 'Active'
+                                ? 'Approved. The release is active in Deployments preview.'
+                                : 'Request rejected in the preview.',
                           );
                           setNote('');
                         }}

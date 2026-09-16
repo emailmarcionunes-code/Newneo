@@ -62,7 +62,13 @@ export type Release = {
   version: string;
   source: string;
   target: string;
-  state: 'Pending approval' | 'Rejected' | 'Active' | 'Paused' | 'Rolled back';
+  state:
+    | 'Pending approval'
+    | 'Rejected'
+    | 'Active'
+    | 'Paused'
+    | 'Rolled back'
+    | 'Failed';
   reason: string;
 };
 export type User = {
@@ -229,6 +235,7 @@ function valid(value: unknown): value is PreviewState {
         [
           'Pending approval',
           'Rejected',
+          'Failed',
           'Active',
           'Paused',
           'Rolled back',

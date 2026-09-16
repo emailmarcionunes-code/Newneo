@@ -1,13 +1,17 @@
 'use client';
+import { useWorkspaceAgents } from './WorkspaceAgents';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { previewSourceRows } from '@/lib/source-preview';
+import type { LaunchDraft } from '@/lib/launch';
 import { hybridAgents } from '@/lib/hybrid-data';
 import { agentConfiguration } from '@/lib/preview-records';
 import { Button } from '../UI';
 import { usePreview, identifier, suiteTypes, type Suite } from './PreviewState';
 import { JourneyHeader, Dialog, Field, Feedback } from './Shared';
 export default function Evaluations() {
+  const hybridAgents = useWorkspaceAgents();
   const { state, update, ready } = usePreview();
   const query = useSearchParams();
   const agentId = query.get('agent') || 'customer-service';
@@ -32,6 +36,13 @@ export default function Evaluations() {
             (s) => s.id !== 'regression' && !s.id.startsWith('regression-'),
           ),
         ];
+  const launch = state.ui?.[`agent:${agent.id}:launch`] as
+    LaunchDraft | undefined;
+  const unavailable = previewSourceRows(state.ui).filter(
+    (r) =>
+      launch?.knowledge.includes(r[0]) &&
+      ['Error', 'Not connected', 'Not synchronized'].includes(r[5]),
+  );
   const [suiteId, setSuiteId] = useState(contextualId);
   const [form, setForm] = useState<Suite | null>(null);
   const [scenario, setScenario] = useState('pass');
@@ -68,6 +79,16 @@ export default function Evaluations() {
         </Button>
       </JourneyHeader>
       <Feedback message={message} />
+      {!!unavailable.length && (
+        <section className="panel" role="status">
+          <h2>Knowledge source unavailable</h2>
+          <p>
+            {unavailable.map((r) => r[1]).join(', ')} needs reconnection or
+            synchronization before this agent can pass evaluation.
+          </p>
+          <Link href="/knowledge">Reconnect and synchronize sources →</Link>
+        </section>
+      )}
       <div className="surfaceCards">
         {suites.map((s) => (
           <article className="agentCard" key={s.id}>
@@ -140,7 +161,7 @@ export default function Evaluations() {
                 expected: suite.expected,
                 name: suite.name,
                 version: version.trim(),
-                passed: scenario === 'pass',
+                passed: scenario === 'pass' && !unavailable.length,
                 score: scenario === 'pass' ? 100 : 0,
               };
               update((s) => ({

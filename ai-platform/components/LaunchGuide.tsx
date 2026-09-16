@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePreview, identifier } from './journeys/PreviewState';
+import { approvedEndpoints } from '@/lib/configuration';
+import { agentConfiguration } from '@/lib/preview-records';
 import { getTemplate } from '@/lib/catalog';
 import {
   createDraft,
@@ -35,6 +38,8 @@ export default function LaunchGuide({
 }: {
   templateId?: string;
 }) {
+  const { update: updateWorkspace } = usePreview();
+  const [workspaceAgentId, setWorkspaceAgentId] = useState('');
   const template = getTemplate(templateId);
   const [draft, setDraft] = useState<LaunchDraft>(() =>
     createDraft(template.id),
@@ -183,6 +188,79 @@ export default function LaunchGuide({
         result.environment !== draft.environment
       )
         throw new Error('Unexpected preview confirmation. Please try again.');
+      const agentId = `preview-${identifier()}`;
+      const runId = identifier();
+      const releaseId = identifier();
+      const model =
+        approvedEndpoints.find((e) => e.id === draft.model.modelId)?.name ||
+        draft.model.modelId;
+      updateWorkspace((s) => {
+        const ui = {
+          ...s.ui,
+          [`agent:${agentId}:mission`]: draft.description,
+          [`agent:${agentId}:owner`]: draft.businessOwner || 'Workspace owner',
+          [`agent:${agentId}:model`]: model,
+          [`agent:${agentId}:launch`]: draft,
+          ['workspace:agents']: [
+            ...(Array.isArray(s.ui?.['workspace:agents'])
+              ? s.ui['workspace:agents']
+              : []),
+            {
+              id: agentId,
+              name: draft.name,
+              model,
+              status: draft.environment === 'Production' ? 'Live' : 'Staging',
+              tasks: '0',
+              success: '—',
+              latency: '—',
+              cost: 0,
+              budget: 100,
+              score: evaluation.score,
+            },
+          ],
+        };
+        return {
+          ...s,
+          ui,
+          runs: [
+            {
+              id: runId,
+              agentId,
+              configuration: agentConfiguration(ui, agentId),
+              suiteId: 'launch',
+              category: 'Regression',
+              question:
+                'Validate the configured agent against the launch requirements.',
+              expected: 'Approved configuration and readiness checks.',
+              name: 'Launch readiness',
+              version: 'v1.0',
+              passed: true,
+              score: evaluation.score,
+            },
+            ...s.runs,
+          ],
+          releases: [
+            {
+              id: releaseId,
+              runId,
+              agentId,
+              version: 'v1.0',
+              source: 'Development',
+              target: draft.environment!,
+              state: 'Active',
+              reason: draft.productionApproved
+                ? 'Manifest reviewed and approved in Launch Guide'
+                : 'Non-production launch preview',
+            },
+            ...s.releases,
+          ],
+          audit: [
+            `Created ${draft.name} v1.0 in ${draft.environment} · preview`,
+            ...s.audit,
+          ],
+        };
+      });
+      setWorkspaceAgentId(agentId);
       setDeployment(result);
       window.scrollTo(0, 0);
     } catch (error) {
@@ -207,6 +285,14 @@ export default function LaunchGuide({
     return (
       <div className="launchGuide" aria-busy={false}>
         {previewBanner}
+        <div className="resourceFooter">
+          <Link className="button outline" href={`/agents/${workspaceAgentId}`}>
+            Open saved agent
+          </Link>
+          <Link className="button outline" href="/deployments">
+            Open release history
+          </Link>
+        </div>
         {overview ? (
           <LaunchRecord
             draft={draft}

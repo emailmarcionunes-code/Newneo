@@ -1,3 +1,5 @@
+import { previewSourceRows } from './source-preview';
+import type { LaunchDraft } from './launch';
 import { hybridAgents } from './hybrid-data';
 export const deploymentRecords = [
   {
@@ -117,9 +119,23 @@ export function agentConfiguration(
   ui: Record<string, unknown> | undefined,
   id: string,
 ) {
-  return JSON.stringify(
-    ['mission', 'model', 'owner'].map((k) => ui?.[`agent:${id}:${k}`] ?? ''),
+  const values = ['mission', 'model', 'owner'].map(
+    (k) => ui?.[`agent:${id}:${k}`] ?? '',
   );
+  const launch = ui?.[`agent:${id}:launch`] as LaunchDraft | undefined;
+  if (launch)
+    values.push(
+      JSON.stringify({
+        knowledge: launch.knowledge,
+        tools: launch.tools,
+        infrastructure: launch.infrastructure,
+        governance: launch.governance,
+        sources: previewSourceRows(ui)
+          .filter((r) => launch.knowledge.includes(r[0]))
+          .map((r) => [r[0], r[5]]),
+      }),
+    );
+  return JSON.stringify(values);
 }
 
 export const workspaceReadiness = Math.round(

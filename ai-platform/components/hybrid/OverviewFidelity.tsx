@@ -1,4 +1,5 @@
 'use client';
+import { useWorkspaceAgents } from '../journeys/WorkspaceAgents';
 import Link from 'next/link';
 import { hybridAgents } from '@/lib/hybrid-data';
 import {
@@ -65,6 +66,11 @@ const events = [
   ],
 ];
 export default function OverviewFidelity() {
+  const hybridAgents = useWorkspaceAgents();
+  const workspaceTasks = hybridAgents.reduce(
+    (sum, a) => sum + (Number(a.tasks.replaceAll(',', '')) || 0),
+    0,
+  );
   const { state } = usePreview();
   const [enabled] = usePreviewValue('policies:enabled', [
     true,
