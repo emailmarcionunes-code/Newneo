@@ -5,13 +5,9 @@ for (const width of [1440, 390])
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto('/agents/it-support');
-    await page.getByRole('tab', { name: 'Skills', exact: true }).click();
+    await page.goto('/skills');
     await page
-      .getByRole('button', { name: '+ Add Skill', exact: true })
-      .click();
-    await page
-      .getByRole('button', { name: 'Create New Skill', exact: true })
+      .getByRole('button', { name: '+ Create Skill', exact: true })
       .click();
     await expect(
       page.getByRole('heading', {
@@ -35,12 +31,6 @@ for (const width of [1440, 390])
       .fill('Read request, explain policy and escalate ambiguous requests.');
     await builder.getByRole('button', { name: 'Save builder draft' }).click();
     await page.reload();
-    await page
-      .getByRole('button', { name: '+ Add Skill', exact: true })
-      .click();
-    await page
-      .getByRole('button', { name: 'Create New Skill', exact: true })
-      .click();
     await expect(
       builder.getByRole('textbox', { name: 'Skill name', exact: true }),
     ).toHaveValue('Explain IT policy');
@@ -84,6 +74,11 @@ for (const width of [1440, 390])
     await builder
       .getByRole('button', { name: 'Publish to demo library' })
       .click();
+    await page.goto('/agents/it-support');
+    await page.getByRole('tab', { name: 'Skills', exact: true }).click();
+    await page
+      .getByRole('button', { name: '+ Add Skill', exact: true })
+      .click();
     await page
       .getByRole('button', { name: 'Choose Explain IT policy', exact: true })
       .click();
@@ -109,17 +104,12 @@ for (const width of [1440, 390])
         .click();
     }
     await validateSave();
+    await page.goto('/skills');
     await page
-      .getByRole('button', { name: '+ Add Skill', exact: true })
+      .getByRole('link', { name: 'Explain IT policy', exact: true })
       .click();
     await page
-      .getByRole('button', { name: 'Select Existing Skill', exact: true })
-      .click();
-    await page
-      .getByRole('button', {
-        name: 'New version of Explain IT policy',
-        exact: true,
-      })
+      .getByRole('button', { name: 'Create New Version', exact: true })
       .click();
     await builder
       .getByRole('textbox', { name: 'Instructions', exact: true })
@@ -133,7 +123,8 @@ for (const width of [1440, 390])
     await builder
       .getByRole('button', { name: 'Publish to demo library' })
       .click();
-    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await page.goto('/agents/it-support');
+    await page.getByRole('tab', { name: 'Skills', exact: true }).click();
     const card = page.locator('article').filter({
       has: page.getByRole('heading', {
         name: 'Explain IT policy',

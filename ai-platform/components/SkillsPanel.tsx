@@ -21,11 +21,10 @@ import { productionVersion } from '@/lib/preview-records';
 import { usePreview } from './journeys/PreviewState';
 import { useDemoAccess } from './journeys/DemoExperience';
 import { Button } from './UI';
-import { SkillBuilder } from './SkillBuilder';
 import { NeoMascot } from './NeoMascot';
 const steps = [
   'Choose Skill',
-  'Bind & Configure',
+  'Configure Binding',
   'Validate',
   'Add to Version',
 ];
@@ -49,8 +48,6 @@ export function SkillsPanel({
   const [maturity, setMaturity] = useState('All');
   const [risk, setRisk] = useState('All');
   const [inspect, setInspect] = useState<string | null>(null);
-  const [builder, setBuilder] = useState(false);
-  const [builderSource, setBuilderSource] = useState<Skill | null>(null);
   const [editing, setEditing] = useState(false);
   const [removing, setRemoving] = useState<Skill | null>(null);
   const library = latestSkills(state.ui);
@@ -145,9 +142,8 @@ export function SkillsPanel({
         <Button
           disabled={!can('create')}
           onClick={() => {
-            setStep(-1);
+            setStep(0);
             setSuccess(null);
-            setBuilder(false);
             setError('');
             setEditing(false);
             setRemoving(null);
@@ -301,6 +297,18 @@ export function SkillsPanel({
                       {s.evaluationScore !== null ? '% · library sample' : ''};
                       bound Agent requires evaluation
                     </dd>
+                    <dt>Last Evaluation</dt>
+                    <dd>
+                      {b.evaluated
+                        ? 'Binding preview reviewed; full-version evaluation required'
+                        : 'Not evaluated'}
+                    </dd>
+                    <dt>Usage</dt>
+                    <dd>
+                      <Link href={`/skills/${s.id}`}>
+                        View global Skill usage →
+                      </Link>
+                    </dd>
                     <dt>Last updated</dt>
                     <dd>{new Date(b.updatedAt).toLocaleDateString('en-US')}</dd>
                   </dl>
@@ -343,68 +351,7 @@ export function SkillsPanel({
           )}
         </>
       )}
-      {step === -1 && !builder && (
-        <section aria-label="Choose how to add a Skill">
-          <h3>How would you like to add a Skill?</h3>
-          <div className="skillLibraryGrid">
-            <article className="skillCard">
-              <h3>Create a new capability</h3>
-              <p>
-                Define your own Skill, its requirements and evaluation
-                scenarios.
-              </p>
-              <Button
-                disabled={!can('create')}
-                onClick={() => {
-                  setBuilderSource(null);
-                  setBuilder(true);
-                }}
-              >
-                Create New Skill
-              </Button>
-            </article>
-            <article className="skillCard">
-              <h3>Use an existing capability</h3>
-              <p>
-                Browse the organization library and configure a Skill for this
-                Agent.
-              </p>
-              <Button disabled={!can('create')} onClick={() => setStep(0)}>
-                Select Existing Skill
-              </Button>
-            </article>
-          </div>
-          <Button variant="secondary" onClick={() => setStep(null)}>
-            Cancel
-          </Button>
-        </section>
-      )}
-      {builder && (
-        <SkillBuilder
-          key={
-            builderSource
-              ? `${builderSource.id}:${builderSource.version}`
-              : 'new'
-          }
-          source={builderSource}
-          onClose={() => {
-            setBuilder(false);
-            setStep(-1);
-          }}
-          onPublished={(s) => {
-            setBuilder(false);
-            setStep(0);
-            setSearch(s.name);
-            setCategory('All');
-            setMaturity('All');
-            setRisk('All');
-            setError(
-              'Skill published to the demo library. Existing Agent bindings are unchanged.',
-            );
-          }}
-        />
-      )}
-      {step !== null && step >= 0 && !builder && (
+      {step !== null && step >= 0 && (
         <section aria-label="Add Skill journey">
           <ol className="skillSteps">
             {steps.map((name, i) => (
@@ -415,10 +362,15 @@ export function SkillsPanel({
           </ol>
           {step === 0 && (
             <>
-              <h3>Organization Skill Library</h3>
-              <Button variant="secondary" onClick={() => setStep(-1)}>
-                Back to Skill options
-              </Button>
+              <h3>Add Skill to {agentName}</h3>
+              <p>Choose from the organization-wide Skill Library.</p>
+              <Link
+                className="button secondary"
+                style={{ whiteSpace: 'normal', maxWidth: '100%' }}
+                href={`/skills/new?agent=${encodeURIComponent(agentId)}`}
+              >
+                Can’t find the Skill you need? Create a new Skill →
+              </Link>
               <div className="skillFilters">
                 <label>
                   Search Skills
@@ -519,20 +471,19 @@ export function SkillsPanel({
                             Inspect {s.name}
                           </Button>
                           <Button
-                            variant="secondary"
-                            disabled={!can('create')}
-                            onClick={() => {
-                              setBuilderSource(s);
-                              setBuilder(true);
-                            }}
-                          >
-                            New version of {s.name}
-                          </Button>
-                          <Button
-                            disabled={bound || !can('create')}
+                            disabled={
+                              bound ||
+                              !can('create') ||
+                              state.ui?.[`skill:${s.id}:status`] === 'Inactive'
+                            }
                             onClick={() => choose(s)}
                           >
-                            {bound ? 'Already added' : `Choose ${s.name}`}
+                            {bound
+                              ? 'Already added'
+                              : state.ui?.[`skill:${s.id}:status`] ===
+                                  'Inactive'
+                                ? 'Inactive'
+                                : `Choose ${s.name}`}
                           </Button>
                         </div>
                         {inspect === s.id && (
@@ -545,6 +496,9 @@ export function SkillsPanel({
                               Governance: {s.governanceRequirements.join(', ')}
                             </p>
                             <p>Owner: {s.owner}</p>
+                            <Link href={`/skills/${s.id}`}>
+                              Open Skill Detail →
+                            </Link>
                             <p>
                               Permission requirements:{' '}
                               {s.permissionRequirements ||

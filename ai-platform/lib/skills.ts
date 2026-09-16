@@ -330,6 +330,8 @@ export function addSkillToDraft(
   skill: Skill,
   binding: SkillBinding,
 ) {
+  if (ui?.[`skill:${skill.id}:status`] === 'Inactive')
+    throw new Error('This Skill is inactive in the organization library.');
   if (
     validateBinding(skill, binding, resolveAgentDomain(ui, id)).some(
       (c) => c.status === 'Blocking',

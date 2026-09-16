@@ -1,5 +1,8 @@
 # Newneo Platform — Product Specification
 
+> **Current Skills surface:** [ADR-003 — Global Skills](decisions/ADR-003-GLOBAL-SKILLS.md) supersedes earlier Agent-only entry points. Skills are created globally and consumed through versioned Agent bindings. `/skills` owns discovery, analytics, creation and versioning; Agent Detail owns Add Skill and binding. Production gates and the eight-stage Agent journey remain unchanged.
+
+
 ## Purpose
 Newneo Platform is the internal operating system for the commercial and delivery lifecycle of enterprise AI engagements.
 

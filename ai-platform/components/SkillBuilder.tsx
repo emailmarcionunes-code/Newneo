@@ -177,10 +177,10 @@ export function SkillBuilder({
   }
   return (
     <section className="skillCard" aria-label="Skill Builder">
-      <h3>
+      <h2>
         {source ? 'Create Skill Version' : 'Create New Skill'} · v
         {skill.version}
-      </h3>
+      </h2>
       <p>
         Organization library · Demo only. Publishing does not change any Agent
         or execute connected systems.
@@ -293,7 +293,7 @@ export function SkillBuilder({
       )}
       {step === 3 && (
         <>
-          <h4>Reusable evaluation scenarios</h4>
+          <h3>Reusable evaluation scenarios</h3>
           {skill.evaluationSuite.map((s, i) => (
             <div className="skillFilters" key={i}>
               <label>
@@ -412,9 +412,9 @@ export function SkillBuilder({
       )}
       {step === 4 && (
         <>
-          <h4>
+          <h3>
             Publish {skill.name} v{skill.version}
-          </h4>
+          </h3>
           <p>{skill.description}</p>
           <p>
             Risk: {skill.riskLevel} · Owner: {skill.owner}

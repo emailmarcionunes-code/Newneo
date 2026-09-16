@@ -1,5 +1,8 @@
 # Newneo Product Surface Roadmap
 
+> **Current Skills surface:** [ADR-003 — Global Skills](decisions/ADR-003-GLOBAL-SKILLS.md) supersedes earlier Agent-only entry points. Skills are created globally and consumed through versioned Agent bindings. `/skills` owns discovery, analytics, creation and versioning; Agent Detail owns Add Skill and binding. Production gates and the eight-stage Agent journey remain unchanged.
+
+
 > **Canonical architecture — ADR-001 (accepted).** [Neo, Agents and reusable Skills](decisions/ADR-001-NEO-AGENTS-SKILLS.md) governs the Agent/Skill/Neo model and resolves older conceptual ambiguity. **One Neo. Many Agents. Reusable Skills.** Neo orchestrates bounded specialized Agents; Skills are reusable versioned capabilities distinct from Tools. Production changes require a new evaluated and approved Agent Version. Hybrid v4 and its eight-stage journey remain unchanged. See the ADR for the current-code audit and unimplemented prerequisites.
 
 > **Current implementation authority — Issue #3 / Hybrid v4.** The approved Hybrid file `7NFyk2kxLzbWsFWF8zWKNO` supersedes earlier visual references, navigation and seven-stage journey definitions in this document. The journey is now Use Case → Knowledge → Tools & MCP → Infrastructure → Model → Governance → Evaluate → Deploy. Existing commercial, security and product boundaries remain in force. See [Hybrid v4 implementation](HYBRID_V4_IMPLEMENTATION.md) for node mappings and verification.
@@ -245,4 +248,4 @@ Process:
 
 ## Skill lifecycle milestone
 
-[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill remains a separate builder scaffold. Live persistence, execution and evidence are future prerequisites.
+[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill has a complete five-stage interactive demo builder on `/skills/new`. Live persistence, execution and evidence are future prerequisites.

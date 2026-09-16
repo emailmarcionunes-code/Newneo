@@ -17,7 +17,7 @@ Knowledge is what the Agent knows. Tools are what it can technically call. Skill
 
 Agent Detail tabs are Overview, Configuration, Knowledge, Tools, Skills, Evaluations, Versions, Activity, AgentOps. Skills exposes name, description, pinned version, maturity, risk, status, tools, knowledge requirements, sample library score and update time. The active version and editable draft are distinguished explicitly.
 
-Add Skill opens the organization library within Agent Detail, without a new sidebar entry. Ten demo capabilities support search, category, maturity and risk filters, inspection, required systems and active-agent usage counts derived from version bindings. Shared Create ServiceNow Ticket demonstrates reuse across IT and Customer Service. Usage is fixture/session data, not live analytics.
+Add Skill opens the organization library within Agent Detail, with a dedicated global Skills sidebar entry (see ADR-003). Ten demo capabilities support search, category, maturity and risk filters, inspection, required systems and active-agent usage counts derived from version bindings. Shared Create ServiceNow Ticket demonstrates reuse across IT and Customer Service. Usage is fixture/session data, not live analytics.
 
 The focused flow is:
 
@@ -71,3 +71,7 @@ The full interactive frontend milestone is complete; durable tenant-scoped persi
 Builder verification: production build passed; 32 unit tests passed (one optional native PostgreSQL test skipped); all 56 Chromium browser tests passed. New desktop/mobile flows cover draft resume, creation/publication, binding, immutable library upgrade, Agent configuration/removal and history. Unit tests cover stale evidence, duplicate version rejection and maturity gates for failed/warning outcomes. The builder evaluation screenshot was inspected, and its desktop/mobile accessibility and overflow checks passed. Preview port 3117 was restarted with this build.
 
 Entry refinement: Add Skill now asks users to choose Create New Skill or Select Existing Skill before showing either workflow. The builder renders independently; the library appears only for selection (or after successful publication). Back/close returns to the choice. Production build and five focused desktop/mobile Skill browser tests passed.
+
+## Superseding navigation decision
+
+[ADR-003](ADR-003-GLOBAL-SKILLS.md) supersedes the entry refinement above: Add Skill opens library selection directly. Creation and versioning now live in the global Skills surface.

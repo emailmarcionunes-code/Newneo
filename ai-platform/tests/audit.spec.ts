@@ -49,7 +49,9 @@ test('catalog proves scale and every category has multiple working templates', a
     'Sales',
     'Customer Service',
   ]) {
-    await page.getByRole('button', { name, exact: true }).click();
+    await page
+      .getByRole('button', { name: new RegExp(`^${name}\\s*\\(\\d+\\)$`) })
+      .click();
     expect(await page.locator('.agentCard').count()).toBeGreaterThanOrEqual(2);
   }
   await page.getByLabel('Search agent templates').fill('nothing-matches');

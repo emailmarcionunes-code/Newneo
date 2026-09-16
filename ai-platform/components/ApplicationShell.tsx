@@ -13,6 +13,7 @@ import { useSidebarState } from './SidebarState';
 export const navigation = [
   ['Overview', '/', 'overview'],
   ['Agents', '/agents', 'agents'],
+  ['Skills', '/skills', 'skills'],
   ['Knowledge', '/knowledge', 'knowledge'],
   ['Tools & MCP', '/tools', 'tools'],
   ['Governance', '/governance', 'governance'],
@@ -26,9 +27,9 @@ export const navigation = [
   ['Settings', '/settings', 'settings'],
 ] as const;
 const groups = [
-  { name: 'BUILD / MANAGE', items: navigation.slice(0, 5) },
-  { name: 'OPERATE', items: navigation.slice(5, 10) },
-  { name: 'PLATFORM', items: navigation.slice(10, 12) },
+  { name: 'BUILD / MANAGE', items: navigation.slice(0, 6) },
+  { name: 'OPERATE', items: navigation.slice(6, 11) },
+  { name: 'PLATFORM', items: navigation.slice(11, 13) },
 ];
 
 export function NavItem({

@@ -55,7 +55,7 @@ test('canonical shell groups, manual collapse and keyboard tooltip', async ({
   await expect(page.locator('.sidebar')).toHaveCSS('width', '224px');
   await expect(
     page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link'),
-  ).toHaveCount(12);
+  ).toHaveCount(13);
   await expect(
     page
       .getByRole('navigation', { name: 'Main navigation' })

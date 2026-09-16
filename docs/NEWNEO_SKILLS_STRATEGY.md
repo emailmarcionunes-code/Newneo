@@ -1,5 +1,8 @@
 # Newneo Skills Strategy
 
+> **Current Skills surface:** [ADR-003 — Global Skills](decisions/ADR-003-GLOBAL-SKILLS.md) supersedes earlier Agent-only entry points. Skills are created globally and consumed through versioned Agent bindings. `/skills` owns discovery, analytics, creation and versioning; Agent Detail owns Add Skill and binding. Production gates and the eight-stage Agent journey remain unchanged.
+
+
 > **Canonical architecture — ADR-001 (accepted).** [Neo, Agents and reusable Skills](decisions/ADR-001-NEO-AGENTS-SKILLS.md) governs the Agent/Skill/Neo model and resolves older conceptual ambiguity. **One Neo. Many Agents. Reusable Skills.** Neo orchestrates bounded specialized Agents; Skills are reusable versioned capabilities distinct from Tools. Production changes require a new evaluated and approved Agent Version. Hybrid v4 and its eight-stage journey remain unchanged. See the ADR for the current-code audit and unimplemented prerequisites.
 
 ## Thesis

@@ -206,3 +206,17 @@ test('simulated failures and warnings limit maturity without being operational e
     null,
   );
 });
+
+test('inactive global Skills cannot be added to an Agent draft', () => {
+  assert.throws(
+    () =>
+      addSkillToDraft(
+        { [`skill:${skill.id}:status`]: 'Inactive' },
+        'it-support',
+        'v2.3',
+        skill,
+        valid(),
+      ),
+    /inactive/,
+  );
+});

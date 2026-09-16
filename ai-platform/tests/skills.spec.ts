@@ -7,9 +7,6 @@ test('add reusable Skill to draft, retain production and record history', async 
   await page.getByRole('tab', { name: 'Skills', exact: true }).click();
   await page.getByRole('button', { name: '+ Add Skill', exact: true }).click();
   await page
-    .getByRole('button', { name: 'Select Existing Skill', exact: true })
-    .click();
-  await page
     .getByLabel('Search Skills', { exact: true })
     .fill('Reset Password');
   await page
@@ -133,9 +130,6 @@ for (const width of [1440, 390])
     await page.getByRole('tab', { name: 'Skills', exact: true }).click();
     await page
       .getByRole('button', { name: '+ Add Skill', exact: true })
-      .click();
-    await page
-      .getByRole('button', { name: 'Select Existing Skill', exact: true })
       .click();
     for (const stage of ['library', 'binding']) {
       if (stage === 'binding')

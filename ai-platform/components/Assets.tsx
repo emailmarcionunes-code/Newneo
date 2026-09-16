@@ -1,4 +1,9 @@
-import { ChartNoAxesCombined, Terminal, ScrollText } from 'lucide-react';
+import {
+  ChartNoAxesCombined,
+  Terminal,
+  ScrollText,
+  Puzzle,
+} from 'lucide-react';
 import type { CSSProperties } from 'react';
 
 /** Exact Figma exports; replace assets here when final optical polish is approved. */
@@ -17,7 +22,8 @@ export function AssetIcon({
     reports: ChartNoAxesCombined,
     playground: Terminal,
     audit: ScrollText,
-  }[name as 'reports' | 'playground' | 'audit'];
+    skills: Puzzle,
+  }[name as 'reports' | 'playground' | 'audit' | 'skills'];
   if (navigationIcon) {
     const Icon = navigationIcon;
     return (
