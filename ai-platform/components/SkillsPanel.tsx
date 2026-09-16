@@ -2,7 +2,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  skillLibrary,
+  allSkills,
+  latestSkills,
+  reviseSkillBinding,
   maturities,
   composition,
   emptyBinding,
@@ -19,6 +21,7 @@ import { productionVersion } from '@/lib/preview-records';
 import { usePreview } from './journeys/PreviewState';
 import { useDemoAccess } from './journeys/DemoExperience';
 import { Button } from './UI';
+import { SkillBuilder } from './SkillBuilder';
 import { NeoMascot } from './NeoMascot';
 const steps = [
   'Choose Skill',
@@ -47,11 +50,17 @@ export function SkillsPanel({
   const [risk, setRisk] = useState('All');
   const [inspect, setInspect] = useState<string | null>(null);
   const [builder, setBuilder] = useState(false);
+  const [builderSource, setBuilderSource] = useState<Skill | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [removing, setRemoving] = useState<Skill | null>(null);
+  const library = latestSkills(state.ui);
+  const definitions = allSkills(state.ui);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState<{
     version: string;
     count: number;
     name: string;
+    action?: string;
   } | null>(null);
   const draftVersion = state.ui?.[`agent:${agentId}:draft`]
     ? String(state.ui?.[`agent:${agentId}:draftVersion`])
@@ -70,6 +79,7 @@ export function SkillsPanel({
     );
   }
   function choose(s: Skill) {
+    setEditing(false);
     setSkill(s);
     setBinding(emptyBinding(s));
     setStep(1);
@@ -78,22 +88,11 @@ export function SkillsPanel({
   function save() {
     if (!skill || !binding || !can('create')) return;
     try {
-      const result = addSkillToDraft(
-        state.ui,
-        agentId,
-        currentVersion,
-        skill,
-        binding,
-      );
+      const mutate = editing ? reviseSkillBinding : addSkillToDraft;
+      const result = mutate(state.ui, agentId, currentVersion, skill, binding);
       update((s) => {
-        const latest = addSkillToDraft(
-          s.ui,
-          agentId,
-          currentVersion,
-          skill,
-          binding,
-        );
-        const event = `${skill.name} v${skill.version} added to draft Agent Version ${latest.version} by demo creator`;
+        const latest = mutate(s.ui, agentId, currentVersion, skill, binding);
+        const event = `${skill.name} v${skill.version} ${editing ? 'updated in' : 'added to'} draft Agent Version ${latest.version} by demo creator`;
         return {
           ...s,
           ui: {
@@ -110,6 +109,7 @@ export function SkillsPanel({
         version: result.version,
         count: result.count,
         name: skill.name,
+        action: editing ? 'updated' : 'added',
       });
       setStep(null);
     } catch (e) {
@@ -149,6 +149,8 @@ export function SkillsPanel({
             setSuccess(null);
             setBuilder(false);
             setError('');
+            setEditing(false);
+            setRemoving(null);
           }}
         >
           + Add Skill
@@ -166,9 +168,10 @@ export function SkillsPanel({
         <section className="skillSuccess" role="status">
           <NeoMascot state="default" size={64} />
           <div>
-            <h3>Skill added successfully</h3>
+            <h3>Skill {success.action || 'added'} successfully</h3>
             <p>
-              {success.name} was added to {agentName} {success.version}.
+              {success.name} was {success.action || 'added'} in {agentName}{' '}
+              {success.version}.
             </p>
             <p>
               Draft {success.version} now has {success.count} skills. Evaluation
@@ -181,6 +184,67 @@ export function SkillsPanel({
       {step === null && draftVersion && !success && (
         <div className="skillActions">{actions}</div>
       )}
+      {removing && (
+        <section className="skillCard" aria-label="Remove Skill confirmation">
+          <h3>Remove {removing.name}?</h3>
+          <p>
+            This changes only the draft Agent Version. Production stays
+            unchanged and a new evaluation is required.
+          </p>
+          <div className="skillActions">
+            <Button variant="secondary" onClick={() => setRemoving(null)}>
+              Keep Skill
+            </Button>
+            <Button
+              disabled={!can('create')}
+              onClick={() => {
+                try {
+                  const result = reviseSkillBinding(
+                    state.ui,
+                    agentId,
+                    currentVersion,
+                    removing,
+                    null,
+                  );
+                  update((s) => {
+                    const next = reviseSkillBinding(
+                      s.ui,
+                      agentId,
+                      currentVersion,
+                      removing,
+                      null,
+                    );
+                    const event = `Removed ${removing.name} from draft ${next.version} by demo creator`;
+                    return {
+                      ...s,
+                      ui: {
+                        ...next.ui,
+                        [`agent:${agentId}:events`]: [
+                          event,
+                          ...((s.ui?.[`agent:${agentId}:events`] as string[]) ||
+                            []),
+                        ],
+                      },
+                      audit: [event, ...s.audit],
+                    };
+                  });
+                  setSuccess({
+                    name: removing.name,
+                    version: result.version,
+                    count: result.count,
+                    action: 'removed',
+                  });
+                  setRemoving(null);
+                } catch (e) {
+                  setError((e as Error).message);
+                }
+              }}
+            >
+              Confirm removal from draft
+            </Button>
+          </div>
+        </section>
+      )}
       {step === null && (
         <>
           <p>
@@ -188,7 +252,32 @@ export function SkillsPanel({
           </p>
           <div className="skillLibraryGrid">
             {assigned.bindings.map((b) => {
-              const s = skillLibrary.find((s) => s.id === b.skillId)!;
+              const s = definitions.find(
+                (s) => s.id === b.skillId && s.version === b.skillVersion,
+              );
+              if (!s)
+                return (
+                  <p key={b.skillId}>
+                    Definition unavailable: {b.skillId} v{b.skillVersion}
+                  </p>
+                );
+              const latest = library.find((v) => v.id === s.id)!;
+              const edit = (target: Skill) => {
+                setSkill(target);
+                setBinding({
+                  ...b,
+                  skillVersion: target.version,
+                  tools: Object.fromEntries(
+                    target.toolRequirements.map((t) => [t, b.tools[t] || '']),
+                  ),
+                  evaluated: false,
+                  validationFingerprint: undefined,
+                });
+                setEditing(true);
+                setSuccess(null);
+                setStep(1);
+                setError('');
+              };
               return (
                 <article className="skillCard" key={b.skillId}>
                   <h3>{s.name}</h3>
@@ -215,6 +304,33 @@ export function SkillsPanel({
                     <dt>Last updated</dt>
                     <dd>{new Date(b.updatedAt).toLocaleDateString('en-US')}</dd>
                   </dl>
+                  <div className="skillActions">
+                    <Button
+                      variant="secondary"
+                      disabled={!can('create')}
+                      onClick={() => edit(s)}
+                    >
+                      Configure {s.name}
+                    </Button>
+                    {latest.version !== b.skillVersion && (
+                      <Button
+                        disabled={!can('create')}
+                        onClick={() => edit(latest)}
+                      >
+                        Upgrade to v{latest.version}
+                      </Button>
+                    )}
+                    <Button
+                      variant="secondary"
+                      disabled={!can('create')}
+                      onClick={() => {
+                        setRemoving(s);
+                        setSuccess(null);
+                      }}
+                    >
+                      Remove {s.name}
+                    </Button>
+                  </div>
                 </article>
               );
             })}
@@ -227,7 +343,28 @@ export function SkillsPanel({
           )}
         </>
       )}
-      {step !== null && (
+      {builder && (
+        <SkillBuilder
+          key={
+            builderSource
+              ? `${builderSource.id}:${builderSource.version}`
+              : 'new'
+          }
+          source={builderSource}
+          onClose={() => setBuilder(false)}
+          onPublished={(s) => {
+            setBuilder(false);
+            setSearch(s.name);
+            setCategory('All');
+            setMaturity('All');
+            setRisk('All');
+            setError(
+              'Skill published to the demo library. Existing Agent bindings are unchanged.',
+            );
+          }}
+        />
+      )}
+      {step !== null && !builder && (
         <section aria-label="Add Skill journey">
           <ol className="skillSteps">
             {steps.map((name, i) => (
@@ -239,6 +376,16 @@ export function SkillsPanel({
           {step === 0 && (
             <>
               <h3>Organization Skill Library</h3>
+              <Button
+                variant="secondary"
+                disabled={!can('create')}
+                onClick={() => {
+                  setBuilderSource(null);
+                  setBuilder(true);
+                }}
+              >
+                Create New Skill
+              </Button>
               <div className="skillFilters">
                 <label>
                   Search Skills
@@ -254,7 +401,7 @@ export function SkillsPanel({
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
-                    {['All', ...new Set(skillLibrary.map((s) => s.domain))].map(
+                    {['All', ...new Set(library.map((s) => s.domain))].map(
                       (v) => (
                         <option key={v}>{v}</option>
                       ),
@@ -285,7 +432,7 @@ export function SkillsPanel({
                 </label>
               </div>
               <div className="skillLibraryGrid">
-                {skillLibrary
+                {library
                   .filter(
                     (s) =>
                       (s.name + ' ' + s.description)
@@ -339,6 +486,16 @@ export function SkillsPanel({
                             Inspect {s.name}
                           </Button>
                           <Button
+                            variant="secondary"
+                            disabled={!can('create')}
+                            onClick={() => {
+                              setBuilderSource(s);
+                              setBuilder(true);
+                            }}
+                          >
+                            New version of {s.name}
+                          </Button>
+                          <Button
                             disabled={bound || !can('create')}
                             onClick={() => choose(s)}
                           >
@@ -355,36 +512,34 @@ export function SkillsPanel({
                               Governance: {s.governanceRequirements.join(', ')}
                             </p>
                             <p>Owner: {s.owner}</p>
+                            <p>
+                              Permission requirements:{' '}
+                              {s.permissionRequirements ||
+                                'Scoped Agent permissions'}
+                            </p>
+                            <p>
+                              Data access:{' '}
+                              {s.dataAccess || 'Authorized workspace only'}
+                            </p>
+                            <h4>Published versions</h4>
+                            <ul>
+                              {definitions
+                                .filter((v) => v.id === s.id)
+                                .map((v) => (
+                                  <li key={v.version}>
+                                    v{v.version} · {v.maturity} ·{' '}
+                                    {new Date(v.updatedAt).toLocaleDateString(
+                                      'en-US',
+                                    )}
+                                  </li>
+                                ))}
+                            </ul>
                           </div>
                         )}
                       </article>
                     );
                   })}
               </div>
-              <Button variant="secondary" onClick={() => setBuilder(!builder)}>
-                Create New Skill
-              </Button>
-              {builder && (
-                <section className="skillCard">
-                  <h3>Skill Builder · planned workflow</h3>
-                  <ol>
-                    {[
-                      'Define Capability — name, business outcome, domain, inputs and outputs',
-                      'Connect Requirements — knowledge, tools, permissions and parameters',
-                      'Governance — risk, approval, policies and data access',
-                      'Evaluate — scenarios, expected results, safety and tool execution',
-                      'Publish — evidence-based maturity',
-                    ].map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ol>
-                  <p>
-                    This separate builder is scaffolded for the next milestone.
-                    Publishing is not enabled. Proven at Scale requires
-                    operational evidence and cannot be manually selected.
-                  </p>
-                </section>
-              )}
             </>
           )}
           {step === 1 && skill && binding && (
@@ -531,7 +686,11 @@ export function SkillsPanel({
           )}
           {step === 3 && skill && binding && (
             <>
-              <h3>Add to a new Agent Version</h3>
+              <h3>
+                {editing
+                  ? 'Update draft Agent Version'
+                  : 'Add to a new Agent Version'}
+              </h3>
               <p>
                 Current: {agentName} {currentVersion}
               </p>

@@ -15,10 +15,17 @@ export type Skill = {
   riskLevel: 'Low' | 'Medium' | 'High';
   owner: string;
   instructions: string;
+  permissionRequirements?: string;
+  parameterDefaults?: string;
+  dataAccess?: string;
   requiredKnowledgeTypes: string[];
   toolRequirements: string[];
   governanceRequirements: string[];
-  evaluationSuite: { name: string; expected: string }[];
+  evaluationSuite: {
+    name: string;
+    expected: string;
+    previewResult?: 'Passed' | 'Warning' | 'Failed';
+  }[];
   inputSchema: Record<string, string>;
   outputSchema: Record<string, string>;
   createdAt: string;
@@ -154,7 +161,8 @@ export type SkillChange = {
     | 'Skill version changed'
     | 'Tool binding changed'
     | 'Knowledge binding changed'
-    | 'policy change';
+    | 'policy change'
+    | 'Skill configuration changed';
   skillId: string;
   detail: string;
   at: string;
@@ -194,7 +202,7 @@ export function emptyBinding(skill: Skill): SkillBinding {
     tools: Object.fromEntries(skill.toolRequirements.map((t) => [t, ''])),
     permissions: false,
     scope: '',
-    parameters: '{}',
+    parameters: skill.parameterDefaults || '{}',
     environment: 'Staging',
     humanApproval: false,
     policies: false,
@@ -256,7 +264,10 @@ export function validateBinding(skill: Skill, b: SkillBinding, domain: string) {
       'Required tools connected',
       skill.toolRequirements.every((t) => !!b.tools[t]?.trim()),
     ],
-    ['Knowledge available', !!b.knowledge.trim()],
+    [
+      'Knowledge available',
+      !skill.requiredKnowledgeTypes.length || !!b.knowledge.trim(),
+    ],
     ['Permissions sufficient', b.permissions && !!b.scope.trim()],
     ['Governance compatibility', b.policies],
     ['Approval requirements', skill.riskLevel === 'Low' || b.humanApproval],
@@ -379,3 +390,193 @@ export type SkillExecution = {
   costMinor: number | null;
   currency: string;
 };
+
+/** Session-scoped immutable library versions. Live storage requires server authorization. */
+export const libraryKey = 'skills:library';
+export const builderKey = 'skills:builderDraft';
+export function allSkills(ui?: Record<string, unknown>): Skill[] {
+  return [
+    ...skillLibrary,
+    ...((ui?.[libraryKey] as Skill[] | undefined) || []),
+  ];
+}
+export function latestSkills(ui?: Record<string, unknown>): Skill[] {
+  return [...new Map(allSkills(ui).map((s) => [s.id, s])).values()];
+}
+export function definitionErrors(s: Skill) {
+  const errors: string[] = [];
+  if (!s.permissionRequirements?.trim())
+    errors.push('Define permission requirements.');
+  if (!s.dataAccess?.trim()) errors.push('Define the data access boundary.');
+  if (
+    ![s.name, s.description, s.domain, s.owner, s.instructions].every((v) =>
+      v.trim(),
+    )
+  )
+    errors.push('Complete name, outcome, domain, owner and instructions.');
+  if (!Object.keys(s.inputSchema).length || !Object.keys(s.outputSchema).length)
+    errors.push('Define inputs and outputs.');
+  if (
+    ![...Object.values(s.inputSchema), ...Object.values(s.outputSchema)].every(
+      (v) => typeof v === 'string' && v.trim(),
+    )
+  )
+    errors.push('Input/output field types must be nonempty strings.');
+  try {
+    const p = JSON.parse(s.parameterDefaults || '{}');
+    if (!p || typeof p !== 'object' || Array.isArray(p)) throw Error();
+  } catch {
+    errors.push('Parameter defaults must be a JSON object.');
+  }
+  if (!s.governanceRequirements.some((v) => v.trim()))
+    errors.push('Define governance policies.');
+  if (
+    s.riskLevel !== 'Low' &&
+    !s.governanceRequirements.some((v) => /approval/i.test(v))
+  )
+    errors.push('Medium/high risk requires an approval policy.');
+  if (
+    s.evaluationSuite.length < 2 ||
+    s.evaluationSuite.some((v) => !v.name.trim() || !v.expected.trim())
+  )
+    errors.push(
+      'Define at least two scenarios with expected results, including a failure case.',
+    );
+  return errors;
+}
+export function definitionFingerprint(s: Skill) {
+  const { maturity, evaluationScore, updatedAt, ...definition } = s;
+  return JSON.stringify(definition);
+}
+export function publishSkill(
+  ui: Record<string, unknown> | undefined,
+  skill: Skill,
+  evidence: string,
+) {
+  const errors = definitionErrors(skill);
+  if (errors.length) throw new Error(errors.join(' '));
+  if (skill.maturity === 'Proven at Scale')
+    throw new Error('Operational evidence is required for Proven at Scale.');
+  if (
+    skill.maturity !== 'Experimental' &&
+    evidence !== definitionFingerprint(skill)
+  )
+    throw new Error(
+      'Run fresh preview evaluation before publishing this maturity.',
+    );
+  if (
+    skill.maturity !== 'Experimental' &&
+    skill.evaluationSuite.some((s) => s.previewResult === 'Failed')
+  )
+    throw new Error('Resolve failing scenarios before promoting maturity.');
+  if (
+    skill.maturity === 'Production Ready' &&
+    skill.evaluationSuite.some((s) => s.previewResult === 'Warning')
+  )
+    throw new Error('Resolve warnings before Production Ready.');
+  if (
+    allSkills(ui).some((s) => s.id === skill.id && s.version === skill.version)
+  )
+    throw new Error('This version already exists. Start a new version.');
+  return {
+    ...ui,
+    [builderKey]: null,
+    [libraryKey]: [
+      ...((ui?.[libraryKey] as Skill[]) || []),
+      {
+        ...skill,
+        evaluationScore:
+          evidence === definitionFingerprint(skill)
+            ? Math.round(
+                (100 *
+                  skill.evaluationSuite.filter(
+                    (s) => !s.previewResult || s.previewResult === 'Passed',
+                  ).length) /
+                  skill.evaluationSuite.length,
+              )
+            : null,
+        updatedAt: new Date().toISOString(),
+      },
+    ],
+  };
+}
+export function reviseSkillBinding(
+  ui: Record<string, unknown> | undefined,
+  id: string,
+  current: string,
+  skill: Skill,
+  binding: SkillBinding | null,
+) {
+  const version = proposedSkillVersion(ui, id, current);
+  const existing = ui?.[skillKey(id)] as SkillVersions | undefined;
+  const base = existing?.[version] ?? composition(ui, id, current);
+  const old = base.bindings.find((b) => b.skillId === skill.id);
+  if (!old) throw new Error('Skill binding not found.');
+  if (
+    binding &&
+    validateBinding(skill, binding, resolveAgentDomain(ui, id)).some(
+      (c) => c.status === 'Blocking',
+    )
+  )
+    throw new Error('Resolve blocking checks before saving.');
+  const at = new Date().toISOString();
+  const changes: SkillChange[] = [];
+  const record = (kind: SkillChange['kind'], detail: string) =>
+    changes.push({ kind, skillId: skill.id, detail, at });
+  if (!binding)
+    record('Removed Skill', `Removed ${skill.name} v${old.skillVersion}`);
+  else {
+    if (old.skillVersion !== binding.skillVersion)
+      record(
+        'Skill version changed',
+        `${skill.name}: v${old.skillVersion} → v${binding.skillVersion}`,
+      );
+    if (JSON.stringify(old.tools) !== JSON.stringify(binding.tools))
+      record(
+        'Tool binding changed',
+        `${skill.name}: ${Object.values(binding.tools).join(', ')}`,
+      );
+    if (old.knowledge !== binding.knowledge)
+      record(
+        'Knowledge binding changed',
+        `${skill.name}: ${binding.knowledge}`,
+      );
+    if (
+      old.humanApproval !== binding.humanApproval ||
+      old.policies !== binding.policies
+    )
+      record(
+        'policy change',
+        `${skill.name}: approval ${binding.humanApproval ? 'required' : 'standard policy'}`,
+      );
+    record(
+      'Skill configuration changed',
+      `${skill.name}: scope ${binding.scope}; ${binding.environment}; permissions ${binding.permissions}`,
+    );
+  }
+  const next = {
+    bindings: binding
+      ? base.bindings.map((b) =>
+          b.skillId === skill.id
+            ? { ...binding, status: 'Draft' as const, updatedAt: at }
+            : b,
+        )
+      : base.bindings.filter((b) => b.skillId !== skill.id),
+    changes: [...base.changes, ...changes],
+  };
+  return {
+    version,
+    count: next.bindings.length,
+    ui: {
+      ...ui,
+      [skillKey(id)]: {
+        ...existing,
+        [current]: composition(ui, id, current),
+        [version]: next,
+      },
+      [`agent:${id}:draftVersion`]: version,
+      [`agent:${id}:draft`]: true,
+      [`agent:${id}:saved`]: true,
+    },
+  };
+}

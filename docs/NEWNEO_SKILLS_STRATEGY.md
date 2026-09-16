@@ -59,4 +59,4 @@ Principle:
 
 ## Skill lifecycle milestone
 
-[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill remains a separate builder scaffold. Live persistence, execution and evidence are future prerequisites.
+[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill now has a complete separate five-stage demo builder, immutable library publication, version upgrades and draft binding configuration/removal. Live persistence, execution and evidence are future prerequisites.

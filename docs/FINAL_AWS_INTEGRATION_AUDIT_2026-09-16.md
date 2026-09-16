@@ -6,7 +6,7 @@ Data: 2026-09-16. Código auditado: `7dcfe48`, branch `newneo-ai-platform-v1`.
 
 Pronto para iniciar integração em staging. Não homologado para operação real de clientes. Publicar o frontend na AWS não implementa o runtime, a persistência completa ou a governança de execução.
 
-O inventário das telas principais está coberto pela prévia. Agent Detail possui nove abas, incluindo Skills; a jornada de criação continua com oito etapas. A biblioteca de Skills e o fluxo de quatro etapas estão implementados. Create New Skill é um scaffold intencional, com publicação desabilitada; não é um editor completo.
+O inventário das telas principais está coberto pela prévia. Agent Detail possui nove abas, incluindo Skills; a jornada de criação continua com oito etapas. A biblioteca de Skills e o fluxo de quatro etapas estão implementados. Atualização posterior: Create New Skill foi concluído como experiência demonstrável de cinco etapas, com publicação, novas versões e edição/remoção de vínculos em rascunho. Ver ADR-002; a persistência e execução reais continuam pendentes.
 
 ## Evidência e limites
 
@@ -30,7 +30,7 @@ O inventário das telas principais está coberto pela prévia. Agent Detail poss
 | P1 primeiro piloto funcional | Knowledge, Tools/MCP e modelos usam registros/ações de demonstração. | Integrar uma fonte, um modelo e uma ferramenta; credenciais no servidor, escopo mínimo, ingestão segura e testes de falha. |
 | P1 antes de operar | Audit, AgentOps e custos ainda incluem snapshots/local state. | Eventos duráveis com ator/tenant/Task/AgentVersion/SkillVersion, logs sanitizados, métricas reais e rastreabilidade de falhas/custos. |
 | P1 implantação | Dockerfile/Compose existem; capacidade de 2 GB é hipótese de piloto. | Imagem validada em CI, smoke test, HTTPS, health monitoring, rollback e carga compatível com memória. Construir fora da VM pequena. |
-| P2 após piloto | Skill Builder, editores de remoção/upgrade de Skills, delivery de notificações/agendas e administração avançada ainda incompletos. | Implementar conforme necessidade do piloto; manter ações não implementadas claramente indisponíveis. |
+| P2 após piloto | Delivery de notificações/agendas e administração avançada ainda incompletos. Skill Builder e editores de remoção/upgrade foram concluídos posteriormente na demo. | Implementar conforme necessidade do piloto; manter ações não implementadas claramente indisponíveis. |
 
 ## Telas e experiência
 

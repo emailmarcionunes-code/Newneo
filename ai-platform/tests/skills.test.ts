@@ -86,3 +86,123 @@ test('shared Skill definition supports distinct Agent bindings', () => {
   );
   assert.equal(skillLibrary.filter((s) => s.id === ticket.id).length, 1);
 });
+
+import {
+  publishSkill,
+  allSkills,
+  latestSkills,
+  definitionFingerprint,
+  reviseSkillBinding,
+  type Skill,
+} from '../lib/skills';
+const definition: Skill = {
+  ...skill,
+  id: 'custom-test',
+  version: '1.0',
+  permissionRequirements: 'Scoped read',
+  dataAccess: 'Workspace only',
+};
+test('publishing preserves immutable versions and rejects stale evidence or unsupported maturity', () => {
+  const evidence = definitionFingerprint(definition);
+  const ui = publishSkill(undefined, definition, evidence);
+  assert.equal(
+    latestSkills(ui).find((s) => s.id === definition.id)?.version,
+    '1.0',
+  );
+  assert.throws(() => publishSkill(ui, definition, evidence), /already exists/);
+  assert.throws(
+    () => publishSkill(ui, { ...definition, version: '1.1' }, evidence),
+    /fresh/,
+  );
+  assert.throws(
+    () =>
+      publishSkill(
+        undefined,
+        { ...definition, maturity: 'Proven at Scale' },
+        evidence,
+      ),
+    /Operational/,
+  );
+  const next = { ...definition, version: '1.1' };
+  const revised = publishSkill(ui, next, definitionFingerprint(next));
+  assert.equal(
+    allSkills(revised).filter((s) => s.id === definition.id).length,
+    2,
+  );
+  assert.equal(
+    latestSkills(revised).find((s) => s.id === definition.id)?.version,
+    '1.1',
+  );
+});
+test('upgrading, configuring and removing a Skill only changes draft and records history', () => {
+  const initial = addSkillToDraft(
+    undefined,
+    'it-support',
+    'v2.3',
+    skill,
+    valid(),
+  );
+  const next = { ...skill, version: '1.7' };
+  const b = { ...valid(), skillVersion: '1.7', scope: 'Support staff' };
+  b.validationFingerprint = bindingFingerprint(b);
+  const changed = reviseSkillBinding(initial.ui, 'it-support', 'v2.3', next, b);
+  assert.equal(
+    composition(changed.ui, 'it-support', 'v2.4').bindings.at(-1)?.skillVersion,
+    '1.7',
+  );
+  assert.ok(
+    composition(changed.ui, 'it-support', 'v2.4').changes.some(
+      (c) => c.kind === 'Skill version changed',
+    ),
+  );
+  const removed = reviseSkillBinding(
+    changed.ui,
+    'it-support',
+    'v2.3',
+    next,
+    null,
+  );
+  assert.equal(removed.count, 1);
+  assert.deepEqual(
+    composition(removed.ui, 'it-support', 'v2.3'),
+    composition(undefined, 'it-support', 'v2.3'),
+  );
+  assert.equal(
+    composition(removed.ui, 'it-support', 'v2.4').changes.at(-1)?.kind,
+    'Removed Skill',
+  );
+});
+
+test('simulated failures and warnings limit maturity without being operational evidence', () => {
+  const failed: Skill = {
+    ...definition,
+    maturity: 'Validated',
+    evaluationSuite: definition.evaluationSuite.map((s, i) => ({
+      ...s,
+      previewResult: i === 0 ? 'Failed' : 'Passed',
+    })),
+  };
+  assert.throws(
+    () => publishSkill(undefined, failed, definitionFingerprint(failed)),
+    /failing scenarios/,
+  );
+  const warned: Skill = {
+    ...definition,
+    maturity: 'Production Ready',
+    evaluationSuite: definition.evaluationSuite.map((s, i) => ({
+      ...s,
+      previewResult: i === 0 ? 'Warning' : 'Passed',
+    })),
+  };
+  assert.throws(
+    () => publishSkill(undefined, warned, definitionFingerprint(warned)),
+    /warnings/,
+  );
+  const experimental: Skill = { ...failed, maturity: 'Experimental' };
+  assert.equal(
+    latestSkills(publishSkill(undefined, experimental, '')).find(
+      (s) => s.id === definition.id,
+    )?.evaluationScore,
+    null,
+  );
+});
