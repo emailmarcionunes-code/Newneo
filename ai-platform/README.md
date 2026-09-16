@@ -39,3 +39,7 @@ Model & Runtime and Governance are now implemented; see `../docs/ISSUE_3_MILESTO
 The PostgreSQL schema, OIDC session flow and authenticated server draft copies are implemented. They require a configured database and identity provider; dashboards and runtime operations remain demonstrative. See [backend setup and boundaries](../docs/NEWNEO_BACKEND_FOUNDATION.md).
 
 All sidebar routes now have frontend coverage, including AgentOps and FinOps. See [workspace surface status](../docs/NEWNEO_WORKSPACE_SURFACES.md) for what is implemented versus demonstrative, [backend configuration](../docs/NEWNEO_BACKEND_FOUNDATION.md) for authenticated server draft copies, and [pilot deployment](../docs/NEWNEO_PILOT_DEPLOYMENT.md) for container packaging. `npm run start` serves the standalone build; use `-- --port 3100` to override its local port.
+
+## Canonical architecture
+
+[ADR-001: One Neo. Many Agents. Reusable Skills.](../docs/decisions/ADR-001-NEO-AGENTS-SKILLS.md) defines the product/runtime model and audits the current code. Existing preview flows do not yet implement first-class reusable Skills or Neo orchestration. Follow the ADR before adding these features; preserve Hybrid v4 and production version gates.

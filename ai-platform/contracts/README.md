@@ -57,3 +57,9 @@ Do not replace these responses silently with the proposed envelope. Introduce `/
 6. Scheduled exports/notifications only after explicit recipient configuration and delivery testing.
 
 Provider-specific AWS implementation, production secrets and live deployment are deliberately not part of this frontend freeze. API contract publication is a handoff, not evidence of live endpoint availability.
+
+## Canonical Agent / Skill / Neo extension
+
+[ADR-001](../../docs/decisions/ADR-001-NEO-AGENTS-SKILLS.md) is the accepted architecture. The current v1 proposal does **not** yet define reusable Skill/SkillVersion resources, AgentVersionSkillBinding, Neo routing or the complete execution/cost ledger. Do not interpret tool bindings as Skills or publish a Skill count from tool totals. Before enabling these capabilities, revise the contract additively with pinned dependencies, tenant-scoped bindings, immutable candidate digests and Task/AgentVersion/Skill attribution. No endpoint is created by this documentation.
+
+Neo routes with bounded user/Agent/Skill/Tool permissions; it receives no global execution grant. Adding a Skill changes a draft Agent Version under the existing Agent ID, followed by evaluation and approval before promotion. Existing deployed composition is never edited directly. See ADR-001 for schema requirements, sequencing and acceptance tests.

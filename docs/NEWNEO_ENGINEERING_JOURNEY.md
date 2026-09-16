@@ -1,5 +1,7 @@
 # Newneo Engineering Journey
 
+> **Canonical architecture — ADR-001 (accepted).** [Neo, Agents and reusable Skills](decisions/ADR-001-NEO-AGENTS-SKILLS.md) governs the Agent/Skill/Neo model and resolves older conceptual ambiguity. **One Neo. Many Agents. Reusable Skills.** Neo orchestrates bounded specialized Agents; Skills are reusable versioned capabilities distinct from Tools. Production changes require a new evaluated and approved Agent Version. Hybrid v4 and its eight-stage journey remain unchanged. See the ADR for the current-code audit and unimplemented prerequisites.
+
 > **Current implementation authority — Issue #3 / Hybrid v4.** The approved Hybrid file `7NFyk2kxLzbWsFWF8zWKNO` supersedes earlier visual references, navigation and seven-stage journey definitions in this document. The journey is now Use Case → Knowledge → Tools & MCP → Infrastructure → Model → Governance → Evaluate → Deploy. Existing commercial, security and product boundaries remain in force. See [Hybrid v4 implementation](HYBRID_V4_IMPLEMENTATION.md) for node mappings and verification.
 
 ## Purpose
@@ -101,7 +103,7 @@ The same policy should be understandable by the business owner, engineer and aud
 A production agent is not a single prompt.
 
 Reference composition:
-`Agent Version = Instructions + Skills + Knowledge Bindings + Tool Bindings + Model Endpoint + Policies + Evaluation Suite + Runtime Configuration`
+`Agent Version = Instructions + Skills + Knowledge Bindings + Tool Bindings + Infrastructure Config + Model Endpoint + Policies + Evaluation Suite + Runtime Configuration`
 
 Production must not be edited directly. Changes create a new version so they can be tested, approved, compared and rolled back.
 
@@ -133,7 +135,7 @@ The production gate must be enforced in the backend, not only in the interface.
 Once live, one business request becomes one Newneo Task even if multiple technical operations occur internally.
 
 Example path:
-`User → Identity → Agent → Intent → Knowledge → Skill → Model → Decision → Tool → Enterprise System → Result`
+`User → Identity → Neo → Intent / Routing → Specialized Agent → Agent Version → Skill → Knowledge / Model / Tools → Enterprise System → Result → AgentOps / FinOps / Audit`
 
 A task may contain multiple model calls, retrievals, actions, retries and approval waits while remaining one business task.
 
