@@ -1,5 +1,7 @@
 # Fechamento antes da AWS — 16/09/2026
 
+> Registro anterior à extensão de Skills. Para o parecer atual, nove abas de Agent Detail, 54 testes de navegador e pendências de integração, consulte [Auditoria final AWS](FINAL_AWS_INTEGRATION_AUDIT_2026-09-16.md). Os números abaixo são históricos daquela rodada.
+
 ## Escopo da versão
 
 Customer AI Platform visual e navegável, seguindo as referências aprovadas. Nenhuma nova área principal necessária foi identificada no inventário desta rodada. Isso não equivale a uma plataforma conectada ou homologação de produção.
