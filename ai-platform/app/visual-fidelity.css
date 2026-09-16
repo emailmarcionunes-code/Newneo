@@ -278,42 +278,42 @@
   color: #64748b;
   font-size: 11px;
 }
-/* Reference Overview has no creation CTA; creation remains available under Agents. */
-body:has(.overviewFidelity) .sidebarCreate {
+/* Shared sidebar follows the user-approved Overview on every route. */
+body .sidebarCreate {
   display: none;
 }
-body:has(.overviewFidelity) .sidebar .brand {
+body .sidebar .brand {
   margin-bottom: 18px;
 }
-body:has(.overviewFidelity) .navGroup {
+body .navGroup {
   border: 0;
   padding: 0 0 16px;
 }
-body:has(.overviewFidelity) .navGroup h2 {
+body .navGroup h2 {
   letter-spacing: 0.08em;
   font-weight: 600;
   font-size: 11px;
   margin: 0 12px 8px;
 }
-body:has(.overviewFidelity) .sidebar .navItem {
+body .sidebar .navItem {
   font-weight: 400;
   height: 30px;
   margin: 2px 0;
   font-size: 14px;
   gap: 12px;
 }
-body:has(.overviewFidelity) .sidebar .navItem.active {
+body .sidebar .navItem.active {
   background: #111f43;
   color: #60a5fa;
 }
-body:has(.overviewFidelity) .sidebar .brand svg {
+body .sidebar .brand svg {
   width: 36px;
   height: 36px;
 }
-body:has(.overviewFidelity) .sidebar .brand > span > span > span:last-child {
+body .sidebar .brand > span > span > span:last-child {
   margin-left: 6px;
 }
-body:has(.overviewFidelity) .shellBreadcrumb {
+body .shellBreadcrumb {
   font-size: 14px;
 }
 @media (max-width: 1100px) {
@@ -1364,6 +1364,6 @@ body:has(.overviewFidelity) .shellBreadcrumb {
   border: 1px solid #bfdbfe;
 }
 
-body:has(.overviewFidelity) .notificationCount {
+body .notificationCount {
   background: #dc2626;
 }

@@ -6,40 +6,6 @@
   --surface-text: #1e293b;
   --surface-muted: #64748b;
 }
-/* Preserve the approved Overview; carry its shell typography to the other routes. */
-body:not(:has(.overviewFidelity)) .sidebar .navItem {
-  font-size: 14px;
-  font-weight: 400;
-  gap: 12px;
-  border-radius: 8px;
-}
-body:not(:has(.overviewFidelity)) .sidebar .navItem.active {
-  background: #111f43;
-  color: #60a5fa;
-}
-body:not(:has(.overviewFidelity)) .navGroup h2 {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-body:not(:has(.overviewFidelity)) .shellBreadcrumb {
-  font-size: 14px;
-}
-body:not(:has(.overviewFidelity)) .sidebar .brand svg {
-  width: 36px;
-  height: 36px;
-}
-body:not(:has(.overviewFidelity))
-  .sidebar
-  .brand
-  > span
-  > span
-  > span:last-child {
-  margin-left: 6px;
-}
-body:not(:has(.overviewFidelity)) .notificationCount {
-  background: #dc2626;
-}
 .content:has(> .hybridPage),
 .content:has(> .catalog) {
   max-width: none;
