@@ -1371,16 +1371,19 @@
 .neoMascot[data-animate='true'][data-state='assembling'] .neoReveal {
   transition: clip-path 650ms ease-in-out;
 }
-.neoMascot[data-state='assembling'] .neoStage {
-  background: radial-gradient(
-    ellipse at bottom,
-    #e2e8f0 0,
-    #f1f5f9 30%,
-    transparent 70%
-  );
-  border-bottom: 1px solid #cbd5e1;
-  border-radius: 0 0 40% 40%;
+/* A quiet assembly platform under the feet, without a surrounding orb. */
+.neoMascot[data-state='assembling'] .neoStage::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #93b4dd, transparent);
+  box-shadow: 0 -3px 9px 1px #2563eb0d;
+  pointer-events: none;
 }
+
 .neoMascot figcaption {
   margin-top: 8px;
   font-size: 11px;
@@ -1423,3 +1426,89 @@
     transition: none !important;
   }
 }
+
+.infraTypeIcons {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #64748b;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.privateCloudIcon {
+  position: relative;
+  display: inline-flex;
+  padding-right: 3px;
+}
+.privateCloudIcon > svg:last-child {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  background: white;
+  border-radius: 2px;
+}
+.infraOption.selected .infraTypeIcons {
+  color: #2563eb;
+}
+.catalog .agentGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  max-height: max(360px, calc(100dvh - 330px));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  padding: 3px 4px 8px 3px;
+  align-content: start;
+}
+.catalog .agentCard {
+  min-height: 210px;
+  padding: 16px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 210px;
+}
+.catalog .agentCard h2 {
+  font-size: 14px;
+  line-height: 20px;
+  margin: 10px 0 5px;
+}
+.catalog .agentCard p {
+  font-size: 12px;
+  line-height: 17px;
+  min-height: 0;
+}
+.catalog .agentCard .agentIcon {
+  width: 32px;
+  height: 32px;
+}
+.catalog .agentCard .catalogMetrics {
+  margin-top: 12px;
+  padding-top: 10px;
+  gap: 5px;
+}
+.catalog .agentCard .catalogMetrics dd {
+  font-size: 16px;
+}
+.catalog .agentCard .catalogMetrics dt {
+  font-size: 10px;
+}
+@media (max-width: 1100px) {
+  .catalog .agentGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 850px) {
+  .catalog .agentGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 540px) {
+  .catalog .agentGrid {
+    grid-template-columns: minmax(0, 1fr);
+    max-height: none;
+    overflow: visible;
+  }
+}
+.catalog .hybridCatalogCard { padding: 0; }
+.catalog .hybridCatalogCard > a { padding: 16px; gap: 6px; }
+.catalog .catalogCardTop { margin-bottom: 4px; }
+.catalog .hybridCatalogCard .catalogTagline { margin-bottom: 4px; }

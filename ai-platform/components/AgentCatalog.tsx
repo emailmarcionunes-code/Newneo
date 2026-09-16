@@ -165,7 +165,7 @@ export default function AgentCatalog() {
           </FilterChip>
         ))}
       </div>
-      <section className="agentGrid" aria-label="Agent templates">
+      <section className="agentGrid" aria-label="Agent templates" tabIndex={0}>
         {agents.map((agent) => (
           <AgentCard key={agent.id} agent={agent} featured={false} />
         ))}

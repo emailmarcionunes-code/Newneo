@@ -94,7 +94,7 @@ test('eight stages preserve mission, sources, actions, infrastructure and model'
     .getByRole('button', { name: 'Deploy to Production', exact: true })
     .click();
   await expect(
-    page.getByRole('heading', { name: 'Agent Created', exact: true }),
+    page.getByRole('heading', { name: 'Hello, my name is Neo!', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/No live deployment/)).toBeVisible();
   await expect(page.locator('.neoImage')).toHaveAttribute('src', /salute-full/);

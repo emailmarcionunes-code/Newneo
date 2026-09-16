@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check, Cloud, Cpu, LockKeyhole } from 'lucide-react';
 import { type InfrastructureSelection } from '@/lib/configuration';
 const options = [
   {
@@ -59,7 +59,23 @@ export function ModelRuntimeStep({
                 {selected === o.id && <Check size={14} />}
               </span>
               <div>
-                <strong>{o.name}</strong>
+                <strong>
+                  <span className="infraTypeIcons" aria-hidden="true">
+                    {(o.id === 'managed' || o.id === 'hybrid') && (
+                      <Cloud size={20} />
+                    )}
+                    {(o.id === 'customer-cloud' || o.id === 'hybrid') && (
+                      <span className="privateCloudIcon">
+                        <Cloud size={20} />
+                        <LockKeyhole size={10} />
+                      </span>
+                    )}
+                    {(o.id === 'private' || o.id === 'hybrid') && (
+                      <Cpu size={20} />
+                    )}
+                  </span>
+                  {o.name}
+                </strong>
                 <small>{o.tag}</small>
               </div>
             </div>
