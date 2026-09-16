@@ -6,6 +6,7 @@ import '@fontsource/inter/700.css';
 import './globals.css';
 import './wizard.css';
 import './journeys.css';
+import './hybrid-v4.css';
 import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 
 export const metadata: Metadata = {

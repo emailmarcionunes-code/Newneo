@@ -10,9 +10,13 @@ const tabs = [
   'Data classifications',
   'Audit',
 ];
-export default function Governance() {
+export default function Governance({
+  initialTab = 'Approvals',
+}: {
+  initialTab?: string;
+}) {
   const { state, update } = usePreview();
-  const [tab, setTab] = useState('Approvals');
+  const [tab, setTab] = useState(initialTab);
   const [invite, setInvite] = useState(false);
   const [email, setEmail] = useState('');
   const [role, setRole] = useState(roles[6]);

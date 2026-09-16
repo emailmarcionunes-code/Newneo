@@ -1,9 +1,4 @@
 import AppShell from '@/components/AppShell';
-import AgentCatalog from '@/components/AgentCatalog';
-export default function Agents() {
-  return (
-    <AppShell>
-      <AgentCatalog />
-    </AppShell>
-  );
-}
+import {Agents} from '@/components/hybrid/Inventory';
+import '@/app/surfaces.css';
+export default function Page(){return <AppShell><Agents/></AppShell>}

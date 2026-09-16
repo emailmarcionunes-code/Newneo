@@ -16,42 +16,131 @@ export function AgentCard({
   agent: AgentTemplate;
   featured?: boolean;
 }) {
+  const index = [
+    'customer-service',
+    'it-support',
+    'knowledge-assistant',
+    'sales-assistant',
+    'process-automation',
+    'research-assistant',
+  ].indexOf(agent.id);
+  const details = [
+    [
+      'Medium',
+      'Resolve faster. Escalate smarter.',
+      [
+        ['68%', 'Deflection'],
+        ['4.8', 'CSAT'],
+        ['< 2min', 'Resolution'],
+      ],
+    ],
+    [
+      'Medium',
+      'Zero-touch IT operations.',
+      [
+        ['80%', 'First-call'],
+        ['< 90s', 'Response'],
+        ['24/7', 'Coverage'],
+      ],
+    ],
+    [
+      'Low',
+      'Your organization’s memory.',
+      [
+        ['94%', 'Accuracy'],
+        ['78%', 'Faster'],
+        ['0', 'Hallucinations'],
+      ],
+    ],
+    [
+      'High',
+      'Pipeline intelligence at scale.',
+      [
+        ['23%', 'Pipeline lift'],
+        ['40%', 'Less entry'],
+        ['Live', 'Deal insights'],
+      ],
+    ],
+    [
+      'High',
+      'Workflows that think.',
+      [
+        ['90%', 'Automation'],
+        ['3.2×', 'Throughput'],
+        ['100%', 'Audit trail'],
+      ],
+    ],
+    [
+      'Low',
+      'Strategic intelligence, instantly.',
+      [
+        ['10×', 'Faster'],
+        ['Multi', 'Sources'],
+        ['Exec', 'Ready outputs'],
+      ],
+    ],
+  ] as const;
+  const [complexity, tagline, metrics] = details[Math.max(0, index)];
   return (
-    <article className={`agentCard${featured ? ' featured' : ''}`}>
-      <AgentIcon type={agent.type} />
-      <h2>{agent.name}</h2>
-      <p>{agent.description}</p>
-      <div className="tags">
-        {agent.tags.map((tag) => (
-          <span className="tag" key={tag}>
-            {tag}
-          </span>
-        ))}
-      </div>
+    <article className="agentCard hybridCatalogCard">
       <Link
-        className="agentLaunch"
         href={`/agents/launch?template=${agent.id}`}
         aria-label={`Get started with ${agent.name}`}
       >
-        Get started →
+        <div className="catalogCardTop">
+          <AgentIcon type={agent.type} />
+          <span className="modelPill">{complexity}</span>
+        </div>
+        <h2>{agent.name}</h2>
+        <p className="catalogTagline">{tagline}</p>
+        <p>
+          Business-ready template with recommended knowledge, tools, policies
+          and evaluations.
+        </p>
+        <dl className="catalogMetrics">
+          {metrics.map(([v, k]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
       </Link>
     </article>
   );
 }
+
 export default function AgentCatalog() {
   const [filter, setFilter] = useState('All');
-  const agents = filterAgents(filter);
+  const [search, setSearch] = useState('');
+  const agents = filterAgents(filter).filter((a) =>
+    `${a.name} ${a.description} ${a.tags.join(' ')}`
+      .toLowerCase()
+      .includes(search.trim().toLowerCase()),
+  );
   return (
     <div className="catalog">
       <div className="pageHead">
         <div>
-          <h1>Agent Catalog</h1>
-          <p>Pre-built and custom agents for real business outcomes.</p>
+          <h1>Choose a template or start from scratch</h1>
+          <p>
+            Start with a proven business pattern. Every agent still follows the
+            same governed path to production.
+          </p>
         </div>
         <Link className="button primary" href="/agents/launch?template=custom">
           + Create Custom Agent
         </Link>
       </div>
+      <label className="catalogSearch">
+        Search agent templates
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search agents, capabilities or categories…"
+        />
+      </label>
       <div className="filterRow" aria-label="Agent categories">
         {catalogFilters.map((category) => (
           <FilterChip
@@ -65,11 +154,7 @@ export default function AgentCatalog() {
       </div>
       <section className="agentGrid" aria-label="Agent templates">
         {agents.map((agent) => (
-          <AgentCard
-            key={agent.id}
-            agent={agent}
-            featured={agent.id === 'customer-service'}
-          />
+          <AgentCard key={agent.id} agent={agent} featured={false} />
         ))}
       </section>
       {!agents.length && (
@@ -78,7 +163,13 @@ export default function AgentCatalog() {
           <p>
             Explore the catalog to find an approved agent for your use case.
           </p>
-          <Button variant="secondary" onClick={() => setFilter('All')}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setFilter('All');
+              setSearch('');
+            }}
+          >
             Show all agents
           </Button>
         </section>

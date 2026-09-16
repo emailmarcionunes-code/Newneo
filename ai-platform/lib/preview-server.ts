@@ -108,12 +108,14 @@ export function handlePreview(body: unknown, now = Date.now()) {
       data: {
         mode: 'preview',
         token: receipt(draft, now),
-        score: 92,
+        score: 78,
         metrics: [
-          { name: 'Relevance', value: 96 },
-          { name: 'Groundedness', value: 90 },
-          { name: 'Safety', value: 98 },
-          { name: 'Tool Success', value: 88 },
+          { name: 'Task success', value: 94 },
+          { name: 'Answer relevance', value: 91 },
+          { name: 'Safety & policy', value: 72 },
+          { name: 'Tool execution', value: 85 },
+          { name: 'Cost per task', value: 60 },
+          { name: 'Failure handling', value: 45 },
         ],
         cases: [
           { status: 'Passed', count: 46 },

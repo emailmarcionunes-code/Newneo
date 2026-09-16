@@ -1,11 +1,4 @@
 import AppShell from '@/components/AppShell';
-import AgentDetail from '@/components/AgentDetail';
-import '../../overview.css';
-import './detail.css';
-export default function AgentDetailPage() {
-  return (
-    <AppShell>
-      <AgentDetail />
-    </AppShell>
-  );
-}
+import HybridDetail from '@/components/hybrid/Details';
+import '@/app/surfaces.css';
+export default function Page(){return <AppShell><HybridDetail kind="agents" id="customer-service"/></AppShell>}

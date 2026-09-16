@@ -5,11 +5,29 @@ export function AssetIcon({
   name,
   size = 18,
   className = '',
+  monochrome = false,
 }: {
   name: string;
   size?: number;
   className?: string;
+  monochrome?: boolean;
 }) {
+  if (monochrome)
+    return (
+      <span
+        aria-hidden="true"
+        className={`assetIcon ${className}`}
+        style={{
+          display: 'inline-block',
+          width: size,
+          height: size,
+          background: 'currentColor',
+          maskImage: `url(/assets/figma/${name}.svg)`,
+          maskSize: 'contain',
+          maskRepeat: 'no-repeat',
+        }}
+      />
+    );
   return (
     <img
       className={`assetIcon ${className}`}
@@ -26,7 +44,7 @@ export type AgentType =
 export function AgentIcon({ type }: { type: AgentType }) {
   return (
     <span className={`agentIcon ${type}`}>
-      <AssetIcon name={type} size={18} />
+      <AssetIcon name={type} size={18} monochrome />
     </span>
   );
 }

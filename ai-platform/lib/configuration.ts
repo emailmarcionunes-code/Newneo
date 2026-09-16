@@ -1,24 +1,25 @@
+import { hybridModels } from './hybrid-models';
 // Organization-scoped preview registry. Production must supply approved resources
 // and enforce permissions through its backend; these fixtures grant no access.
 export const executionModels = [
   {
     id: 'managed',
-    name: 'Managed AI',
+    name: 'Cloud',
     description: 'Use leading approved model providers.',
   },
   {
     id: 'customer-cloud',
-    name: 'Customer Cloud',
+    name: 'Private Cloud',
     description: 'Run in your own cloud account.',
   },
   {
     id: 'private',
-    name: 'Private AI',
+    name: 'Local / On-Prem',
     description: 'Run approved open models in your environment.',
   },
   {
     id: 'hybrid',
-    name: 'Hybrid AI',
+    name: 'Hybrid',
     description: 'Combine approved execution models.',
   },
 ] as const;
@@ -27,38 +28,16 @@ export type RuntimeSelection = {
   executionModel: 'organization-default' | ExecutionModel;
   endpointId: string;
 };
-export const approvedEndpoints = [
-  {
-    id: 'acme-cloud-gpt4o',
-    provider: 'OpenAI',
-    executionModel: 'customer-cloud' as ExecutionModel,
-    name: 'GPT-4o · approved endpoint',
-    region: 'US East',
-    contextWindow: '128k',
-    estimatedCost: '~ $0.02 / task',
-    expectedLatency: '~ 1.2 s',
-  },
-  {
-    id: 'demo-cloud-claude',
-    provider: 'Anthropic',
-    executionModel: 'customer-cloud' as ExecutionModel,
-    name: 'Claude Sonnet · preview endpoint',
-    region: 'US East · sample',
-    contextWindow: 'Depends on approved version',
-    estimatedCost: 'Not measured',
-    expectedLatency: 'Not measured',
-  },
-  {
-    id: 'demo-cloud-gemini',
-    provider: 'Google',
-    executionModel: 'customer-cloud' as ExecutionModel,
-    name: 'Gemini Pro · preview endpoint',
-    region: 'US East · sample',
-    contextWindow: 'Depends on approved version',
-    estimatedCost: 'Not measured',
-    expectedLatency: 'Not measured',
-  },
-];
+export const approvedEndpoints = hybridModels.map((m) => ({
+  id: m.id,
+  provider: m.provider,
+  executionModel: 'managed' as ExecutionModel,
+  name: m.name,
+  region: 'Organization default',
+  contextWindow: m.context,
+  estimatedCost: m.cost,
+  expectedLatency: m.latency,
+}));
 export const defaultRuntime = (): RuntimeSelection => ({
   executionModel: 'organization-default',
   endpointId: 'acme-cloud-gpt4o',
@@ -66,13 +45,12 @@ export const defaultRuntime = (): RuntimeSelection => ({
 export function endpointsFor(
   executionModel: RuntimeSelection['executionModel'],
 ) {
-  const runtime =
-    executionModel === 'organization-default'
-      ? 'customer-cloud'
-      : executionModel;
-  return approvedEndpoints.filter(
-    (endpoint) => endpoint.executionModel === runtime,
-  );
+  // Model and infrastructure are independent preview choices; actual availability
+  // must be validated by the organization endpoint adapter before live execution.
+  return executionModel === 'organization-default' ||
+    executionModels.some((x) => x.id === executionModel)
+    ? approvedEndpoints
+    : [];
 }
 export function runtimeIsReady(selection: RuntimeSelection) {
   return endpointsFor(selection.executionModel).some(
@@ -108,6 +86,8 @@ export const governanceGroups = [
   {
     title: 'Policies',
     controls: [
+      { id: 'roleBasedAccess', label: 'Role-based access' },
+      { id: 'retentionPolicy', label: 'Retention policy' },
       { id: 'companyPolicy', label: 'Follow company AI policy' },
       { id: 'blockHarmful', label: 'Block harmful content' },
       { id: 'dataResidency', label: 'Respect data residency' },
@@ -159,6 +139,11 @@ export function parseGovernance(value: unknown): GovernanceSelection | null {
     return null;
   const controls = defaultGovernance().controls;
   for (const id of Object.keys(controls) as GovernanceControl[]) {
+    if (
+      (id === 'roleBasedAccess' || id === 'retentionPolicy') &&
+      selection.controls[id] === undefined
+    )
+      continue;
     if (typeof selection.controls[id] !== 'boolean') return null;
     controls[id] = selection.controls[id];
   }

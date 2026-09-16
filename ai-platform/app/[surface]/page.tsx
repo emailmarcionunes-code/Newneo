@@ -3,8 +3,15 @@ import AppShell from '@/components/AppShell';
 import RegistrySurface from '@/components/RegistrySurface';
 import OperationsSurface from '@/components/OperationsSurface';
 import Models from '@/components/journeys/Models';
-import Evaluations from '@/components/journeys/Evaluations';
-import Deployments from '@/components/journeys/Deployments';
+import {
+  Evaluations,
+  Deployments,
+  AgentOps,
+  FinOps,
+} from '@/components/hybrid/Operations';
+import { Reports, Playground, AuditLog } from '@/components/hybrid/Platform';
+import { Resources } from '@/components/hybrid/Inventory';
+
 import { surfaces } from '@/lib/surfaces';
 import '../surfaces.css';
 export default async function SurfacePage({
@@ -13,34 +20,18 @@ export default async function SurfacePage({
   params: Promise<{ surface: string }>;
 }) {
   const { surface } = await params;
-  if (surface === 'agentops' || surface === 'finops')
-    return (
-      <AppShell>
-        <OperationsSurface finops={surface === 'finops'} />
-      </AppShell>
-    );
-  if (surface === 'models')
-    return (
-      <AppShell>
-        <Models />
-      </AppShell>
-    );
-  if (surface === 'evaluations')
-    return (
-      <AppShell>
-        <Evaluations />
-      </AppShell>
-    );
-  if (surface === 'deployments')
-    return (
-      <AppShell>
-        <Deployments />
-      </AppShell>
-    );
-  if (!Object.hasOwn(surfaces, surface)) notFound();
-  return (
-    <AppShell>
-      <RegistrySurface key={surface} surface={surface} />
-    </AppShell>
-  );
+  const pages: Record<string, React.ReactNode> = {
+    knowledge: <Resources />,
+    tools: <Resources tools />,
+    evaluations: <Evaluations />,
+    deployments: <Deployments />,
+    agentops: <AgentOps />,
+    finops: <FinOps />,
+    reports: <Reports />,
+    playground: <Playground />,
+    'audit-log': <AuditLog />,
+    models: <Models />,
+  };
+  if (!Object.hasOwn(pages, surface)) notFound();
+  return <AppShell>{pages[surface]}</AppShell>;
 }

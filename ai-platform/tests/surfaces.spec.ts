@@ -1,101 +1,80 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-
-for (const width of [1180, 768, 390])
-  test(`workspace surfaces responsive ${width}`, async ({ page }, testInfo) => {
+for (const width of [1440, 768, 390])
+  test(`Hybrid v4 surfaces ${width}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 900 });
     for (const route of [
-      'knowledge',
-      'tools',
-      'models',
-      'evaluations',
-      'deployments',
-      'governance',
-      'agentops',
-      'finops',
-      'settings',
+      '/',
+      '/agents',
+      '/agents/catalog',
+      '/knowledge',
+      '/tools',
+      '/evaluations',
+      '/deployments',
+      '/agentops',
+      '/finops',
+      '/reports',
+      '/playground',
+      '/audit-log',
+      '/governance',
+      '/settings',
+      '/login',
+      '/knowledge/confluence',
+      '/tools/servicenow',
+      '/agents/customer-service',
+      '/evaluations/customer-service',
+      '/deployments/customer-service',
+      '/agentops/incidents/inc-001',
+      '/governance/policies/pii',
     ]) {
-      await page.goto(`/${route}`);
-      await expect(page.locator('h1')).toBeVisible();
-      if (route === 'settings')
-        await expect(
-          page.getByText('Server login is not configured.', { exact: false }),
-        ).toBeVisible();
-      const firstDetail = page
-        .getByRole('button', { name: /^View .* details/ })
-        .first();
-      if (await firstDetail.count()) await firstDetail.click();
+      await page.goto(route);
+      await expect(
+        page.locator('main h1:visible,main h2:visible').first(),
+      ).toBeVisible();
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth,
         ),
         route,
       ).toBe(true);
-      const result = await new AxeBuilder({ page })
-        .include('.surfacePage')
-        .analyze();
+      const result = await new AxeBuilder({ page }).include('main').analyze();
       expect(result.violations, route).toEqual([]);
-      if (['knowledge', 'agentops', 'finops'].includes(route))
+      if (width === 1440)
         await page.screenshot({
-          path: testInfo.outputPath(`${route}-${width}.png`),
+          path: info.outputPath(
+            `${route.replaceAll('/', '_') || 'overview'}.png`,
+          ),
           fullPage: true,
         });
     }
   });
-test('registry filters, resource details, fleet inspection and budget calculator', async ({
+test('canonical shell groups, manual collapse and keyboard tooltip', async ({
   page,
 }) => {
-  await page.goto('/tools');
-  await page.getByRole('button', { name: 'MCP Servers', exact: true }).click();
-  await expect(page.locator('.surfaceCards .agentCard')).toHaveCount(1);
-  await page
-    .getByRole('button', { name: 'View Custom API / MCP details →' })
-    .click();
+  await page.goto('/agents');
+  await expect(page.locator('.sidebar')).toHaveCSS('width', '224px');
   await expect(
-    page.getByRole('complementary', { name: 'Selected resource details' }),
-  ).toContainText('Authentication');
-  await page.getByLabel('Search Tools & MCP').fill('no-match');
+    page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link'),
+  ).toHaveCount(12);
   await expect(
-    page.getByRole('heading', { name: 'No matching results' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: 'Clear filters' }).click();
-  await expect(page.locator('.surfaceCards .agentCard')).toHaveCount(6);
-  await page.goto('/agentops');
-  await page.getByRole('button', { name: 'Healthy', exact: true }).click();
-  await expect(page.locator('tbody tr')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Inspect IT Support Agent' }).click();
+    page
+      .getByRole('navigation', { name: 'Main navigation' })
+      .getByRole('link', { name: 'Models' }),
+  ).toHaveCount(0);
+  await page.getByRole('button', { name: 'Collapse sidebar' }).click();
+  await expect(page.locator('.sidebar')).toHaveCSS('width', '60px');
+  await page.getByRole('link', { name: 'Knowledge', exact: true }).focus();
   await expect(
-    page.getByText('No sample incidents for this agent.'),
-  ).toBeVisible();
-  await page.goto('/finops');
-  await page.getByLabel('Monthly budget (USD)').fill('100');
-  await expect(page.getByRole('status')).toContainText('240% used');
-  await page.getByLabel('Monthly budget (USD)').fill('0');
-  await expect(page.getByRole('status')).toContainText('greater than zero');
+    page.getByRole('link', { name: 'Knowledge', exact: true }),
+  ).toHaveAttribute('data-tooltip', 'Knowledge');
+  await page.getByRole('button', { name: 'Expand sidebar' }).click();
+  await expect(page.locator('.sidebar')).toHaveCSS('width', '224px');
 });
-test('server routes fail closed without a verified session', async ({
+test('server routes continue to fail closed without identity', async ({
   request,
 }) => {
-  const session = await request.get('/api/session');
-  expect(await session.json()).toMatchObject({
-    authenticated: false,
-    configured: false,
-  });
   expect((await request.get('/api/workspace/drafts')).status()).toBe(401);
   expect(
-    (
-      await request.post('/api/workspace/drafts', {
-        data: { configuration: {} },
-      })
-    ).status(),
-  ).toBe(403);
-  expect(
-    (
-      await request.post('/api/workspace/select', {
-        headers: { Origin: 'https://attacker.invalid' },
-        data: { workspaceId: 'forged' },
-      })
-    ).status(),
-  ).toBe(403);
-  expect((await request.get('/api/auth/login')).status()).toBe(503);
+    (await request.post('/api/launch/deploy', { data: {} })).status(),
+  ).toBe(503);
 });

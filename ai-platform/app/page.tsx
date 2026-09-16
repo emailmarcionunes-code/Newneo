@@ -1,11 +1,4 @@
 import AppShell from '@/components/AppShell';
-import Overview from '@/components/Overview';
-import './overview.css';
-
-export default function OverviewPage() {
-  return (
-    <AppShell>
-      <Overview />
-    </AppShell>
-  );
-}
+import {Overview} from '@/components/hybrid/Inventory';
+import '@/app/surfaces.css';
+export default function Page(){return <AppShell><Overview/></AppShell>}

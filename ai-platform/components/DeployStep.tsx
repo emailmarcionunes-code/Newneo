@@ -15,11 +15,11 @@ export function DeployStep({
   onEnvironment: (value: LaunchDraft['environment']) => void;
 }) {
   const rows = [
-    ['Agent', draft.name],
+    ['Use Case', draft.name],
     [
-      'Runtime',
+      'Infrastructure',
       draft.runtime.executionModel === 'organization-default'
-        ? 'Organization Default'
+        ? 'Cloud · Organization Default'
         : executionModels.find(
             (item) => item.id === draft.runtime.executionModel,
           )?.name,
@@ -39,6 +39,12 @@ export function DeployStep({
         : 'Company policy not selected',
     ],
     ['Evaluation score', `${evaluation.score}% · Reference only`],
+    [
+      'Approvals',
+      draft.governance.controls.sensitiveApproval
+        ? 'Sensitive actions require approval'
+        : 'Organization policy applies',
+    ],
   ];
   return (
     <section

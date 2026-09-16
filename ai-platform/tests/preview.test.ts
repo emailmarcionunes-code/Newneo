@@ -86,7 +86,7 @@ test('invalid resources, runtime and scope cannot enter the preview flow', () =>
     { organizationId: 'other' },
     { knowledge: ['unknown'] },
     { tools: { servicenow: ['close'] } },
-    { runtime: { executionModel: 'private', endpointId: 'acme-cloud-gpt4o' } },
+    { runtime: { executionModel: 'invalid', endpointId: 'acme-cloud-gpt4o' } },
     { name: '' },
   ]) {
     assert.equal(

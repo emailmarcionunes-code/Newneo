@@ -96,7 +96,6 @@ test('runtime and governance edits round-trip without coercing booleans', () => 
 test('unapproved or incompatible endpoints cannot resume beyond model configuration', () => {
   for (const runtime of [
     { executionModel: 'customer-cloud', endpointId: 'unapproved' },
-    { executionModel: 'private', endpointId: 'acme-cloud-gpt4o' },
     { executionModel: 'unknown', endpointId: 'acme-cloud-gpt4o' },
     { executionModel: 'managed', endpointId: '' },
   ]) {

@@ -27,8 +27,8 @@ export function LaunchSuccess({
       </p>
       <div className="successActions">
         <Button onClick={onOverview}>Go to Agent Overview →</Button>
-        <Link className="button secondary" href="/agents">
-          Create Another Agent
+        <Link className="button secondary" href="/agentops">
+          Open AgentOps
         </Link>
       </div>
       <section className="successNext">
@@ -52,14 +52,14 @@ export function LaunchSuccess({
             <span className="nextIcon iterate">
               <AssetIcon name="next-iterate" />
             </span>
-            <strong>Iterate and improve</strong>
+            <strong>Create a new version</strong>
             <small>with new versions</small>
           </Button>
-          <Link href="/agents">
+          <Link href="/agents/catalog">
             <span className="nextIcon explore">
               <AssetIcon name="next-explore" />
             </span>
-            <strong>Explore additional agents</strong>
+            <strong>Explore more agents</strong>
             <small>and use cases</small>
           </Link>
         </div>

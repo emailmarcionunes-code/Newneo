@@ -4,31 +4,17 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getTemplate } from '@/lib/catalog';
 import {
-  approvedActions,
   createDraft,
+  launchSteps,
   draftKey,
-  knowledgeFilters,
-  knowledgeSources,
   parseDraft,
-  toolConnectors,
-  toolFilters,
-  toolSummary,
-  type Integration,
   type LaunchDraft,
 } from '@/lib/launch';
-import { LaunchIcon, ProviderLogo } from './Assets';
-import {
-  Button,
-  Callout,
-  ContextPanel,
-  FilterChip,
-  FormField,
-  IntegrationTile,
-  SelectField,
-} from './UI';
+import { Button, ContextPanel, FormField, SelectField } from './UI';
 import { LaunchStepper } from './LaunchStepper';
-import { IntegrationDialog } from './IntegrationDialog';
 import { ProviderModelStep } from './ProviderModelStep';
+import { HybridResourcesStep } from './HybridResourcesStep';
+import { AgentAssembly } from './AgentAssembly';
 import { ModelRuntimeStep } from './ModelRuntimeStep';
 import { GovernanceStep } from './GovernanceStep';
 import { runtimeIsReady } from '@/lib/configuration';
@@ -59,10 +45,7 @@ export default function LaunchGuide({
   const [deploying, setDeploying] = useState(false);
   const [overview, setOverview] = useState(false);
   const [notice, setNotice] = useState('');
-  const [filter, setFilter] = useState('All');
-  const [dialog, setDialog] = useState<Integration | null>(null);
   const form = useRef<HTMLFormElement>(null);
-  const filters = useRef<HTMLDivElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     try {
@@ -95,8 +78,6 @@ export default function LaunchGuide({
   const goTo = (step: number) => {
     if (deploying || (step === 7 && !evaluation)) return;
     update({ step });
-    setFilter('All');
-    setDialog(null);
     requestAnimationFrame(() => heading.current?.focus());
   };
   const save = () => {
@@ -123,24 +104,18 @@ export default function LaunchGuide({
     if (draft.step === 6 && !evaluation) return;
     if (draft.step < 7) goTo(draft.step + 1);
   };
-  const isKnowledge = draft.step === 1;
-  const integrations = isKnowledge ? knowledgeSources : toolConnectors;
-  const selectedIds = isKnowledge ? draft.knowledge : Object.keys(draft.tools);
-  const selected = selectedIds
-    .map((id) => integrations.find((item) => item.id === id))
-    .filter((item): item is Integration => Boolean(item));
   const titles = [
-    "Let's start with the fundamentals.",
+    'Launch a New Agent',
     'Connect knowledge sources',
     'Add tools and actions',
-    'Choose infrastructure',
-    'Choose your model',
-    'Define governance settings',
-    'Test your agent',
-    'Ready to deploy',
+    'Choose where the agent runs',
+    'Select the intelligence layer',
+    'Governance & controls',
+    'Production evaluation',
+    'Deploy to production',
   ];
   const subtitles = [
-    'Define what your agent will do and who will use it.',
+    'Turn a business outcome into a production-ready AI mission.',
     'Add the data your agent will use to find accurate answers.',
     'Connect the systems your agent can use and define what it can do.',
     'Choose where your agent will run.',
@@ -149,35 +124,6 @@ export default function LaunchGuide({
     'Run sample queries and review production confidence before promotion.',
     'Review your configuration and choose the environment.',
   ];
-  const attach = (actions: string[]) => {
-    if (!dialog) return;
-    if (isKnowledge)
-      update({ knowledge: [...new Set([...draft.knowledge, dialog.id])] });
-    else
-      update({
-        tools: {
-          ...draft.tools,
-          [dialog.id]: approvedActions(dialog.id, actions),
-        },
-      });
-    setDialog(null);
-  };
-  const remove = () => {
-    if (!dialog) return;
-    if (isKnowledge)
-      update({ knowledge: draft.knowledge.filter((id) => id !== dialog.id) });
-    else {
-      const tools = { ...draft.tools };
-      delete tools[dialog.id];
-      update({ tools });
-    }
-    setDialog(null);
-  };
-  const addMore = () => {
-    setFilter('All');
-    filters.current?.querySelector<HTMLButtonElement>('button')?.focus();
-    filters.current?.scrollIntoView({ block: 'nearest' });
-  };
   const deploy = async () => {
     if (!evaluation || !draft.environment || deploying) return;
     setDeploying(true);
@@ -248,31 +194,10 @@ export default function LaunchGuide({
       </div>
     );
   return (
-    <div className={`launchGuide step-${draft.step}`} aria-busy={!ready}>
-      {draft.step === 0 && (
-        <header className="launchHeader">
-          <div className="launchIdentity">
-            <LaunchIcon />
-            <div>
-              <h1>Launch {template.name}</h1>
-              <p>Follow the steps to configure, test and deploy your agent.</p>
-            </div>
-          </div>
-          <div className="launchHeaderActions">
-            <Button
-              variant="secondary"
-              onClick={save}
-              disabled={!ready || deploying}
-            >
-              Save draft
-            </Button>
-            <Button onClick={next} disabled={!ready}>
-              Next →
-            </Button>
-          </div>
-        </header>
-      )}
-      {draft.step >= 6 && previewBanner}
+    <div
+      className={`launchGuide hybridJourney step-${draft.step}`}
+      aria-busy={!ready}
+    >
       <ServerDrafts
         draft={draft}
         onLoad={(saved) => {
@@ -282,290 +207,224 @@ export default function LaunchGuide({
         }}
       />
       <LaunchStepper current={draft.step} onStep={goTo} />
-      <div className="stepHeading">
-        <h2 ref={heading} tabIndex={-1}>
-          {titles[draft.step]}
-        </h2>
-        <p>{subtitles[draft.step]}</p>
-      </div>
-      {draft.step === 0 && (
-        <div className="launchColumns useCaseColumns">
-          <form
-            id="use-case-form"
-            ref={form}
-            className="useCaseForm"
-            onSubmit={(event) => {
-              event.preventDefault();
-              next();
-            }}
-          >
-            <FormField
-              id="agent-name"
-              label="Agent name"
-              value={draft.name}
-              maxLength={120}
-              required
-              pattern=".*\S.*"
-              onChange={(event) => update({ name: event.target.value })}
-            />
-            <div className="field">
-              <label htmlFor="agent-description">Description</label>
-              <textarea
-                id="agent-description"
-                required
-                maxLength={2000}
-                value={draft.description}
-                onChange={(event) =>
-                  update({ description: event.target.value })
-                }
-                onBlur={(event) =>
-                  event.target.setCustomValidity(
-                    event.target.value.trim()
-                      ? ''
-                      : 'Describe what your agent will do.',
-                  )
-                }
-                onInput={(event) => event.currentTarget.setCustomValidity('')}
-              />
-            </div>
-            <SelectField
-              id="target-users"
-              label="Target users"
-              value={draft.targetUsers}
-              onChange={(event) => update({ targetUsers: event.target.value })}
-            >
-              {[
-                'Customers (external)',
-                'Employees (internal)',
-                'Partners',
-                'Mixed audience',
-              ].map((value) => (
-                <option key={value}>{value}</option>
-              ))}
-            </SelectField>
-            <SelectField
-              id="industry"
-              label="Industry (optional)"
-              value={draft.industry}
-              onChange={(event) => update({ industry: event.target.value })}
-            >
-              {[
-                '',
-                'Technology',
-                'Financial Services',
-                'Healthcare',
-                'Retail',
-                'Manufacturing',
-                'Public Sector',
-                'Other',
-              ].map((value) => (
-                <option key={value} value={value}>
-                  {value || 'Select industry'}
-                </option>
-              ))}
-            </SelectField>
-          </form>
-          <aside className="contextStack">
-            <ContextPanel title="Expected outcomes">
-              {template.outcomes.length ? (
-                <ul className="outcomes">
-                  {template.outcomes.map((outcome) => (
-                    <li key={outcome}>
-                      <span aria-hidden="true">✓</span>
-                      {outcome}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Define what your agent will do and who will use it.</p>
-              )}
-            </ContextPanel>
-            <Callout tone="info">
-              A well-defined use case leads to better results.
-            </Callout>
-          </aside>
-        </div>
-      )}
-      {(draft.step === 1 || draft.step === 2) && (
-        <>
+      <div className="hybridWorkarea">
+        <div className="hybridStage">
+          <p className="stageEyebrow">
+            {draft.step === 0
+              ? '01 / LAUNCH MISSION'
+              : `STAGE ${draft.step + 1} / ${launchSteps[draft.step].toUpperCase()}`}
+          </p>
           <div
-            ref={filters}
-            className="filterRow integrationFilters"
-            aria-label={
-              isKnowledge ? 'Knowledge categories' : 'Tool categories'
-            }
+            className={`stepHeading ${draft.step === 0 ? 'missionHeading' : ''}`}
           >
-            {(isKnowledge ? knowledgeFilters : toolFilters).map((category) => (
-              <FilterChip
-                key={category}
-                active={filter === category}
-                onClick={() => setFilter(category)}
-              >
-                {category}
-              </FilterChip>
-            ))}
+            {draft.step === 0 && (
+              <span className="missionArrow" aria-hidden="true">
+                ↗
+              </span>
+            )}
+            <h2 ref={heading} tabIndex={-1}>
+              {titles[draft.step]}
+            </h2>
+            <p>{subtitles[draft.step]}</p>
           </div>
-          <div className="launchColumns integrationColumns">
-            <section
-              className={`integrationGrid ${isKnowledge ? 'knowledgeGrid' : 'toolsGrid'}`}
-              aria-label={isKnowledge ? 'Knowledge sources' : 'Tools & MCP'}
-            >
-              {integrations
-                .filter(
-                  (item) =>
-                    filter === 'All' || item.categories.includes(filter),
-                )
-                .map((item) => (
-                  <IntegrationTile
-                    key={item.id}
-                    provider={item.id}
-                    name={item.name}
-                    caption={item.caption}
-                    onConnect={() => setDialog(item)}
+          {draft.step === 0 && (
+            <>
+              <section className="missionControl">
+                <strong>MISSION CONTROL</strong>
+                <h3>What should this agent accomplish for the business?</h3>
+                <p>
+                  NEWNEO will translate the mission into knowledge, tools,
+                  infrastructure, model, governance and production readiness.
+                </p>
+              </section>
+              <form
+                id="use-case-form"
+                ref={form}
+                className="missionForm"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  next();
+                }}
+              >
+                <div className="missionRow">
+                  <FormField
+                    id="agent-name"
+                    label="Agent name"
+                    value={draft.name}
+                    required
+                    maxLength={120}
+                    onChange={(e) => update({ name: e.target.value })}
                   />
-                ))}
-            </section>
-            <aside className="contextStack">
-              <ContextPanel
-                className={isKnowledge ? 'sourcesPanel' : 'toolsPanel'}
-                title={`${isKnowledge ? 'Connected sources' : 'Selected tools'} (${selected.length})`}
-              >
-                <div className="connectedResources">
-                  {selected.map((item) => (
-                    <button
-                      type="button"
-                      className="connectedResource"
-                      key={item.id}
-                      onClick={() => setDialog(item)}
-                      aria-label={`Manage ${item.name}`}
-                    >
-                      <ProviderLogo provider={item.id} size={24} />
-                      <span>
-                        <strong>{item.name}</strong>
-                        <small>
-                          {isKnowledge
-                            ? item.detail
-                            : toolSummary(item, draft.tools[item.id] ?? [])}
-                        </small>
-                      </span>
-                      <span className="statusDot" aria-label="Selected" />
-                    </button>
-                  ))}
+                  <FormField
+                    id="business-owner"
+                    label="Business owner"
+                    placeholder="e.g. VP Customer Experience"
+                    value={draft.businessOwner ?? ''}
+                    maxLength={200}
+                    onChange={(e) => update({ businessOwner: e.target.value })}
+                  />
                 </div>
-                {!selected.length && (
-                  <p>
-                    No {isKnowledge ? 'sources' : 'tools'} selected. Choose an
-                    approved {isKnowledge ? 'source' : 'tool'} to connect.
-                  </p>
-                )}
-                <Button variant="add" onClick={addMore}>
-                  + {isKnowledge ? 'Add more sources' : 'Add tools'}
+                <div className="field">
+                  <label htmlFor="agent-description">
+                    Business purpose / mission
+                  </label>
+                  <textarea
+                    id="agent-description"
+                    required
+                    maxLength={2000}
+                    value={draft.description}
+                    onChange={(e) => update({ description: e.target.value })}
+                    placeholder="Describe the outcome, who it serves, and what success looks like…"
+                  />
+                </div>
+                <div>
+                  <label>Suggested missions</label>
+                  <div className="missionSuggestions">
+                    {[
+                      'Resolve tier-1 support autonomously',
+                      'Automate IT request routing',
+                      'Qualify sales opportunities',
+                      'Synthesize executive research',
+                    ].map((m) => (
+                      <button
+                        type="button"
+                        key={m}
+                        onClick={() => update({ description: m })}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="missionRow three">
+                  <FormField
+                    id="target-users"
+                    label="Target users"
+                    value={draft.targetUsers}
+                    onChange={(e) => update({ targetUsers: e.target.value })}
+                  />
+                  <FormField
+                    id="success-metric"
+                    label="Success metric"
+                    placeholder="e.g. 70% autonomous"
+                    value={draft.successMetric ?? ''}
+                    onChange={(e) => update({ successMetric: e.target.value })}
+                  />
+                  <SelectField
+                    id="criticality"
+                    label="Business criticality"
+                    value={draft.criticality ?? 'Standard'}
+                    onChange={(e) => update({ criticality: e.target.value })}
+                  >
+                    <option>Standard</option>
+                    <option>Critical</option>
+                  </SelectField>
+                </div>
+                <div className="intelligenceNote">
+                  <strong>✦ NEWNEO Intelligence</strong>Expected complexity:
+                  Medium · likely needs CRM/ITSM data · Cloud or Hybrid
+                  infrastructure · GPT-4o recommended.
+                </div>
+              </form>
+            </>
+          )}
+          {(draft.step === 1 || draft.step === 2) && (
+            <HybridResourcesStep draft={draft} onChange={update} />
+          )}
+          {draft.step === 3 && (
+            <ModelRuntimeStep
+              value={draft.runtime}
+              onChange={(runtime) => update({ runtime })}
+            />
+          )}
+          {draft.step === 4 && (
+            <ProviderModelStep
+              value={draft.runtime}
+              onChange={(runtime) => update({ runtime })}
+            />
+          )}
+          {draft.step === 5 && (
+            <GovernanceStep
+              value={draft.governance}
+              draft={draft}
+              onChange={(governance) => update({ governance })}
+            />
+          )}
+          {draft.step === 6 && (
+            <EvaluateStep
+              draft={draft}
+              result={evaluation}
+              onResult={setEvaluation}
+            />
+          )}
+          {draft.step === 7 && evaluation && (
+            <DeployStep
+              draft={draft}
+              evaluation={evaluation}
+              disabled={deploying}
+              onEnvironment={(environment) => update({ environment })}
+            />
+          )}
+          {draft.step >= 6 && previewBanner}
+          <footer className="wizardActions">
+            {draft.step === 0 ? (
+              <Link href="/agents/catalog" className="button secondary">
+                ← Back
+              </Link>
+            ) : (
+              <Button
+                variant="secondary"
+                disabled={deploying}
+                onClick={() => goTo(draft.step - 1)}
+              >
+                ← Back
+              </Button>
+            )}
+            <div>
+              {draft.step >= 0 && (
+                <Button
+                  variant="secondary"
+                  onClick={save}
+                  disabled={!ready || deploying}
+                >
+                  Save draft
                 </Button>
-              </ContextPanel>
-              <Callout>
-                {isKnowledge
-                  ? 'Your data stays in its approved environment and existing permissions are respected.'
-                  : 'Control what your agent can do. Permissions and approvals stay explicit.'}
-              </Callout>
-            </aside>
-          </div>
-        </>
-      )}
-      {draft.step === 3 && (
-        <ModelRuntimeStep
-          value={draft.runtime}
-          onChange={(runtime) => update({ runtime })}
-        />
-      )}
-      {draft.step === 4 && (
-        <ProviderModelStep
-          value={draft.runtime}
-          onChange={(runtime) => update({ runtime })}
-        />
-      )}
-      {draft.step === 5 && (
-        <GovernanceStep
-          value={draft.governance}
-          draft={draft}
-          onChange={(governance) => update({ governance })}
-        />
-      )}
-      {draft.step === 6 && (
-        <EvaluateStep
-          draft={draft}
-          result={evaluation}
-          onResult={setEvaluation}
-        />
-      )}
-      {draft.step === 7 && evaluation && (
-        <DeployStep
-          draft={draft}
-          evaluation={evaluation}
-          disabled={deploying}
-          onEnvironment={(environment) => update({ environment })}
-        />
-      )}
-      <footer className="wizardActions">
-        {draft.step === 0 ? (
-          <Link href="/agents" className="button secondary">
-            ← Back
-          </Link>
-        ) : (
-          <Button
-            variant="secondary"
-            disabled={deploying}
-            onClick={() => goTo(draft.step - 1)}
-          >
-            ← Back
-          </Button>
-        )}
-        <div>
-          {draft.step > 0 && (
-            <Button
-              variant="secondary"
-              onClick={save}
-              disabled={!ready || deploying}
-            >
-              Save draft
-            </Button>
-          )}
-          {draft.step < 7 ? (
-            <Button
-              onClick={next}
-              disabled={
-                !ready ||
-                (draft.step === 4 && !runtimeIsReady(draft.runtime)) ||
-                (draft.step === 6 && !evaluation)
-              }
-            >
-              Next →
-            </Button>
-          ) : (
-            <Button
-              onClick={deploy}
-              disabled={!draft.environment || !evaluation || deploying}
-            >
-              {deploying
-                ? 'Previewing deployment…'
-                : `Deploy to ${draft.environment ?? 'environment'}`}
-            </Button>
-          )}
+              )}
+              {draft.step < 7 ? (
+                <Button
+                  onClick={next}
+                  disabled={
+                    !ready ||
+                    (draft.step === 4 && !runtimeIsReady(draft.runtime)) ||
+                    (draft.step === 6 && !evaluation)
+                  }
+                >
+                  {draft.step === 0
+                    ? 'Continue to Knowledge →'
+                    : draft.step === 3
+                      ? 'Select Model →'
+                      : draft.step === 4
+                        ? 'Configure Governance →'
+                        : 'Next →'}
+                </Button>
+              ) : (
+                <Button
+                  onClick={deploy}
+                  disabled={!draft.environment || !evaluation || deploying}
+                >
+                  {deploying
+                    ? 'Previewing deployment…'
+                    : `Deploy to ${draft.environment ?? 'environment'}`}
+                </Button>
+              )}
+            </div>
+          </footer>
+          <p role="status" className="draftNotice">
+            {notice}
+          </p>
         </div>
-      </footer>
-      <p role="status" className="draftNotice">
-        {notice}
-      </p>
-      {dialog && (
-        <IntegrationDialog
-          key={dialog.id}
-          integration={dialog}
-          selected={selectedIds.includes(dialog.id)}
-          selectedActions={isKnowledge ? [] : (draft.tools[dialog.id] ?? [])}
-          onClose={() => setDialog(null)}
-          onSave={attach}
-          onRemove={remove}
-        />
-      )}
+        <AgentAssembly draft={draft} />
+      </div>
     </div>
   );
 }

@@ -1,105 +1,82 @@
-import {
-  governanceGroups,
-  type GovernanceSelection,
-} from '@/lib/configuration';
-import {
-  knowledgeSources,
-  toolConnectors,
-  type LaunchDraft,
-} from '@/lib/launch';
-import { SelectField } from './UI';
-
+import type { GovernanceSelection } from '@/lib/configuration';
+import type { LaunchDraft } from '@/lib/launch';
+const controls = [
+  [
+    'logInteractions',
+    'Audit logging',
+    'Every action logged with full context',
+    'Required',
+  ],
+  [
+    'maskSensitive',
+    'PII protection',
+    'Detect and handle personal data via policy',
+    'Required',
+  ],
+  [
+    'roleBasedAccess',
+    'Role-based access',
+    'Agent access limited to authorized users',
+    'Required',
+  ],
+  [
+    'sensitiveApproval',
+    'Human-in-the-loop',
+    'High-risk actions require approval',
+    'Recommended',
+  ],
+  [
+    'dataResidency',
+    'Data residency',
+    'All data remains in approved regions',
+    'Recommended',
+  ],
+  [
+    'retentionPolicy',
+    'Retention policy',
+    'Conversation data handled by organization policy',
+    'Recommended',
+  ],
+] as const;
 export function GovernanceStep({
   value,
-  draft,
   onChange,
 }: {
   value: GovernanceSelection;
   draft: LaunchDraft;
-  onChange: (value: GovernanceSelection) => void;
+  onChange: (v: GovernanceSelection) => void;
 }) {
-  const sources = knowledgeSources
-    .filter((source) => draft.knowledge.includes(source.id))
-    .map((source) => source.name);
-  const actions = toolConnectors.flatMap((tool) =>
-    (tool.actions ?? [])
-      .filter(
-        (action) =>
-          action.approved && draft.tools[tool.id]?.includes(action.id),
-      )
-      .map((action) => ({ ...action, name: `${tool.name}: ${action.name}` })),
-  );
-  const approvals = actions.filter(
-    (action) =>
-      action.requiresApproval ||
-      (value.controls.sensitiveApproval && action.access === 'Write'),
-  );
   return (
-    <section className="governanceStep" aria-label="Governance configuration">
-      <div className="governanceGrid">
-        {governanceGroups.map((group) => (
-          <section
-            className="governanceCard"
-            key={group.title}
-            aria-label={group.title}
-          >
-            <h3>{group.title}</h3>
-            {group.title === 'Access & Permissions' && (
-              <SelectField
-                id="agent-audience"
-                label="Who can use this agent?"
-                value={value.audience}
-                onChange={() => onChange({ ...value, audience: 'everyone' })}
-              >
-                <option value="everyone">Everyone in the company</option>
-              </SelectField>
-            )}
-            <div className="governanceControls">
-              {group.controls.map((control) => (
-                <label key={control.id}>
-                  <input
-                    type="checkbox"
-                    checked={value.controls[control.id]}
-                    onChange={(event) =>
-                      onChange({
-                        ...value,
-                        controls: {
-                          ...value.controls,
-                          [control.id]: event.target.checked,
-                        },
-                      })
-                    }
-                  />
-                  <span>{control.label}</span>
-                </label>
-              ))}
-            </div>
-          </section>
+    <section className="hybridGovernance">
+      <div className="hybridToolRows">
+        {controls.map(([id, name, description, status]) => (
+          <label key={id} className={value.controls[id] ? 'selected' : ''}>
+            <input
+              type="checkbox"
+              role="switch"
+              checked={value.controls[id]}
+              onChange={(e) =>
+                onChange({
+                  ...value,
+                  controls: { ...value.controls, [id]: e.target.checked },
+                })
+              }
+            />
+            <span>
+              <strong>{name}</strong>
+              <small>{description}</small>
+            </span>
+            <span className="modelPill">
+              {value.controls[id] ? status : 'Gap'}
+            </span>
+          </label>
         ))}
       </div>
-      <details className="advancedSettings governanceSummary">
-        <summary>Access and approval summary</summary>
-        <p>
-          This agent can read{' '}
-          {sources.length
-            ? sources.join(', ')
-            : 'no connected knowledge sources'}
-          , execute{' '}
-          {actions.length
-            ? actions.map((action) => action.name).join('; ')
-            : 'no tool actions'}
-          , and requires approval for{' '}
-          {approvals.length
-            ? approvals.map((action) => action.name).join('; ')
-            : 'no selected actions'}
-          .
-        </p>
-        <p>
-          These are draft preferences. Organization policies and action-level
-          approvals remain enforced by the production service. Compliance
-          selections record requirements; they do not certify compliance.
-        </p>
-      </details>
+      <div className="intelligenceNote">
+        <strong>Protection & confidence</strong>
+        {controls.filter(([id]) => value.controls[id]).length} active controls ·
+        review gaps before Production.
+      </div>
     </section>
   );
 }

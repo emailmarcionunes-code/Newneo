@@ -4,6 +4,12 @@ async function add(page: import('@playwright/test').Page, tool = false) {
   await page.goto(tool ? '/tools' : '/knowledge');
   await page
     .getByRole('button', {
+      name: tool ? 'Add Tool' : 'Connect Source',
+      exact: false,
+    })
+    .click();
+  await page
+    .getByRole('button', {
       name: tool ? '+ Add connector' : '+ Add source',
       exact: true,
     })
@@ -59,6 +65,7 @@ test('source creation, sync failure/retry, content, editing and reload persisten
   await page.getByRole('button', { name: 'Continue →', exact: true }).click();
   await page.getByRole('button', { name: 'Save preview', exact: true }).click();
   await page.reload();
+  await page.getByRole('button', { name: /Connect Source|Add Tool/ }).click();
   await expect(
     page.getByRole('heading', { name: 'Updated policies', exact: true }),
   ).toBeVisible();
@@ -155,6 +162,9 @@ test('preview storage errors recover and disconnect preserves configuration', as
     ),
   );
   await page.goto('/knowledge');
+  await page
+    .getByRole('button', { name: 'Connect Source', exact: false })
+    .click();
   await expect(
     page.getByText('Saved preview unavailable.', { exact: false }),
   ).toBeVisible();

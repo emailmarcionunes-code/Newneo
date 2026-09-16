@@ -13,8 +13,8 @@ import {
 export const launchSteps = [
   'Use Case',
   'Knowledge',
-  'Tools',
-  'Infra',
+  'Tools & MCP',
+  'Infrastructure',
   'Model',
   'Governance',
   'Evaluate',
@@ -240,6 +240,9 @@ export type LaunchDraft = {
   description: string;
   targetUsers: string;
   industry: string;
+  businessOwner?: string;
+  successMetric?: string;
+  criticality?: string;
   knowledge: string[];
   tools: Record<string, string[]>;
   runtime: RuntimeSelection;
@@ -349,6 +352,11 @@ export function parseDraft(
       description: value.description,
       targetUsers: value.targetUsers,
       industry: value.industry,
+      ...Object.fromEntries(
+        ['businessOwner', 'successMetric', 'criticality']
+          .filter((k) => typeof value[k] === 'string')
+          .map((k) => [k, value[k].slice(0, 200)]),
+      ),
       // Evaluation receipts are session-only; reloading Deploy returns to Evaluate.
       step:
         value.name.trim() && value.description.trim() ? Math.min(step, 6) : 0,

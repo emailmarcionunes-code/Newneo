@@ -11,14 +11,21 @@ export const navigation = [
   ['Agents', '/agents', 'agents'],
   ['Knowledge', '/knowledge', 'knowledge'],
   ['Tools & MCP', '/tools', 'tools'],
-  ['Models', '/models', 'models'],
+  ['Governance', '/governance', 'governance'],
   ['Evaluations', '/evaluations', 'evaluations'],
   ['Deployments', '/deployments', 'deployments'],
   ['AgentOps', '/agentops', 'agentops'],
   ['FinOps', '/finops', 'finops'],
-  ['Governance', '/governance', 'governance'],
+  ['Reports', '/reports', 'evaluations'],
+  ['Playground', '/playground', 'agents'],
+  ['Audit Log', '/audit-log', 'governance'],
   ['Settings', '/settings', 'settings'],
 ] as const;
+const groups = [
+  { name: 'BUILD / MANAGE', items: navigation.slice(0, 5) },
+  { name: 'OPERATE', items: navigation.slice(5, 10) },
+  { name: 'PLATFORM', items: navigation.slice(10, 12) },
+];
 
 export function NavItem({
   label,
@@ -41,9 +48,11 @@ export function NavItem({
       className={`navItem${active ? ' active' : ''}`}
       aria-current={active ? 'page' : undefined}
       aria-label={compact ? label : undefined}
-      title={compact ? label : undefined}
+      data-tooltip={compact ? label : undefined}
       onClick={onNavigate}
-      style={compact ? { justifyContent: 'center', paddingInline: 8 } : undefined}
+      style={
+        compact ? { justifyContent: 'center', paddingInline: 8 } : undefined
+      }
     >
       <AssetIcon name={icon} />
       {!compact && <span>{label}</span>}
@@ -66,14 +75,18 @@ export function ApplicationSidebar({
   return (
     <aside
       id="application-sidebar"
-      className={`sidebar${open ? ' isOpen' : ''}`}
+      className={`sidebar${open ? ' isOpen' : ''}${collapsed ? ' isCollapsed' : ''}`}
       style={{ width: collapsed ? 60 : 224, transition: 'width 180ms ease' }}
     >
       <Link
         href="/"
         className="brand"
         aria-label="Newneo home"
-        style={{ display: 'flex', justifyContent: collapsed ? 'center' : 'flex-start', marginInline: collapsed ? 0 : 8 }}
+        style={{
+          display: 'flex',
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          marginInline: collapsed ? 0 : 8,
+        }}
       >
         <NewneoWordmark compact={collapsed} />
       </Link>
@@ -85,24 +98,52 @@ export function ApplicationSidebar({
       >
         ×
       </button>
+      <Link
+        href="/agents/catalog"
+        className="sidebarCreate"
+        aria-label="Create Agent"
+        data-tooltip={collapsed ? 'Create Agent' : undefined}
+      >
+        <span aria-hidden="true">＋</span>
+        {!collapsed && 'Create Agent'}
+      </Link>
       <nav aria-label="Main navigation">
-        {navigation.map(([label, href, icon]) => (
-          <NavItem
-            key={href}
-            {...{ label, href, icon }}
-            compact={collapsed}
-            active={
-              href === '/'
-                ? path === '/'
-                : path === href || path.startsWith(`${href}/`)
-            }
-            onNavigate={onClose}
-          />
+        {groups.map((group) => (
+          <section className="navGroup" key={group.name}>
+            <h2>{collapsed ? '' : group.name}</h2>
+            {group.items.map(([label, href, icon]) => (
+              <NavItem
+                key={href}
+                {...{ label, href, icon }}
+                compact={collapsed}
+                active={
+                  href === '/'
+                    ? path === '/'
+                    : path === href || path.startsWith(`${href}/`)
+                }
+                onNavigate={onClose}
+              />
+            ))}
+          </section>
         ))}
       </nav>
+      <div className="sidebarBottom">
+        <NavItem
+          label="Settings"
+          href="/settings"
+          icon="settings"
+          compact={collapsed}
+          active={path.startsWith('/settings')}
+          onNavigate={onClose}
+        />
+      </div>
       <details
         className="workspaceMenu"
-        style={collapsed ? { paddingInline: 0, display: 'grid', justifyItems: 'center' } : undefined}
+        style={
+          collapsed
+            ? { paddingInline: 0, display: 'grid', justifyItems: 'center' }
+            : undefined
+        }
       >
         <summary title={collapsed ? 'Acme Corp' : undefined}>
           <span className="organizationAvatar">AC</span>
@@ -145,6 +186,14 @@ export function Topbar({
   open: boolean;
   onToggle: () => void;
 }) {
+  const path = usePathname();
+  const title = path.includes('/agents/launch')
+    ? 'Create Agent'
+    : (navigation.find(([, href]) =>
+        href === '/'
+          ? path === '/'
+          : path === href || path.startsWith(href + '/'),
+      )?.[0] ?? 'Workspace');
   return (
     <header className="topbar">
       <button
@@ -157,6 +206,11 @@ export function Topbar({
       >
         ☰
       </button>
+      <div className="shellBreadcrumb">
+        <span>Acme Corp</span>
+        <span aria-hidden="true">/</span>
+        <strong>{title}</strong>
+      </div>
       <div className="topActions">
         <details className="topbarMenu">
           <summary aria-label="Notifications">○</summary>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, ProgressRing } from './UI';
+import { Button } from './UI';
 import {
   previewRequest,
   sampleAnswer,
@@ -17,7 +17,6 @@ export function EvaluateStep({
   result: ReferenceEvaluation | null;
   onResult: (value: ReferenceEvaluation) => void;
 }) {
-  const [tab, setTab] = useState<'chat' | 'results'>('chat');
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
@@ -86,203 +85,103 @@ export function EvaluateStep({
       if (!controller.signal.aborted) setSending(false);
     }
   }
+  const notes = [
+    '47/50 scenarios completed',
+    'High groundedness score',
+    '2 edge cases need review',
+    'All actions performed correctly',
+    '$0.14/task vs $0.10 target',
+    '3 failure modes unhandled',
+  ];
   return (
-    <section className="evaluateStep" aria-label="Evaluation preview">
-      <div
-        className="evaluationTabs"
-        role="tablist"
-        aria-label="Evaluation views"
-      >
-        {(['chat', 'results'] as const).map((value) => (
-          <button
-            type="button"
-            role="tab"
-            id={`tab-${value}`}
-            aria-selected={tab === value}
-            aria-controls={`panel-${value}`}
-            tabIndex={tab === value ? 0 : -1}
-            key={value}
-            onKeyDown={(event) => {
-              if (
-                ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)
-              ) {
-                event.preventDefault();
-                const next =
-                  event.key === 'Home'
-                    ? 'chat'
-                    : event.key === 'End'
-                      ? 'results'
-                      : tab === 'chat'
-                        ? 'results'
-                        : 'chat';
-                setTab(next);
-                document.getElementById(`tab-${next}`)?.focus();
-              }
-            }}
-            onClick={() => setTab(value)}
-          >
-            {value === 'chat' ? 'Test Chat' : 'Evaluation Results'}
-          </button>
-        ))}
-      </div>
-      <div className="evaluationColumns">
-        <div className="evaluationMain">
-          <section
-            className="testChat"
-            id="panel-chat"
-            role="tabpanel"
-            aria-labelledby="tab-chat"
-            hidden={tab !== 'chat'}
-          >
-            <p className="referenceLabel">
-              Reference conversation · Customer Service Agent
-            </p>
+    <section
+      className="evaluateStep hybridEvaluation"
+      aria-label="Evaluation preview"
+    >
+      {result ? (
+        <>
+          <div className="readinessBanner">
             <div
-              className="chatMessages"
-              role="log"
-              aria-label="Demo conversation"
-              aria-live="polite"
+              role="meter"
+              aria-label="Evaluation score"
+              aria-valuenow={result.score}
+              aria-valuemin={0}
+              aria-valuemax={100}
             >
-              {messages.map((item, index) => (
-                <div className={`chatMessage ${item.role}`} key={index}>
-                  <span className="srOnly">
-                    {item.role === 'user' ? 'You' : 'Demo agent'}:{' '}
-                  </span>
-                  {item.text}
-                </div>
-              ))}
+              {result.score}%
             </div>
-            <form className="chatComposer" onSubmit={send}>
-              <label htmlFor="test-message" className="srOnly">
-                Test message
-              </label>
-              <input
-                id="test-message"
-                placeholder="Type a message…"
-                value={message}
-                maxLength={1000}
-                onChange={(event) => setMessage(event.target.value)}
-              />
-              <Button
-                type="submit"
-                aria-label="Send message"
-                disabled={sending || !message.trim()}
-              >
-                {sending ? '…' : '→'}
-              </Button>
-            </form>
-            {chatError && (
-              <p className="requestError" role="alert">
-                {chatError}
-              </p>
-            )}
-          </section>
-          <section
-            className="evaluationResults"
-            id="panel-results"
-            role="tabpanel"
-            aria-labelledby="tab-results"
-            hidden={tab !== 'results'}
-          >
-            <h3>Evaluation Results</h3>
-            {result ? (
-              <>
-                <p>Reference suite · Customer Service Agent</p>
-                <table>
-                  <caption>Test case outcomes from the approved design</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Status</th>
-                      <th scope="col">Cases</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.cases.map((item) => (
-                      <tr key={item.status}>
-                        <th scope="row">{item.status}</th>
-                        <td>{item.count}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p>
-                  The reference includes 3 cases needing review and 1 failed
-                  case. It is not a production approval. Individual case details
-                  are not supplied in this preview.
-                </p>
-              </>
-            ) : (
-              <p>Load the reference evaluation to review the sample results.</p>
-            )}
-          </section>
-        </div>
-        <aside className="evaluationSummary">
-          <section className="evaluationScore">
-            <h3>Evaluation Score</h3>
-            {result ? (
-              <div className="scoreContent">
-                <ProgressRing value={result.score} />
-                <div className="evaluationMetrics">
-                  {result.metrics.map((metric) => (
-                    <div key={metric.name} className="evaluationMetric">
-                      <span>{metric.name}</span>
-                      <strong>{metric.value}%</strong>
-                      <div
-                        role="meter"
-                        aria-label={metric.name}
-                        aria-valuenow={metric.value}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        className="metricTrack"
-                      >
-                        <div style={{ width: `${metric.value}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <div>
+              <h3>Agent needs attention</h3>
+              <p>5 passed · 2 warnings · 1 failed</p>
+              <small>3 scenarios require action before Production.</small>
+            </div>
+          </div>
+          <div className="evaluationRows">
+            {result.metrics.map((metric, index) => (
+              <div key={metric.name}>
+                <span>
+                  <strong>{metric.name}</strong>
+                  <small>{notes[index]}</small>
+                </span>
+                <progress
+                  aria-label={metric.name}
+                  max={100}
+                  value={metric.value}
+                />
+                <b>{metric.value}</b>
               </div>
-            ) : (
-              <p className="evaluationEmpty">
-                {loading
-                  ? 'Loading reference results… Next will be enabled shortly.'
-                  : 'Reference results could not be loaded. Use the button below to try again.'}
-              </p>
-            )}
-          </section>
-          <section className="testCases">
-            <h3>Test Cases ({result ? 50 : 0})</h3>
-            {result && (
-              <>
-                <div className="caseCounts">
-                  {result.cases.map((item) => (
-                    <span key={item.status}>
-                      <i
-                        className={`caseDot ${item.status === 'Passed' ? 'passed' : item.status === 'Failed' ? 'failed' : 'review'}`}
-                      />
-                      {item.count} {item.status}
-                    </span>
-                  ))}
-                </div>
-                <Button variant="link" onClick={() => setTab('results')}>
-                  View all results →
-                </Button>
-              </>
-            )}
-          </section>
-          <Button variant="secondary" onClick={evaluate} disabled={loading}>
-            {loading
-              ? 'Loading reference…'
-              : result
-                ? 'Reload reference evaluation'
-                : 'Load reference evaluation'}
+            ))}
+          </div>
+        </>
+      ) : (
+        <p role="status">
+          {loading
+            ? 'Loading reference results… Next will be enabled shortly.'
+            : 'Reference results could not be loaded. Use the button below to try again.'}
+        </p>
+      )}
+      <Button variant="secondary" onClick={evaluate} disabled={loading}>
+        {loading
+          ? 'Loading reference…'
+          : result
+            ? 'Reload reference evaluation'
+            : 'Load reference evaluation'}
+      </Button>
+      {error && (
+        <p className="requestError" role="alert">
+          {error}
+        </p>
+      )}
+      <p className="hybridDataNote">
+        Approved design reference · simulated results, not a production
+        approval.
+      </p>
+      <details className="advancedSettings">
+        <summary>Test Chat</summary>
+        <div className="chatMessages" role="log" aria-label="Demo conversation">
+          {messages.map((m, i) => (
+            <div key={i} className={`chatMessage ${m.role}`}>
+              {m.text}
+            </div>
+          ))}
+        </div>
+        <form className="chatComposer" onSubmit={send}>
+          <label htmlFor="test-message" className="srOnly">
+            Test message
+          </label>
+          <input
+            id="test-message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            maxLength={1000}
+            placeholder="Type a message…"
+          />
+          <Button type="submit" disabled={sending || !message.trim()}>
+            Send message
           </Button>
-          {error && (
-            <p className="requestError" role="alert">
-              {error}
-            </p>
-          )}
-        </aside>
-      </div>
+        </form>
+        {chatError && <p role="alert">{chatError}</p>}
+      </details>
     </section>
   );
 }
