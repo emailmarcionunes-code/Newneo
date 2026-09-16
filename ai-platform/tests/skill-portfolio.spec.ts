@@ -7,8 +7,28 @@ for (const width of [1440, 390])
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/skills');
     await expect(
+      page.getByRole('tabpanel', { name: 'Pipeline', exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Skill Matrix', exact: true }),
+    ).toHaveCount(0);
+    expect(
+      (await new AxeBuilder({ page }).include('main').analyze()).violations,
+    ).toEqual([]);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: info.outputPath('pipeline.png'),
+      fullPage: true,
+    });
+    await page.getByRole('tab', { name: 'Intelligence', exact: true }).click();
+    await expect(
       page.getByRole('heading', { name: 'Portfolio Intelligence' }),
     ).toBeVisible();
+    await page.getByRole('tab', { name: 'Matrix', exact: true }).click();
     const matrix = page.getByRole('region', { name: /Skill Matrix —/ });
     await expect(
       matrix.getByRole('link', { name: /Patient Appointment Scheduling/ }),

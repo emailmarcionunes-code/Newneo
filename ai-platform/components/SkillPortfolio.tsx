@@ -25,7 +25,9 @@ const stateClass = (s: Skill) =>
 export function SkillPortfolio({
   skills,
   telemetry,
+  view = 'Matrix',
 }: {
+  view?: 'Matrix' | 'Intelligence';
   skills: Skill[];
   telemetry: Telemetry;
 }) {
@@ -72,177 +74,185 @@ export function SkillPortfolio({
     }));
   return (
     <>
-      <section
-        className="intelligenceNote portfolioIntelligence"
-        aria-labelledby="portfolio-intelligence"
-      >
-        <h2 id="portfolio-intelligence">Portfolio Intelligence</h2>
-        <p>Build vertically. Reuse horizontally.</p>
-        <div className="portfolioInsights">
-          {top && (
-            <div>
-              <strong>Most Reused Core · {top.name}</strong>
-              <p>
-                {top.skills.length} Skills across {top.domains.length} domains.
-              </p>
-            </div>
-          )}
-          {ranked
-            .filter((c) => c.domains.length >= 2 && c.id !== top?.id)
-            .slice(0, 2)
-            .map((c) => (
-              <div key={c.id}>
-                <strong>{c.name} Core</strong>
+      {view === 'Intelligence' && (
+        <section
+          className="intelligenceNote portfolioIntelligence"
+          aria-labelledby="portfolio-intelligence"
+        >
+          <h2 id="portfolio-intelligence">Portfolio Intelligence</h2>
+          <p>Build vertically. Reuse horizontally.</p>
+          <div className="portfolioInsights">
+            {top && (
+              <div>
+                <strong>Most Reused Core · {top.name}</strong>
                 <p>
-                  Shared by {c.skills.length} Skills across {c.domains.length}{' '}
+                  {top.skills.length} Skills across {top.domains.length}{' '}
                   domains.
                 </p>
               </div>
-            ))}
-        </div>
-        <small>
-          Based on current portfolio metadata, including demonstration
-          definitions. Reuse is breadth of adoption, not a quality or readiness
-          score.
-        </small>
-      </section>
-      <section className="panel skillMatrix" aria-labelledby="matrix-title">
-        <div className="portfolioHeading">
-          <div>
-            <h2 id="matrix-title">Skill Matrix</h2>
-            <p>Discover how capabilities are adapted across domains.</p>
-          </div>
-          <button
-            className="button secondary"
-            onClick={() => setExpanded(!expanded)}
-            aria-expanded={expanded}
-          >
-            {expanded
-              ? 'Representative view'
-              : 'Show all domains & capabilities'}
-          </button>
-        </div>
-        <div className="matrixLegend" aria-label="Matrix maturity legend">
-          {[
-            'Experimental',
-            'Validated',
-            'Production Ready',
-            'Proven at Scale',
-          ].map((m) => (
-            <span key={m}>
-              <i
-                className={`matrixDot ${stateClass({ maturity: m } as Skill)}`}
-              />
-              {m}
-            </span>
-          ))}
-          <span>— Opportunity</span>
-        </div>
-        <div
-          className="matrixScroll"
-          tabIndex={0}
-          role="region"
-          aria-label="Skill Matrix — scroll to explore domains and capabilities"
-        >
-          <table>
-            <caption className="sr-only">
-              Domain by capability Skills matrix
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Domain / capability</th>
-                {cores.map((c) => (
-                  <th scope="col" key={c.id}>
-                    {c.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {domains.map((d) => (
-                <tr key={d.id}>
-                  <th scope="row">{d.domain}</th>
-                  {cores.map((c) => {
-                    const members = skills.filter((s) => {
-                      const r = reuseOf(s);
-                      return r?.coreId === c.id && r.domainPatternId === d.id;
-                    });
-                    return (
-                      <td key={c.id}>
-                        {members.length ? (
-                          members.map((s) => {
-                            const t = telemetry(s.id);
-                            const details = `${s.name} · ${s.maturity} · v${s.version} · ${t.users.length} Agents · ${t.executions === null ? 'No execution history' : `${t.executions.toLocaleString('en-US')} executions`} · ${t.success === null ? 'Success not measured' : `${t.success.toFixed(1)}% success`} · ${c.name} Core`;
-                            return (
-                              <Link
-                                key={s.id}
-                                className={`matrixSkill ${stateClass(s)}`}
-                                href={`/skills/${s.id}`}
-                                title={details}
-                                aria-label={details}
-                              >
-                                <span>{s.name}</span>
-                                <small>
-                                  {s.maturity} · v{s.version}
-                                </small>
-                                <span className="matrixPreview">
-                                  {t.users.length} Agents ·{' '}
-                                  {t.executions?.toLocaleString('en-US') ?? '—'}{' '}
-                                  executions · {t.success?.toFixed(1) ?? '—'}%
-                                  success
-                                  <br />
-                                  {c.name} Core
-                                </span>
-                              </Link>
-                            );
-                          })
-                        ) : (
-                          <button
-                            className="matrixEmpty"
-                            aria-label={`Opportunity: ${c.name} × ${d.domain}`}
-                            onClick={() =>
-                              setOpportunity(
-                                `No Skill exists yet for ${c.name} × ${d.domain}. Explore this adaptation with domain experts; no Skill has been created.`,
-                              )
-                            }
-                          >
-                            —<span>Opportunity</span>
-                          </button>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
+            )}
+            {ranked
+              .filter((c) => c.domains.length >= 2 && c.id !== top?.id)
+              .slice(0, 2)
+              .map((c) => (
+                <div key={c.id}>
+                  <strong>{c.name} Core</strong>
+                  <p>
+                    Shared by {c.skills.length} Skills across {c.domains.length}{' '}
+                    domains.
+                  </p>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <p role="status">
-          {opportunity ||
-            'Select a Skill to inspect it. Empty combinations are opportunities, not automatically created capabilities.'}
-        </p>
-      </section>
-      <section className="panel" aria-labelledby="opportunities-title">
-        <h2 id="opportunities-title">Portfolio Opportunities</h2>
-        <div className="portfolioInsights">
-          {missing.map(({ core, domain }) => (
-            <div key={core.id}>
-              <strong>
-                {core.name} × {domain.domain}
-              </strong>
-              <p>
-                {core.name} Core is present in {core.domains.length} domains,
-                but not yet in {domain.domain}. Review whether its existing
-                logic can be adapted.
-              </p>
+          </div>
+          <small>
+            Based on current portfolio metadata, including demonstration
+            definitions. Reuse is breadth of adoption, not a quality or
+            readiness score.
+          </small>
+        </section>
+      )}
+      {view === 'Matrix' && (
+        <section className="panel skillMatrix" aria-labelledby="matrix-title">
+          <div className="portfolioHeading">
+            <div>
+              <h2 id="matrix-title">Skill Matrix</h2>
+              <p>Discover how capabilities are adapted across domains.</p>
             </div>
-          ))}
-        </div>
-        <small>
-          Strategic suggestions from portfolio gaps. Domain validation,
-          governance review and evaluation are still required.
-        </small>
-      </section>
+            <button
+              className="button secondary"
+              onClick={() => setExpanded(!expanded)}
+              aria-expanded={expanded}
+            >
+              {expanded
+                ? 'Representative view'
+                : 'Show all domains & capabilities'}
+            </button>
+          </div>
+          <div className="matrixLegend" aria-label="Matrix maturity legend">
+            {[
+              'Experimental',
+              'Validated',
+              'Production Ready',
+              'Proven at Scale',
+            ].map((m) => (
+              <span key={m}>
+                <i
+                  className={`matrixDot ${stateClass({ maturity: m } as Skill)}`}
+                />
+                {m}
+              </span>
+            ))}
+            <span>— Opportunity</span>
+          </div>
+          <div
+            className="matrixScroll"
+            tabIndex={0}
+            role="region"
+            aria-label="Skill Matrix — scroll to explore domains and capabilities"
+          >
+            <table>
+              <caption className="sr-only">
+                Domain by capability Skills matrix
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Domain / capability</th>
+                  {cores.map((c) => (
+                    <th scope="col" key={c.id}>
+                      {c.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {domains.map((d) => (
+                  <tr key={d.id}>
+                    <th scope="row">{d.domain}</th>
+                    {cores.map((c) => {
+                      const members = skills.filter((s) => {
+                        const r = reuseOf(s);
+                        return r?.coreId === c.id && r.domainPatternId === d.id;
+                      });
+                      return (
+                        <td key={c.id}>
+                          {members.length ? (
+                            members.map((s) => {
+                              const t = telemetry(s.id);
+                              const details = `${s.name} · ${s.maturity} · v${s.version} · ${t.users.length} Agents · ${t.executions === null ? 'No execution history' : `${t.executions.toLocaleString('en-US')} executions`} · ${t.success === null ? 'Success not measured' : `${t.success.toFixed(1)}% success`} · ${c.name} Core`;
+                              return (
+                                <Link
+                                  key={s.id}
+                                  className={`matrixSkill ${stateClass(s)}`}
+                                  href={`/skills/${s.id}`}
+                                  title={details}
+                                  aria-label={details}
+                                >
+                                  <span>{s.name}</span>
+                                  <small>
+                                    {s.maturity} · v{s.version}
+                                  </small>
+                                  <span className="matrixPreview">
+                                    {t.users.length} Agents ·{' '}
+                                    {t.executions?.toLocaleString('en-US') ??
+                                      '—'}{' '}
+                                    executions · {t.success?.toFixed(1) ?? '—'}%
+                                    success
+                                    <br />
+                                    {c.name} Core
+                                  </span>
+                                </Link>
+                              );
+                            })
+                          ) : (
+                            <button
+                              className="matrixEmpty"
+                              aria-label={`Opportunity: ${c.name} × ${d.domain}`}
+                              onClick={() =>
+                                setOpportunity(
+                                  `No Skill exists yet for ${c.name} × ${d.domain}. Explore this adaptation with domain experts; no Skill has been created.`,
+                                )
+                              }
+                            >
+                              —<span>Opportunity</span>
+                            </button>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p role="status">
+            {opportunity ||
+              'Select a Skill to inspect it. Empty combinations are opportunities, not automatically created capabilities.'}
+          </p>
+        </section>
+      )}
+      {view === 'Intelligence' && (
+        <section className="panel" aria-labelledby="opportunities-title">
+          <h2 id="opportunities-title">Portfolio Opportunities</h2>
+          <div className="portfolioInsights">
+            {missing.map(({ core, domain }) => (
+              <div key={core.id}>
+                <strong>
+                  {core.name} × {domain.domain}
+                </strong>
+                <p>
+                  {core.name} Core is present in {core.domains.length} domains,
+                  but not yet in {domain.domain}. Review whether its existing
+                  logic can be adapted.
+                </p>
+              </div>
+            ))}
+          </div>
+          <small>
+            Strategic suggestions from portfolio gaps. Domain validation,
+            governance review and evaluation are still required.
+          </small>
+        </section>
+      )}
     </>
   );
 }

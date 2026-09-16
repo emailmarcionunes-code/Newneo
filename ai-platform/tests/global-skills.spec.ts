@@ -9,9 +9,11 @@ for (const width of [1440, 390])
     await expect(
       page.getByRole('heading', { name: 'Skills', exact: true }),
     ).toBeVisible();
+    await page.getByRole('tab', { name: 'Intelligence', exact: true }).click();
     await expect(
       page.getByRole('heading', { name: 'Most Used Skill' }),
     ).toBeVisible();
+    await page.getByRole('tab', { name: 'List', exact: true }).click();
     await page
       .getByRole('textbox', { name: 'Search Skills', exact: true })
       .fill('Reset Password');
@@ -75,6 +77,7 @@ for (const width of [1440, 390])
       .getByRole('button', { name: 'Deactivate library Skill' })
       .click();
     await page.goto('/skills');
+    await page.getByRole('tab', { name: 'List', exact: true }).click();
     await page
       .getByRole('combobox', { name: 'Status', exact: true })
       .selectOption('Inactive');

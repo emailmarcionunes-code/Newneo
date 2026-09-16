@@ -124,6 +124,8 @@ export function GlobalSkills() {
   const { can } = useDemoAccess();
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const [view, setView] = useState('Pipeline');
+  const views = ['Pipeline', 'List', 'Matrix', 'Intelligence'];
   const [filters, setFilters] = useState<Record<string, string>>({
     Domain: 'All',
     Maturity: 'All',
@@ -179,7 +181,7 @@ export function GlobalSkills() {
         (data.telemetry(a.id).executions || 0),
   )[0];
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage skillsWorkspace">
       <PageTitle
         title="Skills"
         description="Reusable enterprise capabilities shared across your AI agents."
@@ -237,83 +239,147 @@ export function GlobalSkills() {
           ],
         ]}
       />
-      <p className="intelligenceNote">
-        Demo analytics · 30-day sample history, not live measurements. Adoption
-        is derived from current Agent bindings. New Skills have no execution
-        history.
+      <p className="skillsDemoNote">
+        Demo portfolio · Sample analytics · No live execution
       </p>
-      {most && data.usedBy(most.id).length > 0 && (
-        <section className="panel">
-          <h2>Most Used Skill</h2>
-          <Link href={`/skills/${most.id}`}>{most.name} →</Link>
-          <p>
-            Used by {data.usedBy(most.id).length} Agents ·{' '}
-            {number(data.telemetry(most.id).executions)} executions / 30d ·{' '}
-            {percent(data.telemetry(most.id).success)} success
-          </p>
-        </section>
-      )}
-      <SkillPortfolio skills={data.library} telemetry={data.telemetry} />
-      <div className="skillFilters">
-        <label>
-          Search Skills
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Name or capability"
+      <Tabs names={views} current={view} onChange={setView} />
+      <Panel names={views} current={view}>
+        {view === 'Intelligence' && most && data.usedBy(most.id).length > 0 && (
+          <section className="panel">
+            <h2>Most Used Skill</h2>
+            <Link href={`/skills/${most.id}`}>{most.name} →</Link>
+            <p>
+              Used by {data.usedBy(most.id).length} Agents ·{' '}
+              {number(data.telemetry(most.id).executions)} executions / 30d ·{' '}
+              {percent(data.telemetry(most.id).success)} success
+            </p>
+          </section>
+        )}
+        {(view === 'Matrix' || view === 'Intelligence') && (
+          <SkillPortfolio
+            skills={data.library}
+            telemetry={data.telemetry}
+            view={view}
           />
-        </label>
-        {Object.entries(options).map(([key, values]) => (
-          <label key={key}>
-            {key}
-            <select
-              value={filters[key]}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, [key]: e.target.value }))
-              }
-            >
-              {['All', ...values].map((v) => (
-                <option key={v}>{v}</option>
+        )}
+        {(view === 'Pipeline' || view === 'List') && (
+          <>
+            <div className="skillFilters portfolioFilters">
+              <label>
+                Search Skills
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Name or capability"
+                />
+              </label>
+              {Object.entries(options).map(([key, values]) => (
+                <label key={key}>
+                  {key}
+                  <select
+                    value={filters[key]}
+                    onChange={(e) =>
+                      setFilters((f) => ({ ...f, [key]: e.target.value }))
+                    }
+                  >
+                    {['All', ...values].map((v) => (
+                      <option key={v}>{v}</option>
+                    ))}
+                  </select>
+                </label>
               ))}
-            </select>
-          </label>
-        ))}
-      </div>
-      <Table
-        caption="Organization Skills"
-        headers={[
-          'Skill',
-          'Domain',
-          'Maturity',
-          'Version',
-          'Risk',
-          'Status',
-          'Agents Using',
-          'Executions (30d)',
-          'Success Rate',
-          'Last Updated',
-          'Owner',
-        ]}
-        onRowClick={(i) => router.push(`/skills/${rows[i].id}`)}
-        rows={rows.map((s) => {
-          const t = data.telemetry(s.id);
-          return [
-            <Link key="name" href={`/skills/${s.id}`}>
-              {s.name}
-            </Link>,
-            s.domain,
-            <Tag key="m">{s.maturity}</Tag>,
-            `v${s.version}`,
-            s.riskLevel,
-            <Status key="status">{data.status(s)}</Status>,
-            t.users.length,
-            number(t.executions),
-            percent(t.success),
-            new Date(s.updatedAt).toLocaleDateString('en-US'),
-            s.owner,
-          ];
-        })}
-      />
+            </div>
+            {view === 'Pipeline' && (
+              <div className="skillPipeline" aria-label="Skills by maturity">
+                {maturities.map((maturity, index) => {
+                  const members = rows.filter((s) => s.maturity === maturity);
+                  return (
+                    <section
+                      className={`skillLane lane${index}`}
+                      key={maturity}
+                      aria-label={maturity}
+                    >
+                      <header>
+                        <h2>{maturity}</h2>
+                        <span>{members.length} Skills</span>
+                      </header>
+                      <div className="skillLaneCards">
+                        {members.length ? (
+                          members.map((s) => {
+                            const t = data.telemetry(s.id);
+                            return (
+                              <Link
+                                className="pipelineCard"
+                                href={`/skills/${s.id}`}
+                                key={s.id}
+                              >
+                                <strong>{s.name}</strong>
+                                <span>
+                                  {s.domain} · v{s.version}
+                                </span>
+                                <div>
+                                  <span>{t.users.length} Agents</span>
+                                  <span>{s.riskLevel} risk</span>
+                                </div>
+                                <div>
+                                  <span>{number(t.executions)} executions</span>
+                                  <span>{percent(t.success)} success</span>
+                                </div>
+                                <small>
+                                  {data.status(s)} · {s.owner}
+                                </small>
+                              </Link>
+                            );
+                          })
+                        ) : (
+                          <p className="laneEmpty">No matching Skills</p>
+                        )}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            )}
+            {view === 'List' && (
+              <Table
+                caption="Organization Skills"
+                headers={[
+                  'Skill',
+                  'Domain',
+                  'Maturity',
+                  'Version',
+                  'Risk',
+                  'Status',
+                  'Agents Using',
+                  'Executions (30d)',
+                  'Success Rate',
+                  'Last Updated',
+                  'Owner',
+                ]}
+                onRowClick={(i) => router.push(`/skills/${rows[i].id}`)}
+                rows={rows.map((s) => {
+                  const t = data.telemetry(s.id);
+                  return [
+                    <Link key="name" href={`/skills/${s.id}`}>
+                      {s.name}
+                    </Link>,
+                    s.domain,
+                    <Tag key="m">{s.maturity}</Tag>,
+                    `v${s.version}`,
+                    s.riskLevel,
+                    <Status key="status">{data.status(s)}</Status>,
+                    t.users.length,
+                    number(t.executions),
+                    percent(t.success),
+                    new Date(s.updatedAt).toLocaleDateString('en-US'),
+                    s.owner,
+                  ];
+                })}
+              />
+            )}
+          </>
+        )}
+      </Panel>
       <DataNote />
     </div>
   );

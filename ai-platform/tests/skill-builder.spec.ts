@@ -105,6 +105,7 @@ for (const width of [1440, 390])
     }
     await validateSave();
     await page.goto('/skills');
+    await page.getByRole('tab', { name: 'List', exact: true }).click();
     await page
       .getByRole('link', { name: 'Explain IT policy', exact: true })
       .click();

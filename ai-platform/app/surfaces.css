@@ -394,3 +394,23 @@
 .reuseGuidance label { display:grid; gap:8px; }
 .reuseGuidance h3 { margin-top:0; }
 @media(max-width:800px) { .portfolioInsights { grid-template-columns:1fr; } .matrixScroll th:first-child { min-width:112px; max-width:112px; } }
+
+/* Compact Skills workspace: one view at a time. */
+.skillsWorkspace .skillsDemoNote { font-size:12px; color:#64748b; margin:0; }
+.skillsWorkspace .portfolioFilters { grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:0 0 20px; }
+.skillsWorkspace .portfolioFilters label { font-size:12px; gap:5px; }
+.skillsWorkspace .portfolioFilters input,.skillsWorkspace .portfolioFilters select { min-height:36px; padding:8px 10px; font-size:13px; }
+.skillPipeline { display:grid; gap:14px; }
+.skillLane { display:grid; grid-template-columns:170px minmax(0,1fr); border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; overflow:hidden; }
+.skillLane header { padding:18px 14px; border-left:3px solid #94a3b8; }
+.skillLane h2 { font-size:14px; margin:0 0 8px; }
+.skillLane header > span { font-size:12px; color:#64748b; }
+.skillLane.lane1 header { border-color:#93c5fd; }.skillLane.lane2 header { border-color:#2563eb; }.skillLane.lane3 header { border-color:#16a34a; }
+.skillLaneCards { display:grid; grid-auto-flow:column; grid-auto-columns:230px; gap:12px; overflow-x:auto; padding:12px; }
+.pipelineCard { display:flex; flex-direction:column; gap:8px; padding:14px; border:1px solid #dbe3ee; background:white; border-radius:9px; color:#334155; font-size:12px; }
+.pipelineCard strong { font-size:14px; color:#172033; line-height:1.4; }
+.pipelineCard > span,.pipelineCard small { color:#64748b; }
+.pipelineCard > div { display:flex; justify-content:space-between; gap:8px; }
+.pipelineCard:hover { border-color:#2563eb; background:#f8fbff; }
+.laneEmpty { color:#64748b; font-size:13px; padding:12px; }
+@media(max-width:800px) { .skillsWorkspace .portfolioFilters { grid-template-columns:repeat(2,minmax(0,1fr)); }.skillLane { grid-template-columns:1fr; }.skillLane header { padding:10px 14px; display:flex; justify-content:space-between; align-items:center; }.skillLane h2 { margin:0; } }
