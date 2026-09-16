@@ -1367,3 +1367,8 @@ body .shellBreadcrumb {
 body .notificationCount {
   background: #dc2626;
 }
+
+/* Navigation glyphs inherit only their own active/inactive link color. */
+.sidebar .navItem .assetIcon {
+  filter: none;
+}

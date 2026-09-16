@@ -67,6 +67,13 @@ test('canonical shell groups, manual collapse and keyboard tooltip', async ({
   await expect(
     page.getByRole('link', { name: 'Knowledge', exact: true }),
   ).toHaveAttribute('data-tooltip', 'Knowledge');
+  await page.getByRole('link', { name: 'Knowledge', exact: true }).click();
+  await expect(page).toHaveURL(/\/knowledge$/);
+  await expect(page.locator('.sidebar')).toHaveCSS('width', '60px');
+  await page.getByRole('link', { name: 'Agents', exact: true }).hover();
+  await expect(page.locator('.sidebar')).toHaveCSS('width', '60px');
+  await page.reload();
+  await expect(page.locator('.sidebar')).toHaveCSS('width', '60px');
   await page.getByRole('button', { name: 'Expand sidebar' }).click();
   await expect(page.locator('.sidebar')).toHaveCSS('width', '224px');
 });

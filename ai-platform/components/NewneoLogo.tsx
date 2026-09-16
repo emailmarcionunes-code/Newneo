@@ -2,10 +2,20 @@
 // Crop its surrounding canvas in CSS, without redrawing the mark or lettering.
 const artwork = '/assets/brand/newneo-official.png';
 
-function OfficialArtwork({ compact, size }: { compact: boolean; size: number }) {
+function OfficialArtwork({
+  compact,
+  size,
+  wordOnly = false,
+}: {
+  compact: boolean;
+  size: number;
+  wordOnly?: boolean;
+}) {
   const crop = compact
     ? { x: 252, y: 304, width: 296, height: 296 }
-    : { x: 252, y: 304, width: 1200, height: 296 };
+    : wordOnly
+      ? { x: 608, y: 377, width: 842, height: 148 }
+      : { x: 252, y: 304, width: 1200, height: 296 };
   const scale = size / crop.height;
   return (
     <span
@@ -32,6 +42,20 @@ export function NewneoMark({ size = 32 }: { size?: number }) {
   return <OfficialArtwork compact size={size} />;
 }
 
-export function NewneoWordmark({ compact = false }: { compact?: boolean }) {
+export function NewneoWordmark({
+  compact = false,
+  sidebar = false,
+}: {
+  compact?: boolean;
+  sidebar?: boolean;
+}) {
+  if (sidebar)
+    return (
+      <span
+        style={{ display: 'inline-flex', alignItems: 'center', height: 36 }}
+      >
+        <OfficialArtwork compact={compact} wordOnly={!compact} size={18} />
+      </span>
+    );
   return <OfficialArtwork compact={compact} size={36} />;
 }

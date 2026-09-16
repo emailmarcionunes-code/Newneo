@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AssetIcon } from './Assets';
@@ -55,7 +61,7 @@ export function NavItem({
         compact ? { justifyContent: 'center', paddingInline: 8 } : undefined
       }
     >
-      <AssetIcon name={icon} />
+      <AssetIcon name={icon} monochrome />
       {!compact && <span>{label}</span>}
     </Link>
   );
@@ -89,7 +95,7 @@ export function ApplicationSidebar({
           marginInline: collapsed ? 0 : 8,
         }}
       >
-        <NewneoWordmark compact={collapsed} />
+        <NewneoWordmark compact={collapsed} sidebar />
       </Link>
       <button
         type="button"
@@ -253,6 +259,24 @@ export function Topbar({
 export function ApplicationShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  useLayoutEffect(() => {
+    try {
+      setCollapsed(
+        sessionStorage.getItem('newneo-sidebar-collapsed') === 'true',
+      );
+    } catch {
+      /* Navigation remains available when storage is restricted. */
+    }
+  }, []);
+  function toggleCollapsed() {
+    const next = !collapsed;
+    setCollapsed(next);
+    try {
+      sessionStorage.setItem('newneo-sidebar-collapsed', String(next));
+    } catch {
+      /* The toggle still works for the current screen. */
+    }
+  }
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -296,7 +320,7 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
         open={open}
         collapsed={collapsed}
         onClose={() => setOpen(false)}
-        onToggleCollapsed={() => setCollapsed((value) => !value)}
+        onToggleCollapsed={toggleCollapsed}
       />
       {open && (
         <button
