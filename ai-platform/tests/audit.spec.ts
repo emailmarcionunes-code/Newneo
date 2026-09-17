@@ -63,7 +63,8 @@ test('catalog proves scale and every category has multiple working templates', a
   await page
     .getByRole('link', { name: 'Review Employee Onboarding Agent' })
     .click();
-  await page.getByRole('link', { name: 'Use this Agent →' }).click();
+  await expect(page.getByRole('list', { name: 'Add Agent progress' }).locator('li')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page.getByLabel('Agent name', { exact: true })).toHaveValue(
     'Employee Onboarding Agent',
   );

@@ -17,11 +17,15 @@ test('catalog search, categories and custom entry retain template identity', asy
   await page
     .getByRole('link', { name: 'Review IT Support Agent' })
     .click();
-  await page.getByRole('link', { name: 'Use this Agent →' }).click();
+  await expect(page.getByRole('list', { name: 'Add Agent progress' }).locator('li')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page.getByLabel('Agent name', { exact: true })).toHaveValue(
     'IT Support Agent',
   );
-  await expect(page.locator('.launchStepper li')).toHaveCount(8);
+  await expect(page.getByRole('button', { name: 'Accept & Add Agent' })).toBeDisabled();
+  await page.getByRole('checkbox', { name: /I accept this Agent profile/ }).check();
+  await page.getByRole('button', { name: 'Accept & Add Agent' }).click();
+  await expect(page.getByRole('heading', { name: 'Agent added!' })).toBeVisible();
 });
 test('eight stages preserve mission, sources, actions, infrastructure and model', async ({
   page,

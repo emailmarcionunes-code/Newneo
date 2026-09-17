@@ -5,7 +5,7 @@ This repository is the source reference for the public website and the NEWNEO pl
 ## Project map
 
 - Root `app/`, `lib/`, `public/`: public website, positioning, SEO and presentations.
-- `ai-platform/`: app.newneo.ai platform, catalog, eight-stage Agent journey, Skills portfolio, official workspace screens, demo adapters, authentication, backend services, migrations and tests.
+- `ai-platform/`: app.newneo.ai platform, catalog, three-step Agent addition, Skills portfolio, official workspace screens, demo adapters, authentication, backend services, migrations and tests.
 - `docs/NEWNEO_PRODUCT_DESIGN_SYSTEM.md`: canonical approved Hybrid v4 rules and current product principles.
 - `docs/NEWNEO_BRAND.md`: branding reference. Current application accent is solid blue; older petroleum-blue explorations are history, not a direction to restore.
 - `docs/NEWNEO_DESKTOP_DENSITY.md`: desktop layout hierarchy and viewport use.
@@ -14,7 +14,7 @@ This repository is the source reference for the public website and the NEWNEO pl
 
 ## Current customer journey
 
-**Add Agent → Agent Catalog → Agent Introduction → Use this Agent / Customize → review the eight stages.** Catalog uses four columns at desktop widths, filters and internal scrolling. Introductions expose outcomes, core/optional capabilities, sources, actions and recommended intelligence. Request a New Agent records a separate business brief for manual review rather than creating a definition automatically.
+**Add Agent → select from the catalog → understand capabilities → accept and add.** Catalog uses four columns at desktop widths, filters and internal scrolling. Introductions expose outcomes, core/optional capabilities, sources, actions and recommended intelligence. Request a New Agent records a separate business brief for manual review rather than creating a definition automatically.
 
 Canonical architecture: **One Neo. Many Agents. Reusable Skills.** The internal stages remain Use Case, Knowledge, Tools & MCP, Infrastructure, Model, Governance, Evaluate and Deploy. Profile recommendations are editable, while permissions and activation require actual validation.
 
@@ -35,3 +35,7 @@ No production credentials, environment files, database backups, uploaded custome
 ## Consolidation provenance
 
 Platform code was reconciled against the hosted `/home/ubuntu/platform` source on 2026-09-17. Website source and product documentation include previously unpushed local changes. Migration runner registration, request migration replay safety and main-branch CI triggers were corrected during repository consolidation. No force-push or history rewrite is required.
+
+### Catalog addition update — 2026-09-17
+
+The primary Add Agent journey now has three steps: compact four-column catalog → capability details → accept and add. Confirmation persists the recommended configuration directly, with available workspace bindings. It does not navigate to the eight-stage wizard or imply deployment. Advanced configuration remains available from the Agent workspace.

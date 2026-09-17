@@ -1,0 +1,2 @@
+import {Check} from 'lucide-react';
+export default function AgentAddSteps({current,complete=false}:{current:number;complete?:boolean}){return <ol className="agentAddSteps" aria-label="Add Agent progress">{['Select an Agent','Understand its capabilities','Accept & add'].map((label,i)=><li key={label} aria-current={!complete&&i===current?'step':undefined} className={complete||i<current?'done':i===current?'current':''}><span>{complete||i<current?<Check size={14}/>:i+1}</span>{label}</li>)}</ol>}

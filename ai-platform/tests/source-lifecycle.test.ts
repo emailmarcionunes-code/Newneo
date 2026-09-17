@@ -63,7 +63,7 @@ test('lifecycle and source execution preserve scope, history, idempotency and so
  await assert.rejects(tx(0,()=>db.query("UPDATE newneo.retrieval_suites SET name='modified'")),/permission denied/);
  assert.equal((await tx(1,()=>readWorkspaceAudit(db,a,new URLSearchParams({kind:'evaluation'})))).total,2);
  const a2=await tx(0,()=>saveRegistry(db,a,author,{...input,id:agent.id,revision:1,name:'Updated agent'}));
- const restored=await tx(0,()=>changeRegistry(db,a,author,{action:'restore-version',kind:'agent',id:agent.id,revision:a2.revision,sourceVersionId:agent.versionId}));assert.equal(restored.number,3);
+ const restored=await tx(0,()=>changeRegistry(db,a,author,{action:'restore-version',kind:'agent',id:agent.id,revision:a2.revision,sourceVersionId:agent.versionId}));assert.ok('number' in restored);assert.equal(restored.number,3);
  const snapshot=await tx(0,()=>readRegistry(db,a));assert.equal((snapshot.knowledgeBindings as unknown[]).length,3);
  await assert.rejects(tx(0,()=>changeRegistry(db,a,author,{action:'archive',kind:'agent',id:agent.id,revision:1})),/changed/);
  await tx(0,()=>changeRegistry(db,a,author,{action:'archive',kind:'agent',id:agent.id,revision:3}));

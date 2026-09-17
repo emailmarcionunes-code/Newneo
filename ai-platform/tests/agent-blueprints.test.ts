@@ -26,7 +26,7 @@ test('model recommendation excludes unavailable, unapproved and incompatible mod
 });
 test('blueprint persistence preserves plans and strips claimed approval or execution',()=>{
  const payload={kind:'agent',name:'IT',configuration:{mission:'Resolve requests',skillPlan:JSON.stringify(['Search IT Knowledge']),toolPlan:JSON.stringify(['Search ITSM Records']),governancePlan:JSON.stringify(['Audit Logging']),modelProfile:JSON.stringify({reasoning:'high',approved:true}),environment:'Staging',productionApproved:true}};
- const result=registryInput(payload);const config=result.configuration as Record<string,string>;assert.equal(config.skillPlan,payload.configuration.skillPlan);assert.equal('productionApproved' in result.configuration,false);assert.equal(JSON.parse(config.modelProfile).approved,undefined);
+ const result=registryInput(payload);const config=result.configuration;assert.equal(config.skillPlan,payload.configuration.skillPlan);assert.equal('productionApproved' in result.configuration,false);assert.equal(JSON.parse(config.modelProfile!).approved,undefined);
  assert.throws(()=>registryInput({...payload,configuration:{...payload.configuration,toolPlan:'["duplicate","duplicate"]'}}));
  assert.throws(()=>registryInput({...payload,configuration:{...payload.configuration,modelProfile:'{"reasoning":"perfect"}'}}));
 });

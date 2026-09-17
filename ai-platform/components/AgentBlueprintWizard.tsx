@@ -13,7 +13,8 @@ const titles=['Review your agent’s mission','Review recommended knowledge','Re
 const planKeys=['skillPlan','knowledgePlan','toolPlan','governancePlan','evaluationPlan'] as const;
 function readPlan(raw:string|undefined,fallback:string[]){try{const p=JSON.parse(raw??'');return Array.isArray(p)&&p.every(i=>typeof i==='string')?p:fallback}catch{return fallback}}
 const defaultNames=(items:Recommendation[])=>items.filter(r=>!r.optional&&!r.highRisk).map(r=>r.name);
-export function blueprintDefaults(b:Blueprint,templateId:string){return {blueprintTemplateId:templateId,mission:b.defaultMission,targetUsers:b.defaultTargetUsers,businessOwner:b.suggestedBusinessOwner,successMetrics:b.defaultSuccessMetrics.join('\n'),criticality:b.defaultCriticality,infrastructure:b.recommendedInfrastructure,model:profileLabel(b.recommendedModelProfile),modelPreference:'Balanced',modelProfile:JSON.stringify(b.recommendedModelProfile),environment:'Staging',skillPlan:JSON.stringify(defaultNames(b.recommendedSkills)),knowledgePlan:JSON.stringify(defaultNames(b.recommendedKnowledgeTypes)),toolPlan:JSON.stringify(defaultNames(b.recommendedTools)),governancePlan:JSON.stringify(defaultNames(b.recommendedGovernancePolicies)),evaluationPlan:JSON.stringify(defaultNames(b.recommendedEvaluationSuite))}}
+import {blueprintDefaults} from '@/lib/agent-addition';
+
 export default function AgentBlueprintWizard({resource,latest,data,workspaceId,onCancel,onSaved,templateId}:RegistryEditorProps){
  const initialTemplateId=latest?.configuration.blueprintTemplateId||templateId||'custom';
  const template=getTemplate(initialTemplateId);const isCustom=initialTemplateId==='custom';
