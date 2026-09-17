@@ -74,3 +74,11 @@ No new cloud resource, model execution, external connector or spending limit is 
 - Hosted GAW verification: existing Agents and sources are visible in Workspace; a document search returned the real pilot source; authorized Operations overview still loads the original workspace data.
 - Demo Employee profile hides the Operations switch and blocks a direct Operations page. Live APIs enforce the capability independently of demo controls.
 - Source and database backups were created before publication. Migration history was reconciled for the existing request table (021), then 022 applied transactionally with checksums. The container migration command failed without a detailed error; the migration was applied through the database owner connection after comparing all historical checksums. The maintenance command still needs separate environment diagnosis.
+
+## Workspace Analytics and unified navigation
+
+Workspace and Operations are fixed sidebar groups. Only Org Admin and AI Platform Admin see Operations; FinOps is Org Admin-only, checked in the menu, page access, and analytics API. Settings and Reports remain under Operations; personal Analytics and Reports are under Workspace.
+
+`/workspace/analytics` and the Agent Analytics tab aggregate the current actor’s source searches for the last 30 days. `/finops` aggregates current-workspace usage by Agent and by member for the company administrator. These are document-retrieval counts, match rates and measured search durations, not AI task success or all-company cross-workspace metrics. Personal responses exclude other members’ activity.
+
+Costs per Agent remain unavailable: no Agent-attributed billing ledger exists yet. Existing platform cost controls remain separately authorized for platform owners. No estimated or zero costs substitute for missing billing evidence.

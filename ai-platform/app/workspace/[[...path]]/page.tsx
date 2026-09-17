@@ -15,6 +15,7 @@ export default async function Page({
       'discover',
       'work',
       'reports',
+      'analytics',
       'profile',
       'help',
     ].includes(view) ||

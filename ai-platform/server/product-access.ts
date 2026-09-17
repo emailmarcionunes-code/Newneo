@@ -19,11 +19,18 @@ export async function withOperationsIdentity<T>(
     return action(db, actor);
   });
 }
-export async function canOpenOperations() {
+export async function canOpenOperations(companyOnly = false) {
   const s = await getSession();
   if (!s) return false;
   try {
-    return await withOperationsIdentity(s, async () => true);
+    return await withOperationsIdentity(s, async (db) => {
+      if (!companyOnly) return true;
+      const access = await registryAccess(db, {
+        organizationId: s.organizationId!,
+        workspaceId: s.workspaceId!,
+      });
+      return access.role === 'Org Admin';
+    });
   } catch {
     return false;
   }

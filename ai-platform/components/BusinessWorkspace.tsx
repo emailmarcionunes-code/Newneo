@@ -9,6 +9,7 @@ import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
 import { agentTemplates } from '@/lib/catalog';
 import { demoProductRole, productCapabilities } from '@/lib/product-access';
 import './BusinessWorkspace.css';
+import WorkspaceAnalytics from './WorkspaceAnalytics';
 type Agent = {
   id: string;
   name: string;
@@ -336,17 +337,22 @@ export default function BusinessWorkspace({
               </button>
             </header>
             <nav className="businessTabs" aria-label="Agent details">
-              {['Overview', 'Capabilities', 'Sources', 'Work', 'Results'].map(
-                (t) => (
-                  <button
-                    key={t}
-                    aria-current={tab === t ? 'page' : undefined}
-                    onClick={() => setTab(t)}
-                  >
-                    {t}
-                  </button>
-                ),
-              )}
+              {[
+                'Overview',
+                'Capabilities',
+                'Sources',
+                'Work',
+                'Results',
+                'Analytics',
+              ].map((t) => (
+                <button
+                  key={t}
+                  aria-current={tab === t ? 'page' : undefined}
+                  onClick={() => setTab(t)}
+                >
+                  {t}
+                </button>
+              ))}
             </nav>
             <article className="panel businessDetail">
               {tab === 'Overview' && (
@@ -529,6 +535,9 @@ export default function BusinessWorkspace({
                     </div>
                   )}
                 </>
+              )}
+              {tab === 'Analytics' && (
+                <WorkspaceAnalytics agentId={agent.id} embedded />
               )}
               {tab === 'Results' && (
                 <>
@@ -761,6 +770,7 @@ export default function BusinessWorkspace({
           )}
         </>
       )}
+      {view === 'analytics' && <WorkspaceAnalytics />}
       {view === 'reports' && (
         <>
           <header className="pageHead">

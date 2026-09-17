@@ -6,7 +6,7 @@ import {Metrics,PageTitle,Table,Status,IconLabel} from './hybrid/UI';
 import {Tabs} from './journeys/Shared';
 import './WorkspaceRegistry.css';
 import WorkspaceOperationsHealth from './WorkspaceOperationsHealth';
-import WorkspaceCostConsole from './WorkspaceCostConsole';
+import WorkspaceAnalytics from './WorkspaceAnalytics';
 import WorkspaceRetrievalEvaluations from './WorkspaceRetrievalEvaluations';
 type Hit={id:string;title:string;excerpt:string};
 type Run={id:string;query:string;agent_name:string;number:number;created_at:string;result:Hit[];duration_ms:number};
@@ -15,7 +15,7 @@ type Data={access:{can_run:boolean};total:number;page:number;runs:Run[];checks:C
 type Registry={agents:{id:string;archived_at?:string}[];agentVersions:{id:string;agent_id:string;number:number;configuration:{name:string}}[]};
 type View='playground'|'operations'|'checks'|'costs'|'reports';
 const titles={playground:'Playground',operations:'AgentOps',checks:'Evaluations',costs:'FinOps',reports:'Reports'};
-export default function WorkspaceSourceOps({children,view}:{children:ReactNode;view:View}){const a=useAccount();if(a.mode==='demo')return <>{children}</>;if(!a.authenticated||!a.workspaceId)return <section className="surfacePage hybridPage registry"><h1>{titles[view]}</h1><Link href="/settings">Select a workspace →</Link></section>;return view==='costs'?<WorkspaceCostConsole/>:view==='checks'?<EvaluationWorkspace key={a.workspaceId} workspaceId={a.workspaceId}/>:<SourceOps key={a.workspaceId} workspaceId={a.workspaceId} view={view}/>}
+export default function WorkspaceSourceOps({children,view}:{children:ReactNode;view:View}){const a=useAccount();if(a.mode==='demo')return <>{children}</>;if(!a.authenticated||!a.workspaceId)return <section className="surfacePage hybridPage registry"><h1>{titles[view]}</h1><Link href="/settings">Select a workspace →</Link></section>;return view==='costs'?<WorkspaceAnalytics company/>:view==='checks'?<EvaluationWorkspace key={a.workspaceId} workspaceId={a.workspaceId}/>:<SourceOps key={a.workspaceId} workspaceId={a.workspaceId} view={view}/>}
 function EvaluationWorkspace({workspaceId}:{workspaceId:string}){const [tab,setTab]=useState('Source retrieval');const navigation=<Tabs names={['Source retrieval','Configuration checks']} current={tab} onChange={setTab}/>;return tab==='Source retrieval'?<WorkspaceRetrievalEvaluations workspaceId={workspaceId} navigation={navigation}/>:<SourceOps workspaceId={workspaceId} view="checks" navigation={navigation}/>}
 
 function SourceOps({workspaceId,view,navigation}:{workspaceId:string;view:View;navigation?:ReactNode}){

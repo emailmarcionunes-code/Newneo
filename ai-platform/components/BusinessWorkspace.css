@@ -431,3 +431,52 @@
     grid-row: auto;
   }
 }
+.workspaceAnalytics {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.analyticsPanels {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 18px;
+}
+.analyticsPanels > .panel {
+  min-width: 0;
+  overflow: auto;
+  max-height: 55dvh;
+}
+.analyticsTrend {
+  display: grid;
+  gap: 12px;
+}
+.analyticsTrend > div {
+  display: grid;
+  grid-template-columns: 95px minmax(60px, 1fr) 35px;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.analyticsTrend meter {
+  width: 100%;
+  accent-color: var(--primary);
+}
+@media (max-width: 900px) {
+  .analyticsPanels {
+    grid-template-columns: 1fr;
+  }
+  .analyticsPanels > .panel {
+    max-height: none;
+  }
+}
+/* Both navigation groups remain available; only the navigation area scrolls. */
+.sidebar nav[aria-label='Main navigation'] {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar .sidebarBottom {
+  flex-shrink: 0;
+}

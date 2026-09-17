@@ -34,17 +34,12 @@ export const navigation = [
   ['Audit Log', '/audit-log', 'audit'],
   ['Settings', '/settings', 'settings'],
 ] as const;
-const groups = [
-  { name: 'BUILD / MANAGE', items: navigation.slice(0, 7) },
-  { name: 'OPERATE', items: navigation.slice(7, 12) },
-  { name: 'PLATFORM', items: navigation.slice(12, 14) },
-];
-
 const workspaceNavigation = [
   ['Home', '/', 'overview'],
   ['My Agents', '/workspace/agents', 'agents'],
   ['Discover', '/workspace/discover', 'skills'],
   ['Work', '/workspace/work', 'playground'],
+  ['Analytics', '/workspace/analytics', 'reports'],
   ['Reports', '/workspace/reports', 'reports'],
 ] as const;
 
@@ -109,9 +104,26 @@ export function ApplicationSidebar({
     'operations:view',
   );
   const operations = isOperationsPath(path) && canOperate;
-  const visibleGroups = operations
-    ? groups
-    : [{ name: 'WORKSPACE', items: workspaceNavigation }];
+  const companyAdmin =
+    (account.mode === 'demo'
+      ? demoProductRole(demoRole)
+      : account.workspace?.role) === 'Org Admin';
+  const visibleGroups = [
+    { name: 'WORKSPACE', items: workspaceNavigation },
+    ...(canOperate
+      ? [
+          {
+            name: 'OPERATIONS',
+            items: [
+              ...navigation.filter(([, href]) => href !== '/finops'),
+              ...(companyAdmin
+                ? [navigation.find(([, href]) => href === '/finops')!]
+                : []),
+            ],
+          },
+        ]
+      : []),
+  ];
   return (
     <aside
       id="application-sidebar"
@@ -148,16 +160,6 @@ export function ApplicationSidebar({
         {!collapsed && 'Add Agent'}
       </Link>
       <nav aria-label="Main navigation">
-        {canOperate && operations && (
-          <NavItem
-            label={operations ? 'Workspace' : 'Operations'}
-            href={operations ? '/' : '/operations'}
-            icon={operations ? 'overview' : 'settings'}
-            compact={collapsed}
-            active={false}
-            onNavigate={onClose}
-          />
-        )}
         {visibleGroups.map((group) => (
           <section className="navGroup" key={group.name}>
             <h2>{collapsed ? '' : group.name}</h2>
@@ -176,19 +178,6 @@ export function ApplicationSidebar({
             ))}
           </section>
         ))}
-        {canOperate && !operations && (
-          <section className="navGroup">
-            <h2>{collapsed ? '' : 'ADMINISTRATION'}</h2>
-            <NavItem
-              label="Operations"
-              href="/operations"
-              icon="settings"
-              compact={collapsed}
-              active={false}
-              onNavigate={onClose}
-            />
-          </section>
-        )}
       </nav>
       <div className="sidebarBottom">
         {!operations && (
@@ -202,8 +191,8 @@ export function ApplicationSidebar({
           />
         )}
         <NavItem
-          label={operations ? 'Settings' : 'Profile'}
-          href={operations ? '/settings' : '/workspace/profile'}
+          label="Profile"
+          href="/workspace/profile"
           icon="settings"
           compact={collapsed}
           active={path.startsWith('/settings')}
@@ -368,14 +357,19 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
   const account = useAccount();
   const path = usePathname();
   const [demoRole] = usePreviewValue('demo:role', 'Administrator');
+  const effectiveRole =
+    account.mode === 'demo'
+      ? demoProductRole(demoRole)
+      : account.workspace?.role;
   const allowed =
-    !isOperationsPath(path) ||
-    hasCapability(
-      account.mode === 'demo'
-        ? demoProductRole(demoRole)
-        : account.workspace?.role,
-      'operations:view',
-    );
+    (path !== '/finops' || effectiveRole === 'Org Admin') &&
+    (!isOperationsPath(path) ||
+      hasCapability(
+        account.mode === 'demo'
+          ? demoProductRole(demoRole)
+          : account.workspace?.role,
+        'operations:view',
+      ));
   const [open, setOpen] = useState(false);
   const { collapsed, toggleCollapsed } = useSidebarState();
   useEffect(() => {

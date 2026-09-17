@@ -42,7 +42,7 @@ export default async function RootLayout({
   if (
     isOperationsPath(path) &&
     (await cookies()).get(demoCookie)?.value !== 'acme' &&
-    !(await canOpenOperations())
+    !(await canOpenOperations(path === '/finops'))
   )
     redirect('/workspace?access=operations');
   return (
