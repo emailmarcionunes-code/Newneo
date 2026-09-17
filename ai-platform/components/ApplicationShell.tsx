@@ -148,7 +148,7 @@ export function ApplicationSidebar({
         {!collapsed && 'Add Agent'}
       </Link>
       <nav aria-label="Main navigation">
-        {canOperate && (
+        {canOperate && operations && (
           <NavItem
             label={operations ? 'Workspace' : 'Operations'}
             href={operations ? '/' : '/operations'}
@@ -176,6 +176,19 @@ export function ApplicationSidebar({
             ))}
           </section>
         ))}
+        {canOperate && !operations && (
+          <section className="navGroup">
+            <h2>{collapsed ? '' : 'ADMINISTRATION'}</h2>
+            <NavItem
+              label="Operations"
+              href="/operations"
+              icon="settings"
+              compact={collapsed}
+              active={false}
+              onNavigate={onClose}
+            />
+          </section>
+        )}
       </nav>
       <div className="sidebarBottom">
         {!operations && (

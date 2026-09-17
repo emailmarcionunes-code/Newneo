@@ -4,11 +4,7 @@ import Link from 'next/link';
 import { SignOutControl } from './SignOutControl';
 import { Bot, ArrowRight, BookOpen, CheckCircle, Search } from 'lucide-react';
 import { useAccount } from './AccountContext';
-import {
-  usePreview,
-  usePreviewValue,
-  identifier,
-} from './journeys/PreviewState';
+import { usePreviewValue } from './journeys/PreviewState';
 import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
 import { agentTemplates } from '@/lib/catalog';
 import { demoProductRole, productCapabilities } from '@/lib/product-access';
@@ -17,6 +13,7 @@ type Agent = {
   id: string;
   name: string;
   purpose: string;
+  templateId?: string;
   capabilities: string[];
   sources: { id: string; title: string }[];
   versionId: string | null;
@@ -46,8 +43,7 @@ export default function BusinessWorkspace({
 }) {
   const account = useAccount(),
     demo = account.mode === 'demo',
-    previewAgents = useWorkspaceAgents(),
-    { update } = usePreview();
+    previewAgents = useWorkspaceAgents();
   const [role] = usePreviewValue('demo:role', 'Administrator');
   const [data, setData] = useState<Data>(),
     [error, setError] = useState(''),
@@ -58,8 +54,6 @@ export default function BusinessWorkspace({
     [tab, setTab] = useState('Overview'),
     [result, setResult] = useState<Work>(),
     [stage, setStage] = useState(1),
-    [accepted, setAccepted] = useState(false),
-    [name, setName] = useState(''),
     [saved, setSaved] = useState('');
   const [brief, setBrief] = useState('');
   async function load() {
@@ -84,6 +78,7 @@ export default function BusinessWorkspace({
       const t = agentTemplates.find((t) => t.id === a.id);
       return {
         id: a.id,
+        templateId: t?.id,
         name: a.name,
         purpose: t?.defaultMission ?? 'Your AI specialist for business tasks.',
         capabilities:
@@ -127,15 +122,14 @@ export default function BusinessWorkspace({
       setBusy(false);
     }
   }
-  const request = (outcome: string) =>
+  const request = (outcome: string, complete = false) =>
     action(async () => {
       if (demo) {
-        setMessage(
-          'Demo request recorded for this preview. No request was sent.',
-        );
+        setMessage('Demo preview only. No request was sent to Operations.');
+        if (complete) setSaved('demo');
         return;
       }
-      await post({
+      const submitted = await post({
         action: 'request',
         brief: {
           outcome,
@@ -147,8 +141,9 @@ export default function BusinessWorkspace({
         },
       });
       setMessage(
-        'Request submitted for review. Your administrator must review it before anything changes.',
+        'Request sent to Operations. The team will review your needs and prepare the approved sources, connections and capabilities before the Agent is ready.',
       );
+      if (complete) setSaved(submitted.id || 'submitted');
       setBrief('');
       await load();
     });
@@ -215,9 +210,22 @@ export default function BusinessWorkspace({
         )}
       </section>
     );
+  const profile = agentTemplates.find((t) => t.id === agent?.templateId);
+  const capabilities = Array.from(
+    new Set([
+      ...(agent?.capabilities ?? []),
+      ...(profile
+        ? [...profile.recommendedSkills, ...profile.recommendedTools].map(
+            (s) => s.name,
+          )
+        : []),
+    ]),
+  );
   const own = agent ? d.work.filter((w) => w.agent_id === agent.id) : d.work;
   return (
-    <section className="businessWorkspace">
+    <section
+      className={`businessWorkspace ${view === 'home' ? 'businessHome' : ''}`}
+    >
       {error && (
         <p className="businessNotice" role="alert">
           {error}
@@ -262,7 +270,7 @@ export default function BusinessWorkspace({
                 <Link href="/workspace/agents">View all →</Link>
               </div>
               {d.agents.length ? (
-                cards(d.agents.slice(0, 4))
+                cards(d.agents)
               ) : (
                 <p>Start in Discover to choose a specialist for your team.</p>
               )}
@@ -323,7 +331,8 @@ export default function BusinessWorkspace({
                 <p>{agent.purpose}</p>
               </div>
               <button className="button primary" onClick={() => setTab('Work')}>
-                Use Agent <ArrowRight size={16} />
+                {agent.canSearch ? 'Search documents' : 'Request setup'}{' '}
+                <ArrowRight size={16} />
               </button>
             </header>
             <nav className="businessTabs" aria-label="Agent details">
@@ -346,7 +355,7 @@ export default function BusinessWorkspace({
                   <p>{agent.purpose}</p>
                   <div className="businessSummary">
                     <div>
-                      <strong>{agent.capabilities.length}</strong>
+                      <strong>{capabilities.length}</strong>
                       <span>Planned capabilities</span>
                     </div>
                     <div>
@@ -403,9 +412,9 @@ export default function BusinessWorkspace({
                     These capabilities describe the Agent’s intended work.
                     Availability depends on your team’s setup and approval.
                   </p>
-                  {agent.capabilities.length ? (
+                  {capabilities.length ? (
                     <ul className="businessFeatures">
-                      {agent.capabilities.map((c, i) => (
+                      {capabilities.map((c, i) => (
                         <li key={i}>
                           <CheckCircle size={16} />
                           {c}
@@ -589,22 +598,29 @@ export default function BusinessWorkspace({
               <li aria-current={stage === 1 ? 'step' : undefined}>
                 Understand
               </li>
-              <li aria-current={stage === 2 ? 'step' : undefined}>
-                Accept & add
-              </li>
+              <li aria-current={stage === 2 ? 'step' : undefined}>Request</li>
             </ol>
             {saved ? (
               <article className="panel">
-                <h1>Agent added</h1>
+                <span className="businessIcon">
+                  <CheckCircle size={24} />
+                </span>
+                <h1>
+                  {demo ? 'Request preview' : 'Request sent to Operations'}
+                </h1>
                 <p>
-                  {name || template.name} is in your workspace. Your
-                  administrator can complete its setup before use.
+                  {template.name}:{' '}
+                  {demo
+                    ? 'This is a demo; nothing was submitted.'
+                    : 'Your request is awaiting review by the Operations team.'}
                 </p>
-                <Link
-                  className="button primary"
-                  href={`/workspace/agents/${saved}`}
-                >
-                  Open Agent
+                <p>
+                  The team reviews your needs, connects approved documents and
+                  services, and prepares the Agent’s capabilities. Setup and
+                  activation happen after review.
+                </p>
+                <Link className="button primary" href="/workspace/work">
+                  View your requests →
                 </Link>
               </article>
             ) : (
@@ -621,14 +637,26 @@ export default function BusinessWorkspace({
                       <h2>What it helps you do</h2>
                       <p>{template.defaultMission}</p>
                       <ul className="businessFeatures">
-                        {template.recommendedSkills
-                          .filter((s) => !s.optional)
-                          .map((s) => (
-                            <li key={s.id}>
-                              <CheckCircle size={16} />
+                        {Array.from(
+                          new Map(
+                            [
+                              ...template.recommendedSkills,
+                              ...template.recommendedTools,
+                            ].map((s) => [s.name, s]),
+                          ).values(),
+                        ).map((s) => (
+                          <li key={s.id}>
+                            <CheckCircle size={16} />
+                            <span>
                               {s.name}
-                            </li>
-                          ))}
+                              {s.highRisk && (
+                                <small className="businessApproval">
+                                  Approval required
+                                </small>
+                              )}
+                            </span>
+                          </li>
+                        ))}
                       </ul>
                     </article>
                     <article className="panel">
@@ -642,40 +670,44 @@ export default function BusinessWorkspace({
                       </ul>
                     </article>
                     <article className="panel">
-                      <h2>Before you start</h2>
+                      <h2>Prepared by Operations</h2>
                       <p>
-                        Your administrator connects the approved sources and
-                        services, reviews permissions and confirms the Agent is
-                        ready.
+                        Your request goes to the Operations team. They review
+                        your needs, connect approved documents and services,
+                        configure capabilities and permissions, and validate
+                        readiness.
                       </p>
-                      <p>Adding an Agent does not automatically start tasks.</p>
+                      <p>
+                        These are available profile capabilities, not active
+                        connections. Operations confirms what can be enabled for
+                        your team.
+                      </p>
                       <button
                         className="button primary"
                         onClick={() => setStage(2)}
                       >
-                        Continue →
+                        Request this Agent →
                       </button>
                     </article>
                   </div>
                 ) : (
                   <article className="panel businessConfirm">
-                    <h2>Add this specialist</h2>
+                    <h2>What do you need help with?</h2>
+                    <p>
+                      Request {template.name}. Operations will prepare the Agent
+                      for your team; you do not need to configure it here.
+                    </p>
                     <label>
-                      Agent name
-                      <input
-                        maxLength={120}
-                        value={name || template.name}
-                        onChange={(e) => setName(e.target.value)}
+                      Your needs{' '}
+                      <small>
+                        Optional — tasks, documents or systems your team uses
+                      </small>
+                      <textarea
+                        maxLength={1500}
+                        value={brief}
+                        onChange={(e) => setBrief(e.target.value)}
+                        placeholder="Describe the work you want this Agent to handle…"
                       />
-                    </label>
-                    <label className="businessAccept">
-                      <input
-                        type="checkbox"
-                        checked={accepted}
-                        onChange={(e) => setAccepted(e.target.checked)}
-                      />
-                      I have reviewed this Agent’s purpose and want it in my
-                      workspace.
                     </label>
                     <div className="businessActions">
                       <button
@@ -686,58 +718,15 @@ export default function BusinessWorkspace({
                       </button>
                       <button
                         className="button primary"
-                        disabled={busy || !accepted}
+                        disabled={busy}
                         onClick={() =>
-                          d.capabilities.includes('agents:configure')
-                            ? action(async () => {
-                                if (demo) {
-                                  const newId = `preview-${identifier()}`;
-                                  update((s) => ({
-                                    ...s,
-                                    ui: {
-                                      ...s.ui,
-                                      'workspace:agents': [
-                                        ...(Array.isArray(
-                                          s.ui?.['workspace:agents'],
-                                        )
-                                          ? s.ui['workspace:agents']
-                                          : []),
-                                        {
-                                          id: newId,
-                                          name: name || template.name,
-                                          model: 'Not selected',
-                                          status: 'Staging',
-                                          tasks: '—',
-                                          success: '—',
-                                          latency: '—',
-                                          cost: 0,
-                                          budget: 100,
-                                          score: 0,
-                                        },
-                                      ],
-                                    },
-                                  }));
-                                  setSaved(newId);
-                                } else {
-                                  const r = await post({
-                                    action: 'add',
-                                    templateId: template.id,
-                                    name: name || template.name,
-                                    accepted,
-                                  });
-                                  setSaved(r.id);
-                                }
-                              })
-                            : request(
-                                `Please add ${name || template.name} from Discover (${template.id}). ${template.defaultMission}`,
-                              )
+                          request(
+                            `Agent request: ${template.name} (${template.id}). ${brief.trim() || template.defaultMission}`,
+                            true,
+                          )
                         }
                       >
-                        {busy
-                          ? 'Saving…'
-                          : d.capabilities.includes('agents:configure')
-                            ? 'Accept & Add Agent'
-                            : 'Request this Agent'}
+                        {busy ? 'Sending…' : 'Send to Operations'}
                       </button>
                     </div>
                   </article>

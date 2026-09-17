@@ -12,7 +12,7 @@ Membership roles already separated authors, operators, reviewers and readers. Th
 
 ## Information architecture
 
-Workspace is the landing experience at `/` (also `/workspace`). Its navigation is Home, My Agents, Discover, Work, Reports, Help and Profile. Agent pages expose Overview, Capabilities, Sources, Work and Results. Discover presents business-purpose profiles and the three-step Select → Understand → Accept & add journey. Members without author permission submit a request instead of creating configuration.
+Workspace is the landing experience at `/` (also `/workspace`). Its navigation is Home, My Agents, Discover, Work, Reports, Help and Profile. Agent pages expose Overview, Capabilities, Sources, Work and Results. Discover presents business-purpose profiles and the three-step Select → Understand → Request journey. All Workspace members submit a request to Operations; direct configuration creation stays in Operations.
 
 Operations retains the existing modules and their URLs. `/operations` contains the prior operational overview. The existing `/agents`, `/skills`, `/knowledge`, `/tools`, `/models`, `/governance`, `/evaluations`, `/deployments`, `/agentops`, `/finops`, `/reports`, `/playground`, `/audit-log` and `/settings` remain technical routes. This avoids breaking existing references and duplicating modules. The shell identifies the environment from the route; authorized users can switch between environments.
 
@@ -36,23 +36,23 @@ Capabilities are centralized in `lib/product-access.ts`. Product personas do not
 | --- | --- | --- | --- | --- | --- |
 | Read Only (employee mapping) | Yes | No | No | No | Access / Agent requests only |
 | Business Owner (department-owner mapping) | Yes | No | No | No | Pending review request |
-| Operator | Yes | Yes | No | Yes | Access / Agent requests |
-| Reviewer / Approver | Yes | Yes | No | Yes | Existing configuration review permissions |
-| AI Engineer | Yes | Yes | Yes | Yes | Yes |
+| Operator | Yes | No | No | Yes | Access / Agent requests |
+| Reviewer / Approver | Yes | No | No | Yes | Existing configuration review permissions |
+| AI Engineer | Yes | No | No | Yes | Yes |
 | AI Platform Admin | Yes | Yes | Yes | Yes | Yes |
 | Org Admin | Yes | Yes | Yes | Yes | Yes |
 
 Member administration remains Org Admin-only in the existing database policy. Platform ownership remains a separate privileged DB authorization; being Org Admin does not confer platform-owner access. Unknown roles fail closed. Demo Employee and Department Owner profiles are visual previews, never live authorization.
 
-Technical pages are gated at the server entry and in the client shell. Technical workspace API handlers use the verified identity + membership capability gate independently. Existing SQL RLS and write permissions still apply. The business API uses verified session scope, same-origin writes and workspace consistency checks. Its add action reuses the existing `agentAddition` and `saveRegistry` operations; no second Agent table exists. The business projection excludes model, infrastructure, prompts and raw tool configuration. Work and requests are filtered by the current actor as well as workspace and organization.
+Technical pages are gated at the server entry and in the client shell. Technical workspace API handlers use the verified identity + membership capability gate independently. Existing SQL RLS and write permissions still apply. The business API uses verified session scope, same-origin writes and workspace consistency checks. The business API accepts requests and source searches, not direct Agent creation; no second Agent table exists. The business projection excludes model, infrastructure, prompts and raw tool configuration. Work and requests are filtered by the current actor as well as workspace and organization.
 
 Migration 022 allows verified active members to insert a pending request. It does not grant Agent editing, search execution, approval, deployment, or permission changes. Administrators can see requests through the existing Operations Agent request screen at `/agents/request`.
 
 ## What works now
 
 - Workspace home, Agent directory, Discover, shared-ID Agent profile, personal Work, Reports, Help and Profile.
-- Existing author roles add catalog Agents through a business-facing confirmation.
-- Other members request an Agent or access. Department Owners submit a bounded business adjustment for review.
+- All Workspace catalog selections enter the existing Operations request queue. Operations is restricted to Org Admin and AI Platform Admin and appears below Workspace navigation.
+- Members request an Agent or access. Department Owners submit a bounded business adjustment for review.
 - Authorized roles search already-connected documents and inspect source passages. Search history is personal in Workspace, workspace-wide in authorized Operations.
 - Existing technical modules remain available with their established permissions and design language.
 

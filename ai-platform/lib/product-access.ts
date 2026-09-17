@@ -19,20 +19,16 @@ const grants: Record<string, readonly ProductCapability[]> = {
     'business:propose',
     'work:search',
   ],
-  'AI Engineer': [
-    'operations:view',
-    'agents:configure',
-    'business:propose',
-    'work:search',
-  ],
-  Operator: ['operations:view', 'work:search'],
-  'Reviewer / Approver': ['operations:view', 'work:search'],
+  'AI Engineer': ['agents:configure', 'business:propose', 'work:search'],
+  Operator: ['work:search'],
+  'Reviewer / Approver': ['work:search'],
   'Business Owner': ['business:propose'],
   'Read Only': [],
 };
 export const productCapabilities = (
   role?: string,
-): readonly ProductCapability[] => grants[role ?? ''] ?? [];
+): readonly ProductCapability[] =>
+  role && Object.hasOwn(grants, role) ? grants[role] : [];
 export const hasCapability = (
   role: string | undefined,
   cap: ProductCapability,

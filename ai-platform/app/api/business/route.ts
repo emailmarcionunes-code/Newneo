@@ -1,10 +1,7 @@
 import { getSession, sameOrigin } from '@/server/auth';
 import { withVerifiedIdentity } from '@/server/database';
 import { RegistryError } from '@/server/registry';
-import {
-  readBusinessWorkspace,
-  addBusinessAgent,
-} from '@/server/business-workspace';
+import { readBusinessWorkspace } from '@/server/business-workspace';
 import { runSourceQuery } from '@/server/source-runs';
 import { saveAgentRequest } from '@/server/agent-requests';
 import { readJson, noStore } from '@/server/http';
@@ -35,8 +32,6 @@ async function handle(request: Request, write = false) {
       if (!write) return readBusinessWorkspace(db, scope, actor);
       if (body?.action === 'search')
         return runSourceQuery(db, scope, actor, body);
-      if (body?.action === 'add')
-        return addBusinessAgent(db, scope, actor, body);
       if (body?.action === 'request')
         return saveAgentRequest(db, scope, actor, body.brief);
       throw new RegistryError(400, 'Unknown action.');

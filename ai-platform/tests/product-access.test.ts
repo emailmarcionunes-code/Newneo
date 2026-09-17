@@ -8,15 +8,18 @@ import {
 } from '../lib/product-access';
 import { businessAgent } from '../server/business-workspace';
 test('Workspace and Operations roles are distinct and unknown roles fail closed', () => {
-  for (const role of ['Read Only', 'Business Owner', 'Unknown', undefined])
-    assert.equal(hasCapability(role, 'operations:view'), false);
   for (const role of [
-    'Org Admin',
-    'AI Platform Admin',
+    'Read Only',
+    'Business Owner',
+    'Unknown',
     'AI Engineer',
     'Operator',
     'Reviewer / Approver',
+    'constructor',
+    undefined,
   ])
+    assert.equal(hasCapability(role, 'operations:view'), false);
+  for (const role of ['Org Admin', 'AI Platform Admin'])
     assert.equal(hasCapability(role, 'operations:view'), true);
   assert.equal(hasCapability('Business Owner', 'business:propose'), true);
   assert.equal(hasCapability('Business Owner', 'agents:configure'), false);
