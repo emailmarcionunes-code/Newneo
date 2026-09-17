@@ -1,7 +1,7 @@
 name: AI Platform
 on:
   push:
-    branches: [newneo-ai-platform-v1]
+    branches: [main, newneo-ai-platform-v1]
     paths: ['ai-platform/**', '.github/workflows/ai-platform.yml']
   pull_request:
     paths: ['ai-platform/**', '.github/workflows/ai-platform.yml']

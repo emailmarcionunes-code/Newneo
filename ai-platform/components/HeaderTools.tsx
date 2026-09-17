@@ -2,6 +2,7 @@
 import { usePreview, usePreviewValue } from './journeys/PreviewState';
 import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
 import { previewSourceRows } from '@/lib/source-preview';
+import {useAccount} from './AccountContext';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Bell, Search, HelpCircle, CheckCheck } from 'lucide-react';
@@ -44,12 +45,14 @@ const sampleNotices = [
   ],
 ];
 export function HeaderSearch() {
+  const account=useAccount();
   const hybridAgents = useWorkspaceAgents();
   const { state } = usePreview();
   const sourceRows = previewSourceRows(state.ui);
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const records = [
+    ...(account.mode==='demo' ? [
     ...hybridAgents.map((a) => [a.name, 'Agent', `/agents/${a.id}`]),
     ...sourceRows.map((s) => [s[1], 'Knowledge', `/knowledge/${s[0]}`]),
     ...(state.ui?.['demo:dataset'] === 'empty' ? [] : actionRows).map((a) => [
@@ -57,14 +60,16 @@ export function HeaderSearch() {
       'Tool',
       `/tools/${a[0]}`,
     ]),
+    ] : []),
     ...[
+      'Agents','Skills','Knowledge','Audit Log',
       'Settings',
       'Reports',
       'Playground',
       'Governance',
       'Evaluations',
       'Deployments',
-    ].map((n) => [n, 'Workspace', `/${n.toLowerCase()}`]),
+    ].map((n) => [n, 'Workspace', `/${n.toLowerCase().replaceAll(' ','-')}`]),
   ];
   const matches = records
     .filter((r) => r.join(' ').toLowerCase().includes(query.toLowerCase()))
@@ -114,8 +119,9 @@ export function HeaderSearch() {
   );
 }
 export function HeaderNotifications() {
+  const account=useAccount();
   const { state } = usePreview();
-  const notices = state.ui?.['demo:dataset'] === 'empty' ? [] : sampleNotices;
+  const notices = account.mode!=='demo'||state.ui?.['demo:dataset'] === 'empty' ? [] : sampleNotices;
   const [read, setRead] = usePreviewValue('demo:notifications-read', false);
   return (
     <details
@@ -145,10 +151,10 @@ export function HeaderNotifications() {
           </button>
         </div>
         <p className="hybridDataNote">
-          {read || !notices.length
+          {account.mode!=='demo'?'Live notifications are not connected.':read || !notices.length
             ? 'All caught up'
             : `${notices.length} unread`}{' '}
-          · Reference workspace
+          {account.mode==='demo'?'· Reference workspace':''}
         </p>
         {notices.map(([kind, title, body, time, url]) => (
           <Link href={url} key={kind}>

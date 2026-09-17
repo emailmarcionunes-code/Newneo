@@ -85,3 +85,14 @@ export async function closeDatabase() {
   await pool?.end();
   pool = undefined;
 }
+
+/** Health probe checks connectivity only; never reads tenant data. */
+let healthPool: Pool | undefined;
+let lastProbe: {at:number;result:Promise<boolean>} | undefined;
+export function databaseAvailable():Promise<boolean>{
+ if(!process.env.DATABASE_URL)return Promise.resolve(false);
+ if(lastProbe&&Date.now()-lastProbe.at<5000)return lastProbe.result;
+ healthPool??=new Pool({connectionString:process.env.DATABASE_URL,max:1,connectionTimeoutMillis:2000,idleTimeoutMillis:10000,statement_timeout:3000,query_timeout:4000}).on('error',()=>{lastProbe=undefined});
+ const result=healthPool.query('SELECT 1').then(()=>true,()=>false);
+ lastProbe={at:Date.now(),result};return result;
+}

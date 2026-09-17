@@ -4,7 +4,7 @@ async function next(page: import('@playwright/test').Page) {
   await page
     .locator('.wizardActions')
     .getByRole('button', {
-      name: /Continue to/,
+      name: /Confirm & Continue/,
     })
     .click();
 }

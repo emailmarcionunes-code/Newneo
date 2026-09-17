@@ -212,7 +212,7 @@ export function GettingStarted() {
       </ol>
       {can('create') ? (
         <Link className="button primary" href="/agents/catalog">
-          Create your first agent →
+          Add your first Agent →
         </Link>
       ) : (
         <p>

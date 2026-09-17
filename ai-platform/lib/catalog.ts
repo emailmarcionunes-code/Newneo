@@ -1,6 +1,7 @@
+import {buildBlueprint,type Blueprint} from './agent-blueprints';
 import type { AgentType } from '../components/Assets';
 
-export type AgentTemplate = {
+type TemplateMetadata = {
   id: string;
   type: AgentType;
   name: string;
@@ -23,7 +24,8 @@ export const catalogFilters = [
   'Operations',
   'Marketing',
 ];
-export const agentTemplates: AgentTemplate[] = [
+export type AgentTemplate = TemplateMetadata & Blueprint;
+const templateMetadata: TemplateMetadata[] = [
   {
     id: 'customer-service',
     type: 'service',
@@ -223,7 +225,7 @@ const broaderCatalog: [string, AgentType, string, string, string, string][] = [
     'Medium',
   ],
 ];
-agentTemplates.push(
+templateMetadata.push(
   ...broaderCatalog.map(
     ([id, type, name, category, objective, complexity]) => ({
       id,
@@ -240,7 +242,8 @@ agentTemplates.push(
     }),
   ),
 );
-export const customTemplate: AgentTemplate = {
+export const agentTemplates: AgentTemplate[] = templateMetadata.map(t=>({...t,...buildBlueprint(t)}));
+const customMetadata: TemplateMetadata = {
   id: 'custom',
   type: 'automation',
   name: 'Custom Agent',
@@ -251,6 +254,7 @@ export const customTemplate: AgentTemplate = {
   tags: [],
   outcomes: [],
 };
+export const customTemplate: AgentTemplate = {...customMetadata,...buildBlueprint(customMetadata)};
 export function getTemplate(id?: string | null) {
   return id === 'custom'
     ? customTemplate

@@ -535,3 +535,18 @@ Implementation verification: production build passed; eight launch browser tests
 ## Skill lifecycle milestone
 
 [ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill has a complete five-stage interactive demo builder on `/skills/new`. Live persistence, execution and evidence are future prerequisites.
+
+## Template-guided agent creation (2026-09-17)
+
+Templates are production blueprints, not empty forms. NEWNEO recommends; customers confirm. Opinionated by default, flexible when needed. The shortest path to a safe production agent is the default path; customization is an option, not a requirement.
+
+Keep the approved eight stages and Hybrid v4 design. Prepopulate business context, intended skills/sources/tools, infrastructure preference, provider-neutral model requirements, governance requirements, evaluation scenarios and deployment path. Distinguish Recommended, Customized, available bindings, and pending connections. Blueprint progress is not production readiness. Never label a planned policy enforced, an unapproved model approved, or an unrun evaluation passed. High-risk actions stay unselected until their approval requirements are satisfied. Fast confirmation cannot skip production gates.
+
+## Curated Agent portfolio — canonical customer journey (2026-09-17)
+NEWNEO builds Agents. Customers add and operate them. NEWNEO is not a DIY Agent factory for customers: it delivers a curated portfolio of enterprise Agents and owns its reusable intelligence. Customers select, contextualize and activate Agents. NEWNEO turns implementation experience into reusable product.
+
+Primary entry is **+ Add Agent → Agent Catalog → Agent Introduction → Use this Agent / Customize**. Introductions expose business outcomes, core/optional Skills, expected systems and recommendations before review. Preserve the canonical eight stages internally; customer copy emphasizes Select → Connect → Confirm → Activate. Preserve Hybrid v4 and One Neo. Many Agents. Reusable Skills.
+
+Global Skill Library entries are linked when available; unresolved profile capabilities must show binding required, never masquerade as installed Skills. Governance defaults are blueprint requirements until enforcement is verified. Maturity cannot claim measured readiness without evaluation evidence. Activation and live success language require actual execution/deployment evidence.
+
+Replace arbitrary customer custom creation with Request a New Agent. Store a separate workspace-scoped business brief for product review; do not create Agent definitions on submission. Review considers existing Agent fit, additional Skills, or a new portfolio profile. Internal template/Skill/version authoring remains a product responsibility.

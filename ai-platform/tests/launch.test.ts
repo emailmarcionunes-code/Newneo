@@ -13,7 +13,9 @@ test('every catalog launch retains its template and business defaults', () => {
     const draft = createDraft(template.id);
     assert.equal(draft.templateId, template.id);
     assert.equal(draft.name, template.name);
-    assert.equal(draft.description, template.objective);
+    assert.equal(draft.description, template.defaultMission);
+    assert.equal(draft.businessOwner, template.suggestedBusinessOwner);
+    assert.equal(draft.criticality, template.defaultCriticality);
   }
   assert.equal(createDraft('custom').description, '');
   assert.equal(getTemplate('unknown').id, 'customer-service');

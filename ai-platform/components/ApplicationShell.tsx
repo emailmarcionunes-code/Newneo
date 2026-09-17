@@ -8,6 +8,7 @@ import { HeaderSearch, HeaderNotifications, HelpIcon } from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
 import { DemoControls, DemoBoundary } from './journeys/DemoExperience';
 import { usePreviewValue } from './journeys/PreviewState';
+import { useAccount } from './AccountContext';
 import { useSidebarState } from './SidebarState';
 
 export const navigation = [
@@ -76,7 +77,9 @@ export function ApplicationSidebar({
   onClose: () => void;
   onToggleCollapsed: () => void;
 }) {
-  const [org] = usePreviewValue('settings:org', 'Acme Corp');
+  const [previewOrg] = usePreviewValue('settings:org', 'Acme Corp');
+  const account = useAccount();
+  const org = account.mode === 'demo' ? 'Acme Corp' : account.authenticated ? (account.workspace?.organization_name ?? 'Select workspace') : previewOrg;
   const [demoRole] = usePreviewValue('demo:role', 'Administrator');
   const path = usePathname();
   return (
@@ -108,11 +111,11 @@ export function ApplicationSidebar({
       <Link
         href="/agents/catalog"
         className="sidebarCreate"
-        aria-label="Create Agent"
-        data-tooltip={collapsed ? 'Create Agent' : undefined}
+        aria-label="Add Agent"
+        data-tooltip={collapsed ? 'Add Agent' : undefined}
       >
         <span aria-hidden="true">＋</span>
-        {!collapsed && 'Create Agent'}
+        {!collapsed && 'Add Agent'}
       </Link>
       <nav aria-label="Main navigation">
         {groups.map((group) => (
@@ -153,7 +156,7 @@ export function ApplicationSidebar({
         }
       >
         <summary title={collapsed ? org : undefined}>
-          <span className="organizationAvatar">AC</span>
+          <span className="organizationAvatar">{account.authenticated ? org.slice(0,2).toUpperCase() : 'AC'}</span>
           {!collapsed && <span>{org}</span>}
         </summary>
         <div className="workspacePopover">
@@ -195,13 +198,15 @@ export function Topbar({
 }) {
   const path = usePathname();
   const title = path.includes('/agents/launch')
-    ? 'Create Agent'
+    ? 'Add Agent'
     : (navigation.find(([, href]) =>
         href === '/'
           ? path === '/'
           : path === href || path.startsWith(href + '/'),
       )?.[0] ?? (path === '/models' ? 'Model endpoints' : 'Workspace'));
-  const [org] = usePreviewValue('settings:org', 'Acme Corp');
+  const [previewOrg] = usePreviewValue('settings:org', 'Acme Corp');
+  const account = useAccount();
+  const org = account.mode === 'demo' ? 'Acme Corp' : account.authenticated ? (account.workspace?.organization_name ?? 'Select workspace') : previewOrg;
   const [demoRole] = usePreviewValue('demo:role', 'Administrator');
   return (
     <header className="topbar" role="banner">
@@ -222,7 +227,7 @@ export function Topbar({
       </div>
       <HeaderSearch />
       <div className="topActions">
-        <DemoControls />
+        {account.mode === 'demo' && <DemoControls />}
         <HeaderNotifications />
         <details className="topbarMenu">
           <summary aria-label="Help">
@@ -238,20 +243,20 @@ export function Topbar({
         </details>
         <details className="topbarMenu profileMenu">
           <summary>
-            <span className="avatar">AM</span>
+            <span className="avatar">{account.authenticated ? 'AD' : 'AM'}</span>
             <span className="userContext">
-              <strong>Ana Martinez</strong>
+              <strong>{account.authenticated ? account.displayName : 'Ana Martinez'}</strong>
               <small>{org}</small>
             </span>
           </summary>
           <div className="topbarPopover">
-            <strong>Ana Martinez</strong>
-            <p>Demo workspace · {demoRole}</p>
+            <strong>{account.authenticated ? account.displayName : 'Ana Martinez'}</strong>
+            <p>{account.authenticated ? account.workspace?.name : `Demo workspace · ${demoRole}`}</p>
             <Link href="/settings#team">Team & Roles</Link>
             <p>
               <Link href="/settings">Workspace settings</Link>
             </p>
-            <Link href="/login">Sign out of preview</Link>
+            <Link href={account.authenticated ? '/settings' : '/login'}>{account.authenticated ? 'Manage account' : 'Sign out of preview'}</Link>
           </div>
         </details>
       </div>
@@ -260,6 +265,7 @@ export function Topbar({
 }
 
 export function ApplicationShell({ children }: { children: ReactNode }) {
+  const account = useAccount();
   const [open, setOpen] = useState(false);
   const { collapsed, toggleCollapsed } = useSidebarState();
   useEffect(() => {
@@ -292,6 +298,8 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
     };
   }, [open]);
 
+  if (account.mode !== 'demo' && !account.authenticated) return <main style={{maxWidth:640,margin:'12vh auto',padding:24}}><NewneoWordmark/><h1>{account.error?'Workspace unavailable':'Sign in to your workspace'}</h1><p role="alert">{account.error??'Your session is no longer active. Sign in to continue.'}</p><a href="/login">Open NEWNEO login →</a>{account.error&&<button onClick={()=>window.dispatchEvent(new Event('newneo-account-changed'))}>Retry</button>}</main>;
+
   const shellStyle = {
     '--sidebar-width': collapsed ? '60px' : '224px',
   } as CSSProperties;
@@ -318,7 +326,7 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
       <section className="mainArea">
         <Topbar open={open} onToggle={() => setOpen(!open)} />
         <main id="main-content" className="content">
-          <DemoBoundary>{children}</DemoBoundary>
+          <DemoBoundary>{account.mode === 'demo' && <div role="note" className="intelligenceNote">Demo · Acme Corp / Ana Martinez · Sample data only. No live actions. <a href="/login">Exit demo →</a></div>}{children}</DemoBoundary>
         </main>
       </section>
     </div>

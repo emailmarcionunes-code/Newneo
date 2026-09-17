@@ -30,6 +30,19 @@ services:
       OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+    volumes:
+      - /home/ubuntu/operations:/run/newneo-operations:ro
+    healthcheck:
+      test: ['CMD', 'node', '-e', 'fetch("http://127.0.0.1:3000/api/health",{signal:AbortSignal.timeout(7000)}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))']
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
     mem_limit: 768m
   proxy:
     image: caddy:2
@@ -41,6 +54,7 @@ services:
       PUBLIC_HOST: ${PUBLIC_HOST:?Set the public DNS hostname}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv/site:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
@@ -54,6 +68,7 @@ services:
     environment:
       MIGRATION_DATABASE_URL: ${MIGRATION_DATABASE_URL:-}
       APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD:-}
+      NOTIFIER_DATABASE_PASSWORD: ${NOTIFIER_DATABASE_PASSWORD:-}
       OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
       BOOTSTRAP_SUBJECT: ${BOOTSTRAP_SUBJECT:-}
       BOOTSTRAP_ORGANIZATION: ${BOOTSTRAP_ORGANIZATION:-}
@@ -62,6 +77,28 @@ services:
     depends_on:
       database:
         condition: service_healthy
+  cost-notifier:
+    profiles: ['cost-alerts']
+    build:
+      context: .
+      target: tooling
+    command: ['node', '--import', 'tsx', 'scripts/cost-notifier.ts']
+    user: node
+    read_only: true
+    security_opt: ['no-new-privileges:true']
+    cap_drop: ['ALL']
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      COST_NOTIFIER_DATABASE_URL: ${COST_NOTIFIER_DATABASE_URL:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      COST_ALERT_TOPIC_ARN: ${COST_ALERT_TOPIC_ARN:-}
+      AWS_ACCESS_KEY_ID: ${COST_NOTIFIER_AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${COST_NOTIFIER_AWS_SECRET_ACCESS_KEY:-}
+      AWS_SESSION_TOKEN: ${COST_NOTIFIER_AWS_SESSION_TOKEN:-}
+    mem_limit: 192m
 volumes:
   database:
   caddy_data:

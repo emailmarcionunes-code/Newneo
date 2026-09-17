@@ -75,7 +75,7 @@
   color: #dc2626;
 }
 .overviewFidelity .blue {
-  color: #2563eb;
+  color: #1955a6;
 }
 .overviewFidelity .warning {
   color: #b45309;
@@ -122,7 +122,7 @@
   flex-shrink: 0;
 }
 .overviewReferencePanels header > a {
-  color: #2563eb;
+  color: #1955a6;
   font-size: 12px;
 }
 .overviewAgentList,
@@ -248,20 +248,20 @@
 }
 .overviewSummaryPanels > section > a {
   font-size: 12px;
-  color: #2563eb;
+  color: #1955a6;
 }
 .overviewSummaryPanels .overviewInsight {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: #eff4fb;
+  border: 1px solid #bed1ed;
   border-radius: 12px;
   padding: 16px 14px;
-  color: #1d4ed8;
+  color: #124381;
 }
 .overviewInsight > span {
-  background: #2563eb;
+  background: #1955a6;
   color: white;
   font-weight: 600;
   border-radius: 7px;
@@ -456,7 +456,7 @@ body .shellBreadcrumb {
 }
 .environmentSummaryGrid header > span {
   font-size: 11px;
-  color: #2563eb;
+  color: #1955a6;
 }
 .environmentHealth {
   display: flex;
@@ -754,19 +754,19 @@ body .shellBreadcrumb {
   background: #d97706;
 }
 .hybridTimeline [data-tone='blue']:before {
-  background: #2563eb;
+  background: #1955a6;
 }
 .policyModes label {
   position: relative;
   cursor: pointer;
 }
 .policyModes label:has(:checked) {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: #1955a6;
+  background: #eff4fb;
 }
 .policyModes input {
   margin-right: 6px;
-  accent-color: #2563eb;
+  accent-color: #1955a6;
 }
 .policiesDetail .hybridSplit {
   grid-template-columns: minmax(0, 2.25fr) minmax(230px, 1fr);
@@ -812,8 +812,8 @@ body .shellBreadcrumb {
   box-shadow: 0 1px 2px #0b122033;
 }
 :is(.hybridPage, .hybridJourney) input[role='switch']:checked {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: #1955a6;
+  border-color: #1955a6;
 }
 :is(.hybridPage, .hybridJourney) input[role='switch']:checked::before {
   transform: translateX(14px);
@@ -830,7 +830,7 @@ body .shellBreadcrumb {
   font-size: 10px;
 }
 .hybridPolicyList > div > span:not(.hybridStatus) {
-  color: #2563eb;
+  color: #1955a6;
 }
 .hybridMetrics article[data-metric='Sources connected'] strong,
 .hybridMetrics article[data-metric='Index coverage'] strong,
@@ -902,7 +902,7 @@ body .shellBreadcrumb {
   font-size: 13px;
 }
 .onboardingBanner small {
-  color: #93c5fd;
+  color: #8fadd6;
   font-size: 10px;
   display: block;
 }
@@ -1196,9 +1196,9 @@ body .shellBreadcrumb {
   gap: 12px;
 }
 .settingsWorkspace .hybridControls .filterRow .button.primary {
-  background: #eff6ff;
-  color: #2563eb;
-  border-color: #bfdbfe;
+  background: #eff4fb;
+  color: #1955a6;
+  border-color: #bed1ed;
 }
 .settingsWorkspace .onboardingTask {
   font-size: 12px;
@@ -1271,7 +1271,7 @@ body .shellBreadcrumb {
   flex-shrink: 0;
 }
 .blueText {
-  color: #2563eb;
+  color: #1955a6;
 }
 .agentsPage .hybridTable {
   min-height: 470px;
@@ -1359,9 +1359,9 @@ body .shellBreadcrumb {
   color: #64748b;
 }
 .hybridStage .environmentSelection .callout {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: #eff4fb;
+  color: #124381;
+  border: 1px solid #bed1ed;
 }
 
 body .notificationCount {

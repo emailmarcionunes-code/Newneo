@@ -6,10 +6,12 @@ type Workspace = {
   id: string;
   organization_id: string;
   name: string;
+  organization_name: string;
   can_edit_agents: boolean;
 };
 type SessionInfo = {
   authenticated: boolean;
+  displayName?: string;
   configured?: boolean;
   workspaces?: Workspace[];
   workspaceId?: string;
@@ -42,9 +44,9 @@ export default function AccountSettings() {
       const value = await response.json();
       if (!response.ok) throw new Error(value.error);
       await refresh();
-      setMessage(
-        url.includes('logout') ? 'Signed out.' : 'Workspace selected.',
-      );
+      window.dispatchEvent(new Event('newneo-account-changed'));
+      setMessage(url.includes('logout') ? 'Signed out.' : 'Workspace selected.');
+      if (url.includes('/select')) window.location.assign('/');
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Request failed.');
     } finally {
@@ -55,8 +57,8 @@ export default function AccountSettings() {
     <div className="surfacePage">
       <div className="pageHead">
         <div>
-          <h2>Account connection</h2>
-          <p>Manage sign-in and workspace access.</p>
+          <h2>Account & workspace</h2>
+          <p>Manage your account and organization. No setup form is required to open your workspace.</p>
         </div>
       </div>
       <section className="panel">
@@ -76,7 +78,7 @@ export default function AccountSettings() {
         )}
         {session?.authenticated ? (
           <>
-            <p>Signed in through your configured identity provider.</p>
+            <p>{session.displayName} · Signed in securely.</p>
             <Button
               variant="secondary"
               disabled={busy}
@@ -105,6 +107,7 @@ export default function AccountSettings() {
       {session?.authenticated && (
         <section className="panel">
           <h2>Your workspaces</h2>
+          <Link href={session.workspaceId ? "/" : "/welcome"} className="button primary">{session.workspaceId ? "Open Overview →" : "Continue to workspace →"}</Link>
           <p>
             Access is assigned by an administrator and verified on the server.
           </p>
@@ -116,10 +119,10 @@ export default function AccountSettings() {
             <div className="surfaceCards">
               {session.workspaces.map((workspace) => (
                 <article className="agentCard" key={workspace.id}>
-                  <h3>{workspace.name}</h3>
+                  <h3>{workspace.organization_name}</h3><p>Workspace: {workspace.name}</p>
                   <p>
                     {workspace.can_edit_agents
-                      ? 'Can save draft configurations'
+                      ? 'Can author Agent, Skill and Knowledge configurations'
                       : 'Read-only access'}
                   </p>
                   <Button
@@ -148,20 +151,16 @@ export default function AccountSettings() {
       <section className="panel">
         <h2>Application mode</h2>
         <p>
-          Catalog, dashboards and runtime connections still use demonstration
-          resources. Signing in enables server draft storage; it does not turn
-          sample agents into live deployments.
+          Your selected workspace stores Agent and Skill versions, Knowledge documents and audit history. Demo data belongs to a separate preview context.
         </p>
         <Link className="button outline" href="/agents">
-          Browse Agent Catalog
+          Manage Agents
         </Link>
       </section>
       <section className="panel">
         <h2>Deployment and billing</h2>
         <p>
-          No AWS infrastructure or paid resources have been provisioned by this
-          application. Runtime deployment and provider billing require
-          separately configured services.
+          The platform is hosted. Paid Agent execution and provider usage reporting are not yet enabled. Existing hosting charges continue independently of Agent execution.
         </p>
       </section>
     </div>

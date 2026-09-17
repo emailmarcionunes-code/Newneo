@@ -1,4 +1,5 @@
 'use client';
+import { useAccount } from './AccountContext';
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -40,6 +41,7 @@ export default function LaunchGuide({
 }: {
   templateId?: string;
 }) {
+  const account = useAccount();
   const { can } = useDemoAccess();
   const { update: updateWorkspace } = usePreview();
   const [workspaceAgentId, setWorkspaceAgentId] = useState('');
@@ -59,7 +61,7 @@ export default function LaunchGuide({
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(draftKey(template.id));
+      const raw = localStorage.getItem((draftKey(template.id) + (account.mode === 'demo' ? ':public-demo' : '')));
       if (raw) {
         const saved = parseDraft(raw, template.id);
         if (saved) {
@@ -119,7 +121,7 @@ export default function LaunchGuide({
   const save = () => {
     try {
       const saved = { ...draft, savedAt: new Date().toISOString() };
-      localStorage.setItem(draftKey(template.id), JSON.stringify(saved));
+      localStorage.setItem((draftKey(template.id) + (account.mode === 'demo' ? ':public-demo' : '')), JSON.stringify(saved));
       setDraft(saved);
       setNotice('Draft saved on this device.');
     } catch {
@@ -346,7 +348,7 @@ export default function LaunchGuide({
       <div className="journeyBreadcrumb">
         <Link href="/agents/catalog">← Catalog</Link>
         <span>/</span>
-        <strong>Create Agent</strong>
+        <strong>Add Agent</strong>
       </div>
       <LaunchStepper
         current={draft.step}
@@ -380,6 +382,7 @@ export default function LaunchGuide({
               </details>
             )}
           </div>
+          <div className="intelligenceNote" style={{margin:'0 0 12px',padding:'10px 14px',fontSize:12}}><strong>NEWNEO Recommended Configuration</strong><p>Preconfigured enterprise patterns. Review and adjust only where needed.</p><small>{[template.defaultSuccessMetrics.join(' · '),template.recommendedKnowledgeTypes.filter(r=>!r.optional).map(r=>r.name).join(' · '),template.recommendedSkills.filter(r=>!r.optional).map(r=>r.name).join(' · '),template.infrastructureReason,template.expectedTaskProfile,template.recommendedGovernancePolicies.map(r=>r.name).join(' · '),template.recommendedEvaluationSuite.map(r=>r.name).join(' · '),template.recommendedDeploymentPath.join(' → ')][draft.step]}</small></div>
           {draft.step === 0 && (
             <>
               <form
@@ -571,7 +574,7 @@ export default function LaunchGuide({
                     (draft.step === 6 && !evaluation)
                   }
                 >
-                  {`Continue to ${launchSteps[draft.step + 1]} →`}
+                  {'Confirm & Continue →'}
                 </Button>
               ) : (
                 <Button

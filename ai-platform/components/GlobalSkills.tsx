@@ -19,6 +19,7 @@ import { Button } from './UI';
 import { SkillPortfolio, SkillReuseDetail } from './SkillPortfolio';
 import { capabilityCores, coreUsage } from '@/lib/skill-portfolio';
 import { SkillBuilder } from './SkillBuilder';
+import SkillInventoryLayout from './hybrid/SkillInventoryLayout';
 
 // Clearly labeled historical demo aggregates, pinned to specific Skill versions.
 // New definitions and bindings do not manufacture execution evidence.
@@ -125,7 +126,7 @@ export function GlobalSkills() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [view, setView] = useState('Pipeline');
-  const views = ['Pipeline', 'List', 'Matrix', 'Intelligence'];
+  const views = ['List', 'Pipeline', 'Matrix', 'Intelligence'];
   const [filters, setFilters] = useState<Record<string, string>>({
     Domain: 'All',
     Maturity: 'All',
@@ -181,20 +182,10 @@ export function GlobalSkills() {
         (data.telemetry(a.id).executions || 0),
   )[0];
   return (
-    <div className="surfacePage hybridPage skillsWorkspace">
-      <PageTitle
-        title="Skills"
-        description="Reusable enterprise capabilities shared across your AI agents."
-      >
-        <Button
-          disabled={!can('create')}
-          onClick={() => router.push('/skills/new')}
-        >
-          + Create Skill
-        </Button>
-      </PageTitle>
-      <Metrics
-        items={[
+    <SkillInventoryLayout view={view} onView={setView}
+      action={<Button disabled={!can('create')} onClick={()=>router.push('/skills/new')}>+ Create Skill</Button>}
+      note="Demo portfolio · Sample analytics · No live execution"
+      metrics={[
           ['Total Skills', String(data.library.length)],
           [
             'Production Ready',
@@ -237,13 +228,7 @@ export function GlobalSkills() {
               ).size,
             ),
           ],
-        ]}
-      />
-      <p className="skillsDemoNote">
-        Demo portfolio · Sample analytics · No live execution
-      </p>
-      <Tabs names={views} current={view} onChange={setView} />
-      <Panel names={views} current={view}>
+        ]}>
         {view === 'Intelligence' && most && data.usedBy(most.id).length > 0 && (
           <section className="panel">
             <h2>Most Used Skill</h2>
@@ -341,47 +326,51 @@ export function GlobalSkills() {
               </div>
             )}
             {view === 'List' && (
-              <Table
-                caption="Organization Skills"
-                headers={[
-                  'Skill',
-                  'Domain',
-                  'Maturity',
-                  'Version',
-                  'Risk',
-                  'Status',
-                  'Agents Using',
-                  'Executions (30d)',
-                  'Success Rate',
-                  'Last Updated',
-                  'Owner',
-                ]}
-                onRowClick={(i) => router.push(`/skills/${rows[i].id}`)}
-                rows={rows.map((s) => {
-                  const t = data.telemetry(s.id);
-                  return [
-                    <Link key="name" href={`/skills/${s.id}`}>
-                      {s.name}
-                    </Link>,
-                    s.domain,
-                    <Tag key="m">{s.maturity}</Tag>,
-                    `v${s.version}`,
-                    s.riskLevel,
-                    <Status key="status">{data.status(s)}</Status>,
-                    t.users.length,
-                    number(t.executions),
-                    percent(t.success),
-                    new Date(s.updatedAt).toLocaleDateString('en-US'),
-                    s.owner,
-                  ];
-                })}
-              />
+              <section className="skillsListPanel" aria-label="Skill inventory">
+                <div className="skillsListHeading">
+                  <h2>Skill Library</h2>
+                  <span>{rows.length} Skills</span>
+                </div>
+                <Table
+                  caption="Organization Skills"
+                  headers={[
+                    'Skill',
+                    'Domain',
+                    'Maturity',
+                    'Version',
+                    'Risk',
+                    'Status',
+                    'Agents Using',
+                    'Executions (30d)',
+                    'Success Rate',
+                    'Last Updated',
+                    'Owner',
+                  ]}
+                  onRowClick={(i) => router.push(`/skills/${rows[i].id}`)}
+                  rows={rows.map((s) => {
+                    const t = data.telemetry(s.id);
+                    return [
+                      <Link key="name" href={`/skills/${s.id}`}>
+                        {s.name}
+                      </Link>,
+                      s.domain,
+                      <Tag key="maturity">{s.maturity}</Tag>,
+                      `v${s.version}`,
+                      s.riskLevel,
+                      <Status key="status">{data.status(s)}</Status>,
+                      t.users.length,
+                      number(t.executions),
+                      percent(t.success),
+                      new Date(s.updatedAt).toLocaleDateString('en-US'),
+                      s.owner,
+                    ];
+                  })}
+                />
+              </section>
             )}
           </>
         )}
-      </Panel>
-      <DataNote />
-    </div>
+    </SkillInventoryLayout>
   );
 }
 export function GlobalSkillBuilder({
@@ -498,7 +487,7 @@ export function GlobalSkillDetail({ id }: { id: string }) {
     </Link>
   );
   return (
-    <div className="surfacePage hybridPage">
+    <div className="surfacePage hybridPage skillDetailPage">
       <Link href="/skills">← Skills</Link>
       <PageTitle
         title={skill.name}
@@ -513,6 +502,18 @@ export function GlobalSkillDetail({ id }: { id: string }) {
           Create New Version
         </Button>
       </PageTitle>
+      <Metrics
+        items={[
+          ['Agents Using', String(t.users.length)],
+          ['Executions (30d)', number(t.executions)],
+          ['Success Rate', percent(t.success)],
+          ['P95 Latency', t.p95 === null ? '—' : `${t.p95}s`],
+          [
+            'Avg Cost / Execution',
+            t.cost === null ? '—' : `$${t.cost.toFixed(3)}`,
+          ],
+        ]}
+      />
       <p className="intelligenceNote">
         Demo Skill analytics · Historical sample data. Skill Definition ≠ Agent
         Skill Binding. Production Agents keep their pinned version.
@@ -532,273 +533,268 @@ export function GlobalSkillDetail({ id }: { id: string }) {
           ))}
         </section>
       )}
-      <Tabs names={names} current={tab} onChange={setTab} />
-      <Panel names={names} current={tab}>
-        {tab === 'Overview' && (
-          <>
-            <p>{skill.description}</p>
-            <SkillReuseDetail
-              skill={skill}
-              skills={data.library}
-              telemetry={data.telemetry}
-            />
-            <Metrics
-              items={[
-                ['Agents Using', String(t.users.length)],
-                ['Executions (30d)', number(t.executions)],
-                ['Success Rate', percent(t.success)],
-                ['P95 Latency', t.p95 === null ? '—' : `${t.p95}s`],
-                [
-                  'Avg Cost / Execution',
-                  t.cost === null ? '—' : `$${t.cost.toFixed(3)}`,
-                ],
-              ]}
-            />
-            <p>
-              Owner: {skill.owner} · Risk: {skill.riskLevel} · Status:{' '}
-              {data.status(skill)}
-            </p>
-            <h2>Used by</h2>
-            {t.users.length ? (
-              t.users.map((a) => (
-                <p key={a.id}>
-                  {agentLink(a)} · Agent {a.agentVersion} → Skill v
-                  {a.skillVersion}
-                </p>
-              ))
-            ) : (
-              <p>
-                No Agents use this Skill yet. Open an Agent’s Skills tab to add
-                it.
-              </p>
-            )}
-            <p>
-              Usage metrics aggregate currently consumed versions; selected
-              definition: v{skill.version}.
-            </p>
-          </>
-        )}
-        {tab === 'Configuration' && (
-          <>
-            <h2>Capability definition</h2>
-            <p>{skill.instructions}</p>
-            <p>Owner: {skill.owner}</p>
-            <h3>Inputs</h3>
-            <pre>{JSON.stringify(skill.inputSchema, null, 2)}</pre>
-            <h3>Outputs</h3>
-            <pre>{JSON.stringify(skill.outputSchema, null, 2)}</pre>
-            <p>Parameters: {skill.parameterDefaults || '{}'}</p>
-            <p>Definitions are immutable. Use Create New Version to edit.</p>
-            <Button
-              variant="secondary"
-              disabled={!can('create')}
-              onClick={() =>
-                data.update((s) => ({
-                  ...s,
-                  ui: {
-                    ...s.ui,
-                    [`skill:${id}:status`]:
-                      data.status(skill) === 'Active' ? 'Inactive' : 'Active',
-                  },
-                  audit: [
-                    `${skill.name} library status changed · preview`,
-                    ...s.audit,
-                  ],
-                }))
-              }
-            >
-              {data.status(skill) === 'Active' ? 'Deactivate' : 'Activate'}{' '}
-              library Skill
-            </Button>
-            <p>
-              Inactive Skills cannot receive new bindings. Existing pinned Agent
-              compositions remain unchanged.
-            </p>
-          </>
-        )}
-        {tab === 'Tools' && (
-          <>
-            <h2>Tools / MCP requirements</h2>
-            {skill.toolRequirements.length ? (
-              <ul>
-                {skill.toolRequirements.map((v) => (
-                  <li key={v}>{v}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No tools required.</p>
-            )}
-            <p>
-              Permissions:{' '}
-              {skill.permissionRequirements ||
-                'Least privilege within the Agent scope'}
-            </p>
-            <Link href="/tools">Open Tools & MCP →</Link>
-          </>
-        )}
-        {tab === 'Knowledge' && (
-          <>
-            <h2>Knowledge requirements</h2>
-            {skill.requiredKnowledgeTypes.length ? (
-              <ul>
-                {skill.requiredKnowledgeTypes.map((v) => (
-                  <li key={v}>{v}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No knowledge source required.</p>
-            )}
-            <Link href="/knowledge">Open Knowledge →</Link>
-          </>
-        )}
-        {tab === 'Governance' && (
-          <>
-            <p>Risk: {skill.riskLevel}</p>
-            <ul>
-              {skill.governanceRequirements.map((v) => (
-                <li key={v}>{v}</li>
-              ))}
-            </ul>
-            <p>
-              Data boundary:{' '}
-              {skill.dataAccess || 'Authorized workspace resources only'}
-            </p>
-            <p>
-              Human approval is required for privileged or high-risk actions and
-              must be enforced by each binding.
-            </p>
-          </>
-        )}
-        {tab === 'Evaluations' && (
-          <>
-            <h2>Skill evaluation · v{skill.version}</h2>
-            <p>
-              Score:{' '}
-              {skill.evaluationScore === null
-                ? 'Not evaluated'
-                : `${skill.evaluationScore}% · sample / simulated`}
-            </p>
-            <Table
-              caption="Skill scenarios"
-              headers={['Scenario', 'Expected result', 'Demo result']}
-              rows={skill.evaluationSuite.map((s) => [
-                s.name,
-                s.expected,
-                s.previewResult ||
-                  (skill.evaluationScore === null
-                    ? 'Not run'
-                    : 'Reference sample'),
-              ])}
-            />
-            <p>
-              Run a fresh preview evaluation in Create New Version. Each Agent
-              also requires binding validation and regression evaluation.
-            </p>
-          </>
-        )}
-        {tab === 'Versions' && (
-          <>
-            <Table
-              caption="Skill versions"
-              headers={[
-                'Version',
-                'Maturity',
-                'Updated',
-                'Agents Using',
-                'Inspect',
-              ]}
-              rows={[...versions].reverse().map((v) => [
-                `v${v.version}`,
-                v.maturity,
-                new Date(v.updatedAt).toLocaleDateString('en-US'),
-                t.users.filter((a) => a.skillVersion === v.version).length,
-                <Button
-                  key={v.version}
-                  variant="secondary"
-                  onClick={() => {
-                    setSelectedVersion(v.version);
-                    setTab('Configuration');
-                  }}
-                >
-                  Inspect v{v.version}
-                </Button>,
-              ])}
-            />
-            <p>
-              Agent Version → Skill Binding → Skill Version. Publishing never
-              upgrades Agents automatically.
-            </p>
-          </>
-        )}
-        {tab === 'Usage' && (
-          <>
-            <h2>Usage across Agents · last 30 days</h2>
-            <Metrics
-              items={[
-                ['Total Executions', number(t.executions)],
-                ['Success Rate', percent(t.success)],
-                [
-                  'Error Rate',
-                  t.success === null ? '—' : percent(100 - t.success),
-                ],
-                ['P95 Latency', t.p95 === null ? '—' : `${t.p95}s`],
-                [
-                  'Cost',
-                  t.cost === null || t.executions === null
-                    ? '—'
-                    : `$${(t.cost * t.executions).toFixed(2)}`,
-                ],
-              ]}
-            />
-            <Table
-              caption="Skill usage by Agent"
-              headers={[
-                'Agent',
-                'Agent Version',
-                'Skill Version',
-                'Executions',
-                'Success',
-                'Latency',
-                'Cost',
-              ]}
-              rows={t.users.map((a, i) => {
-                const m = samples[`${id}:${a.skillVersion}`];
-                const peers = t.users.filter(
-                  (u) => u.skillVersion === a.skillVersion,
-                );
-                const position = peers.findIndex((u) => u.id === a.id);
-                const n = m
-                  ? Math.floor(m.executions / peers.length) +
-                    (position < m.executions % peers.length ? 1 : 0)
-                  : null;
-                return [
-                  <span key={a.id}>{agentLink(a)}</span>,
-                  a.agentVersion,
-                  `v${a.skillVersion}`,
-                  number(n),
-                  percent(m?.success ?? null),
-                  m ? `${m.p95}s` : '—',
-                  m && n !== null ? `$${(n * m.cost).toFixed(2)}` : '—',
-                ];
-              })}
-            />
-            <p>
-              Per-Agent executions are an illustrative allocation of sample
-              totals, not measured activity.
-            </p>
-            <h3>Adoption trend · sample weekly snapshots</h3>
-            {t.trend ? (
-              <Table
-                caption="Weekly Skill adoption"
-                headers={['Week 1', 'Week 2', 'Week 3', 'Week 4']}
-                rows={[t.trend.map((n) => `${n} Agents`)]}
+      <section className="skillDetailPanel" aria-label="Skill details">
+        <Tabs names={names} current={tab} onChange={setTab} />
+        <Panel names={names} current={tab}>
+          {tab === 'Overview' && (
+            <div className="skillOverviewGrid">
+              <section className="panel">
+                <h2>Capability</h2>
+                <p>{skill.description}</p>
+              </section>
+              <SkillReuseDetail
+                skill={skill}
+                skills={data.library}
+                telemetry={data.telemetry}
               />
-            ) : (
-              <p>No historical adoption data yet.</p>
-            )}
-          </>
-        )}
-      </Panel>
+              <section className="panel">
+                <p>
+                  Owner: {skill.owner} · Risk: {skill.riskLevel} · Status:{' '}
+                  {data.status(skill)}
+                </p>
+                <h2>Used by</h2>
+                {t.users.length ? (
+                  t.users.map((a) => (
+                    <p key={a.id}>
+                      {agentLink(a)} · Agent {a.agentVersion} → Skill v
+                      {a.skillVersion}
+                    </p>
+                  ))
+                ) : (
+                  <p>
+                    No Agents use this Skill yet. Open an Agent’s Skills tab to
+                    add it.
+                  </p>
+                )}
+                <p>
+                  Usage metrics aggregate currently consumed versions; selected
+                  definition: v{skill.version}.
+                </p>
+              </section>
+            </div>
+          )}
+          {tab === 'Configuration' && (
+            <>
+              <h2>Capability definition</h2>
+              <p>{skill.instructions}</p>
+              <p>Owner: {skill.owner}</p>
+              <h3>Inputs</h3>
+              <pre>{JSON.stringify(skill.inputSchema, null, 2)}</pre>
+              <h3>Outputs</h3>
+              <pre>{JSON.stringify(skill.outputSchema, null, 2)}</pre>
+              <p>Parameters: {skill.parameterDefaults || '{}'}</p>
+              <p>Definitions are immutable. Use Create New Version to edit.</p>
+              <Button
+                variant="secondary"
+                disabled={!can('create')}
+                onClick={() =>
+                  data.update((s) => ({
+                    ...s,
+                    ui: {
+                      ...s.ui,
+                      [`skill:${id}:status`]:
+                        data.status(skill) === 'Active' ? 'Inactive' : 'Active',
+                    },
+                    audit: [
+                      `${skill.name} library status changed · preview`,
+                      ...s.audit,
+                    ],
+                  }))
+                }
+              >
+                {data.status(skill) === 'Active' ? 'Deactivate' : 'Activate'}{' '}
+                library Skill
+              </Button>
+              <p>
+                Inactive Skills cannot receive new bindings. Existing pinned
+                Agent compositions remain unchanged.
+              </p>
+            </>
+          )}
+          {tab === 'Tools' && (
+            <>
+              <h2>Tools / MCP requirements</h2>
+              {skill.toolRequirements.length ? (
+                <ul>
+                  {skill.toolRequirements.map((v) => (
+                    <li key={v}>{v}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No tools required.</p>
+              )}
+              <p>
+                Permissions:{' '}
+                {skill.permissionRequirements ||
+                  'Least privilege within the Agent scope'}
+              </p>
+              <Link href="/tools">Open Tools & MCP →</Link>
+            </>
+          )}
+          {tab === 'Knowledge' && (
+            <>
+              <h2>Knowledge requirements</h2>
+              {skill.requiredKnowledgeTypes.length ? (
+                <ul>
+                  {skill.requiredKnowledgeTypes.map((v) => (
+                    <li key={v}>{v}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No knowledge source required.</p>
+              )}
+              <Link href="/knowledge">Open Knowledge →</Link>
+            </>
+          )}
+          {tab === 'Governance' && (
+            <>
+              <p>Risk: {skill.riskLevel}</p>
+              <ul>
+                {skill.governanceRequirements.map((v) => (
+                  <li key={v}>{v}</li>
+                ))}
+              </ul>
+              <p>
+                Data boundary:{' '}
+                {skill.dataAccess || 'Authorized workspace resources only'}
+              </p>
+              <p>
+                Human approval is required for privileged or high-risk actions
+                and must be enforced by each binding.
+              </p>
+            </>
+          )}
+          {tab === 'Evaluations' && (
+            <>
+              <h2>Skill evaluation · v{skill.version}</h2>
+              <p>
+                Score:{' '}
+                {skill.evaluationScore === null
+                  ? 'Not evaluated'
+                  : `${skill.evaluationScore}% · sample / simulated`}
+              </p>
+              <Table
+                caption="Skill scenarios"
+                headers={['Scenario', 'Expected result', 'Demo result']}
+                rows={skill.evaluationSuite.map((s) => [
+                  s.name,
+                  s.expected,
+                  s.previewResult ||
+                    (skill.evaluationScore === null
+                      ? 'Not run'
+                      : 'Reference sample'),
+                ])}
+              />
+              <p>
+                Run a fresh preview evaluation in Create New Version. Each Agent
+                also requires binding validation and regression evaluation.
+              </p>
+            </>
+          )}
+          {tab === 'Versions' && (
+            <>
+              <Table
+                caption="Skill versions"
+                headers={[
+                  'Version',
+                  'Maturity',
+                  'Updated',
+                  'Agents Using',
+                  'Inspect',
+                ]}
+                rows={[...versions].reverse().map((v) => [
+                  `v${v.version}`,
+                  v.maturity,
+                  new Date(v.updatedAt).toLocaleDateString('en-US'),
+                  t.users.filter((a) => a.skillVersion === v.version).length,
+                  <Button
+                    key={v.version}
+                    variant="secondary"
+                    onClick={() => {
+                      setSelectedVersion(v.version);
+                      setTab('Configuration');
+                    }}
+                  >
+                    Inspect v{v.version}
+                  </Button>,
+                ])}
+              />
+              <p>
+                Agent Version → Skill Binding → Skill Version. Publishing never
+                upgrades Agents automatically.
+              </p>
+            </>
+          )}
+          {tab === 'Usage' && (
+            <>
+              <h2>Usage across Agents · last 30 days</h2>
+              <Metrics
+                items={[
+                  ['Total Executions', number(t.executions)],
+                  ['Success Rate', percent(t.success)],
+                  [
+                    'Error Rate',
+                    t.success === null ? '—' : percent(100 - t.success),
+                  ],
+                  ['P95 Latency', t.p95 === null ? '—' : `${t.p95}s`],
+                  [
+                    'Cost',
+                    t.cost === null || t.executions === null
+                      ? '—'
+                      : `$${(t.cost * t.executions).toFixed(2)}`,
+                  ],
+                ]}
+              />
+              <Table
+                caption="Skill usage by Agent"
+                headers={[
+                  'Agent',
+                  'Agent Version',
+                  'Skill Version',
+                  'Executions',
+                  'Success',
+                  'Latency',
+                  'Cost',
+                ]}
+                rows={t.users.map((a, i) => {
+                  const m = samples[`${id}:${a.skillVersion}`];
+                  const peers = t.users.filter(
+                    (u) => u.skillVersion === a.skillVersion,
+                  );
+                  const position = peers.findIndex((u) => u.id === a.id);
+                  const n = m
+                    ? Math.floor(m.executions / peers.length) +
+                      (position < m.executions % peers.length ? 1 : 0)
+                    : null;
+                  return [
+                    <span key={a.id}>{agentLink(a)}</span>,
+                    a.agentVersion,
+                    `v${a.skillVersion}`,
+                    number(n),
+                    percent(m?.success ?? null),
+                    m ? `${m.p95}s` : '—',
+                    m && n !== null ? `$${(n * m.cost).toFixed(2)}` : '—',
+                  ];
+                })}
+              />
+              <p>
+                Per-Agent executions are an illustrative allocation of sample
+                totals, not measured activity.
+              </p>
+              <h3>Adoption trend · sample weekly snapshots</h3>
+              {t.trend ? (
+                <Table
+                  caption="Weekly Skill adoption"
+                  headers={['Week 1', 'Week 2', 'Week 3', 'Week 4']}
+                  rows={[t.trend.map((n) => `${n} Agents`)]}
+                />
+              ) : (
+                <p>No historical adoption data yet.</p>
+              )}
+            </>
+          )}
+        </Panel>
+      </section>
       <DataNote />
     </div>
   );

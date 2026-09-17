@@ -147,7 +147,7 @@ export default function AgentWorkspace({
                 ['Cost today', launch ? '$0 · simulation' : '$22.4'],
               ]}
             />
-            <div className="hybridSplit">
+            <div className="hybridSplit agentOverviewGrid">
               <section className="panel">
                 <h2>Task volume — last 7 days</h2>
                 <div className="hybridChart">
@@ -178,6 +178,10 @@ export default function AgentWorkspace({
                       'Tools',
                       `${launch ? Object.values(launch.tools).flat().length : 3} approved actions`,
                     ],
+                    [
+                      'Skills',
+                      `${composition(state.ui, agent.id, currentVersion).bindings.length} bound`,
+                    ],
                     ['Policies', '4 active'],
                     ['Eval score', `${agent.score}%`],
                   ].map(([k, v]) => (
@@ -194,95 +198,95 @@ export default function AgentWorkspace({
                   View configuration
                 </button>
               </section>
-            </div>
-            <section className="panel">
-              <h2>Recent tasks</h2>
-              {launch && (
-                <>
-                  <p>
-                    Run a sample task to experience monitoring. No model or tool
-                    will be called.
-                  </p>
-                  <Button
-                    onClick={() => {
-                      update((s) => ({
-                        ...s,
-                        ui: {
-                          ...s.ui,
-                          ['workspace:agents']: (
-                            s.ui?.['workspace:agents'] as (typeof agent)[]
-                          ).map((a) =>
-                            a.id === agent.id
-                              ? {
-                                  ...a,
-                                  tasks: String(Number(a.tasks) + 1),
-                                  success: '100%',
-                                  latency: '1.1s',
-                                }
-                              : a,
-                          ),
-                        },
-                        audit: [
-                          `Sample task completed by ${agent.name} · preview`,
-                          ...s.audit,
-                        ],
-                      }));
-                      setMessage(
-                        'Sample task completed. Monitoring updated; no external system was contacted.',
-                      );
-                    }}
-                    disabled={
-                      !can('operate') ||
-                      !state.releases.some(
-                        (r) => r.agentId === agent.id && r.state === 'Active',
-                      )
-                    }
-                  >
-                    Run sample task
-                  </Button>
-                </>
-              )}
-
-              <Table
-                caption="Recent agent tasks"
-                headers={['Task', 'When', 'Result']}
-                emptyMessage="No tasks yet. Run a sample task to populate monitoring."
-                rows={
-                  launch
-                    ? Number(agent.tasks)
-                      ? [
-                          [
-                            'Sample task completed',
-                            'This session',
-                            'Success · simulated',
+              <section className="panel recentTaskPanel">
+                <h2>Recent tasks</h2>
+                {launch && (
+                  <>
+                    <p>
+                      Run a sample task to experience monitoring. No model or
+                      tool will be called.
+                    </p>
+                    <Button
+                      onClick={() => {
+                        update((s) => ({
+                          ...s,
+                          ui: {
+                            ...s.ui,
+                            ['workspace:agents']: (
+                              s.ui?.['workspace:agents'] as (typeof agent)[]
+                            ).map((a) =>
+                              a.id === agent.id
+                                ? {
+                                    ...a,
+                                    tasks: String(Number(a.tasks) + 1),
+                                    success: '100%',
+                                    latency: '1.1s',
+                                  }
+                                : a,
+                            ),
+                          },
+                          audit: [
+                            `Sample task completed by ${agent.name} · preview`,
+                            ...s.audit,
                           ],
-                        ]
-                      : []
-                    : [
-                        ['Resolved refund question', '2 min ago', 'Success'],
-                        [
-                          'Created ServiceNow Ticket #4832',
-                          '8 min ago',
-                          'Success',
-                        ],
-                        [
-                          'Escalated billing dispute',
-                          '14 min ago',
-                          'Escalated',
-                        ],
-                        [
-                          'Answered order-status request',
-                          '18 min ago',
-                          'Success',
-                        ],
-                      ].map(([task, time, result]) => [
-                        task,
-                        time,
-                        <Status key={task}>{result}</Status>,
-                      ])
-                }
-              />
-            </section>
+                        }));
+                        setMessage(
+                          'Sample task completed. Monitoring updated; no external system was contacted.',
+                        );
+                      }}
+                      disabled={
+                        !can('operate') ||
+                        !state.releases.some(
+                          (r) => r.agentId === agent.id && r.state === 'Active',
+                        )
+                      }
+                    >
+                      Run sample task
+                    </Button>
+                  </>
+                )}
+
+                <Table
+                  caption="Recent agent tasks"
+                  headers={['Task', 'When', 'Result']}
+                  emptyMessage="No tasks yet. Run a sample task to populate monitoring."
+                  rows={
+                    launch
+                      ? Number(agent.tasks)
+                        ? [
+                            [
+                              'Sample task completed',
+                              'This session',
+                              'Success · simulated',
+                            ],
+                          ]
+                        : []
+                      : [
+                          ['Resolved refund question', '2 min ago', 'Success'],
+                          [
+                            'Created ServiceNow Ticket #4832',
+                            '8 min ago',
+                            'Success',
+                          ],
+                          [
+                            'Escalated billing dispute',
+                            '14 min ago',
+                            'Escalated',
+                          ],
+                          [
+                            'Answered order-status request',
+                            '18 min ago',
+                            'Success',
+                          ],
+                        ].map(([task, time, result]) => [
+                          task,
+                          time,
+                          <Status key={task}>{result}</Status>,
+                        ])
+                  }
+                />
+              </section>
+            </div>
           </>
         ) : tab === 'Skills' ? (
           <SkillsPanel

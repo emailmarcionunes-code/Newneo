@@ -40,7 +40,7 @@ test('empty workspace, onboarding and sample restore are explicit and repeatable
     page.getByRole('heading', { name: 'Welcome to your workspace' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('link', { name: 'Create your first agent →' }),
+    page.getByRole('link', { name: 'Add your first Agent →' }),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Dismiss getting started' }).click();
   await page.reload();
@@ -49,7 +49,7 @@ test('empty workspace, onboarding and sample restore are explicit and repeatable
   ).toHaveCount(0);
   await page.goto('/agents');
   await expect(
-    page.getByRole('heading', { name: 'Create your first agent', exact: true }),
+    page.getByRole('heading', { name: 'Add your first Agent', exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Customer Service Agent', exact: true }),

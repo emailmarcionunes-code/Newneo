@@ -95,7 +95,7 @@
   font-size: 12px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  --bar: #2563eb;
+  --bar: #1955a6;
 }
 .referenceProgress progress {
   display: block;
@@ -156,8 +156,8 @@
   gap: 11px;
 }
 .referenceIcon {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #eff4fb;
+  color: #1955a6;
   width: 32px;
   height: 32px;
   flex-shrink: 0;
@@ -234,7 +234,7 @@
   font-size: 12px;
 }
 .referenceSegments button[aria-pressed='true'] {
-  background: #2563eb;
+  background: #1955a6;
   color: white;
 }
 .referenceActions {
@@ -295,7 +295,7 @@
   color: #d97706;
 }
 .referenceCompliance > div:nth-child(3) strong {
-  color: #2563eb;
+  color: #1955a6;
 }
 .finOpsPage .hybridSplit {
   grid-template-columns: 1fr 1fr;
@@ -363,8 +363,8 @@
   place-items: center;
   width: 46px;
   height: 46px;
-  background: #eff6ff;
-  color: #2563eb;
+  background: #eff4fb;
+  color: #1955a6;
   border-radius: 14px;
   margin: 0 auto 18px;
 }
@@ -468,7 +468,7 @@
   border-radius: 5px;
 }
 .hybridPage .hybridMetrics article[data-metric*='readiness'] > strong {
-  color: #2563eb;
+  color: #1955a6;
 }
 .hybridPage .hybridMetrics article[data-metric*='ompliance'] > strong,
 .hybridPage .hybridMetrics article[data-metric*='coverage'] > strong {
@@ -598,7 +598,7 @@
   padding: 8px 16px;
 }
 .agentOpsPage .resourceTabs button[aria-selected='true'] {
-  background: #2563eb;
+  background: #1955a6;
   color: white;
 }
 @media print {
@@ -670,18 +670,18 @@
   border-radius: 6px;
 }
 .referenceSync:hover {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #eff4fb;
+  color: #1955a6;
 }
 .referenceSync:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid #1955a6;
   outline-offset: 2px;
 }
 .finOpsPage .hybridBars progress::-webkit-progress-value {
-  background: #2563eb;
+  background: #1955a6;
 }
 .finOpsPage .hybridBars progress::-moz-progress-bar {
-  background: #2563eb;
+  background: #1955a6;
 }
 .finOpsPage
   aside

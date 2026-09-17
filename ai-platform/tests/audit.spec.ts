@@ -54,14 +54,16 @@ test('catalog proves scale and every category has multiple working templates', a
       .click();
     expect(await page.locator('.agentCard').count()).toBeGreaterThanOrEqual(2);
   }
-  await page.getByLabel('Search agent templates').fill('nothing-matches');
+  await page.getByLabel('Find an Agent').fill('nothing-matches');
   await expect(
-    page.getByRole('heading', { name: 'No agents in this category' }),
+    page.getByRole('heading', { name: 'No matching Agent' }),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'Show all agents' }).click();
+  await page.getByLabel('Find an Agent').fill('');
+  await page.getByRole('button', { name: /^All\s*\(\d+\)$/ }).click();
   await page
-    .getByRole('link', { name: 'Get started with Employee Onboarding Agent' })
+    .getByRole('link', { name: 'Review Employee Onboarding Agent' })
     .click();
+  await page.getByRole('link', { name: 'Use this Agent →' }).click();
   await expect(page.getByLabel('Agent name', { exact: true })).toHaveValue(
     'Employee Onboarding Agent',
   );

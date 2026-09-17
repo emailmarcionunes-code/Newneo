@@ -37,7 +37,7 @@
 }
 .sidebar .navItem.active {
   background: #172944;
-  color: #bfdbfe;
+  color: #bed1ed;
 }
 .navItem.active::before {
   content: '';
@@ -46,7 +46,7 @@
   top: 7px;
   bottom: 7px;
   width: 2px;
-  background: #2563eb;
+  background: #1955a6;
 }
 .sidebarCreate {
   display: flex;
@@ -54,7 +54,7 @@
   gap: 10px;
   border-radius: 8px;
   padding: 10px 12px;
-  background: #2563eb;
+  background: #1955a6;
   color: white;
   font-size: 12px;
   font-weight: 600;
@@ -295,7 +295,7 @@
 }
 .intelligenceNote {
   background: #f5f9ff;
-  border: 1px solid #bfdbfe;
+  border: 1px solid #bed1ed;
   border-radius: 10px;
   padding: 12px;
   font-size: 11px;
@@ -331,7 +331,7 @@
   margin: 20px 0;
 }
 .missionControl strong {
-  color: #93c5fd;
+  color: #8fadd6;
   font-size: 10px;
 }
 .missionControl h3 {
@@ -366,10 +366,10 @@
   gap: 8px;
 }
 .missionSuggestions button {
-  border: 1px solid #bfdbfe;
+  border: 1px solid #bed1ed;
   border-radius: 20px;
-  background: #eff6ff;
-  color: #2563eb;
+  background: #eff4fb;
+  color: #1955a6;
   padding: 5px 12px;
   font-size: 11px;
 }
@@ -455,7 +455,7 @@
   color: var(--ink);
 }
 .infraOption.selected {
-  border-color: #93c5fd;
+  border-color: #8fadd6;
   background: #f5f9ff;
 }
 .infraTitle {
@@ -579,7 +579,7 @@
   height: 16px;
 }
 .hybridModel.selected {
-  border-color: #93c5fd;
+  border-color: #8fadd6;
   background: #f5f9ff;
 }
 .hybridModel.selected:before,
@@ -591,7 +591,7 @@
 }
 .modelStrengths {
   margin-top: 20px;
-  border: 1px solid #bfdbfe;
+  border: 1px solid #bed1ed;
   background: #f5f9ff;
   padding: 14px;
   border-radius: 10px;
@@ -785,7 +785,7 @@
   color: #dc2626;
 }
 .hybridStatus.neutral {
-  color: #2563eb;
+  color: #1955a6;
 }
 .hybridDataNote {
   font-size: 11px;
@@ -911,7 +911,7 @@
 }
 .hybridChart span {
   display: block;
-  background: #bfdbfe;
+  background: #bed1ed;
   border-radius: 5px;
   max-width: 44px;
   width: 100%;
@@ -931,7 +931,7 @@
   position: relative;
   padding: 0 0 26px 16px;
   font-size: 12px;
-  border-left: 1px solid #dbeafe;
+  border-left: 1px solid #dce7f6;
 }
 .hybridTimeline li:before {
   content: '';
@@ -993,7 +993,7 @@
   border-radius: 8px;
 }
 .playgroundAgents [aria-pressed='true'] {
-  background: #eff6ff;
+  background: #eff4fb;
   color: var(--primary);
 }
 .playgroundLayout label {
@@ -1173,8 +1173,8 @@
   color: var(--ink);
 }
 .hybridSourceGrid button[aria-pressed='true'] {
-  border-color: #93c5fd;
-  background: #eff6ff;
+  border-color: #8fadd6;
+  background: #eff4fb;
   color: var(--primary);
 }
 .hybridSourceGrid strong {
@@ -1201,7 +1201,7 @@
   padding: 12px;
 }
 .hybridToolRows label.selected {
-  border-color: #bfdbfe;
+  border-color: #bed1ed;
   background: #f5f9ff;
 }
 .hybridToolRows label > span:nth-child(2) {
@@ -1293,7 +1293,7 @@
   margin-bottom: 24px;
 }
 .hybridLogin h1 span {
-  color: #93c5fd;
+  color: #8fadd6;
 }
 .hybridLogin > section:first-child p {
   color: #94a3b8;
@@ -1311,7 +1311,7 @@
 }
 .loginNumbers strong {
   font-size: 24px;
-  color: #93c5fd;
+  color: #8fadd6;
   display: block;
 }
 .loginNumbers small {
@@ -1519,8 +1519,8 @@
   width: 52px;
   height: 52px;
   border-radius: 12px;
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
+  border: 1px solid #bed1ed;
+  background: #eff4fb;
   color: var(--primary);
   font-size: 26px;
 }
@@ -1578,7 +1578,7 @@
 }
 .hybridCatalogCard .agentIcon {
   color: var(--primary);
-  background: #eff6ff;
+  background: #eff4fb;
 }
 .infraTitle > span {
   color: var(--primary);

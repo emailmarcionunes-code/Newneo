@@ -57,8 +57,8 @@ async function main() {
       )
     ).rows[0];
     await db.query(
-      'INSERT INTO newneo.workspace_memberships(organization_id,workspace_id,identity_id,can_edit_agents) VALUES($1,$2,$3,$4)',
-      [org.id, ws.id, identity.id, process.env.BOOTSTRAP_CAN_EDIT === 'true'],
+      'INSERT INTO newneo.workspace_memberships(organization_id,workspace_id,identity_id,can_edit_agents,role) VALUES($1,$2,$3,$4,$5)',
+      [org.id, ws.id, identity.id, process.env.BOOTSTRAP_CAN_EDIT === 'true', process.env.BOOTSTRAP_CAN_EDIT === 'true' ? 'AI Engineer' : 'Read Only'],
     );
     await db.query('COMMIT');
     console.log(

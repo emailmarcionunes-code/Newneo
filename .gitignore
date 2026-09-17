@@ -10,3 +10,10 @@ test-results/
 
 # Local database backups must never be committed.
 ai-platform/backups/
+
+/.deployment/
+
+# macOS metadata and local deployment packages
+._*
+*.tgz
+*.tar.gz

@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import * as oidc from 'openid-client';
 import { seal, unseal } from './session-token';
 export const sessionCookie = 'newneo_session';
+export const demoCookie = 'newneo_demo';
 export const loginCookie = 'newneo_login';
 export type Session = {
   issuer: string;
@@ -55,6 +56,7 @@ export function oidcConfiguration() {
   return configuration;
 }
 export async function getSession(): Promise<Session | null> {
+  if ((await cookies()).get(demoCookie)?.value === 'acme') return null;
   const value = unseal((await cookies()).get(sessionCookie)?.value, 'session');
   if (
     !value ||
@@ -68,6 +70,7 @@ export async function getSession(): Promise<Session | null> {
   return value as Session;
 }
 export async function writeSession(session: Session) {
+  (await cookies()).set(demoCookie, '', {...cookieOptions(), maxAge:0});
   (await cookies()).set(
     sessionCookie,
     seal(session, 'session', session.expiresAt),

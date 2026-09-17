@@ -1,108 +1,53 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { ArrowRight, Layers3, ShieldCheck, Sparkles } from 'lucide-react';
 import { NewneoWordmark } from '../NewneoLogo';
-import { Button, FormField } from '../UI';
+import styles from './Login.module.css';
+
 export default function Login() {
   const [message, setMessage] = useState('');
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const reason = query.get('reason') || query.get('login');
     const messages: Record<string, string> = {
-      unavailable:
-        'Enterprise sign-in is not available in this preview. You can explore the workspace below.',
-      failed: 'Sign-in failed. Please try again or explore the preview.',
+      unavailable: 'Sign-in is temporarily unavailable. Please try again shortly.',
+      failed: 'We could not complete your sign-in. Please try again.',
       expired: 'Your session expired. Sign in again to continue.',
     };
     if (reason && messages[reason]) setMessage(messages[reason]);
   }, []);
   return (
-    <main className="hybridLogin">
-      <section>
-        <NewneoWordmark />
-        <div>
-          <h1>
-            Enterprise AI
-            <br />
-            <span>Command Center</span>
-          </h1>
-          <p>
-            Create, govern, evaluate and operate AI agents across your
-            enterprise — with full auditability and control.
-          </p>
-          <div className="loginNumbers">
-            <div>
-              <strong>6</strong>
-              <small>Active agents</small>
-            </div>
-            <div>
-              <strong>99.7%</strong>
-              <small>Uptime SLA</small>
-            </div>
-            <div>
-              <strong>7.9K</strong>
-              <small>Tasks today</small>
-            </div>
+    <main className={styles.page}>
+      <section className={styles.story} aria-label="NEWNEO platform">
+        <a href="https://www.newneo.ai" aria-label="NEWNEO website"><NewneoWordmark /></a>
+        <div className={styles.storyContent}>
+          <span className={styles.eyebrow}>YOUR ENTERPRISE AI WORKSPACE</span>
+          <h1>One workspace.<br /><span>More possibilities.</span></h1>
+          <p>Bring your agents, skills and enterprise knowledge together. Build with purpose. Operate with control.</p>
+          <div className={styles.features}>
+            <div><Layers3 size={20} /><span>Build agents. Expand their skills.</span></div>
+            <div><ShieldCheck size={20} /><span>Keep governance at the center.</span></div>
+            <div><Sparkles size={20} /><span>Turn knowledge into action.</span></div>
           </div>
         </div>
-        <div className="tags">
-          <span className="tag">SOC 2 Type II</span>
-          <span className="tag">GDPR</span>
-          <span className="tag">ISO 27001</span>
-        </div>
-        <small>
-          Illustrative workspace and certification labels from the approved
-          design.
-        </small>
+        <small>NEWNEO · Enterprise AI, connected.</small>
       </section>
-      <section>
-        <div className="loginForm">
-          <h2>Welcome back</h2>
-          <p>Sign in to your Newneo workspace</p>
-          <Link className="button secondary" href="/api/auth/login">
-            Continue with Enterprise SSO
-          </Link>
-          <p className="loginDivider">or sign in with email</p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setMessage(
-                'Email sign-in is not connected in this preview. Use Explore preview to review the product.',
-              );
-            }}
-          >
-            <FormField
-              id="email"
-              label="Work email"
-              type="email"
-              autoComplete="username"
-              placeholder="sarah.andrade@acmecorp.com"
-              required
-            />
-            <FormField
-              id="password"
-              label="Password"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-            <Button
-              variant="link"
-              onClick={() =>
-                setMessage(
-                  'Password recovery is managed by your organization identity provider.',
-                )
-              }
-            >
-              Forgot password?
-            </Button>
-            <Button type="submit">Sign in</Button>
-          </form>
-          {message && <p role="status">{message}</p>}
-          <Link className="loginPreview" href="/">
-            Explore preview →
-          </Link>
+      <section className={styles.entry} aria-labelledby="login-title">
+        <a className={styles.back} href="https://www.newneo.ai">← Back to website</a>
+        <div className={styles.card}>
+          <span className={styles.label}>NEWNEO PLATFORM</span>
+          <h2 id="login-title">Welcome back.</h2>
+          <p>Your next chapter starts here.<br />Sign in to your workspace to continue.</p>
+          {message && <div className={styles.notice} role="alert">{message}</div>}
+          <a className={styles.signin} href="/api/auth/login">Sign in <ArrowRight size={20} /></a>
+          <div className={styles.secure}><ShieldCheck size={16} />Secure sign-in with your work account</div>
+          <div className={styles.help}>
+            <strong>First time here?</strong>
+            <p>Use the email address and temporary password from your invitation. You’ll choose your own password on your first visit.</p>
+            <a href="https://www.newneo.ai/contact">Need access? Contact us <ArrowRight size={14} /></a>
+          </div>
         </div>
+        <small className={styles.footer}>Your workspace. Your agents. Your next move.</small>
       </section>
     </main>
   );

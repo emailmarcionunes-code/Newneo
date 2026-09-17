@@ -16,7 +16,24 @@ async function main() {
     await db.query(
       'CREATE TABLE IF NOT EXISTS public.newneo_migrations (name text PRIMARY KEY, checksum text NOT NULL, applied_at timestamptz NOT NULL DEFAULT now())',
     );
-    for (const name of ['001_platform.sql', '002_identity_and_drafts.sql']) {
+    for (const name of [
+      '001_platform.sql',
+      '002_identity_and_drafts.sql',
+      '003_cost_controls.sql',
+      '004_cost_notifications.sql',
+      '005_account_profiles.sql',
+      '006_versioned_registry.sql',
+      '007_knowledge.sql',
+      '008_workspace_members.sql',
+      '009_registry_lifecycle.sql',
+      '010_source_runs.sql',
+      '011_configuration_reviews.sql',
+      '012_retrieval_evaluations.sql',
+      '013_cost_console.sql',
+      '014_cost_console_notifications.sql',
+      '015_platform_owner.sql',
+      '021_agent_requests.sql',
+    ]) {
       const sql = await readFile(
         new URL(`../db/migrations/${name}`, import.meta.url),
         'utf8',

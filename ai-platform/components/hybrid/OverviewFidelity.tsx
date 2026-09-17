@@ -214,69 +214,71 @@ export default function OverviewFidelity() {
             ))}
           </ul>
         </section>
-      </div>
-      <div className="overviewSummaryPanels">
-        <section>
-          <h2>
-            <CheckCircle2 className="healthy" aria-hidden="true" />
-            Governance
-          </h2>
-          <div className="overviewProgressLabel">
-            <span>Compliance score</span>
-            <strong className="healthy">78%</strong>
-          </div>
-          <progress
-            aria-label="Compliance score"
-            value={78}
-            max={100}
-            className="healthy"
-          />
-          <div className="overviewProgressFoot">
-            <span>{enabled.filter(Boolean).length} active policies</span>
-            <span>2 open violations</span>
-          </div>
-          <Link href="/governance">View governance →</Link>
-        </section>
-        <section>
-          <h2>
-            <TrendingUp className="blue" aria-hidden="true" />
-            Evaluations
-          </h2>
-          <div className="overviewProgressLabel">
-            <span>Avg readiness</span>
-            <strong className="blue">{workspaceReadiness}%</strong>
-          </div>
-          <progress
-            aria-label="Average readiness"
-            value={workspaceReadiness}
-            max={100}
-            className="blue"
-          />
-          <div className="overviewProgressFoot">
-            <span>{hybridAgents.length + state.runs.length} preview runs</span>
-            <span>
-              {hybridAgents.reduce(
-                (sum, a) => sum + 50 - Math.round(a.score / 2),
-                0,
-              ) + state.runs.filter((r) => !r.passed).length}{' '}
-              failing cases
-            </span>
-          </div>
-          <Link href="/evaluations">View evaluations →</Link>
-        </section>
-        <section>
-          <h2>
-            <Clock3 aria-hidden="true" />
-            NEWNEO Insights
-          </h2>
-          <Link className="overviewInsight" href="/agentops">
-            <span aria-hidden="true">N</span>
-            <p>
-              Sales Assistant latency spike may be linked to Confluence
-              re-indexing. Review agent health and source sync.
-            </p>
-          </Link>
-        </section>
+        <div className="overviewSummaryPanels">
+          <section>
+            <h2>
+              <CheckCircle2 className="healthy" aria-hidden="true" />
+              Governance
+            </h2>
+            <div className="overviewProgressLabel">
+              <span>Compliance score</span>
+              <strong className="healthy">78%</strong>
+            </div>
+            <progress
+              aria-label="Compliance score"
+              value={78}
+              max={100}
+              className="healthy"
+            />
+            <div className="overviewProgressFoot">
+              <span>{enabled.filter(Boolean).length} active policies</span>
+              <span>2 open violations</span>
+            </div>
+            <Link href="/governance">View governance →</Link>
+          </section>
+          <section>
+            <h2>
+              <TrendingUp className="blue" aria-hidden="true" />
+              Evaluations
+            </h2>
+            <div className="overviewProgressLabel">
+              <span>Avg readiness</span>
+              <strong className="blue">{workspaceReadiness}%</strong>
+            </div>
+            <progress
+              aria-label="Average readiness"
+              value={workspaceReadiness}
+              max={100}
+              className="blue"
+            />
+            <div className="overviewProgressFoot">
+              <span>
+                {hybridAgents.length + state.runs.length} preview runs
+              </span>
+              <span>
+                {hybridAgents.reduce(
+                  (sum, a) => sum + 50 - Math.round(a.score / 2),
+                  0,
+                ) + state.runs.filter((r) => !r.passed).length}{' '}
+                failing cases
+              </span>
+            </div>
+            <Link href="/evaluations">View evaluations →</Link>
+          </section>
+          <section>
+            <h2>
+              <Clock3 aria-hidden="true" />
+              NEWNEO Insights
+            </h2>
+            <Link className="overviewInsight" href="/agentops">
+              <span aria-hidden="true">N</span>
+              <p>
+                Sales Assistant latency spike may be linked to Confluence
+                re-indexing. Review agent health and source sync.
+              </p>
+            </Link>
+          </section>
+        </div>
       </div>
       <p className="overviewDemoNote">
         Reference workspace · interactive preview

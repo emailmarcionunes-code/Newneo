@@ -6,6 +6,24 @@ for (const width of [1440, 390])
   }, info) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/skills');
+    await expect(page.getByRole('tab')).toHaveText([
+      'List',
+      'Pipeline',
+      'Matrix',
+      'Intelligence',
+    ]);
+    await expect(
+      page.getByRole('tab', { name: 'Pipeline', exact: true }),
+    ).toHaveAttribute('aria-selected', 'true');
+    expect(
+      await page
+        .locator('.portfolioFilters label')
+        .evaluateAll(
+          (nodes) =>
+            new Set(nodes.map((n) => Math.round(n.getBoundingClientRect().top)))
+              .size,
+        ),
+    ).toBe(1);
     await expect(
       page.getByRole('heading', { name: 'Skills', exact: true }),
     ).toBeVisible();
@@ -14,21 +32,28 @@ for (const width of [1440, 390])
       page.getByRole('heading', { name: 'Most Used Skill' }),
     ).toBeVisible();
     await page.getByRole('tab', { name: 'List', exact: true }).click();
+    await expect(
+      page.getByRole('table', { name: 'Organization Skills' }),
+    ).toBeVisible();
+    expect(
+      await page
+        .getByRole('region', { name: 'Organization Skills', exact: true })
+        .evaluate((el) => el.scrollHeight > el.clientHeight),
+    ).toBe(true);
+    await page.getByRole('tab', { name: 'Pipeline', exact: true }).click();
     await page
       .getByRole('textbox', { name: 'Search Skills', exact: true })
       .fill('Reset Password');
-    await expect(
-      page.getByRole('table', { name: 'Organization Skills', exact: true }),
-    ).toContainText('Reset Password');
-    await expect(
-      page.getByRole('table', { name: 'Organization Skills', exact: true }),
-    ).not.toContainText('Unlock User');
+    await expect(page.locator('.skillPipeline')).toContainText(
+      'Reset Password',
+    );
+    await expect(page.locator('.skillPipeline')).not.toContainText(
+      'Unlock User',
+    );
     await page
       .getByRole('combobox', { name: 'Risk', exact: true })
       .selectOption('High');
-    await expect(
-      page.getByText('No matching records.', { exact: false }),
-    ).toBeVisible();
+    await expect(page.locator('.pipelineCard')).toHaveCount(0);
     await page
       .getByRole('combobox', { name: 'Risk', exact: true })
       .selectOption('All');
@@ -48,8 +73,8 @@ for (const width of [1440, 390])
       fullPage: true,
     });
     await page
-      .getByRole('table')
-      .getByRole('link', { name: 'Create ServiceNow Ticket', exact: true })
+      .locator('.pipelineCard')
+      .filter({ hasText: 'Create ServiceNow Ticket' })
       .click();
     for (const name of [
       'Overview',
@@ -77,13 +102,13 @@ for (const width of [1440, 390])
       .getByRole('button', { name: 'Deactivate library Skill' })
       .click();
     await page.goto('/skills');
-    await page.getByRole('tab', { name: 'List', exact: true }).click();
+    await page.getByRole('tab', { name: 'Pipeline', exact: true }).click();
     await page
       .getByRole('combobox', { name: 'Status', exact: true })
       .selectOption('Inactive');
-    await expect(
-      page.getByRole('table', { name: 'Organization Skills', exact: true }),
-    ).toContainText('Create ServiceNow Ticket');
+    await expect(page.locator('.skillPipeline')).toContainText(
+      'Create ServiceNow Ticket',
+    );
     await page.goto('/agents/it-support');
     await page.getByRole('tab', { name: 'Skills', exact: true }).click();
     await page

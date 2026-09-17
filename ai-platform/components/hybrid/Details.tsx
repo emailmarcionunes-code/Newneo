@@ -293,7 +293,7 @@ export default function HybridDetail({
             ['Agents using', r[5]],
           ]}
         />
-        <div className="hybridSplit">
+        <div className="hybridSplit toolOverviewGrid">
           <section className="panel">
             <h2>Description</h2>
             <p>
@@ -322,41 +322,41 @@ export default function HybridDetail({
               </p>
             ))}
           </section>
+          <section className="panel toolRecentCalls">
+            <h2>Recent calls</h2>
+            <Table
+              caption="Recent tool calls"
+              headers={['Time', 'Agent', 'Parameters', 'Result', 'Latency']}
+              rows={[
+                [
+                  '14:35:02',
+                  'Customer Service Agent',
+                  'priority=P3 · billing',
+                  'Success',
+                  '0.8s',
+                ],
+                [
+                  '14:34:50',
+                  'IT Support Agent',
+                  'priority=P2 · access',
+                  'Success',
+                  '0.7s',
+                ],
+                [
+                  '14:12:10',
+                  'Customer Service Agent',
+                  'priority=P3 · shipping',
+                  'Failed',
+                  '30.0s',
+                ],
+              ].map((row) =>
+                row.map((cell, i) =>
+                  i === 3 ? <Status key={i}>{cell}</Status> : cell,
+                ),
+              )}
+            />
+          </section>
         </div>
-        <section className="panel">
-          <h2>Recent calls</h2>
-          <Table
-            caption="Recent tool calls"
-            headers={['Time', 'Agent', 'Parameters', 'Result', 'Latency']}
-            rows={[
-              [
-                '14:35:02',
-                'Customer Service Agent',
-                'priority=P3 · billing',
-                'Success',
-                '0.8s',
-              ],
-              [
-                '14:34:50',
-                'IT Support Agent',
-                'priority=P2 · access',
-                'Success',
-                '0.7s',
-              ],
-              [
-                '14:12:10',
-                'Customer Service Agent',
-                'priority=P3 · shipping',
-                'Failed',
-                '30.0s',
-              ],
-            ].map((row) =>
-              row.map((cell, i) =>
-                i === 3 ? <Status key={i}>{cell}</Status> : cell,
-              ),
-            )}
-          />
-        </section>
         <DataNote />
       </div>
     );
@@ -397,66 +397,68 @@ export default function HybridDetail({
             ]}
           />
         </div>
-        <section className="panel">
-          <h2>Scenario results</h2>
-          {run && 'question' in run && (
-            <div>
-              <h3>{run.name}</h3>
-              <p>{run.question}</p>
-              <p>Expected: {run.expected}</p>
-              <Status>{run.passed ? 'Passed' : 'Failed'}</Status>
-            </div>
-          )}
-          <p>Illustrative scenario breakdown for this preview.</p>
-          <div className="scenarioResults">
-            {[
-              ['Task completion', '48/50 scenarios resolved', 96],
-              ['Answer accuracy', 'High groundedness against KB', 91],
-              ['Hallucination resistance', 'Assertions verified', 94],
-              ['Safety & policy', '2 PII snippets need review', 78],
-              ['Tool execution', 'All actions completed', 97],
-              ['Latency P95', '2.4s vs 3s threshold', 91],
-              ['Edge cases', 'Ambiguous queries need work', 72],
-            ].map(([name, note, score]) => (
-              <div
-                key={String(name)}
-                data-tone={Number(score) < 85 ? 'warning' : 'healthy'}
-              >
-                <span>{name}</span>
-                <small>{note}</small>
-                <progress
-                  aria-label={String(name)}
-                  max={100}
-                  value={Number(score)}
-                />
-                <strong>{score}%</strong>
+        <div className="evaluationWorkspace">
+          <section className="panel">
+            <h2>Scenario results</h2>
+            {run && 'question' in run && (
+              <div>
+                <h3>{run.name}</h3>
+                <p>{run.question}</p>
+                <p>Expected: {run.expected}</p>
+                <Status>{run.passed ? 'Passed' : 'Failed'}</Status>
               </div>
-            ))}
-          </div>
-        </section>
-        <section className="evaluationScenarios panel">
-          <h2>Representative outputs and recommendations</h2>
-          <p>
-            {agent.score >= 90
-              ? 'Production candidate: no failed scenarios. Review warnings before promotion.'
-              : 'Production blocked: resolve failed scenarios and rerun the evaluation.'}
-          </p>
-          {evaluationScenarios
-            .filter((s) => (agent.score >= 90 ? s.status !== 'Failed' : true))
-            .map((s) => (
-              <details key={s.id}>
-                <summary>
-                  <strong>{s.name}</strong>
-                  <Status>{s.status}</Status>
-                </summary>
-                <p>{s.output}</p>
-                <p>
-                  <strong>Recommendation:</strong> {s.recommendation}
-                </p>
-                <code>{s.trace}</code>
-              </details>
-            ))}
-        </section>
+            )}
+            <p>Illustrative scenario breakdown for this preview.</p>
+            <div className="scenarioResults">
+              {[
+                ['Task completion', '48/50 scenarios resolved', 96],
+                ['Answer accuracy', 'High groundedness against KB', 91],
+                ['Hallucination resistance', 'Assertions verified', 94],
+                ['Safety & policy', '2 PII snippets need review', 78],
+                ['Tool execution', 'All actions completed', 97],
+                ['Latency P95', '2.4s vs 3s threshold', 91],
+                ['Edge cases', 'Ambiguous queries need work', 72],
+              ].map(([name, note, score]) => (
+                <div
+                  key={String(name)}
+                  data-tone={Number(score) < 85 ? 'warning' : 'healthy'}
+                >
+                  <span>{name}</span>
+                  <small>{note}</small>
+                  <progress
+                    aria-label={String(name)}
+                    max={100}
+                    value={Number(score)}
+                  />
+                  <strong>{score}%</strong>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="evaluationScenarios panel">
+            <h2>Representative outputs and recommendations</h2>
+            <p>
+              {agent.score >= 90
+                ? 'Production candidate: no failed scenarios. Review warnings before promotion.'
+                : 'Production blocked: resolve failed scenarios and rerun the evaluation.'}
+            </p>
+            {evaluationScenarios
+              .filter((s) => (agent.score >= 90 ? s.status !== 'Failed' : true))
+              .map((s) => (
+                <details key={s.id}>
+                  <summary>
+                    <strong>{s.name}</strong>
+                    <Status>{s.status}</Status>
+                  </summary>
+                  <p>{s.output}</p>
+                  <p>
+                    <strong>Recommendation:</strong> {s.recommendation}
+                  </p>
+                  <code>{s.trace}</code>
+                </details>
+              ))}
+          </section>
+        </div>
         <Link className="button outline" href="/evaluations">
           Compare evaluation runs →
         </Link>

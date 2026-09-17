@@ -638,7 +638,7 @@ export function FinOps() {
           </Button>
         </section>
       )}
-      <div className="hybridSplit">
+      <div className="hybridSplit finopsWorkspace">
         <section className="panel">
           <div className="surfaceHeading">
             <h2>Cost by agent · September 2026</h2>
@@ -690,47 +690,45 @@ export function FinOps() {
             Budget planning
           </Button>
         </section>
-        <aside>
-          <section className="panel">
-            <h2>Cost by model</h2>
-            <Bars
-              items={Object.entries(
-                hybridAgents.reduce<Record<string, number>>((totals, a) => {
-                  totals[a.model] = (totals[a.model] ?? 0) + a.cost;
-                  return totals;
-                }, {}),
-              ).map(([name, cost]) => [
-                name,
-                (100 * cost) /
-                  Math.max(
-                    1,
-                    hybridAgents.reduce((sum, a) => sum + a.cost, 0),
-                  ),
-                `$${cost}`,
-              ])}
-            />
-          </section>
-          <div className="intelligenceNote">
-            <strong>COST RECOMMENDATIONS</strong>
-            <ul className="costRecommendations">
-              <li>
-                <span>Switch Sales Assistant to Managed AI</span>
-                <strong>$94/mo</strong>
-              </li>
-              <li>
-                <span>Cache Knowledge Assistant responses</span>
-                <strong>$68/mo</strong>
-              </li>
-              <li>
-                <span>Right-size IT Agent to GPT-4o-mini</span>
-                <strong>$42/mo</strong>
-              </li>
-            </ul>
-            <Link href="/evaluations">
-              Validate quality before changing models →
-            </Link>
-          </div>
-        </aside>
+        <section className="panel">
+          <h2>Cost by model</h2>
+          <Bars
+            items={Object.entries(
+              hybridAgents.reduce<Record<string, number>>((totals, a) => {
+                totals[a.model] = (totals[a.model] ?? 0) + a.cost;
+                return totals;
+              }, {}),
+            ).map(([name, cost]) => [
+              name,
+              (100 * cost) /
+                Math.max(
+                  1,
+                  hybridAgents.reduce((sum, a) => sum + a.cost, 0),
+                ),
+              `$${cost}`,
+            ])}
+          />
+        </section>
+        <div className="intelligenceNote panel costInsightPanel">
+          <strong>COST RECOMMENDATIONS</strong>
+          <ul className="costRecommendations">
+            <li>
+              <span>Switch Sales Assistant to Managed AI</span>
+              <strong>$94/mo</strong>
+            </li>
+            <li>
+              <span>Cache Knowledge Assistant responses</span>
+              <strong>$68/mo</strong>
+            </li>
+            <li>
+              <span>Right-size IT Agent to GPT-4o-mini</span>
+              <strong>$42/mo</strong>
+            </li>
+          </ul>
+          <Link href="/evaluations">
+            Validate quality before changing models →
+          </Link>
+        </div>
       </div>
       {budget && <BudgetEditor finops />}
       <DataNote />

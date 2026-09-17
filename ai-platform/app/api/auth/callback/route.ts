@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: `${appOrigin()}/settings`,
+        Location: `${appOrigin()}/welcome`,
         'Cache-Control': 'no-store',
       },
     });

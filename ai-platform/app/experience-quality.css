@@ -145,7 +145,7 @@
   background: #fef2f2;
 }
 .hybridStatus.neutral {
-  background: #eff6ff;
+  background: #eff4fb;
 }
 .hybridControls input,
 .hybridControls select {
@@ -335,7 +335,7 @@
 }
 .costRecommendations strong {
   white-space: nowrap;
-  color: #1d4ed8;
+  color: #124381;
   font-size: 13px;
 }
 .modelCostFacts dt {
@@ -348,7 +348,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #1955a6;
   flex-shrink: 0;
 }
 .modelCostFacts > div:nth-child(2) dt::before {
@@ -375,7 +375,7 @@
     box-shadow 0.15s;
 }
 .catalog .hybridCatalogCard:hover {
-  border-color: #93c5fd;
+  border-color: #8fadd6;
   box-shadow: 0 4px 12px #0f172a08;
 }
 .catalog .hybridCatalogCard > a {
@@ -460,7 +460,7 @@
   border-radius: 12px;
 }
 .hybridJourney .hybridSourceGrid button[aria-pressed='true'] {
-  background: #eff6ff;
+  background: #eff4fb;
 }
 .hybridJourney .hybridSourceGrid strong {
   font-size: 13px;
@@ -774,7 +774,7 @@
 .evaluationsPage .hybridMetrics [data-metric='Runs this month'] > strong,
 .auditLogPage .hybridMetrics [data-metric='Policy changes'] > strong,
 .reportsPage [data-fact='HITL approvals'] dd {
-  color: #2563eb;
+  color: #1955a6;
 }
 .evaluationsPage .hybridMetrics [data-metric='Avg readiness score'] > strong,
 .auditLogPage .hybridMetrics [data-metric='Deployments'] > strong,

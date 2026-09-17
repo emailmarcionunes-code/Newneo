@@ -1,4 +1,5 @@
 'use client';
+import { useAccount } from '../AccountContext';
 import {
   createContext,
   useContext,
@@ -282,12 +283,16 @@ function valid(value: unknown): value is PreviewState {
   );
 }
 export function PreviewStateProvider({ children }: { children: ReactNode }) {
+  const account = useAccount();
+  const storageKey = account.mode === 'demo' ? 'newneo:acme-public-demo:v1' : 'newneo:customer-journeys:v1';
   const [state, setState] = useState(initial);
   const [ready, setReady] = useState(false);
   const [storageError, setStorageError] = useState(false);
   useEffect(() => {
+    if (!account.ready) return;
+    setState(createDemoState('sample'));
     try {
-      const raw = sessionStorage.getItem('newneo:customer-journeys:v1');
+      const raw = sessionStorage.getItem(storageKey);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (valid(parsed)) setState(parsed);
@@ -297,18 +302,18 @@ export function PreviewStateProvider({ children }: { children: ReactNode }) {
       setStorageError(true);
     }
     setReady(true);
-  }, []);
+  }, [account.ready, storageKey]);
   useEffect(() => {
     if (!ready) return;
     try {
       sessionStorage.setItem(
-        'newneo:customer-journeys:v1',
+        storageKey,
         JSON.stringify(state),
       );
     } catch {
       setStorageError(true);
     }
-  }, [state, ready]);
+  }, [state, ready, storageKey]);
   return (
     <Context.Provider value={{ state, update: setState, ready, storageError }}>
       {children}

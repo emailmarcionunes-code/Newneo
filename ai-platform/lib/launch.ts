@@ -270,7 +270,8 @@ export type LaunchDraft = {
 };
 export function createDraft(templateId?: string | null): LaunchDraft {
   const template = getTemplate(templateId);
-  const service = template.id === 'customer-service';
+  const service = template.id === 'customer-service'||template.categories.includes('IT');
+  const custom=template.id==='custom';
   return {
     schemaVersion: 1,
     journeyVersion: 2,
@@ -280,21 +281,24 @@ export function createDraft(templateId?: string | null): LaunchDraft {
     step: 0,
     environment: null,
     name: template.id === 'custom' ? '' : template.name,
-    description: template.objective,
-    targetUsers: template.targetUsers,
+    description: template.defaultMission,
+    businessOwner: custom?'':template.suggestedBusinessOwner,
+    successMetric: custom?'':template.defaultSuccessMetrics.join(', ').slice(0,200),
+    criticality: template.defaultCriticality,
+    targetUsers: template.defaultTargetUsers,
     industry: 'Technology',
-    infrastructure: defaultInfrastructure(),
-    model: defaultModel(),
+    infrastructure: template.recommendedInfrastructure==='Private Cloud'?{kind:'customer-cloud'}:defaultInfrastructure(),
+    model: template.recommendedModelProfile.contextRequirement==='long'?{modelId:'demo-cloud-claude'}:defaultModel(),
     reviewedStages: [],
     knowledgeNotNeeded: false,
     toolsNotNeeded: false,
     evaluationRemediation: false,
     productionApproved: false,
     governance: defaultGovernance(),
-    knowledge: service ? ['sharepoint', 'servicenow', 'confluence'] : [],
+    knowledge: custom?[]:service ? ['sharepoint', 'servicenow', 'confluence'] : ['sharepoint'],
     tools: service
       ? { servicenow: ['search', 'create'], teams: ['notify'] }
-      : {},
+      : custom?{}:template.categories.includes('Sales')?{salesforce:['search']}:template.categories.includes('Finance')?{sap:['read']}:{},
   };
 }
 export const draftKey = (templateId: string) =>

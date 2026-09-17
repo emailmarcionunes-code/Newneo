@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "AlertEmail",
+    "ParameterValue": "adm@gawservices.com"
+  },
+  {
+    "ParameterKey": "MonthlyLimitUsd",
+    "ParameterValue": "1000"
+  }
+]

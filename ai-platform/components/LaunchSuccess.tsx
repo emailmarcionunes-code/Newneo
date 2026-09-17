@@ -28,7 +28,7 @@ export function LaunchSuccess({
       <NeoMascot state="success" progress={100} size={200} />
       <h1>Hello, my name is Neo!</h1>
       <p>
-        <strong>Agent Created!</strong> {receipt.agentName} is configured for {receipt.environment}.
+        <strong>Agent Added!</strong> {receipt.agentName} is configured for {receipt.environment}.
       </p>
       <p className="successPreviewNote">
         Your preview is ready to explore. No live deployment occurred.

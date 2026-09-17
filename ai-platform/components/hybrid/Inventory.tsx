@@ -1,4 +1,5 @@
 'use client';
+import AgentInventoryView from './AgentInventoryView';
 import { RefreshCw } from 'lucide-react';
 import { deploymentRecords } from '@/lib/preview-records';
 import { IconLabel, Tag, Progress } from './UI';
@@ -23,107 +24,9 @@ export function Agents() {
       (filter === 'All' || a.status === filter) &&
       a.name.toLowerCase().includes(search.toLowerCase()),
   );
-  return (
-    <div className="surfacePage hybridPage agentsPage">
-      <PageTitle
-        title="Agents"
-        description={`${hybridAgents.filter((a) => a.status === 'Live').length} live · ${hybridAgents.filter((a) => a.status === 'Staging').length} staging · ${hybridAgents.filter((a) => a.status === 'Degraded').length} degraded`}
-      >
-        <Link className="button primary" href="/agents/catalog">
-          + Create Agent
-        </Link>
-      </PageTitle>
-      {!hybridAgents.length && (
-        <section className="panel">
-          <h2>Create your first agent</h2>
-          <p>
-            Choose a template, define its mission and follow the eight-step
-            guide. No credentials are required for this demo.
-          </p>
-          <Link href="/agents/catalog">Browse templates →</Link>
-        </section>
-      )}
-      <div className="hybridControls">
-        <input
-          aria-label="Search agents"
-          placeholder="Search agents…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="filterRow">
-          {['All', 'Live', 'Degraded', 'Paused', 'Staging'].map((v) => (
-            <FilterChip
-              key={v}
-              active={filter === v}
-              onClick={() => setFilter(v)}
-            >
-              {v}
-            </FilterChip>
-          ))}
-        </div>
-      </div>
-      <Table
-        caption="All agents"
-        headers={[
-          'Agent',
-          'Status',
-          'Version',
-          'Tasks/day',
-          'Success',
-          'Latency',
-          'Model',
-          'Owner',
-          'Deployed',
-        ]}
-        onRowClick={(index) =>
-          router.push(`/agents/${visibleAgents[index].id}`)
-        }
-        rows={visibleAgents.map((a) => [
-          <DetailLink key={a.id} href={`/agents/${a.id}`}>
-            <IconLabel>{a.name}</IconLabel>
-          </DetailLink>,
-          <Status key="s">{a.status}</Status>,
-          <span className="referenceMono" key="version">
-            {String(
-              state.releases.find(
-                (r) => r.agentId === a.id && r.state === 'Active',
-              )?.version ??
-                state.ui?.[`agent:${a.id}:version`] ??
-                deploymentRecords.find(
-                  (r) => r.agentId === a.id && r.status === 'Success',
-                )?.version ??
-                '—',
-            )}
-          </span>,
-          a.tasks,
-          <span
-            key="success"
-            className={
-              a.status === 'Degraded'
-                ? 'hybridDanger'
-                : a.status === 'Live'
-                  ? 'successText'
-                  : ''
-            }
-          >
-            {a.success}
-          </span>,
-          a.latency,
-          <Tag key="model">{a.model}</Tag>,
-          String(state.ui?.[`agent:${a.id}:owner`] ?? 'Ops Team'),
-          <span className="referenceMono" key="deployed">
-            {a.id.startsWith('preview-')
-              ? 'This session'
-              : (deploymentRecords.find(
-                  (r) => r.agentId === a.id && r.status === 'Success',
-                )?.when ?? '—')}
-          </span>,
-        ])}
-      />
-      <DataNote />
-    </div>
-  );
+  return <AgentInventoryView description={`${hybridAgents.filter(a=>a.status==='Live').length} live · ${hybridAgents.filter(a=>a.status==='Staging').length} staging · ${hybridAgents.filter(a=>a.status==='Degraded').length} degraded`} action={<Link className="button primary" href="/agents/catalog">+ Add Agent</Link>} search={search} onSearch={setSearch} filter={filter} onFilter={setFilter} filters={['All','Live','Degraded','Paused','Staging']} note="Interactive demo · sample data · no live execution" rows={visibleAgents.map(a=>({id:a.id,name:a.name,status:a.status,version:String(state.releases.find(r=>r.agentId===a.id&&r.state==='Active')?.version??state.ui?.[`agent:${a.id}:version`]??deploymentRecords.find(r=>r.agentId===a.id&&r.status==='Success')?.version??'—'),tasks:a.tasks,success:<span className={a.status==='Degraded'?'hybridDanger':a.status==='Live'?'successText':''}>{a.success}</span>,latency:a.latency,model:a.model,owner:String(state.ui?.[`agent:${a.id}:owner`]??'Ops Team'),deployed:a.id.startsWith('preview-')?'This session':deploymentRecords.find(r=>r.agentId===a.id&&r.status==='Success')?.when??'—'}))}>{!hybridAgents.length&&<section className="panel"><h2>Add your first Agent</h2><p>Choose an Agent, review its mission and follow the eight-step guide. No credentials are required for this demo.</p><Link href="/agents/catalog">Browse templates →</Link></section>}</AgentInventoryView>;
 }
+
 export { default as Overview } from './OverviewFidelity';
 export function Resources({ tools = false }: { tools?: boolean }) {
   const { state } = usePreview();

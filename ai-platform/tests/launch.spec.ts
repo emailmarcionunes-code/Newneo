@@ -4,7 +4,7 @@ async function next(page: import('@playwright/test').Page) {
   await page
     .locator('.wizardActions')
     .getByRole('button', {
-      name: /Continue to/,
+      name: /Confirm & Continue/,
     })
     .click();
 }
@@ -12,11 +12,12 @@ test('catalog search, categories and custom entry retain template identity', asy
   page,
 }) => {
   await page.goto('/agents/catalog');
-  await page.getByLabel('Search agent templates').fill('IT Support');
+  await page.getByLabel('Find an Agent').fill('IT Support');
   await expect(page.locator('.agentCard')).toHaveCount(1);
   await page
-    .getByRole('link', { name: 'Get started with IT Support Agent' })
+    .getByRole('link', { name: 'Review IT Support Agent' })
     .click();
+  await page.getByRole('link', { name: 'Use this Agent →' }).click();
   await expect(page.getByLabel('Agent name', { exact: true })).toHaveValue(
     'IT Support Agent',
   );
@@ -162,7 +163,7 @@ test('evaluation errors retry and configuration edits invalidate reference recei
   await expect(
     page
       .locator('.wizardActions')
-      .getByRole('button', { name: 'Continue to Deploy →', exact: true }),
+      .getByRole('button', { name: 'Confirm & Continue →', exact: true }),
   ).toBeDisabled();
   fail = false;
   await page

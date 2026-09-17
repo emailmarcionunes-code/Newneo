@@ -82,13 +82,13 @@
 }
 .journeyReference .launchStepper .current button {
   background: none;
-  color: #2563eb;
+  color: #1955a6;
   font-weight: 600;
 }
 .journeyReference .launchStepper .current .stepCircle {
   color: white;
-  background: #2563eb;
-  box-shadow: 0 0 0 4px #dbeafe;
+  background: #1955a6;
+  box-shadow: 0 0 0 4px #dce7f6;
 }
 .journeyReference .launchStepper .complete button {
   color: #15803d;
@@ -107,8 +107,8 @@
 }
 .journeyReference .stageEyebrow {
   display: table;
-  background: #eff6ff;
-  color: #2563eb;
+  background: #eff4fb;
+  color: #1955a6;
   padding: 3px 9px;
   border-radius: 4px;
   letter-spacing: 0.1em;
@@ -161,7 +161,7 @@
   list-style: none;
 }
 .missionHelp summary svg {
-  color: #2563eb;
+  color: #1955a6;
 }
 .journeyReference .missionHelp p {
   width: 280px;
@@ -344,12 +344,12 @@
   border-color: #16a34a;
 }
 .journeyReference .assemblyStages .current b {
-  background: #2563eb;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px #dbeafe;
+  background: #1955a6;
+  border-color: #1955a6;
+  box-shadow: 0 0 0 3px #dce7f6;
 }
 .journeyReference .assemblyStages .current {
-  color: #2563eb;
+  color: #1955a6;
 }
 .journeyReference .assemblyStages li > div {
   display: flex;
@@ -376,7 +376,7 @@
   justify-content: space-between;
 }
 .assemblyReadiness h2 span {
-  color: #2563eb;
+  color: #1955a6;
   letter-spacing: 0;
 }
 .journeyReference .assemblyScore {
@@ -387,7 +387,7 @@
 .journeyReference .assemblyScore > strong {
   display: block;
   font-size: 38px;
-  color: #2563eb;
+  color: #1955a6;
   font-weight: 700;
   margin: 0 0 12px;
 }
@@ -396,7 +396,7 @@
   width: 100%;
   height: 6px;
   margin: 0 0 14px;
-  accent-color: #2563eb;
+  accent-color: #1955a6;
 }
 .journeyReference .assemblyScore p {
   font-size: 12px;
@@ -408,7 +408,7 @@
   color: #64748b;
 }
 .journeyReference .assemblyScore small b {
-  color: #2563eb;
+  color: #1955a6;
 }
 .journeyReference .assemblyScore .readinessHint {
   color: #64748b;
@@ -448,7 +448,7 @@
   text-align: left;
 }
 .journeyReference .hybridSourceGrid button[aria-pressed='true'] {
-  border-color: #93c5fd;
+  border-color: #8fadd6;
   background: #fafcff;
 }
 .journeyReference .sourceIdentity {
@@ -465,8 +465,8 @@
 }
 .journeyReference .sourceIdentity em {
   font-size: 11px;
-  color: #1d4ed8;
-  background: #dbeafe;
+  color: #124381;
+  background: #dce7f6;
   border-radius: 999px;
   padding: 3px 10px;
   font-style: normal;
@@ -496,20 +496,20 @@
   flex-shrink: 0;
 }
 [aria-pressed='true'] .selectionCircle {
-  background: #2563eb;
+  background: #1955a6;
   color: white;
-  border-color: #2563eb;
+  border-color: #1955a6;
 }
 .journeyInsight {
   margin: 16px 0;
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  border: 1px solid #bfdbfe;
+  border: 1px solid #bed1ed;
   border-radius: 12px;
-  background: #eff6ff;
+  background: #eff4fb;
   padding: 16px;
-  color: #1d4ed8;
+  color: #124381;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -520,7 +520,7 @@
   place-items: center;
   flex-shrink: 0;
   color: white;
-  background: #2563eb;
+  background: #1955a6;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
@@ -556,7 +556,7 @@
   min-height: 76px;
 }
 .journeyReference .hybridToolRows label.selected {
-  border-color: #93c5fd;
+  border-color: #8fadd6;
   background: white;
 }
 .journeyReference .hybridToolRows strong {
@@ -603,8 +603,8 @@
   box-shadow: none;
 }
 .journeyReference .hybridToolRows input[role='switch']:checked {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: #1955a6;
+  border-color: #1955a6;
 }
 .journeyReference .hybridToolRows input[role='switch']:checked::before {
   display: block;
@@ -655,7 +655,7 @@
   min-height: 130px;
 }
 .journeyReference .infraOption.selected {
-  border-color: #93c5fd;
+  border-color: #8fadd6;
   background: white;
 }
 .journeyReference .infraTitle {
@@ -680,9 +680,9 @@
 }
 .journeyReference .infraTitle small {
   display: inline;
-  background: #eff6ff;
+  background: #eff4fb;
   border-radius: 999px;
-  color: #2563eb;
+  color: #1955a6;
   padding: 3px 8px;
   font-size: 11px;
   margin: 0;
@@ -714,17 +714,17 @@
 .journeyReference .infraRecommendation,
 .journeyReference .modelStrengths,
 .journeyReference .intelligenceNote {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: #eff4fb;
+  border: 1px solid #bed1ed;
   border-radius: 12px;
   padding: 16px;
-  color: #1d4ed8;
+  color: #124381;
   font-size: 13px;
   margin: 16px 0;
 }
 .journeyReference .infraRecommendation p,
 .journeyReference .modelStrengths p {
-  color: #1d4ed8;
+  color: #124381;
   line-height: 1.6;
 }
 .journeyReference .infraRecommendation .tags {
@@ -747,7 +747,7 @@
 }
 .journeyReference .hybridModel.selected {
   background: white;
-  border-color: #93c5fd;
+  border-color: #8fadd6;
 }
 .journeyReference .modelIdentity {
   display: flex;
@@ -986,8 +986,8 @@
   background: transparent;
 }
 .journeyReference .environmentOption.selected {
-  background: #eff6ff;
-  border-color: #93c5fd;
+  background: #eff4fb;
+  border-color: #8fadd6;
 }
 .journeyReference .environmentOption strong {
   font-size: 14px;
@@ -1380,7 +1380,7 @@
   right: 20%;
   height: 2px;
   background: linear-gradient(90deg, transparent, #93b4dd, transparent);
-  box-shadow: 0 -3px 9px 1px #2563eb0d;
+  box-shadow: 0 -3px 9px 1px #1955a60d;
   pointer-events: none;
 }
 
@@ -1448,7 +1448,7 @@
   border-radius: 2px;
 }
 .infraOption.selected .infraTypeIcons {
-  color: #2563eb;
+  color: #1955a6;
 }
 .catalog .agentGrid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1600,7 +1600,7 @@
   color: #64748b;
 }
 .skillSteps [aria-current] {
-  color: #2563eb;
+  color: #1955a6;
   font-weight: 600;
 }
 .skillCheck {

@@ -1,0 +1,96 @@
+/* Layout adapters only. Visual authority: hybrid-v4.css, make-refinement.css,
+   desktop-density.css, and the approved shared UI components. */
+.registry{display:grid;min-width:0;gap:24px}
+.registry small{display:block;color:var(--text-secondary,#64748b)}
+.registry label{display:grid;gap:8px;font-size:13px;font-weight:500}
+.registry input,.registry textarea,.registry select{font:inherit;width:100%;min-width:0;padding:10px 12px;border:1px solid var(--border,#e2e8f0);border-radius:8px;background:var(--surface,#fff);color:inherit}
+.registry input[type=checkbox]{width:18px;height:18px;accent-color:var(--primary,#1955a6)}
+.registry label:has(>input[type=checkbox]){display:flex;align-items:center;gap:8px}
+.registry fieldset{border:0;padding:0;margin:0;min-width:0}
+.registryToolbar,.registryFilterBar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.registryToolbar label,.registryFilterBar>label:first-child{flex:1;max-width:420px}
+.registryFields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.registryActions{display:flex;justify-content:flex-end;gap:12px;margin-top:24px;flex-wrap:wrap}
+.registryBinding{grid-template-columns:1fr 1fr;align-items:center;max-width:700px;margin:12px 0}
+.registryPanels{display:grid;grid-template-columns:minmax(0,1.45fr) repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.registryPanels>article{min-width:0;max-height:460px;overflow:auto;margin:0}
+.registryPanels h2,.knowledgeWorkspace h2{display:flex;align-items:center;gap:8px}
+.registryPanels h2 svg,.knowledgeWorkspace h2 svg{color:var(--text-muted,#94a3b8)}
+.registry p,.registry dd{overflow-wrap:anywhere;white-space:pre-wrap}
+.registry dl{margin:0}.registry dl>div{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,1fr);gap:16px;padding:12px 0;border-bottom:1px solid var(--border,#e2e8f0)}
+.registry dt{color:var(--text-secondary,#64748b)}.registry dd{margin:0}
+.registryVersion{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border,#e2e8f0);gap:12px}
+.registryCard section{margin-top:24px}.registryCard form{min-width:0}
+.registryScroll{max-height:60vh;overflow:auto;scrollbar-width:thin}
+.registryScroll thead{position:sticky;top:0;background:var(--canvas,#f8fafc)}
+.registryScroll table{width:100%;border-collapse:collapse}
+.registryScroll th,.registryScroll td{text-align:left;padding:16px;border-bottom:1px solid #f1f5f9;font-size:14px;color:#475569}
+.registryScroll th{font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600;background:#f8fafc;color:#64748b}
+.registryScroll tbody tr:hover{background:#f8fafc}
+.registryTabs{display:flex;gap:8px;border-bottom:1px solid var(--border,#e2e8f0);overflow-x:auto}
+.registryTabs .button{border:0;background:transparent;border-radius:0;padding:12px 16px;color:var(--text-secondary,#64748b);white-space:nowrap}
+.registryTabs .button[aria-selected=true]{color:var(--primary,#1955a6);border-bottom:2px solid var(--primary,#1955a6)}
+.registrySegmented{display:flex;gap:4px;padding:4px;background:white;border:1px solid var(--border,#e2e8f0);border-radius:8px}
+.registrySegmented .button{border:0;white-space:nowrap}
+.registrySegmented .button[aria-pressed=true]{background:var(--primary,#1955a6);color:white}
+.registryCollection{min-width:0}.registryCollection>header,.registryCollection>footer{display:none}
+.registryResourceLink{display:flex;align-items:center;gap:12px}.registryResourceLink small{max-width:340px;font-weight:400}
+.workspaceIcon{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border-radius:8px;background:var(--primary-tint,#eff6ff);color:var(--primary,#1955a6)}
+.registryBadge{display:inline-flex;background:var(--chip-bg,#f1f5f9);color:var(--text-secondary,#64748b);font-size:12px;padding:2px 8px;border-radius:6px}
+.knowledgeWorkspace{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:16px}
+.knowledgeWorkspace>article,.knowledgeWorkspace>aside{min-width:0;max-height:60vh;overflow:auto;margin:0}
+.knowledgeRow{padding:16px 0;border-bottom:1px solid var(--border,#e2e8f0)}.knowledgeRow p{margin:8px 0}
+.knowledgeImport label{display:grid;gap:8px;margin:16px 0}.knowledgeImport textarea,.knowledgeImport input{max-width:100%}
+.workspaceSkillPipeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.workspaceSkillPipeline>section{background:#f8fafc;border:1px solid var(--border,#e2e8f0);border-radius:12px;padding:16px;min-width:0}
+.workspaceSkillPipeline header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.workspaceSkillPipeline h2{font-size:15px;margin:0}.workspaceSkillPipeline>section>p{font-size:13px}
+.workspaceSkillLane{max-height:55vh;min-height:200px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.workspaceSkillCard{display:grid;gap:8px;padding:16px;background:white;border:1px solid var(--border,#e2e8f0);border-radius:12px}
+.workspaceMatrixLink{display:inline-block;margin-right:16px}.workspaceEmptyLane{color:#64748b;padding:16px}
+.registry [role=alert]{padding:12px 16px;border:1px solid #fecaca;background:#fff7f7;border-radius:8px;color:#b42318}
+.registryServiceNote{display:flex;gap:16px;align-items:center}.registry details summary{cursor:pointer}
+.workspaceOverviewGrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px}
+@media(max-width:1100px){.registryPanels{grid-template-columns:1fr 1fr}.registryPanels>article:first-child{grid-column:1/-1}}
+@media(max-width:700px){.registryPanels,.registryFields,.knowledgeWorkspace,.workspaceOverviewGrid,.workspaceSkillPipeline{grid-template-columns:1fr}.registryPanels>article,.knowledgeWorkspace>article,.knowledgeWorkspace>aside{max-height:none}.registryToolbar,.registryFilterBar{align-items:stretch}.registryVersion{align-items:flex-start;flex-direction:column}.registry dl>div{grid-template-columns:1fr;gap:8px}}
+.liveOverviewEmpty {padding:20px;color:var(--muted,#64748b)}
+.liveOverviewHealthNote {display:flex;gap:12px;margin:20px;padding:16px;background:#f7f9fb;border:1px solid #e1e7ef;border-radius:12px;color:#64748b}
+.liveOverviewHealthNote svg {flex-shrink:0;color:#1955a6}
+.liveOverviewHealthNote strong {font-size:14px;color:#263445}
+.liveOverviewHealthNote p {font-size:13px;line-height:1.6;margin:8px 0}
+.liveOverviewHealthNote a {font-size:13px;color:#1955a6}
+
+/* Live adapters use the approved panels, tabs, tables and semantic tokens. */
+/* Page headers and KPI margins inherit the same desktop-density rules as demo. */
+.registry .registryToolbar>.registryActions,.registry .pageHead>.registryActions{margin-top:0}
+.registry [role=tabpanel]{min-width:0}.registry .hybridSplit{min-width:0}
+.registry .hybridTable{max-width:100%;overflow:auto}.registry .hybridTable td{overflow-wrap:anywhere}
+.workspaceTextAction{border:0;background:transparent;padding:0;color:var(--primary);font:inherit;text-align:left;cursor:pointer}
+.workspaceTextAction:hover{text-decoration:underline}.workspaceTextAction:focus-visible{outline:2px solid var(--primary);outline-offset:4px}
+.workspaceHistory{display:grid;gap:16px;min-width:0}
+.workspacePlayground{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px}
+.workspacePlayground>aside{min-width:0}.workspaceConversation{display:flex;flex-direction:column;min-height:480px;margin:0!important;padding:0!important;overflow:hidden}
+.workspaceConversation>header{padding:16px;border-bottom:1px solid var(--border)}
+.workspaceConversation>header label{width:min(360px,100%)}
+.workspaceTranscript{flex:1;padding:24px;min-height:280px;max-height:50vh;overflow:auto}
+.workspaceTranscript:has(>.hybridEmpty){display:grid;place-items:center}
+.workspaceConversation>footer{display:flex;gap:12px;padding:16px;border-top:1px solid var(--border)}
+.workspaceConversation>footer>label{flex:1;min-width:0}
+.liveWorkspaceOverview .overviewAgentList>li{grid-template-columns:8px minmax(100px,1fr) repeat(4,auto);gap:12px}
+.registry details.panel>summary{font-weight:600}.registry details.panel[open]>summary{margin-bottom:16px}
+.registry .panel>h2{display:flex;align-items:center;gap:8px}
+@media(min-width:1280px){.registry.agentWorkspace .agentOverviewGrid>.panel{min-height:0;max-height:480px;overflow:auto}}
+@media(max-width:900px){.workspacePlayground{grid-template-columns:1fr}.workspaceConversation{min-height:420px}.liveWorkspaceOverview .overviewAgentList>li{grid-template-columns:8px minmax(120px,1fr) auto}.liveWorkspaceOverview .overviewAgentList>li>div:nth-last-child(-n+3){display:none}}
+@media(max-width:600px){.workspaceConversation>footer{flex-wrap:wrap}.workspaceConversation>footer>label{flex-basis:100%}}
+
+.registry.skillDetailPage>.hybridMetrics.count-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.registry .resourceTabs>button{flex-shrink:0}
+.registry form.hybridControls{justify-content:flex-start}
+.registry form.hybridControls>span:last-child{margin-left:auto}
+@media(max-width:800px){.registry.skillDetailPage>.hybridMetrics.count-5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.registry .registrySpendGrid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+.registry .registrySpendGrid>.panel{margin:0;min-width:0}
+.registry .registrySpendGrid .hybridTable table{min-width:0;width:100%}
+.registry .environmentSummaryGrid .hybridStatus.neutral{background:var(--chip-bg,#f1f5f9);color:var(--text-secondary,#64748b)}
+@media(max-width:800px){.registry .registrySpendGrid{grid-template-columns:1fr}}

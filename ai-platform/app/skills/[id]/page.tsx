@@ -1,3 +1,4 @@
+import {RegistrySurface} from '@/components/WorkspaceRegistry';
 import AppShell from '@/components/AppShell';
 import { GlobalSkillDetail } from '@/components/GlobalSkills';
 import '@/app/surfaces.css';
@@ -9,7 +10,7 @@ export default async function Page({
   const { id } = await params;
   return (
     <AppShell>
-      <GlobalSkillDetail id={id} />
+      <RegistrySurface kind="skill" id={id}><GlobalSkillDetail id={id} /></RegistrySurface>
     </AppShell>
   );
 }

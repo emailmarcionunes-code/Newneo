@@ -5,6 +5,7 @@ import { usePreviewValue } from '../journeys/PreviewState';
 import Link from 'next/link';
 import { Button, FormField } from '../UI';
 import { Tabs, Panel, Feedback } from '../journeys/Shared';
+import { useAccount } from '../AccountContext';
 import AccountSettings from '../AccountSettings';
 import { PageTitle, Metrics, Table, Status, DataNote } from './UI';
 const names = [
@@ -24,6 +25,7 @@ const hashes = [
   'getting-started',
 ];
 export default function SettingsWorkspace() {
+  const account = useAccount();
   const [tab, setTab] = useState(names[0]);
   const [message, setMessage] = useState('');
   const [editingProfile, setEditingProfile] = useState(false);
@@ -99,6 +101,7 @@ export default function SettingsWorkspace() {
     history.pushState(null, '', `#${hashes[names.indexOf(n)]}`);
     setMessage('');
   }
+  if (account.authenticated) return <AccountSettings />;
   return (
     <CapabilityNotice cap="admin">
       <div className="surfacePage hybridPage settingsWorkspace">
@@ -678,7 +681,7 @@ export default function SettingsWorkspace() {
                     ['Workspace configured', 'organization'],
                     ['SSO configured', 'integrations'],
                     ['Connect a knowledge source', '/knowledge'],
-                    ['Create your first agent', '/agents/catalog'],
+                    ['Add your first Agent', '/agents/catalog'],
                     ['Set a governance policy', '/governance'],
                     ['Run your first evaluation', '/evaluations'],
                     ['Deploy to production', '/deployments'],

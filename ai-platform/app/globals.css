@@ -1,9 +1,9 @@
 :root {
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #3b82f6;
-  --primary-tint: #eff6ff;
-  --primary-tint-strong: #dbeafe;
+  --primary: #1955a6;
+  --primary-hover: #124381;
+  --primary-light: #3973bc;
+  --primary-tint: #eff4fb;
+  --primary-tint-strong: #dce7f6;
   --navy: #0b1220;
   --ink: #0f172a;
   --muted: #64748b;
@@ -336,7 +336,7 @@ summary::-webkit-details-marker {
 }
 .button.add {
   background: #fff;
-  border: 1px solid #93c5fd;
+  border: 1px solid #8fadd6;
   color: var(--primary);
 }
 .button.link {

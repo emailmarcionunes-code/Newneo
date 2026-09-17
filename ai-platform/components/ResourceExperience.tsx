@@ -1,4 +1,5 @@
 'use client';
+import { useAccount } from './AccountContext';
 import { CapabilityNotice } from './journeys/DemoExperience';
 import { useEffect, useRef, useState } from 'react';
 import { surfaces, type SurfaceRecord } from '@/lib/surfaces';
@@ -101,7 +102,8 @@ export default function ResourceExperience({
 
   const pageHeading = useRef<HTMLHeadingElement>(null);
   const modalHeading = useRef<HTMLHeadingElement>(null);
-  const key = `newneo:resource-preview:v1:${surface}`;
+  const account = useAccount();
+  const key = `newneo:resource-preview:v1:${surface}${account.mode === 'demo' ? ':public-demo' : ''}`;
   useEffect(() => {
     if (!ready) return;
     try {
