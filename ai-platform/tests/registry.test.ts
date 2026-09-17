@@ -15,7 +15,7 @@ test('registry rejects malformed configuration and strips untrusted runtime fiel
 test('versioned registry enforces tenant, role, optimistic locking and pinned snapshots',async()=>{
  const db=new PGlite();try{
  await db.exec('CREATE ROLE newneo_app');
- for(const file of ['001_platform.sql','002_identity_and_drafts.sql','005_account_profiles.sql','006_versioned_registry.sql','007_knowledge.sql','008_workspace_members.sql','009_registry_lifecycle.sql','021_agent_requests.sql'])await db.exec(await readFile(new URL('../db/migrations/'+file,import.meta.url),'utf8'));
+ for(const file of ['001_platform.sql','002_identity_and_drafts.sql','005_account_profiles.sql','006_versioned_registry.sql','007_knowledge.sql','008_workspace_members.sql','009_registry_lifecycle.sql','021_agent_requests.sql','022_business_requests.sql'])await db.exec(await readFile(new URL('../db/migrations/'+file,import.meta.url),'utf8'));
  await db.exec('GRANT USAGE ON SCHEMA newneo TO newneo_app; GRANT SELECT ON newneo.identities,newneo.workspaces,newneo.workspace_memberships TO newneo_app; GRANT SELECT,INSERT,UPDATE ON newneo.agents,newneo.drafts TO newneo_app');
  const orgs=(await db.query<{id:string}>("INSERT INTO newneo.organizations(name) VALUES('A'),('B') RETURNING id")).rows;
  const work=async(org:string)=>(await db.query<{id:string}>("INSERT INTO newneo.workspaces(organization_id,name) VALUES($1,'Main') RETURNING id",[org])).rows[0].id;
@@ -29,7 +29,7 @@ test('versioned registry enforces tenant, role, optimistic locking and pinned sn
  await tx(editor,()=>saveAgentRequest(db,a,editor,brief));
  assert.equal((await tx(editor,()=>db.query('SELECT id FROM newneo.agent_requests'))).rows.length,1);
  assert.equal((await tx(users[2].id,()=>db.query('SELECT id FROM newneo.agent_requests'))).rows.length,0);
- await assert.rejects(tx(reader,()=>saveAgentRequest(db,a,reader,brief)),/role cannot/);
+ assert.equal((await tx(reader,()=>saveAgentRequest(db,a,reader,brief))).status,'Pending review');
  await assert.rejects(tx(editor,()=>saveAgentRequest(db,b,editor,brief)),/unavailable/);
  await assert.rejects(tx(editor,()=>saveAgentRequest(db,a,users[2].id,brief)));
 

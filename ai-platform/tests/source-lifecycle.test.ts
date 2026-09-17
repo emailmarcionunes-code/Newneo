@@ -8,11 +8,13 @@ import {mutateKnowledge} from '../server/knowledge';
 import {runSourceQuery,readSourceRuns,checkConfiguration} from '../server/source-runs';
 import {requestConfigurationReview,decideConfigurationReview,readConfigurationReviews} from '../server/configuration-reviews';
 import {createRetrievalSuite,runRetrievalEvaluation,readRetrievalEvaluations} from '../server/retrieval-evaluations';
+import {readBusinessWorkspace} from '../server/business-workspace';
+import {saveAgentRequest} from '../server/agent-requests';
 import {readWorkspaceAudit} from '../server/workspace-audit';
 test('lifecycle and source execution preserve scope, history, idempotency and source availability',async()=>{
  const db=new PGlite();try{
  await db.exec('CREATE ROLE newneo_app');
- for(const file of ['001_platform.sql','002_identity_and_drafts.sql','005_account_profiles.sql','006_versioned_registry.sql','007_knowledge.sql','008_workspace_members.sql','009_registry_lifecycle.sql','010_source_runs.sql','011_configuration_reviews.sql','012_retrieval_evaluations.sql'])await db.exec(await readFile(new URL('../db/migrations/'+file,import.meta.url),'utf8'));
+ for(const file of ['001_platform.sql','002_identity_and_drafts.sql','005_account_profiles.sql','006_versioned_registry.sql','007_knowledge.sql','008_workspace_members.sql','009_registry_lifecycle.sql','010_source_runs.sql','011_configuration_reviews.sql','012_retrieval_evaluations.sql','021_agent_requests.sql','022_business_requests.sql'])await db.exec(await readFile(new URL('../db/migrations/'+file,import.meta.url),'utf8'));
  await db.exec('GRANT USAGE ON SCHEMA newneo TO newneo_app; GRANT SELECT ON newneo.identities,newneo.workspaces,newneo.workspace_memberships TO newneo_app; GRANT SELECT,INSERT,UPDATE ON newneo.agents,newneo.drafts TO newneo_app');
  const orgs=(await db.query<{id:string}>("INSERT INTO newneo.organizations(name) VALUES('A'),('B') RETURNING id")).rows;
  const ws=async(org:string)=>(await db.query<{id:string}>("INSERT INTO newneo.workspaces(organization_id,name) VALUES($1,'Main') RETURNING id",[org])).rows[0].id;
@@ -28,6 +30,13 @@ test('lifecycle and source execution preserve scope, history, idempotency and so
  const agent=await tx(0,()=>saveRegistry(db,a,author,input));
  const request={id:randomUUID(),agentVersionId:agent.versionId,query:'vacation'};
  const run=await tx(3,()=>runSourceQuery(db,a,users[3].id,request));assert.equal((run.result as unknown[]).length,1);
+ const business=await tx(3,()=>readBusinessWorkspace(db,a,users[3].id));assert.equal(business.work.length,1);assert.equal(business.agents[0].id,agent.id);
+ assert.equal((await tx(0,()=>readBusinessWorkspace(db,a,author))).work.length,0);
+ const requestBrief={outcome:'Need an Agent',department:'Sales',targetUsers:'Team',systems:'Documents',volume:'Daily',sensitivity:'Internal'};
+ await tx(1,()=>saveAgentRequest(db,a,users[1].id,requestBrief));
+ assert.equal((await tx(1,()=>readBusinessWorkspace(db,a,users[1].id))).requests.length,1);
+ assert.equal((await tx(0,()=>readBusinessWorkspace(db,a,author))).requests.length,0);
+ await assert.rejects(tx(2,()=>saveAgentRequest(db,a,users[2].id,requestBrief)));
  const replay=await tx(3,()=>runSourceQuery(db,a,users[3].id,request));assert.equal(replay.replayed,true);
  await assert.rejects(tx(3,()=>runSourceQuery(db,a,users[3].id,{...request,query:'other'})),/already used/);
  await assert.rejects(tx(1,()=>runSourceQuery(db,a,users[1].id,{...request,id:randomUUID()})),/role cannot/);

@@ -1,5 +1,5 @@
 import {getSession} from '@/server/auth';
-import {withVerifiedIdentity} from '@/server/database';
+import {withOperationsIdentity as withVerifiedIdentity} from '@/server/product-access';
 import {readWorkspaceAudit} from '@/server/workspace-audit';
 import {RegistryError} from '@/server/registry';
 import {noStore} from '@/server/http';

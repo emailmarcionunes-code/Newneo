@@ -1,5 +1,5 @@
 import { getSession, sameOrigin } from '@/server/auth';
-import { withVerifiedIdentity } from '@/server/database';
+import { withOperationsIdentity as withVerifiedIdentity } from '@/server/product-access';
 import { readDrafts, storeDraft, validatedDraft } from '@/server/drafts';
 import { readJson, noStore } from '@/server/http';
 export async function GET() {

@@ -3,20 +3,27 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { SignOutControl } from './SignOutControl';
 import { AssetIcon } from './Assets';
 import { HeaderSearch, HeaderNotifications, HelpIcon } from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
 import { DemoControls, DemoBoundary } from './journeys/DemoExperience';
 import { usePreviewValue } from './journeys/PreviewState';
 import { useAccount } from './AccountContext';
+import {
+  isOperationsPath,
+  hasCapability,
+  demoProductRole,
+} from '@/lib/product-access';
 import { useSidebarState } from './SidebarState';
 
 export const navigation = [
-  ['Overview', '/', 'overview'],
+  ['Overview', '/operations', 'overview'],
   ['Agents', '/agents', 'agents'],
   ['Skills', '/skills', 'skills'],
   ['Knowledge', '/knowledge', 'knowledge'],
-  ['Tools & MCP', '/tools', 'tools'],
+  ['Connections', '/tools', 'tools'],
+  ['Models', '/models', 'tools'],
   ['Governance', '/governance', 'governance'],
   ['Evaluations', '/evaluations', 'evaluations'],
   ['Deployments', '/deployments', 'deployments'],
@@ -28,10 +35,18 @@ export const navigation = [
   ['Settings', '/settings', 'settings'],
 ] as const;
 const groups = [
-  { name: 'BUILD / MANAGE', items: navigation.slice(0, 6) },
-  { name: 'OPERATE', items: navigation.slice(6, 11) },
-  { name: 'PLATFORM', items: navigation.slice(11, 13) },
+  { name: 'BUILD / MANAGE', items: navigation.slice(0, 7) },
+  { name: 'OPERATE', items: navigation.slice(7, 12) },
+  { name: 'PLATFORM', items: navigation.slice(12, 14) },
 ];
+
+const workspaceNavigation = [
+  ['Home', '/', 'overview'],
+  ['My Agents', '/workspace/agents', 'agents'],
+  ['Discover', '/workspace/discover', 'skills'],
+  ['Work', '/workspace/work', 'playground'],
+  ['Reports', '/workspace/reports', 'reports'],
+] as const;
 
 export function NavItem({
   label,
@@ -79,9 +94,24 @@ export function ApplicationSidebar({
 }) {
   const [previewOrg] = usePreviewValue('settings:org', 'Acme Corp');
   const account = useAccount();
-  const org = account.mode === 'demo' ? 'Acme Corp' : account.authenticated ? (account.workspace?.organization_name ?? 'Select workspace') : previewOrg;
+  const org =
+    account.mode === 'demo'
+      ? 'Acme Corp'
+      : account.authenticated
+        ? (account.workspace?.organization_name ?? 'Select workspace')
+        : previewOrg;
   const [demoRole] = usePreviewValue('demo:role', 'Administrator');
   const path = usePathname();
+  const canOperate = hasCapability(
+    account.mode === 'demo'
+      ? demoProductRole(demoRole)
+      : account.workspace?.role,
+    'operations:view',
+  );
+  const operations = isOperationsPath(path) && canOperate;
+  const visibleGroups = operations
+    ? groups
+    : [{ name: 'WORKSPACE', items: workspaceNavigation }];
   return (
     <aside
       id="application-sidebar"
@@ -109,7 +139,7 @@ export function ApplicationSidebar({
         ×
       </button>
       <Link
-        href="/agents/catalog"
+        href={operations ? '/agents/catalog' : '/workspace/discover'}
         className="sidebarCreate"
         aria-label="Add Agent"
         data-tooltip={collapsed ? 'Add Agent' : undefined}
@@ -118,7 +148,17 @@ export function ApplicationSidebar({
         {!collapsed && 'Add Agent'}
       </Link>
       <nav aria-label="Main navigation">
-        {groups.map((group) => (
+        {canOperate && (
+          <NavItem
+            label={operations ? 'Workspace' : 'Operations'}
+            href={operations ? '/' : '/operations'}
+            icon={operations ? 'overview' : 'settings'}
+            compact={collapsed}
+            active={false}
+            onNavigate={onClose}
+          />
+        )}
+        {visibleGroups.map((group) => (
           <section className="navGroup" key={group.name}>
             <h2>{collapsed ? '' : group.name}</h2>
             {group.items.map(([label, href, icon]) => (
@@ -138,9 +178,19 @@ export function ApplicationSidebar({
         ))}
       </nav>
       <div className="sidebarBottom">
+        {!operations && (
+          <NavItem
+            label="Help"
+            href="/workspace/help"
+            icon="overview"
+            compact={collapsed}
+            active={path === '/workspace/help'}
+            onNavigate={onClose}
+          />
+        )}
         <NavItem
-          label="Settings"
-          href="/settings"
+          label={operations ? 'Settings' : 'Profile'}
+          href={operations ? '/settings' : '/workspace/profile'}
           icon="settings"
           compact={collapsed}
           active={path.startsWith('/settings')}
@@ -156,13 +206,21 @@ export function ApplicationSidebar({
         }
       >
         <summary title={collapsed ? org : undefined}>
-          <span className="organizationAvatar">{account.authenticated ? org.slice(0,2).toUpperCase() : 'AC'}</span>
+          <span className="organizationAvatar">
+            {account.authenticated ? org.slice(0, 2).toUpperCase() : 'AC'}
+          </span>
           {!collapsed && <span>{org}</span>}
         </summary>
         <div className="workspacePopover">
           <strong>{org}</strong>
-          <p>Customer Service workspace</p>
-          <small>Demo organization</small>
+          <p>
+            {account.mode === 'demo'
+              ? 'Demo workspace'
+              : account.workspace?.name}
+          </p>
+          <small>
+            {account.mode === 'demo' ? 'Sample data' : account.workspace?.role}
+          </small>
         </div>
       </details>
       <button
@@ -199,15 +257,28 @@ export function Topbar({
   const path = usePathname();
   const title = path.includes('/agents/launch')
     ? 'Add Agent'
-    : (navigation.find(([, href]) =>
+    : ([...workspaceNavigation, ...navigation].find(([, href]) =>
         href === '/'
           ? path === '/'
           : path === href || path.startsWith(href + '/'),
       )?.[0] ?? (path === '/models' ? 'Model endpoints' : 'Workspace'));
   const [previewOrg] = usePreviewValue('settings:org', 'Acme Corp');
   const account = useAccount();
-  const org = account.mode === 'demo' ? 'Acme Corp' : account.authenticated ? (account.workspace?.organization_name ?? 'Select workspace') : previewOrg;
+  const org =
+    account.mode === 'demo'
+      ? 'Acme Corp'
+      : account.authenticated
+        ? (account.workspace?.organization_name ?? 'Select workspace')
+        : previewOrg;
   const [demoRole] = usePreviewValue('demo:role', 'Administrator');
+  const operations =
+    isOperationsPath(path) &&
+    hasCapability(
+      account.mode === 'demo'
+        ? demoProductRole(demoRole)
+        : account.workspace?.role,
+      'operations:view',
+    );
   return (
     <header className="topbar" role="banner">
       <button
@@ -225,38 +296,54 @@ export function Topbar({
         <span aria-hidden="true">/</span>
         <strong>{title}</strong>
       </div>
-      <HeaderSearch />
+      {operations ? (
+        <HeaderSearch />
+      ) : (
+        <Link href="/workspace/discover" style={{ marginLeft: 'auto' }}>
+          Find an Agent
+        </Link>
+      )}
       <div className="topActions">
         {account.mode === 'demo' && <DemoControls />}
-        <HeaderNotifications />
+        {operations && <HeaderNotifications />}
         <details className="topbarMenu">
           <summary aria-label="Help">
             <HelpIcon />
           </summary>
           <div className="topbarPopover">
-            <strong>Agent Launch Guide</strong>
+            <strong>Work with your Agents</strong>
             <p>
-              Choose an agent, define its use case and select approved knowledge
-              and actions. Save a draft to return later.
+              Discover a specialist, review what it can do and open it from My
+              Agents. Your administrator manages connections and activation.
             </p>
           </div>
         </details>
         <details className="topbarMenu profileMenu">
           <summary>
-            <span className="avatar">{account.authenticated ? 'AD' : 'AM'}</span>
+            <span className="avatar">
+              {account.authenticated ? 'AD' : 'AM'}
+            </span>
             <span className="userContext">
-              <strong>{account.authenticated ? account.displayName : 'Ana Martinez'}</strong>
+              <strong>
+                {account.authenticated ? account.displayName : 'Ana Martinez'}
+              </strong>
               <small>{org}</small>
             </span>
           </summary>
           <div className="topbarPopover">
-            <strong>{account.authenticated ? account.displayName : 'Ana Martinez'}</strong>
-            <p>{account.authenticated ? account.workspace?.name : `Demo workspace · ${demoRole}`}</p>
-            <Link href="/settings#team">Team & Roles</Link>
+            <strong>
+              {account.authenticated ? account.displayName : 'Ana Martinez'}
+            </strong>
             <p>
-              <Link href="/settings">Workspace settings</Link>
+              {account.authenticated
+                ? account.workspace?.name
+                : `Demo workspace · ${demoRole}`}
             </p>
-            <Link href={account.authenticated ? '/settings' : '/login'}>{account.authenticated ? 'Manage account' : 'Sign out of preview'}</Link>
+            <Link href="/workspace/profile">Your account</Link>
+            <p>
+              <Link href="/workspace/help">Help</Link>
+            </p>
+            <SignOutControl />
           </div>
         </details>
       </div>
@@ -266,6 +353,16 @@ export function Topbar({
 
 export function ApplicationShell({ children }: { children: ReactNode }) {
   const account = useAccount();
+  const path = usePathname();
+  const [demoRole] = usePreviewValue('demo:role', 'Administrator');
+  const allowed =
+    !isOperationsPath(path) ||
+    hasCapability(
+      account.mode === 'demo'
+        ? demoProductRole(demoRole)
+        : account.workspace?.role,
+      'operations:view',
+    );
   const [open, setOpen] = useState(false);
   const { collapsed, toggleCollapsed } = useSidebarState();
   useEffect(() => {
@@ -298,7 +395,31 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
     };
   }, [open]);
 
-  if (account.mode !== 'demo' && !account.authenticated) return <main style={{maxWidth:640,margin:'12vh auto',padding:24}}><NewneoWordmark/><h1>{account.error?'Workspace unavailable':'Sign in to your workspace'}</h1><p role="alert">{account.error??'Your session is no longer active. Sign in to continue.'}</p><a href="/login">Open NEWNEO login →</a>{account.error&&<button onClick={()=>window.dispatchEvent(new Event('newneo-account-changed'))}>Retry</button>}</main>;
+  if (account.mode !== 'demo' && !account.authenticated)
+    return (
+      <main style={{ maxWidth: 640, margin: '12vh auto', padding: 24 }}>
+        <NewneoWordmark />
+        <h1>
+          {account.error
+            ? 'Workspace unavailable'
+            : 'Sign in to your workspace'}
+        </h1>
+        <p role="alert">
+          {account.error ??
+            'Your session is no longer active. Sign in to continue.'}
+        </p>
+        <a href="/login">Open NEWNEO login →</a>
+        {account.error && (
+          <button
+            onClick={() =>
+              window.dispatchEvent(new Event('newneo-account-changed'))
+            }
+          >
+            Retry
+          </button>
+        )}
+      </main>
+    );
 
   const shellStyle = {
     '--sidebar-width': collapsed ? '60px' : '224px',
@@ -326,7 +447,26 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
       <section className="mainArea">
         <Topbar open={open} onToggle={() => setOpen(!open)} />
         <main id="main-content" className="content">
-          <DemoBoundary>{account.mode === 'demo' && <div role="note" className="intelligenceNote">Demo · Acme Corp / Ana Martinez · Sample data only. No live actions. <a href="/login">Exit demo →</a></div>}{children}</DemoBoundary>
+          <DemoBoundary>
+            {account.mode === 'demo' && (
+              <div role="note" className="intelligenceNote">
+                Demo · Acme Corp / Ana Martinez · Sample data only. No live
+                actions. <a href="/login">Exit demo →</a>
+              </div>
+            )}
+            {allowed ? (
+              children
+            ) : (
+              <section className="panel">
+                <h1>Operations access required</h1>
+                <p>
+                  Your role provides access to Workspace. Contact your
+                  administrator for additional access.
+                </p>
+                <Link href="/">Return to Workspace</Link>
+              </section>
+            )}
+          </DemoBoundary>
         </main>
       </section>
     </div>

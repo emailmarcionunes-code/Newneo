@@ -39,3 +39,7 @@ Platform code was reconciled against the hosted `/home/ubuntu/platform` source o
 ### Catalog addition update — 2026-09-17
 
 The primary Add Agent journey now has three steps: compact four-column catalog → capability details → accept and add. Confirmation persists the recommended configuration directly, with available workspace bindings. It does not navigate to the eight-stage wizard or imply deployment. Advanced configuration remains available from the Agent workspace.
+
+## Workspace + Operations — September 17, 2026
+
+Workspace is now the primary business entry point. Operations preserves the existing technical modules and Agent IDs behind role-based access. Reuse the capability contract and business projection instead of duplicating domain records. See [the architecture audit and transition](../ai-platform/docs/WORKSPACE-OPERATIONS-ARCHITECTURE.md).

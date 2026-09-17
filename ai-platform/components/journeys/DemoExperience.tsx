@@ -11,6 +11,8 @@ export const demoRoles = [
   'Creator',
   'Approver',
   'Operator',
+  'Employee',
+  'Department Owner',
 ] as const;
 export function useDemoAccess() {
   const [role] = usePreviewValue('demo:role', 'Administrator');

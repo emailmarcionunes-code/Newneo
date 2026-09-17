@@ -1,3 +1,8 @@
+import { headers, cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { isOperationsPath } from '@/lib/product-access';
+import { canOpenOperations } from '@/server/product-access';
+import { demoCookie } from '@/server/auth';
 import { AccountProvider } from '@/components/AccountContext';
 import type { Metadata } from 'next';
 import '@fontsource/inter/400.css';
@@ -18,9 +23,9 @@ import { SidebarStateProvider } from '@/components/SidebarState';
 import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 
 export const metadata: Metadata = {
-  title: 'Newneo AI Platform',
+  title: 'NEWNEO Workspace',
   robots: { index: false, follow: false },
-  description: 'Build, govern, deploy and operate enterprise AI.',
+  description: 'Work with AI specialists across your business.',
   icons: {
     icon: '/icon.svg?brand=official',
     shortcut: '/icon.svg?brand=official',
@@ -28,16 +33,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const path = (await headers()).get('x-newneo-path') ?? '';
+  if (
+    isOperationsPath(path) &&
+    (await cookies()).get(demoCookie)?.value !== 'acme' &&
+    !(await canOpenOperations())
+  )
+    redirect('/workspace?access=operations');
   return (
     <html lang="en">
       <body>
         <SidebarStateProvider>
-          <AccountProvider><PreviewStateProvider>{children}</PreviewStateProvider></AccountProvider>
+          <AccountProvider>
+            <PreviewStateProvider>{children}</PreviewStateProvider>
+          </AccountProvider>
         </SidebarStateProvider>
       </body>
     </html>

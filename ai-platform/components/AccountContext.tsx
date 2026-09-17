@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-type Workspace = { id: string; organization_id: string; organization_name: string; name: string; can_edit_agents: boolean; role?: string };
+type Workspace = { id: string; organization_id: string; organization_name: string; name: string; can_edit_agents: boolean; capabilities?: string[]; role?: string };
 type Account = { error?: string; ready?: boolean; mode?: 'demo'; authenticated?: boolean; displayName?: string; workspaceId?: string; workspaces?: Workspace[] };
 const Context = createContext<Account>({});
 export function AccountProvider({children}: {children: ReactNode}) {

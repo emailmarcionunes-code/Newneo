@@ -33,6 +33,7 @@ async function main() {
       '014_cost_console_notifications.sql',
       '015_platform_owner.sql',
       '021_agent_requests.sql',
+      '022_business_requests.sql',
     ]) {
       const sql = await readFile(
         new URL(`../db/migrations/${name}`, import.meta.url),

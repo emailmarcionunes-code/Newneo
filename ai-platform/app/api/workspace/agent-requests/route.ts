@@ -1,5 +1,5 @@
 import {getSession,sameOrigin} from '@/server/auth';
-import {withVerifiedIdentity} from '@/server/database';
+import {withOperationsIdentity as withVerifiedIdentity} from '@/server/product-access';
 import {readJson,noStore} from '@/server/http';
 import {RegistryError} from '@/server/registry';
 import {saveAgentRequest} from '@/server/agent-requests';

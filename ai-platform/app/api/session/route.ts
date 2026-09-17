@@ -1,3 +1,4 @@
+import {productCapabilities} from '@/lib/product-access';
 import { cookies } from 'next/headers';
 import { authConfigured, getSession, demoCookie } from '@/server/auth';
 import { withVerifiedIdentity } from '@/server/database';
@@ -25,7 +26,7 @@ export async function GET() {
       {
         displayName: displayName || 'Workspace member',
         authenticated: true,
-        workspaces,
+        workspaces: workspaces.map(w=>({...w,capabilities:productCapabilities(w.role)})),
         workspaceId: session.workspaceId ?? null,
       },
       { headers: noStore },
