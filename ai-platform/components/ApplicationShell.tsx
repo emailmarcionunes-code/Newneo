@@ -11,27 +11,45 @@ import { usePreviewValue } from './journeys/PreviewState';
 import { useAccount } from './AccountContext';
 import { useSidebarState } from './SidebarState';
 
-export const navigation = [
-  ['Overview', '/', 'overview'],
+export const workspaceNavigation = [
+  ['Home', '/', 'overview'],
   ['Agents', '/agents', 'agents'],
+  ['Reports', '/reports', 'reports'],
+] as const;
+
+export const operationsNavigation = [
   ['Skills', '/skills', 'skills'],
   ['Knowledge', '/knowledge', 'knowledge'],
-  ['Tools & MCP', '/tools', 'tools'],
+  ['Connections', '/tools', 'tools'],
   ['Governance', '/governance', 'governance'],
   ['Evaluations', '/evaluations', 'evaluations'],
   ['Deployments', '/deployments', 'deployments'],
   ['AgentOps', '/agentops', 'agentops'],
   ['FinOps', '/finops', 'finops'],
-  ['Reports', '/reports', 'reports'],
   ['Playground', '/playground', 'playground'],
   ['Audit Log', '/audit-log', 'audit'],
-  ['Settings', '/settings', 'settings'],
 ] as const;
-const groups = [
-  { name: 'BUILD / MANAGE', items: navigation.slice(0, 6) },
-  { name: 'OPERATE', items: navigation.slice(6, 11) },
-  { name: 'PLATFORM', items: navigation.slice(11, 13) },
-];
+
+export const navigation = [...workspaceNavigation, ...operationsNavigation] as const;
+
+function hasOperationsAccess({
+  account,
+  demoRole,
+}: {
+  account: ReturnType<typeof useAccount>;
+  demoRole: string;
+}) {
+  if (account.mode === 'demo') {
+    return ['administrator', 'admin', 'ai administrator', 'it administrator'].includes(
+      demoRole.toLowerCase(),
+    );
+  }
+  const role = account.workspace?.role?.toLowerCase() ?? '';
+  return Boolean(
+    account.workspace?.can_edit_agents ||
+      ['administrator', 'admin', 'owner', 'ai administrator', 'it administrator'].includes(role),
+  );
+}
 
 export function NavItem({
   label,
@@ -56,9 +74,7 @@ export function NavItem({
       aria-label={compact ? label : undefined}
       data-tooltip={compact ? label : undefined}
       onClick={onNavigate}
-      style={
-        compact ? { justifyContent: 'center', paddingInline: 8 } : undefined
-      }
+      style={compact ? { justifyContent: 'center', paddingInline: 8 } : undefined}
     >
       <AssetIcon name={icon} monochrome />
       {!compact && <span>{label}</span>}
@@ -79,9 +95,20 @@ export function ApplicationSidebar({
 }) {
   const [previewOrg] = usePreviewValue('settings:org', 'Acme Corp');
   const account = useAccount();
-  const org = account.mode === 'demo' ? 'Acme Corp' : account.authenticated ? (account.workspace?.organization_name ?? 'Select workspace') : previewOrg;
+  const org =
+    account.mode === 'demo'
+      ? 'Acme Corp'
+      : account.authenticated
+        ? (account.workspace?.organization_name ?? 'Select workspace')
+        : previewOrg;
   const [demoRole] = usePreviewValue('demo:role', 'Administrator');
   const path = usePathname();
+  const canAccessOperations = hasOperationsAccess({ account, demoRole });
+  const groups = [
+    { name: 'WORKSPACE', items: workspaceNavigation },
+    ...(canAccessOperations ? [{ name: 'OPERATIONS', items: operationsNavigation }] : []),
+  ];
+
   return (
     <aside
       id="application-sidebar"
@@ -111,11 +138,11 @@ export function ApplicationSidebar({
       <Link
         href="/agents/catalog"
         className="sidebarCreate"
-        aria-label="Add Agent"
-        data-tooltip={collapsed ? 'Add Agent' : undefined}
+        aria-label={canAccessOperations ? 'Add Agent' : 'Discover Agents'}
+        data-tooltip={collapsed ? (canAccessOperations ? 'Add Agent' : 'Discover Agents') : undefined}
       >
         <span aria-hidden="true">＋</span>
-        {!collapsed && 'Add Agent'}
+        {!collapsed && (canAccessOperations ? 'Add Agent' : 'Discover Agents')}
       </Link>
       <nav aria-label="Main navigation">
         {groups.map((group) => (
@@ -156,13 +183,15 @@ export function ApplicationSidebar({
         }
       >
         <summary title={collapsed ? org : undefined}>
-          <span className="organizationAvatar">{account.authenticated ? org.slice(0,2).toUpperCase() : 'AC'}</span>
+          <span className="organizationAvatar">
+            {account.authenticated ? org.slice(0, 2).toUpperCase() : 'AC'}
+          </span>
           {!collapsed && <span>{org}</span>}
         </summary>
         <div className="workspacePopover">
           <strong>{org}</strong>
-          <p>Customer Service workspace</p>
-          <small>Demo organization</small>
+          <p>{canAccessOperations ? 'Workspace + Operations access' : 'Business workspace'}</p>
+          <small>{account.mode === 'demo' ? `Demo · ${demoRole}` : account.workspace?.role ?? 'Workspace member'}</small>
         </div>
       </details>
       <button
@@ -206,8 +235,14 @@ export function Topbar({
       )?.[0] ?? (path === '/models' ? 'Model endpoints' : 'Workspace'));
   const [previewOrg] = usePreviewValue('settings:org', 'Acme Corp');
   const account = useAccount();
-  const org = account.mode === 'demo' ? 'Acme Corp' : account.authenticated ? (account.workspace?.organization_name ?? 'Select workspace') : previewOrg;
+  const org =
+    account.mode === 'demo'
+      ? 'Acme Corp'
+      : account.authenticated
+        ? (account.workspace?.organization_name ?? 'Select workspace')
+        : previewOrg;
   const [demoRole] = usePreviewValue('demo:role', 'Administrator');
+  const canAccessOperations = hasOperationsAccess({ account, demoRole });
   return (
     <header className="topbar" role="banner">
       <button
@@ -234,10 +269,11 @@ export function Topbar({
             <HelpIcon />
           </summary>
           <div className="topbarPopover">
-            <strong>Agent Launch Guide</strong>
+            <strong>{canAccessOperations ? 'Newneo Operations Guide' : 'Working with Newneo'}</strong>
             <p>
-              Choose an agent, define its use case and select approved knowledge
-              and actions. Save a draft to return later.
+              {canAccessOperations
+                ? 'Manage agents, knowledge, connections, skills, policies and operational controls. Business users only see the workspace they need to get work done.'
+                : 'Choose an agent, give it the task and select or connect the business sources it should use. Newneo handles the technical AI configuration behind the scenes.'}
             </p>
           </div>
         </details>
@@ -251,12 +287,18 @@ export function Topbar({
           </summary>
           <div className="topbarPopover">
             <strong>{account.authenticated ? account.displayName : 'Ana Martinez'}</strong>
-            <p>{account.authenticated ? account.workspace?.name : `Demo workspace · ${demoRole}`}</p>
-            <Link href="/settings#team">Team & Roles</Link>
+            <p>
+              {account.authenticated
+                ? account.workspace?.name
+                : `Demo workspace · ${demoRole}`}
+            </p>
+            {canAccessOperations && <Link href="/settings#team">Team & Roles</Link>}
             <p>
               <Link href="/settings">Workspace settings</Link>
             </p>
-            <Link href={account.authenticated ? '/settings' : '/login'}>{account.authenticated ? 'Manage account' : 'Sign out of preview'}</Link>
+            <Link href={account.authenticated ? '/settings' : '/login'}>
+              {account.authenticated ? 'Manage account' : 'Sign out of preview'}
+            </Link>
           </div>
         </details>
       </div>
@@ -298,7 +340,24 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
     };
   }, [open]);
 
-  if (account.mode !== 'demo' && !account.authenticated) return <main style={{maxWidth:640,margin:'12vh auto',padding:24}}><NewneoWordmark/><h1>{account.error?'Workspace unavailable':'Sign in to your workspace'}</h1><p role="alert">{account.error??'Your session is no longer active. Sign in to continue.'}</p><a href="/login">Open NEWNEO login →</a>{account.error&&<button onClick={()=>window.dispatchEvent(new Event('newneo-account-changed'))}>Retry</button>}</main>;
+  if (account.mode !== 'demo' && !account.authenticated)
+    return (
+      <main style={{ maxWidth: 640, margin: '12vh auto', padding: 24 }}>
+        <NewneoWordmark />
+        <h1>{account.error ? 'Workspace unavailable' : 'Sign in to your workspace'}</h1>
+        <p role="alert">
+          {account.error ?? 'Your session is no longer active. Sign in to continue.'}
+        </p>
+        <a href="/login">Open NEWNEO login →</a>
+        {account.error && (
+          <button
+            onClick={() => window.dispatchEvent(new Event('newneo-account-changed'))}
+          >
+            Retry
+          </button>
+        )}
+      </main>
+    );
 
   const shellStyle = {
     '--sidebar-width': collapsed ? '60px' : '224px',
@@ -326,7 +385,15 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
       <section className="mainArea">
         <Topbar open={open} onToggle={() => setOpen(!open)} />
         <main id="main-content" className="content">
-          <DemoBoundary>{account.mode === 'demo' && <div role="note" className="intelligenceNote">Demo · Acme Corp / Ana Martinez · Sample data only. No live actions. <a href="/login">Exit demo →</a></div>}{children}</DemoBoundary>
+          <DemoBoundary>
+            {account.mode === 'demo' && (
+              <div role="note" className="intelligenceNote">
+                Demo · Acme Corp / Ana Martinez · Sample data only. No live actions.{' '}
+                <a href="/login">Exit demo →</a>
+              </div>
+            )}
+            {children}
+          </DemoBoundary>
         </main>
       </section>
     </div>
