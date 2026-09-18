@@ -37,3 +37,9 @@ This is a deterministic product-guide assistant, not an LLM integration. It reco
 The Neo popup collapses after the mouse leaves the combined launcher/panel area (180 ms grace to cross the gap). Re-entry cancels collapse; touch and keyboard retain click, close and Escape controls. Closing does not discard the draft or conversation in the mounted page.
 
 Chat shows the latest question and answer. History keeps the latest 20 exchanges in component memory, newest first, with each question as a collapsed expandable title. Changing workspace/role or reloading the page clears this in-memory history; it is not a persistent database archive.
+
+## Daily hidden memory (replaces visible History)
+
+The visible History tab was removed. A fresh page opens on “Como posso ajudar?” without replaying past questions. The last 20 exchanges are stored locally in the browser under a key scoped by mode, workspace, account display identifier and role, and are used for topic continuity and explicit recall requests. No cross-device or server-side memory is provided.
+
+Memory is valid only for the current browser-local calendar date. A next-midnight timer and focus/visibility checks reset the visible exchange, draft, topic and stored daily memory at rollover; submission also rejects stale-day context. Invalid local data and unavailable browser storage are handled without preventing chat use. Tests cover same-day restoration, stale-day rejection, invalid storage and month-boundary local midnight.
