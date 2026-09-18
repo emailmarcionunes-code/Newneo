@@ -193,7 +193,7 @@ export default function BusinessWorkspace({
           </details>
         ))
       ) : (
-        <div className="businessEmpty"><span className="businessIcon"><Clock3 size={22}/></span><strong>Your work starts here</strong><p>Your completed document searches and results will appear here.</p><Link className="businessCardAction" href="/workspace/agents">Explore My Agents <ArrowRight size={15}/></Link></div>
+        <div className="businessEmpty"><span className="businessIcon"><Clock3 size={22}/></span><strong>Your work starts here</strong><p>Your searches and results appear here.</p><Link className="businessCardAction" href="/workspace/agents">Explore My Agents <ArrowRight size={15}/></Link></div>
       )}
     </div>
   );
@@ -241,8 +241,8 @@ export default function BusinessWorkspace({
         <>
           <header className="pageHead">
             <div>
-              <h1>Your work, with AI specialists</h1>
-              <p>Find the right Agent and get help with your next task.</p>
+              <h1>Your workspace</h1>
+              <p>Choose an agent and start a task.</p>
             </div>
             <Link className="button primary" href="/workspace/discover">
               Discover Agents <ArrowRight size={16} />

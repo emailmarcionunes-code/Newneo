@@ -209,3 +209,35 @@
 @media(min-width:1280px) {
  .skillsWorkspace .skillsListPanel .hybridTable { max-height:clamp(280px, calc(100dvh - 450px), 720px); }
 }
+
+/* Platform typography: restrained hierarchy aligned with the approved lists. */
+body .content { font-size:12px; line-height:1.5; }
+body .content :is(.pageHead, .businessPageHead, .businessHeading) h1,
+body .content h1 { font-size:24px; line-height:1.2; letter-spacing:-.6px; font-weight:600; }
+body .content :is(h2, .panel h2, .businessCard h2) { font-size:15px; line-height:1.4; font-weight:600; letter-spacing:-.15px; }
+body .content h3 { font-size:13px; line-height:1.4; font-weight:500; }
+body .content :is(.pageHead p, .businessWorkspace header p) { font-size:12px; line-height:1.5; }
+body .content :is(.panel p, .businessCard p, .businessEmpty p, .pipelineCard, .skillLaneCards, .registryCard p) { font-size:12px; line-height:1.5; }
+body .content :is(.button, .filterRow button, [role="tab"]) { font-size:12px; font-weight:500; }
+body .content :is(input, select, textarea) { font-size:12px; }
+body .content :is(label, .surfaceMuted, .tableSecondary) { font-size:11px; }
+body .content .hybridMetrics article { padding:14px 16px; }
+body .content .hybridMetrics .metricLabel { font-size:11px; font-weight:500; }
+body .content .hybridMetrics strong { font-size:25px; font-weight:600; line-height:1.2; }
+body .content .hybridMetrics small { font-size:10px; line-height:1.4; }
+body .content .hybridMetrics .metricIcon { width:24px; height:24px; }
+body .content .businessCard h3 { font-size:14px; font-weight:600; }
+body .content :is(.businessCardStatus, .businessCardAction, .pipelineCard small) { font-size:11px; }
+body .sidebar nav a { font-size:13px; font-weight:400; }
+body .sidebar nav h2 { font-size:10px; letter-spacing:.8px; }
+body .topbar { font-size:12px; }
+body .topbar strong { font-size:12px; font-weight:600; }
+body .topbar small { font-size:10px; }
+/* Keep technical inventory labels at their measured reference sizes. */
+body .content .listToolbar label { font-size:11px; }
+body .content .listToolbar :is(input, select) { font-size:11px; }
+body .content .listSearch input { font-size:12px; }
+@media(max-width:650px) {
+ body .content :is(input, select, textarea) { font-size:16px; }
+ body .content h1 { font-size:22px; }
+}

@@ -1,5 +1,6 @@
 'use client';
 import {
+  KeyRound, LockOpen, TicketPlus, ContactRound, Target, Scale, FileText, UserRoundPlus, ShoppingCart, CalendarDays, CalendarClock, CalendarCheck, ShieldPlus, BadgeCheck, HeartPulse, Siren, ReceiptText, Database, Globe, Mail,
   Bot,
   BookOpen,
   Wrench,
@@ -102,7 +103,20 @@ export function IconLabel({
   identity?: string;
   kind?: 'skill' | 'agent' | 'source' | 'tool' | 'evaluation' | 'deployment' | 'server';
 }) {
-  const Icon = {
+  const label = `${identity ?? ''} ${cellText(children)}`.toLowerCase();
+  const semanticIcons: [RegExp, typeof Puzzle][] = [
+    [/password|senha/, KeyRound], [/unlock|desbloque/, LockOpen],
+    [/ticket|chamado/, TicketPlus], [/crm/, ContactRound],
+    [/opportun|oportun/, Target], [/contract|contrato/, Scale],
+    [/summary|resumo/, FileText], [/provision|access|acesso/, UserRoundPlus],
+    [/purchase|procure|compra/, ShoppingCart], [/patient.*sched|paciente.*agend/, CalendarDays],
+    [/interview|entrevista/, CalendarCheck], [/schedul|agend/, CalendarClock],
+    [/insurance|seguro/, ShieldPlus], [/license|licen/, BadgeCheck],
+    [/clinical|clínic/, HeartPulse], [/incident|escalat|incidente/, Siren],
+    [/financ|invoice|fatura/, ReceiptText], [/document|knowledge|conhecimento/, BookOpen],
+    [/database|sql|banco/, Database], [/mail|email/, Mail], [/web|api/, Globe],
+  ];
+  const Icon = semanticIcons.find(([pattern]) => pattern.test(label))?.[1] ?? {
     skill: Puzzle,
     agent: Bot,
     source: BookOpen,

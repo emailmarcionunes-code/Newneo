@@ -59,7 +59,7 @@ export default function AccountSettings() {
       <div className="pageHead">
         <div>
           <h2>Account & workspace</h2>
-          <p>Manage your account and organization. No setup form is required to open your workspace.</p>
+          <p>Manage your account and organization.</p>
         </div>
       </div>
       <section className="panel">
