@@ -126,7 +126,6 @@ export function GlobalSkills() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [view, setView] = useState('List');
-  const views = ['List', 'Pipeline', 'Matrix', 'Intelligence'];
   const [filters, setFilters] = useState<Record<string, string>>({
     Domain: 'All',
     Maturity: 'All',
@@ -271,60 +270,8 @@ export function GlobalSkills() {
             view={view}
           />
         )}
-        {(view === 'Pipeline' || view === 'List') && (
+        {view === 'List' && (
           <>
-            {view === 'Pipeline' && toolbar}
-            {view === 'Pipeline' && (
-              <div className="skillPipeline" aria-label="Skills by maturity">
-                {maturities.map((maturity, index) => {
-                  const members = rows.filter((s) => s.maturity === maturity);
-                  return (
-                    <section
-                      className={`skillLane lane${index}`}
-                      key={maturity}
-                      aria-label={maturity}
-                    >
-                      <header>
-                        <h2>{maturity}</h2>
-                        <span>{members.length} Skills</span>
-                      </header>
-                      <div className="skillLaneCards">
-                        {members.length ? (
-                          members.map((s) => {
-                            const t = data.telemetry(s.id);
-                            return (
-                              <Link
-                                className="pipelineCard"
-                                href={`/skills/${s.id}`}
-                                key={s.id}
-                              >
-                                <strong>{s.name}</strong>
-                                <span>
-                                  {s.domain} · v{s.version}
-                                </span>
-                                <div>
-                                  <span>{t.users.length} Agents</span>
-                                  <span>{s.riskLevel} risk</span>
-                                </div>
-                                <div>
-                                  <span>{number(t.executions)} executions</span>
-                                  <span>{percent(t.success)} success</span>
-                                </div>
-                                <small>
-                                  {data.status(s)} · {s.owner}
-                                </small>
-                              </Link>
-                            );
-                          })
-                        ) : (
-                          <p className="laneEmpty">No matching Skills</p>
-                        )}
-                      </div>
-                    </section>
-                  );
-                })}
-              </div>
-            )}
             {view === 'List' && (
               <section className="skillsListPanel" aria-label="Skill inventory">
                 <Table
