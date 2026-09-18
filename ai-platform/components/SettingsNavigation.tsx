@@ -1,8 +1,9 @@
 'use client';
 import {useAccount} from './AccountContext';
 import Link from 'next/link';
-import {Plug,Cpu,ShieldCheck,ScrollText,WalletCards,UsersRound} from 'lucide-react';
+import {Plug,Cpu,ShieldCheck,ScrollText,WalletCards,UsersRound, CircleHelp} from 'lucide-react';
 const sections=[
+  {title:'Configure Help',description:'Neo guidance and help topics by access level.',href:'/settings/help',Icon:CircleHelp},
   {title:'People & access',description:'Users, workspace membership and access levels.',href:'#workspace-members',Icon:UsersRound},
   {title:'Connections',description:'Enterprise integrations and tool connections.',href:'/tools',Icon:Plug},
   {title:'Models',description:'Approved AI providers and model endpoints.',href:'/models',Icon:Cpu},

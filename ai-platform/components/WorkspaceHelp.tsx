@@ -4,10 +4,10 @@ import {useAccount} from './AccountContext';
 import {usePreviewValue} from './journeys/PreviewState';
 import {demoProductRole, hasCapability} from '@/lib/product-access';
 
-export default function WorkspaceHelp({compact=false}:{compact?:boolean}) {
+export default function WorkspaceHelp({compact=false,previewRole}:{compact?:boolean;previewRole?:string}) {
   const account=useAccount();
   const [demoRole]=usePreviewValue('demo:role','Administrator');
-  const role=account.mode==='demo'?demoProductRole(demoRole):account.workspace?.role;
+  const role=previewRole ?? (account.mode==='demo'?demoProductRole(demoRole):account.workspace?.role);
   const operator=hasCapability(role,'operations:view');
   const admin=role==='Org Admin';
   if(compact) return <><strong>{admin?'Administrator help':operator?'AI Operator help':'Workspace help'}</strong><p>{admin?'Manage workspace access, organization settings and financial controls.':operator?'Prepare agents, review evaluations and follow daily operations.':'Discover specialists, use your agents and follow your work.'}</p><Link href="/workspace/help">Open Help →</Link></>;

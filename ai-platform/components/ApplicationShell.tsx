@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { SignOutControl } from './SignOutControl';
 import { AssetIcon } from './Assets';
-import WorkspaceHelp from './WorkspaceHelp';
+import NeoHelp from './NeoHelp';
 import { HeaderSearch, HeaderNotifications, HelpIcon } from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
 import { DemoControls, DemoBoundary } from './journeys/DemoExperience';
@@ -178,7 +178,6 @@ export function ApplicationSidebar({
       <div className="sidebarBottom">
         {companyAdmin && <NavItem label="Settings" href="/settings" icon="settings" compact={collapsed} active={isSettingsPath(path)} onNavigate={onClose}/>}
 
-        <NavItem label="Help" href="/workspace/help" icon="help" compact={collapsed} active={path === '/workspace/help'} onNavigate={onClose}/>
       </div>
       <details
         className="workspaceMenu"
@@ -289,14 +288,6 @@ export function Topbar({
       <div className="topActions">
         {account.mode === 'demo' && <DemoControls />}
         {operations && <HeaderNotifications />}
-        <details className="topbarMenu">
-          <summary aria-label="Help">
-            <HelpIcon />
-          </summary>
-          <div className="topbarPopover">
-            <WorkspaceHelp compact/>
-          </div>
-        </details>
         <details className="topbarMenu profileMenu">
           <summary aria-label="User menu">
             <span className="avatar">
@@ -444,6 +435,7 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
           </DemoBoundary>
         </main>
       </section>
+      <NeoHelp/>
     </div>
   );
 }

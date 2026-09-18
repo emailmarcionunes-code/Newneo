@@ -19,3 +19,9 @@ Production compilation and TypeScript validation; product-access regression cove
 ## Profile and role-aware help
 
 Profile is accessed from the header avatar/name menu, not a separate sidebar item. Help stays in the sidebar in Workspace and Operations for every role. The header Help preview and the full Help page share the same role-aware component: workspace guidance for everyone, daily Operations guidance for AI Operators and Administrators, and organization settings guidance for Administrators. Help content does not confer any additional permission.
+
+## Neo Help entry point
+
+Help is now a persistent lower-right Neo face button, replacing the sidebar Help item and the header question-mark popup. It opens a dismissible, keyboard-accessible panel with role-aware guidance and a link to the full help page. Profile remains in the avatar menu. The launcher reuses the approved standing Neo asset through CSS framing; no new mascot artwork was introduced.
+
+Settings → Configure Help is administrator-only and previews the three role-specific guides, linking to membership management to change the assigned access that controls help. This is guidance and navigation, not a live AI conversation or a help-content editor. No user role or permissions are changed by previewing guidance.
