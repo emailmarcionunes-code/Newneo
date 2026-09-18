@@ -30,7 +30,7 @@ export function useAcmeDemo(enabled:boolean){
   });
   const agents=hybridAgents.map((a,i)=>{const items=work.filter(w=>w.agent_id===a.id);return {id:a.id,name:a.name,searches:items.length,matched:items.filter(w=>w.result.length).length,latency:420+i*135,users:3+i,latest:items[0]?.created_at??new Date(now).toISOString()}});
   const days=new Map<string,number>();for(const w of work){const day=w.created_at.slice(0,10);days.set(day,(days.get(day)||0)+1)}
-  return {work,agents,trend:[...days].sort(([a],[b])=>a.localeCompare(b)).map(([day,searches])=>({day,searches})),requests:[{id:'acme-request-1',status:'In review',created_at:new Date(now-3600000).toISOString()},{id:'acme-request-2',status:'Preparing sources',created_at:new Date(now-86400000).toISOString()}]};
+  return {work,agents,trend:[...days].sort(([a],[b])=>a.localeCompare(b)).map(([day,searches])=>({day,searches})),requests:[{id:'acme-request-1',status:'Pending review',created_at:new Date(now-3600000).toISOString()},{id:'acme-request-2',status:'Preparing sources',created_at:new Date(now-86400000).toISOString()}]};
  },[clock]);
 }
 export const acmeSources=(id:string)=>scenarios.filter(s=>s[0]===id).map((s,i)=>({id:`${id}-source-${i}`,title:s[2]}));
