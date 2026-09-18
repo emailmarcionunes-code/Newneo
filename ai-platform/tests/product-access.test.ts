@@ -4,7 +4,7 @@ import {
   productCapabilities,
   hasCapability,
   isOperationsPath,
-  demoProductRole,
+  demoProductRole, canAccessProductPath, productRoleOptions,
 } from '../lib/product-access';
 import { businessAgent } from '../server/business-workspace';
 test('Workspace and Operations roles are distinct and unknown roles fail closed', () => {
@@ -25,7 +25,7 @@ test('Workspace and Operations roles are distinct and unknown roles fail closed'
   assert.equal(hasCapability('Business Owner', 'agents:configure'), false);
   assert.equal(hasCapability('Operator', 'agents:configure'), false);
   assert.deepEqual(productCapabilities('unknown'), []);
-  assert.equal(demoProductRole('Employee'), 'Read Only');
+  assert.equal(demoProductRole('Employee'), 'Operator');
   assert.equal(demoProductRole('Department Owner'), 'Business Owner');
 });
 test('legacy technical links remain Operations routes while Workspace paths are business', () => {
@@ -72,4 +72,22 @@ test('business Agent is a projection of the same ID, with technical configuratio
   assert.equal(JSON.stringify(a).includes('hidden'), false);
   assert.equal('organization_id' in a, false);
   assert.deepEqual(businessAgent({ id: 'a' }, undefined, []).capabilities, []);
+});
+
+test('three product levels enforce direct administrative routes',()=>{
+ assert.equal(productRoleOptions.length,3);
+ const user=demoProductRole('Employee'), operator=demoProductRole('Operator');
+ for(const path of ['/operations','/agents/a','/skills','/knowledge','/evaluations','/deployments','/agentops','/reports','/playground']) {
+  assert.equal(canAccessProductPath(user,path),false);
+  assert.equal(canAccessProductPath(operator,path),true);
+ }
+ for(const path of ['/settings','/settings/team','/tools','/models','/governance','/audit-log','/finops']) {
+  assert.equal(canAccessProductPath(user,path),false);
+  assert.equal(canAccessProductPath(operator,path),false);
+  assert.equal(canAccessProductPath('Org Admin',path),true);
+ }
+ assert.equal(hasCapability(operator,'members:manage'),false);
+ assert.equal(hasCapability(operator,'agents:configure'),true);
+ assert.equal(hasCapability(user,'work:search'),true);
+ assert.equal(canAccessProductPath(user,'/workspace/analytics'),true);
 });

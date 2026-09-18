@@ -11,7 +11,7 @@ import { DemoControls, DemoBoundary } from './journeys/DemoExperience';
 import { usePreviewValue } from './journeys/PreviewState';
 import { useAccount } from './AccountContext';
 import {
-  isOperationsPath,
+  isOperationsPath, isSettingsPath, canAccessProductPath,
   hasCapability,
   demoProductRole,
 } from '@/lib/product-access';
@@ -114,12 +114,7 @@ export function ApplicationSidebar({
       ? [
           {
             name: 'OPERATIONS',
-            items: [
-              ...navigation.filter(([, href]) => href !== '/finops'),
-              ...(companyAdmin
-                ? [navigation.find(([, href]) => href === '/finops')!]
-                : []),
-            ],
+            items: navigation.filter(([,href]) => !isSettingsPath(href)),
           },
         ]
       : []),
@@ -180,6 +175,8 @@ export function ApplicationSidebar({
         ))}
       </nav>
       <div className="sidebarBottom">
+        {companyAdmin && <NavItem label="Settings" href="/settings" icon="settings" compact={collapsed} active={isSettingsPath(path)} onNavigate={onClose}/>}
+
         {!operations && (
           <NavItem
             label="Help"
@@ -195,7 +192,7 @@ export function ApplicationSidebar({
           href="/workspace/profile"
           icon="settings"
           compact={collapsed}
-          active={path.startsWith('/settings')}
+          active={path === '/workspace/profile'}
           onNavigate={onClose}
         />
       </div>
@@ -361,15 +358,7 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
     account.mode === 'demo'
       ? demoProductRole(demoRole)
       : account.workspace?.role;
-  const allowed =
-    (path !== '/finops' || effectiveRole === 'Org Admin') &&
-    (!isOperationsPath(path) ||
-      hasCapability(
-        account.mode === 'demo'
-          ? demoProductRole(demoRole)
-          : account.workspace?.role,
-        'operations:view',
-      ));
+  const allowed = canAccessProductPath(effectiveRole,path);
   const [open, setOpen] = useState(false);
   const { collapsed, toggleCollapsed } = useSidebarState();
   useEffect(() => {
@@ -465,10 +454,9 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
               children
             ) : (
               <section className="panel">
-                <h1>Operations access required</h1>
+                <h1>{isSettingsPath(path) ? 'Administrator access required' : 'Operations access required'}</h1>
                 <p>
-                  Your role provides access to Workspace. Contact your
-                  administrator for additional access.
+                  {isSettingsPath(path) ? 'These organization settings are available to Administrators.' : 'Your role provides access to Workspace. Contact your administrator for additional access.'}
                 </p>
                 <Link href="/">Return to Workspace</Link>
               </section>

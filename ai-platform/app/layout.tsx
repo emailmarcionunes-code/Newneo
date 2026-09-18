@@ -1,6 +1,6 @@
 import { headers, cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { isOperationsPath } from '@/lib/product-access';
+import { isOperationsPath, isSettingsPath } from '@/lib/product-access';
 import { canOpenOperations } from '@/server/product-access';
 import { demoCookie } from '@/server/auth';
 import { AccountProvider } from '@/components/AccountContext';
@@ -43,7 +43,7 @@ export default async function RootLayout({
   if (
     isOperationsPath(path) &&
     (await cookies()).get(demoCookie)?.value !== 'acme' &&
-    !(await canOpenOperations(path === '/finops'))
+    !(await canOpenOperations(isSettingsPath(path)))
   )
     redirect('/workspace?access=operations');
   return (

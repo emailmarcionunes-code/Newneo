@@ -38,8 +38,8 @@ export const demoProductRole = (role: string) =>
     Administrator: 'Org Admin',
     Creator: 'AI Engineer',
     Approver: 'Reviewer / Approver',
-    Operator: 'Operator',
-    Employee: 'Read Only',
+    Operator: 'AI Platform Admin',
+    Employee: 'Operator',
     'Department Owner': 'Business Owner',
   })[role] ?? 'Read Only';
 export const operationsRoots = [
@@ -61,3 +61,15 @@ export const operationsRoots = [
 ];
 export const isOperationsPath = (path: string) =>
   operationsRoots.includes(path.split('/')[1]);
+
+// Three product levels, backed by existing database roles (no implicit membership migration).
+export const productRoleOptions = [
+  {value:'Operator', label:'User'},
+  {value:'AI Platform Admin', label:'AI Operator'},
+  {value:'Org Admin', label:'Administrator'},
+] as const;
+export const productRoleLabel = (role?:string) => productRoleOptions.find(r=>r.value===role)?.label ?? role ?? 'No access';
+export const settingsRoots = ['settings','tools','models','governance','audit-log','finops'];
+export const isSettingsPath = (path:string) => settingsRoots.includes(path.split('/')[1]);
+export const canAccessProductPath = (role:string|undefined,path:string) =>
+  isSettingsPath(path) ? role==='Org Admin' : !isOperationsPath(path)||hasCapability(role,'operations:view');

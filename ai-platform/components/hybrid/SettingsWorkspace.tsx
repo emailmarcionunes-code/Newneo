@@ -39,15 +39,15 @@ export default function SettingsWorkspace() {
   const [keyOpen, setKeyOpen] = useState(false);
   const [org, setOrg] = usePreviewValue('settings:org', 'Acme Corp');
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState('Viewer');
+  const [role, setRole] = useState('User');
   const [users, setUsers] = usePreviewValue('settings:users', [
-    ['Ana Martinez', 'ana@acme.example', 'Admin', 'Active'],
-    ['João Silva', 'joao@acme.example', 'AI Engineer', 'Active'],
-    ['Taylor Ferreira', 'taylor@acme.example', 'Reviewer', 'Active'],
-    ['Ana Costa', 'ana.costa@acme.example', 'AI Engineer', 'Active'],
-    ['Rafael Lima', 'rafael@acme.example', 'Viewer', 'Active'],
-    ['Thiago Ferreira', 'thiago@acme.example', 'AI Engineer', 'Active'],
-    ['Lucas Rodrigues', 'lucas@acme.example', 'Viewer', 'Pending'],
+    ['Ana Martinez', 'ana@acme.example', 'Administrator', 'Active'],
+    ['João Silva', 'joao@acme.example', 'AI Operator', 'Active'],
+    ['Taylor Ferreira', 'taylor@acme.example', 'User', 'Active'],
+    ['Ana Costa', 'ana.costa@acme.example', 'AI Operator', 'Active'],
+    ['Rafael Lima', 'rafael@acme.example', 'User', 'Active'],
+    ['Thiago Ferreira', 'thiago@acme.example', 'AI Operator', 'Active'],
+    ['Lucas Rodrigues', 'lucas@acme.example', 'User', 'Pending'],
   ]);
   const [keys, setKeys] = usePreviewValue('settings:keys', [
     ['prod-key-001', 'Production', '•••• DEMO 4a2f', 'Active'],
@@ -279,7 +279,7 @@ export default function SettingsWorkspace() {
                   ],
                   [
                     'Admins',
-                    String(users.filter((u) => u[2] === 'Admin').length),
+                    String(users.filter((u) => u[2] === 'Administrator').length),
                   ],
                 ]}
               />
@@ -323,7 +323,7 @@ export default function SettingsWorkspace() {
                             );
                           }}
                         >
-                          {['Admin', 'AI Engineer', 'Reviewer', 'Viewer'].map(
+                          {['Administrator', 'AI Operator', 'User'].map(
                             (r) => (
                               <option key={r}>{r}</option>
                             ),
@@ -344,21 +344,16 @@ export default function SettingsWorkspace() {
                     headers={['Role', 'Access', 'Production changes']}
                     rows={[
                       [
-                        'Admin',
+                        'Administrator',
                         'Organization, members and approved resources',
                         'Approve versions; never edit Production directly',
                       ],
                       [
-                        'AI Engineer',
+                        'AI Operator',
                         'Create agents, draft versions and evaluations',
                         'Submit for approval',
                       ],
-                      [
-                        'Reviewer',
-                        'Inspect evaluation evidence and policies',
-                        'Approve or reject a version',
-                      ],
-                      ['Viewer', 'Read approved operational data', 'Read only'],
+                      ['User', 'Workspace, personal Agents and Analytics', 'Request preparation from Operations'],
                     ]}
                   />
                 )}
@@ -393,7 +388,7 @@ export default function SettingsWorkspace() {
                           value={role}
                           onChange={(e) => setRole(e.target.value)}
                         >
-                          {['AI Engineer', 'Reviewer', 'Viewer'].map((r) => (
+                          {['AI Operator', 'User'].map((r) => (
                             <option key={r}>{r}</option>
                           ))}
                         </select>
@@ -403,8 +398,7 @@ export default function SettingsWorkspace() {
                   </>
                 )}
                 <p>
-                  Admins manage the organization. AI Engineers create versions.
-                  Reviewers approve changes. Viewers inspect approved data.
+                  Administrators manage settings, access and costs. AI Operators prepare and monitor agents. Users work with their agents in Workspace.
                 </p>
               </section>
             </>

@@ -6,20 +6,13 @@ import { usePreview, usePreviewValue, createDemoState } from './PreviewState';
 import { Dialog } from './Shared';
 import { Button } from '../UI';
 export type Capability = 'create' | 'approve' | 'operate' | 'admin';
-export const demoRoles = [
-  'Administrator',
-  'Creator',
-  'Approver',
-  'Operator',
-  'Employee',
-  'Department Owner',
-] as const;
+export const demoRoles = ['Administrator', 'Operator', 'Employee'] as const;
 export function useDemoAccess() {
   const [role] = usePreviewValue('demo:role', 'Administrator');
   return {
     role,
     can: (cap: Capability) =>
-      role === 'Administrator' ||
+      role === 'Administrator' || (role === 'Operator' && (cap === 'create' || cap === 'operate')) ||
       {
         create: 'Creator',
         approve: 'Approver',
@@ -84,7 +77,7 @@ export function DemoControls() {
             Preview profile
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               {demoRoles.map((r) => (
-                <option key={r}>{r}</option>
+                <option key={r} value={r}>{r === 'Operator' ? 'AI Operator' : r === 'Employee' ? 'User' : r}</option>
               ))}
             </select>
           </label>
