@@ -1,3 +1,4 @@
+'use client';
 import {
   Bot,
   BookOpen,
@@ -8,7 +9,7 @@ import {
   Layers3, Puzzle, TriangleAlert, Search, ChartNoAxesCombined,
 } from 'lucide-react';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useState, isValidElement, type ReactNode } from 'react';
 import { AgentIcon } from '../Assets';
 export function PageTitle({
   title,
@@ -58,70 +59,39 @@ export function Metrics({ items }: { items: [string, string, string?][] }) {
     })}
   </div>;
 }
-export function Table({
-  headers,
-  rows,
-  caption,
-  emptyMessage,
-  onRowClick,
-}: {
-  headers: string[];
-  rows: ReactNode[][];
-  caption: string;
-  emptyMessage?: string;
-  onRowClick?: (index: number) => void;
+function cellText(value: ReactNode): string {
+  if (typeof value === 'string' || typeof value === 'number') return String(value);
+  if (Array.isArray(value)) return value.map(cellText).join(' ');
+  if (isValidElement<{ children?: ReactNode }>(value)) return cellText(value.props.children);
+  return '';
+}
+export function Table({ headers, rows, caption, emptyMessage, onRowClick, toolbar }: {
+  headers: string[]; rows: ReactNode[][]; caption: string; emptyMessage?: string;
+  onRowClick?: (index: number) => void; toolbar?: ReactNode;
 }) {
-  return (
-    <div
-      className="hybridTable"
-      role="region"
-      aria-label={caption}
-      tabIndex={0}
-    >
-      <table>
-        <caption className="srOnly">{caption}</caption>
-        <thead>
-          <tr>
-            {headers.map((h) => (
-              <th key={h}>{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr
-              key={i}
-              className={onRowClick ? 'navigableRow' : undefined}
-              onClick={
-                onRowClick
-                  ? (event) => {
-                      if (
-                        (event.target as HTMLElement).closest(
-                          'a, button, input, select, textarea',
-                        )
-                      )
-                        return;
-                      if (window.getSelection()?.toString()) return;
-                      onRowClick(i);
-                    }
-                  : undefined
-              }
-            >
-              {r.map((v, j) => (
-                <td key={j}>{v}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {!rows.length && (
-        <p className="hybridEmpty">
-          {emptyMessage ??
-            'No matching records. Clear your filters to see all results.'}
-        </p>
-      )}
+  const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<{column: number; ascending: boolean} | null>(null);
+  const visible = rows.map((cells, index) => ({cells, index})).filter(({cells}) =>
+    cells.map(cellText).join(' ').toLowerCase().includes(query.toLowerCase()));
+  if (sort) visible.sort((a, b) => cellText(a.cells[sort.column]).localeCompare(cellText(b.cells[sort.column]), undefined, {numeric: true}) * (sort.ascending ? 1 : -1));
+  const searchable = !!onRowClick || rows.length > 5;
+  return <section className="listFrame" aria-label={caption}>
+    {(toolbar || searchable) && <div className="listToolbar">{toolbar || <label className="listSearch"><Search size={18} aria-hidden="true"/><input aria-label={`Search ${caption}`} placeholder={`Search ${caption.toLowerCase()}…`} value={query} onChange={e => setQuery(e.target.value)}/></label>}</div>}
+    <div className="hybridTable" role="region" aria-label={`${caption} rows`} tabIndex={0}>
+      <table><caption className="srOnly">{caption}</caption><thead><tr>
+        {headers.map((h, column) => <th key={column} scope="col" aria-sort={sort?.column === column ? sort.ascending ? 'ascending' : 'descending' : 'none'}><button className="listSort" onClick={() => setSort({column, ascending: sort?.column === column ? !sort.ascending : true})}>{h}{sort?.column === column && <span aria-hidden="true">{sort.ascending ? ' ↑' : ' ↓'}</span>}</button></th>)}
+        {onRowClick && <th scope="col"><span className="srOnly">Open</span></th>}
+      </tr></thead><tbody>{visible.map(({cells, index}) => <tr key={index} className={onRowClick ? 'navigableRow' : undefined}
+        tabIndex={onRowClick ? 0 : undefined}
+        onKeyDown={event => {if (onRowClick && event.target === event.currentTarget && event.key === 'Enter') {event.preventDefault(); onRowClick(index);}}}
+        onClick={event => {if (onRowClick && !(event.target as HTMLElement).closest('a, button, input, select, textarea') && !window.getSelection()?.toString()) onRowClick(index);}}>
+        {cells.map((v, j) => <td key={j}>{v}</td>)}
+        {onRowClick && <td className="listOpenCell"><button className="listOpen" aria-label={`Open ${cellText(cells[0])}`} onClick={() => onRowClick(index)}>Open ↗</button></td>}
+      </tr>)}</tbody></table>
+      {!visible.length && <p className="hybridEmpty">{emptyMessage ?? 'No matching records. Clear your filters to see all results.'}</p>}
     </div>
-  );
+    <footer className="listFooter"><span>{visible.length} of {rows.length} records</span>{onRowClick && <span>Select a row · Enter or Open for details</span>}</footer>
+  </section>;
 }
 export function IconLabel({
   children,
@@ -130,9 +100,10 @@ export function IconLabel({
 }: {
   children: ReactNode;
   identity?: string;
-  kind?: 'agent' | 'source' | 'tool' | 'evaluation' | 'deployment' | 'server';
+  kind?: 'skill' | 'agent' | 'source' | 'tool' | 'evaluation' | 'deployment' | 'server';
 }) {
   const Icon = {
+    skill: Puzzle,
     agent: Bot,
     source: BookOpen,
     tool: Wrench,

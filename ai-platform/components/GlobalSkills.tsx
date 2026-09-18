@@ -14,7 +14,7 @@ import { usePreview } from './journeys/PreviewState';
 import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
 import { useDemoAccess } from './journeys/DemoExperience';
 import { Tabs, Panel } from './journeys/Shared';
-import { PageTitle, Metrics, Table, Tag, Status, DataNote } from './hybrid/UI';
+import { PageTitle, Metrics, Table, Tag, Status, DataNote, IconLabel } from './hybrid/UI';
 import { Button } from './UI';
 import { SkillPortfolio, SkillReuseDetail } from './SkillPortfolio';
 import { capabilityCores, coreUsage } from '@/lib/skill-portfolio';
@@ -181,6 +181,31 @@ export function GlobalSkills() {
       (data.telemetry(b.id).executions || 0) -
         (data.telemetry(a.id).executions || 0),
   )[0];
+  const toolbar = (<div className="skillFilters portfolioFilters">
+              <label>
+                Search Skills
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Name or capability"
+                />
+              </label>
+              {Object.entries(options).map(([key, values]) => (
+                <label key={key}>
+                  {key}
+                  <select
+                    value={filters[key]}
+                    onChange={(e) =>
+                      setFilters((f) => ({ ...f, [key]: e.target.value }))
+                    }
+                  >
+                    {['All', ...values].map((v) => (
+                      <option key={v}>{v}</option>
+                    ))}
+                  </select>
+                </label>
+              ))}
+            </div>);
   return (
     <SkillInventoryLayout view={view} onView={setView}
       action={<Button disabled={!can('create')} onClick={()=>router.push('/skills/new')}>+ Create Skill</Button>}
@@ -248,31 +273,7 @@ export function GlobalSkills() {
         )}
         {(view === 'Pipeline' || view === 'List') && (
           <>
-            <div className="skillFilters portfolioFilters">
-              <label>
-                Search Skills
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Name or capability"
-                />
-              </label>
-              {Object.entries(options).map(([key, values]) => (
-                <label key={key}>
-                  {key}
-                  <select
-                    value={filters[key]}
-                    onChange={(e) =>
-                      setFilters((f) => ({ ...f, [key]: e.target.value }))
-                    }
-                  >
-                    {['All', ...values].map((v) => (
-                      <option key={v}>{v}</option>
-                    ))}
-                  </select>
-                </label>
-              ))}
-            </div>
+            {view === 'Pipeline' && toolbar}
             {view === 'Pipeline' && (
               <div className="skillPipeline" aria-label="Skills by maturity">
                 {maturities.map((maturity, index) => {
@@ -326,12 +327,9 @@ export function GlobalSkills() {
             )}
             {view === 'List' && (
               <section className="skillsListPanel" aria-label="Skill inventory">
-                <div className="skillsListHeading">
-                  <h2>Skill Library</h2>
-                  <span>{rows.length} Skills</span>
-                </div>
                 <Table
                   caption="Organization Skills"
+                  toolbar={toolbar}
                   headers={[
                     'Skill',
                     'Domain',
@@ -350,7 +348,7 @@ export function GlobalSkills() {
                     const t = data.telemetry(s.id);
                     return [
                       <Link key="name" href={`/skills/${s.id}`}>
-                        {s.name}
+                        <IconLabel kind="skill">{s.name}</IconLabel>
                       </Link>,
                       s.domain,
                       <Tag key="maturity">{s.maturity}</Tag>,

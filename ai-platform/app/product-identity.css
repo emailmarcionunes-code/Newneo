@@ -137,3 +137,43 @@
   border: 1px solid #e8c364;
   font-weight: 600;
 }
+
+/* Unified inventory lists: integrated controls, calm rows and explicit actions. */
+.listFrame { min-width:0; width:100%; border:1px solid #dfe6ef; border-radius:14px; background:#fff; overflow:hidden; }
+.listToolbar { display:flex; align-items:center; gap:16px; min-height:70px; padding:14px 18px; border-bottom:1px solid #dfe6ef; }
+.listToolbar > * { width:100%; min-width:0; }
+.listSearch { display:flex; align-items:center; gap:12px; color:#8291a8; }
+.listSearch input { flex:1; min-width:0; border:0; background:transparent; box-shadow:none; padding:8px 0; font-size:14px; }
+.listFrame .hybridTable { border:0; border-radius:0; margin:0; overflow:auto; max-height: min(620px, 62dvh); }
+.listFrame .hybridTable table { width:100%; border-collapse:collapse; }
+.listFrame .hybridTable th, .surfaceTable th, .detailTableWrap th { background:#f7f9fc; color:#6c7e98; text-transform:none; letter-spacing:0; font-size:12px; font-weight:600; padding:13px 16px; white-space:nowrap; border-bottom:1px solid #dfe6ef; }
+.listFrame .hybridTable th { position:sticky; top:0; z-index:1; }
+.listFrame .hybridTable td, .surfaceTable td, .detailTableWrap td { padding:15px 16px; font-size:13px; line-height:1.45; border-bottom:1px solid #e9eef5; vertical-align:middle; }
+.listFrame .hybridTable td:first-child { min-width:210px; font-weight:600; color:#1b273b; }
+.listFrame .hybridTable td:first-child a { color:inherit; text-decoration:none; }
+.listFrame .hybridTable tr:last-child td { border-bottom:0; }
+.listFrame .hybridTable tbody tr:hover { background:#f8faff; }
+.listFrame .hybridTable tr:focus-visible { outline:2px solid #1955a6; outline-offset:-2px; }
+.listFrame .listSort { display:inline; padding:0; border:0; background:none; color:inherit; font:inherit; cursor:pointer; text-align:left; }
+.listFrame .listOpen { padding:4px 0; border:0; background:none; color:#1955a6; font-size:13px; font-weight:500; white-space:nowrap; cursor:pointer; }
+.listOpenCell { width:80px; text-align:right; }
+.listFooter { display:flex; justify-content:space-between; gap:16px; padding:13px 18px; border-top:1px solid #dfe6ef; color:#70829d; font-size:12px; }
+.listFrame .hybridStatus { display:inline-flex; align-items:center; gap:7px; border-radius:6px; padding:3px 8px; white-space:nowrap; font-size:12px; }
+.listFrame .hybridStatus::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+.listFrame .referenceIconLabel { display:inline-flex; align-items:center; gap:12px; }
+.listFrame .referenceIcon { background:transparent; color:#8596ae; width:24px; height:28px; }
+.listFrame .referenceTag { font-size:12px; padding:3px 7px; border-radius:5px; }
+.skillsWorkspace .skillsListPanel { border:0; background:transparent; overflow:visible; }
+.skillsWorkspace .listToolbar .portfolioFilters { margin:0; padding:0; gap:12px; align-items:center; }
+.skillsWorkspace .listToolbar .portfolioFilters label { display:flex; flex-direction:row; align-items:center; gap:8px; flex:0 0 auto; font-size:12px; white-space:nowrap; }
+.skillsWorkspace .listToolbar .portfolioFilters label:first-child { flex:1 0 220px; font-size:0; }
+.skillsWorkspace .listToolbar .portfolioFilters label:first-child input { border:0; background:transparent; font-size:13px; }
+.skillsWorkspace .listToolbar .portfolioFilters select { width:auto; max-width:150px; min-height:34px; }
+.listToolbar .hybridControls { margin:0; padding:0; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.listToolbar .hybridControls > input { flex:1; border:0; background:transparent; }
+@media(max-width:760px) {
+ .listToolbar { padding:12px; overflow-x:auto; }
+ .listToolbar .hybridControls { min-width:640px; }
+ .listFooter { flex-wrap:wrap; padding:12px; }
+ .listFrame .hybridTable { max-height:65dvh; }
+}
