@@ -177,3 +177,30 @@
  .listFooter { flex-wrap:wrap; padding:12px; }
  .listFrame .hybridTable { max-height:65dvh; }
 }
+
+/* Approved Kamory reference proportions, shared by demo and live inventories. */
+.listFrame .hybridTable th, .surfaceTable th, .detailTableWrap th {
+  font-size:13px; padding:15px 18px; height:46px;
+}
+.listFrame .hybridTable td, .surfaceTable td, .detailTableWrap td {
+  font-size:15px; padding:16px 18px; height:72px; line-height:1.4;
+}
+.listFrame .hybridTable th:first-child, .listFrame .hybridTable td:first-child {
+  width:24%; min-width:260px;
+}
+.listFrame .listIdentity { display:flex; flex-direction:column; gap:4px; white-space:normal; }
+.listFrame .listIdentity strong { font-size:15px; font-weight:600; line-height:1.35; }
+.listFrame .listIdentity small { color:#71839e; font-size:12.5px; font-weight:400; line-height:1.35; }
+.listFrame .referenceIconLabel { gap:14px; }
+.listFrame .referenceIcon { width:24px; height:32px; flex-shrink:0; }
+.listFrame .referenceIcon svg { width:22px; height:22px; }
+.listFrame .listOpen { font-size:14px; }
+.listFrame .hybridStatus, .listFrame .referenceTag { font-size:12.5px; padding:4px 8px; }
+.listFooter { font-size:13px; padding:15px 20px; }
+.listToolbar { min-height:76px; padding:16px 20px; }
+.listSearch input, .skillsWorkspace .listToolbar .portfolioFilters label:first-child input { font-size:14px; }
+.skillsWorkspace .skillsListPanel .hybridTable table { min-width:1120px; }
+.skillsWorkspace .skillsListPanel .hybridTable td { padding-top:16px; padding-bottom:16px; }
+@media(min-width:1280px) {
+ .skillsWorkspace .skillsListPanel .hybridTable { max-height:clamp(280px, calc(100dvh - 470px), 720px); }
+}

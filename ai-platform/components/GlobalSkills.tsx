@@ -332,9 +332,7 @@ export function GlobalSkills() {
                   toolbar={toolbar}
                   headers={[
                     'Skill',
-                    'Domain',
                     'Maturity',
-                    'Version',
                     'Risk',
                     'Status',
                     'Agents Using',
@@ -348,11 +346,9 @@ export function GlobalSkills() {
                     const t = data.telemetry(s.id);
                     return [
                       <Link key="name" href={`/skills/${s.id}`}>
-                        <IconLabel kind="skill">{s.name}</IconLabel>
+                        <IconLabel kind="skill"><span className="listIdentity"><strong>{s.name}</strong><small>{s.domain} · v{s.version}</small></span></IconLabel>
                       </Link>,
-                      s.domain,
                       <Tag key="maturity">{s.maturity}</Tag>,
-                      `v${s.version}`,
                       s.riskLevel,
                       <Status key="status">{data.status(s)}</Status>,
                       t.users.length,
