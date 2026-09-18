@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ArrowRight, Layers3, ShieldCheck, Sparkles } from 'lucide-react';
 import { NewneoWordmark } from '../NewneoLogo';
 import styles from './Login.module.css';
+import LoginForm from './LoginForm';
 
 export default function Login() {
   const [message, setMessage] = useState('');
@@ -39,7 +40,7 @@ export default function Login() {
           <h2 id="login-title">Welcome back.</h2>
           <p>Your next chapter starts here.<br />Sign in to your workspace to continue.</p>
           {message && <div className={styles.notice} role="alert">{message}</div>}
-          <a className={styles.signin} href="/api/auth/login">Sign in <ArrowRight size={20} /></a>
+          <LoginForm />
           <div className={styles.secure}><ShieldCheck size={16} />Secure sign-in with your work account</div>
           <div className={styles.help}>
             <strong>First time here?</strong>
