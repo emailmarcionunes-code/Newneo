@@ -72,3 +72,8 @@ so they appropriately share its identity. No records were deleted or merged.
 One additional inconsistency was found in Workspace Reports: its older summary
 markup bypassed shared Metrics and agent identities. It now uses shared Metrics,
 Table and AgentIcon while retaining the original personal search counts and scope.
+
+Authenticated Settings also retained a stacked full-width layout. Scoped
+`accountSettings` styles now arrange its four existing panels in two desktop
+columns (one below 800px), add semantic section icons and compact the workspace
+card. Account actions, authorization and membership management are unchanged.

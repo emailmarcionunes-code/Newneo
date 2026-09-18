@@ -108,3 +108,14 @@
 .agentAddSteps .done>span { background:var(--primary-tint); color:var(--primary); }
 .businessWorkspace .profileIdentity { display:flex; gap:14px; }
 @media(max-width:650px) { .agentAddSteps { gap:10px; flex-wrap:wrap; } .agentAddSteps li { font-size:11px; } }
+
+/* Live account settings uses the same compact panel hierarchy as Operations. */
+.accountSettings.surfacePage { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.accountSettings>.pageHead { grid-column:1/-1; }
+.accountSettings>.panel { min-width:0; padding:20px; }
+.accountSettings>.panel>h2 { display:flex; align-items:center; gap:9px; font-size:16px; margin:0 0 16px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+.accountSettings>.panel>h2 svg { color:var(--primary); flex-shrink:0; }
+.accountSettings>.panel p { font-size:13px; line-height:1.6; margin:12px 0; color:var(--muted); }
+.accountSettings .surfaceCards { grid-template-columns:1fr; }
+.accountSettings .agentCard { min-height:0; padding:16px; gap:8px; }
+@media(max-width:800px) { .accountSettings.surfacePage { grid-template-columns:minmax(0,1fr); } }

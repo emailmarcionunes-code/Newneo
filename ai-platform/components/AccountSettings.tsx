@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from './UI';
+import {UserRound,Building2,Layers3,WalletCards} from 'lucide-react';
 type Workspace = {
   id: string;
   organization_id: string;
@@ -54,7 +55,7 @@ export default function AccountSettings() {
     }
   }
   return (
-    <div className="surfacePage">
+    <div className="surfacePage accountSettings">
       <div className="pageHead">
         <div>
           <h2>Account & workspace</h2>
@@ -62,7 +63,7 @@ export default function AccountSettings() {
         </div>
       </div>
       <section className="panel">
-        <h2>Account</h2>
+        <h2><UserRound size={18}/>Account</h2>
         {!session && !message && <p role="status">Loading account status…</p>}
         {message && <p role="status">{message}</p>}
         {!session && message && (
@@ -106,7 +107,7 @@ export default function AccountSettings() {
       </section>
       {session?.authenticated && (
         <section className="panel">
-          <h2>Your workspaces</h2>
+          <h2><Building2 size={18}/>Your workspaces</h2>
           <Link href={session.workspaceId ? "/" : "/welcome"} className="button primary">{session.workspaceId ? "Open Overview →" : "Continue to workspace →"}</Link>
           <p>
             Access is assigned by an administrator and verified on the server.
@@ -149,7 +150,7 @@ export default function AccountSettings() {
         </section>
       )}
       <section className="panel">
-        <h2>Application mode</h2>
+        <h2><Layers3 size={18}/>Application mode</h2>
         <p>
           Your selected workspace stores Agent and Skill versions, Knowledge documents and audit history. Demo data belongs to a separate preview context.
         </p>
@@ -158,7 +159,7 @@ export default function AccountSettings() {
         </Link>
       </section>
       <section className="panel">
-        <h2>Deployment and billing</h2>
+        <h2><WalletCards size={18}/>Deployment and billing</h2>
         <p>
           The platform is hosted. Paid Agent execution and provider usage reporting are not yet enabled. Existing hosting charges continue independently of Agent execution.
         </p>
