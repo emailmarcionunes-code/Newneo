@@ -31,3 +31,9 @@ Settings → Configure Help is administrator-only and previews the three role-sp
 Neo now opens its help panel on mouse pointer entry, without taking keyboard focus or closing when the pointer moves from the launcher into the panel. Click/tap still opens it and focuses the composer; Escape, close and outside click dismiss it. The initial message is “How can I help you?”. Users can type questions and receive in-panel guidance, with no forced page navigation.
 
 This is a deterministic product-guide assistant, not an LLM integration. It recognizes supported English/Portuguese help topics, handles topic follow-ups and admits unsupported questions. It does not inspect workspace data, transmit chat text to an external provider or execute account actions. Messages stay in component memory and reset when workspace, demo mode or role changes. Topic guidance is restricted to the relevant access level. Regression tests cover specific-topic precedence, access-limited guidance, truthful billing limitations and unknown questions.
+
+## Collapse and question history
+
+The Neo popup collapses after the mouse leaves the combined launcher/panel area (180 ms grace to cross the gap). Re-entry cancels collapse; touch and keyboard retain click, close and Escape controls. Closing does not discard the draft or conversation in the mounted page.
+
+Chat shows the latest question and answer. History keeps the latest 20 exchanges in component memory, newest first, with each question as a collapsed expandable title. Changing workspace/role or reloading the page clears this in-memory history; it is not a persistent database archive.
