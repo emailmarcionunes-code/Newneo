@@ -20,6 +20,6 @@ export default function NeoHelp(){
  },[open]);
  return <div className="neoHelp" ref={root}>
   {open&&<section id="neo-help-panel" role="dialog" aria-label="Neo Help" className="neoHelpPanel"><header><div><strong>Neo</strong><span>Your NEWNEO guide</span></div><button ref={close} aria-label="Close Help" onClick={()=>{setOpen(false);trigger.current?.focus()}}><X size={18}/></button></header><div className="neoHelpBody"><WorkspaceHelp compact/></div></section>}
-  <button ref={trigger} className="neoHelpTrigger" aria-label="Help with Neo" aria-expanded={open} aria-controls={open?'neo-help-panel':undefined} onClick={()=>setOpen(!open)}><span className="neoHelpFace" aria-hidden="true"/><span>Help</span></button>
+  <button ref={trigger} className="neoHelpTrigger" aria-label="Como posso ajudar?" title="Como posso ajudar?" aria-expanded={open} aria-controls={open?'neo-help-panel':undefined} onClick={()=>setOpen(!open)}><span className="neoHelpFace" aria-hidden="true"/></button>
  </div>
 }
