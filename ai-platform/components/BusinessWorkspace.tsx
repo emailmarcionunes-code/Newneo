@@ -9,6 +9,7 @@ import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
 import { agentTemplates } from '@/lib/catalog';
 import { demoProductRole, productCapabilities } from '@/lib/product-access';
 import './BusinessWorkspace.css';
+import WorkspaceHelp from './WorkspaceHelp';
 import WorkspaceAnalytics from './WorkspaceAnalytics';
 import { AgentIcon } from './Assets';
 import { Metrics, Status, Table } from './hybrid/UI';
@@ -774,28 +775,7 @@ export default function BusinessWorkspace({
           </p>
         </article>
       )}
-      {view === 'help' && (
-        <article className="panel">
-          <h1>Getting started</h1>
-          <ol>
-            <li>Browse Discover to find a specialist for your task.</li>
-            <li>
-              Open My Agents to see its capabilities and connected sources.
-            </li>
-            <li>Choose Use Agent when document search is available.</li>
-            <li>Find your searches and results in Work.</li>
-          </ol>
-          <p>
-            Need another capability or access? Request assistance from the
-            Agent’s Work tab. Your administrator reviews requests and completes
-            setup in Operations.
-          </p>
-          <p>
-            AI-generated conversations and automated business actions are not
-            yet activated in the live workspace.
-          </p>
-        </article>
-      )}
+      {view === 'help' && <WorkspaceHelp/>}
     </section>
   );
 }

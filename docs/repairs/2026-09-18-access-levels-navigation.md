@@ -15,3 +15,7 @@ Demo personas use the same product access policy. A User has no Operations navig
 ## Validation
 
 Production compilation and TypeScript validation; product-access regression coverage for all administrative roots and their nested routes, operational routes, unknown roles, and membership/configuration capabilities. Existing workspace-member authorization tests remain in the suite.
+
+## Profile and role-aware help
+
+Profile is accessed from the header avatar/name menu, not a separate sidebar item. Help stays in the sidebar in Workspace and Operations for every role. The header Help preview and the full Help page share the same role-aware component: workspace guidance for everyone, daily Operations guidance for AI Operators and Administrators, and organization settings guidance for Administrators. Help content does not confer any additional permission.

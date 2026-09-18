@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { SignOutControl } from './SignOutControl';
 import { AssetIcon } from './Assets';
+import WorkspaceHelp from './WorkspaceHelp';
 import { HeaderSearch, HeaderNotifications, HelpIcon } from './HeaderTools';
 import { NewneoWordmark } from './NewneoLogo';
 import { DemoControls, DemoBoundary } from './journeys/DemoExperience';
@@ -70,7 +71,7 @@ export function NavItem({
         compact ? { justifyContent: 'center', paddingInline: 8 } : undefined
       }
     >
-      <AssetIcon name={icon} monochrome />
+      {icon === 'help' ? <HelpIcon/> : <AssetIcon name={icon} monochrome />}
       {!compact && <span>{label}</span>}
     </Link>
   );
@@ -177,24 +178,7 @@ export function ApplicationSidebar({
       <div className="sidebarBottom">
         {companyAdmin && <NavItem label="Settings" href="/settings" icon="settings" compact={collapsed} active={isSettingsPath(path)} onNavigate={onClose}/>}
 
-        {!operations && (
-          <NavItem
-            label="Help"
-            href="/workspace/help"
-            icon="overview"
-            compact={collapsed}
-            active={path === '/workspace/help'}
-            onNavigate={onClose}
-          />
-        )}
-        <NavItem
-          label="Profile"
-          href="/workspace/profile"
-          icon="settings"
-          compact={collapsed}
-          active={path === '/workspace/profile'}
-          onNavigate={onClose}
-        />
+        <NavItem label="Help" href="/workspace/help" icon="help" compact={collapsed} active={path === '/workspace/help'} onNavigate={onClose}/>
       </div>
       <details
         className="workspaceMenu"
@@ -310,15 +294,11 @@ export function Topbar({
             <HelpIcon />
           </summary>
           <div className="topbarPopover">
-            <strong>Work with your Agents</strong>
-            <p>
-              Discover a specialist, review what it can do and open it from My
-              Agents. Your administrator manages connections and activation.
-            </p>
+            <WorkspaceHelp compact/>
           </div>
         </details>
         <details className="topbarMenu profileMenu">
-          <summary>
+          <summary aria-label="User menu">
             <span className="avatar">
               {account.authenticated ? 'AD' : 'AM'}
             </span>
@@ -338,7 +318,7 @@ export function Topbar({
                 ? account.workspace?.name
                 : `Demo workspace · ${demoRole}`}
             </p>
-            <Link href="/workspace/profile">Your account</Link>
+            <Link href="/workspace/profile">Profile</Link>
             <p>
               <Link href="/workspace/help">Help</Link>
             </p>
