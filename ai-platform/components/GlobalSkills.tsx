@@ -125,7 +125,7 @@ export function GlobalSkills() {
   const { can } = useDemoAccess();
   const router = useRouter();
   const [search, setSearch] = useState('');
-  const [view, setView] = useState('Pipeline');
+  const [view, setView] = useState('List');
   const views = ['List', 'Pipeline', 'Matrix', 'Intelligence'];
   const [filters, setFilters] = useState<Record<string, string>>({
     Domain: 'All',
