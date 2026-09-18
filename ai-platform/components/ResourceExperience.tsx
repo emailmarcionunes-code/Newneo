@@ -338,13 +338,6 @@ export default function ResourceExperience({
                 : '+ Add connector'}
           </Button>
         </div>
-        <div className="surfaceNotice">
-          <strong>Interactive preview</strong>
-          <p>
-            Explore the complete flow with sample data. Changes stay in this
-            browser tab; no credentials or external connections are used.
-          </p>
-        </div>
         {notice && (
           <p role="status" className="resourceNotice">
             {notice}

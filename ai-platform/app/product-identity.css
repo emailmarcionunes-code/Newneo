@@ -129,3 +129,11 @@
 .neoChatPanel{width:min(380px,calc(100vw - 32px));display:flex;flex-direction:column;overflow:hidden}.neoChatMessages{overflow:auto;max-height:360px;min-height:130px;padding:16px;overscroll-behavior:contain}.neoChatMessage{margin-bottom:14px;max-width:95%}.neoChatMessage>span{font-size:11px;color:var(--muted);font-weight:600}.neoChatMessage p{margin:5px 0 0;padding:12px 14px;border-radius:12px;background:#f1f5fa;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}.neoChatMessage.user{margin-left:auto}.neoChatMessage.user p{background:#eaf1fc;color:#173c70}.neoChatComposer{display:flex;align-items:flex-end;gap:8px;border-top:1px solid var(--line);padding:12px}.neoChatComposer textarea{flex:1;min-width:0;resize:none;max-height:110px;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:13px}.neoChatComposer button{background:var(--primary);color:white;border-radius:9px;width:36px;height:36px;display:grid;place-items:center;flex-shrink:0}.neoChatComposer button:disabled{opacity:.4;cursor:default}.neoChatNotice{font-size:11px;color:var(--muted);line-height:1.5;padding:0 14px 12px;margin:0}@media(max-height:700px){.neoChatMessages{max-height:210px;min-height:80px}}.neoChatComposer .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 
 .neoChatPanel{height:min(286px,calc(100dvh - 108px))}.neoChatPanel .neoChatMessages{flex:1;min-height:0;max-height:none}.neoChatPanel>header,.neoChatPanel>.neoChatComposer,.neoChatPanel>.neoChatNotice{flex-shrink:0}
+
+/* One persistent, compact demo indicator instead of repeated page notices. */
+.topbar .demoControls > details > summary {
+  color: #854d0e;
+  background: #fff4d6;
+  border: 1px solid #e8c364;
+  font-weight: 600;
+}

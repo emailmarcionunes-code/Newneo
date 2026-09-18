@@ -280,16 +280,9 @@ export default function LaunchGuide({
       setDeploying(false);
     }
   };
-  const previewBanner = (
-    <p className="previewBanner">
-      Demo preview · Reference results and simulated deployment only. No live
-      agent is created.
-    </p>
-  );
   if (deployment)
     return (
       <div className="launchGuide journeyComplete" aria-busy={false}>
-        {previewBanner}
         <div className="resourceFooter">
           <Link className="button outline" href={`/agents/${workspaceAgentId}`}>
             Open saved agent
@@ -540,7 +533,6 @@ export default function LaunchGuide({
               onApprove={(productionApproved) => update({ productionApproved })}
             />
           )}
-          {draft.step >= 6 && previewBanner}
           <footer className="wizardActions">
             {draft.step === 0 ? (
               <Link href="/agents/catalog" className="button secondary">

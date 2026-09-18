@@ -164,10 +164,6 @@ export function Reports() {
           </div>
         </div>
       </section>
-      <p className="hybridDataNote">
-        Preview period totals are simulated from the sample daily task volume;
-        spend is the current workspace snapshot.
-      </p>
       <ReportSchedule />
       <DataNote />
     </div>
@@ -314,9 +310,6 @@ export function AuditLog() {
         />
       </section>
       <DataNote />
-      <p className="hybridDataNote">
-        Preview records are local samples, not a production audit store.
-      </p>
     </div>
   );
 }

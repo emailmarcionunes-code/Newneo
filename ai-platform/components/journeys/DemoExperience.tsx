@@ -72,7 +72,8 @@ export function DemoControls() {
       <details>
         <summary aria-label={`Demo controls · ${role}`}>Demo</summary>
         <div className="demoControlsBody">
-          <p>Simulated profiles only. No account permissions change.</p>
+          <p>Sample workspace · No live execution. Simulated profiles do not change account permissions.</p>
+          <a href="/login">Exit demo →</a>
           <label>
             Preview profile
             <select value={role} onChange={(e) => setRole(e.target.value)}>

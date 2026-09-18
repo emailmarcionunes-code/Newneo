@@ -153,7 +153,6 @@ export function SkillsPanel({
         </Button>
       </div>
       <p className="intelligenceNote">
-        Interactive preview ·{' '}
         {draftVersion
           ? `Draft ${shown}; Production ${currentVersion} is unchanged.`
           : `Active version ${currentVersion}. Changes create a draft.`}{' '}

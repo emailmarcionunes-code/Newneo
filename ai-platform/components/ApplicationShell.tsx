@@ -415,12 +415,6 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
         <Topbar open={open} onToggle={() => setOpen(!open)} />
         <main id="main-content" className="content">
           <DemoBoundary>
-            {account.mode === 'demo' && (
-              <div role="note" className="intelligenceNote">
-                Demo · Acme Corp / Ana Martinez · Sample data only. No live
-                actions. <a href="/login">Exit demo →</a>
-              </div>
-            )}
             {allowed ? (
               children
             ) : (

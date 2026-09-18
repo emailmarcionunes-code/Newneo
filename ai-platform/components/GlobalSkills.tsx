@@ -184,7 +184,6 @@ export function GlobalSkills() {
   return (
     <SkillInventoryLayout view={view} onView={setView}
       action={<Button disabled={!can('create')} onClick={()=>router.push('/skills/new')}>+ Create Skill</Button>}
-      note="Demo portfolio · Sample analytics · No live execution"
       metrics={[
           ['Total Skills', String(data.library.length)],
           [
@@ -514,10 +513,6 @@ export function GlobalSkillDetail({ id }: { id: string }) {
           ],
         ]}
       />
-      <p className="intelligenceNote">
-        Demo Skill analytics · Historical sample data. Skill Definition ≠ Agent
-        Skill Binding. Production Agents keep their pinned version.
-      </p>
       {outdated.length > 0 && (
         <section className="intelligenceNote">
           <strong>Update available</strong>

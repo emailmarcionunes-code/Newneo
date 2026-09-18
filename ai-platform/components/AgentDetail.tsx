@@ -88,13 +88,6 @@ export default function AgentDetail() {
           </Button>
         </div>
       </div>
-      <div className="detailNotice">
-        <strong>Demo agent · illustrative data</strong>
-        <p>
-          No agent is deployed. Tests and version creation below are local
-          previews; no live changes are made.
-        </p>
-      </div>
       <dl className="detailIdentity">
         {[
           ['Status', 'Production · sample'],

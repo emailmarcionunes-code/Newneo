@@ -4,22 +4,14 @@ import { Button } from '../UI';
 import { usePreview } from './PreviewState';
 export function PreviewNotice() {
   const { storageError } = usePreview();
+  if (!storageError) return null;
   return (
-    <div className="surfaceNotice">
-      <strong>Interactive preview</strong>
-      <p>
-        Explore with sample data. Changes stay in this tab; no systems, messages
-        or payments are triggered.
-      </p>
-      {storageError && (
-        <p>
-          Browser storage could not be restored or saved. You can continue in
-          this session.
-        </p>
-      )}
-    </div>
+    <p role="status" className="surfaceNotice">
+      Browser storage could not be restored or saved. You can continue in this session.
+    </p>
   );
 }
+
 export function JourneyHeader({
   title,
   description,

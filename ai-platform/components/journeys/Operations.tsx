@@ -37,7 +37,6 @@ export default function Operations({ finops }: { finops: boolean }) {
             ? 'Budgets, forecast & recommendations'
             : 'Task investigation'}
         </h2>
-        <p>Interactive sample data · changes are saved in this tab only.</p>
         <Feedback message={message} />
         {finops ? (
           <>

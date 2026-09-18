@@ -123,7 +123,7 @@ export default function Overview() {
                 <h2>{label}</h2>
                 <strong>{value}</strong>
                 <p>{note}</p>
-                <span className="tag">Sample data</span>
+
               </article>
             ))}
           </section>

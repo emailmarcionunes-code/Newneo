@@ -280,9 +280,6 @@ export default function OverviewFidelity() {
           </section>
         </div>
       </div>
-      <p className="overviewDemoNote">
-        Reference workspace · interactive preview
-      </p>
     </div>
   );
 }

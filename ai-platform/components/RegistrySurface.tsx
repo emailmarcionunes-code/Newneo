@@ -4,15 +4,7 @@ import ResourceExperience from './ResourceExperience';
 import { surfaces } from '@/lib/surfaces';
 import { FilterChip, Button } from './UI';
 export function DemoNotice() {
-  return (
-    <div className="surfaceNotice">
-      <strong>Demo workspace</strong>
-      <p>
-        Reference data only. No live connections, approvals or executions are
-        performed.
-      </p>
-    </div>
-  );
+  return null;
 }
 export default function RegistrySurface({ surface }: { surface: string }) {
   if (surface === 'knowledge' || surface === 'tools')
