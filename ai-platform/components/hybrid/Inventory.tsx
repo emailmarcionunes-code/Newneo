@@ -122,7 +122,7 @@ export function Resources({ tools = false }: { tools?: boolean }) {
           }
         />
       )}
-      <div className="hybridControls">
+      <div className="hybridControls" hidden={!tools}>
         {tools ? (
           <div className="filterRow">
             {['Tools', 'MCP Servers'].map((f) => (
@@ -135,14 +135,7 @@ export function Resources({ tools = false }: { tools?: boolean }) {
               </FilterChip>
             ))}
           </div>
-        ) : (
-          <input
-            aria-label="Search sources"
-            placeholder="Search sources…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        )}
+        ) : null}
       </div>
       {tools ? (
         <div className="referenceToolContent">
@@ -210,6 +203,7 @@ export function Resources({ tools = false }: { tools?: boolean }) {
         <>
           <Table
             caption="Knowledge sources"
+            toolbar={<input aria-label="Search sources" placeholder="Search sources…" value={search} onChange={e => setSearch(e.target.value)}/>}
             emptyMessage="No knowledge sources match your search. Clear it or connect a source."
             headers={[
               'Source',

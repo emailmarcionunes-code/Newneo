@@ -170,7 +170,7 @@ export default function HybridDetail({
                   ['Sync frequency', '15 min'],
                 ]}
               />
-              <div className="hybridSplit equal">
+              <div className="knowledgeOverviewGrid">
                 <section className="panel">
                   <h2>Source details</h2>
                   <dl className="surfaceFacts">
@@ -205,7 +205,6 @@ export default function HybridDetail({
                     <p>No agents use this source yet.</p>
                   )}
                 </section>
-              </div>
               <section className="panel">
                 <Bars
                   semantics="quality"
@@ -220,6 +219,7 @@ export default function HybridDetail({
                   Review freshness and source permissions.
                 </p>
               </section>
+              </div>
             </>
           ) : tab === 'Documents' ? (
             <Table
