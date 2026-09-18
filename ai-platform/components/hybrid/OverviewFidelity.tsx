@@ -11,6 +11,7 @@ import {
 } from '@/lib/preview-records';
 import { usePreview, usePreviewValue } from '../journeys/PreviewState';
 import { useState } from 'react';
+import {useAcmeDemo} from '@/lib/acme-demo';
 import {
   Activity,
   Bot,
@@ -55,6 +56,8 @@ const events = [
 ];
 export default function OverviewFidelity() {
   const hybridAgents = useWorkspaceAgents();
+  const simulation=useAcmeDemo(true);
+  const activity=simulation.work.slice(0,6).map(w=>[`${w.agent_name} · ${w.query}`,new Date(w.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}),'healthy',`/workspace/agents/${w.agent_id}`]);
   const summary = workspaceSummary(hybridAgents);
   const workspaceTasks = summary.tasks;
   const workspaceSpend = summary.spend;
@@ -200,7 +203,7 @@ export default function OverviewFidelity() {
             </h2>
           </header>
           <ul>
-            {events.map(([text, time, tone, href]) => (
+            {activity.map(([text, time, tone, href]) => (
               <li key={text}>
                 <span
                   className={`overviewEventDot ${tone}`}

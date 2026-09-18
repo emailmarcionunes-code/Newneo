@@ -12,6 +12,7 @@ import './BusinessWorkspace.css';
 import WorkspaceHelp from './WorkspaceHelp';
 import WorkspaceAnalytics from './WorkspaceAnalytics';
 import { AgentIcon } from './Assets';
+import {useAcmeDemo,acmeSources} from '@/lib/acme-demo';
 import { Metrics, Status, Table } from './hybrid/UI';
 import AgentAddSteps from './AgentAddSteps';
 type Agent = {
@@ -78,6 +79,7 @@ export default function BusinessWorkspace({
   useEffect(() => {
     void load();
   }, [demo, account.workspaceId]);
+  const simulation=useAcmeDemo(demo);
   const demoData: Data = {
     agents: previewAgents.map((a) => {
       const t = agentTemplates.find((t) => t.id === a.id);
@@ -89,20 +91,26 @@ export default function BusinessWorkspace({
         capabilities:
           t?.recommendedSkills.filter((s) => !s.optional).map((s) => s.name) ??
           [],
-        sources: [],
+        sources: acmeSources(a.id),
         versionId: null,
-        status: 'Demo example',
-        canSearch: false,
+        status: 'Available',
+        canSearch: true,
       };
     }),
-    work: [],
-    requests: [],
+    work: simulation.work,
+    requests: simulation.requests,
     capabilities: productCapabilities(demoProductRole(role)),
   };
   const d = demo ? demoData : data;
   const agent = d?.agents.find((a) => a.id === id),
     template = agentTemplates.find((t) => t.id === id);
   async function post(body: Record<string, unknown>) {
+    if (demo && body.action === 'search') {
+      const sample=simulation.work.find(w=>w.agent_id===id)??simulation.work[0];
+      const words=String(body.query).toLowerCase().split(/\s+/).filter(w=>w.length>2);
+      const matches=simulation.work.filter(w=>w.agent_id===id).flatMap(w=>w.result).filter(hit=>words.some(word=>`${hit.title} ${hit.excerpt}`.toLowerCase().includes(word)));
+      return {...sample,id:`acme-query-${Date.now()}`,query:String(body.query),created_at:new Date().toISOString(),result:[...new Map(matches.map(hit=>[hit.id,hit])).values()]};
+    }
     const r = await fetch('/api/business', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -437,8 +445,7 @@ export default function BusinessWorkspace({
                     connected sources. This is document search, not an
                     AI-generated answer.
                   </p>
-                  {!demo &&
-                  agent.canSearch &&
+                  {agent.canSearch &&
                   d.capabilities.includes('work:search') ? (
                     <form
                       onSubmit={(e) => {

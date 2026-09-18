@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAccount } from './AccountContext';
+import {useAcmeDemo} from '@/lib/acme-demo';
 import { Metrics, Table, IconLabel } from './hybrid/UI';
 import WorkspaceCostConsole from './WorkspaceCostConsole';
 import './BusinessWorkspace.css';
@@ -33,7 +34,8 @@ export default function WorkspaceAnalytics({
 }) {
   const account = useAccount();
   const [loadedData, setData] = useState<Analytics>();
-  const data = account.mode === 'demo' ? { scope: 'personal', period: '30d', agents: [], trend: [], users: [] } as Analytics : loadedData;
+  const simulation=useAcmeDemo(account.mode === 'demo');
+  const data = account.mode === 'demo' ? { scope: company?'workspace':'personal', period: '30d', agents: simulation.agents, trend: simulation.trend, users: [{id:'ana-martinez',searches:simulation.work.length,agents:simulation.agents.length,latest:simulation.work[0].created_at}] } as Analytics : loadedData;
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
   const [controls, setControls] = useState(false);
@@ -98,14 +100,7 @@ export default function WorkspaceAnalytics({
         </>
       )}
       {error && <p role="alert">{error}</p>}
-      {account.mode === 'demo' ? (
-        <p className="businessNotice">
-          Demo preview. Personal usage analytics appear after recorded workspace
-          activity.
-        </p>
-      ) : !data && !error ? (
-        <p role="status">Loading analytics…</p>
-      ) : null}
+      {!data && !error && <p role="status">Loading analytics…</p>}
       {data && (
         <>
           <Metrics
