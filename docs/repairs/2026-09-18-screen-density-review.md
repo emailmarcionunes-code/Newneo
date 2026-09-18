@@ -9,3 +9,7 @@ Hosted demo screens visually inspected: Operations Overview, Agent detail, Evalu
 List metrics remain based on the approved Kamory reference. Mobile keeps natural vertical flow. No data, permissions or operational actions changed.
 
 Final follow-up: Workspace agent detail no longer grows to fill the viewport when its active tab contains only a short summary. Production build and git diff whitespace checks passed.
+
+## Discover catalog follow-up
+
+The generic `min-height: 0` card rule allowed the bounded catalog grid to compress its implicit rows below their content size. Set catalog rows to `max-content`, retained a compact 240px minimum card height, and prevented flex children from shrinking. The catalog remains scrollable, with the existing 4/3/2/1-column responsive breakpoints.

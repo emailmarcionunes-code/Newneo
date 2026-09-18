@@ -85,3 +85,15 @@ body .content .hybridControls[hidden] { display:none; }
 
 /* Detail tabs use content height; only long activity lists scroll internally. */
 body .content .businessWorkspace:not(.businessHome) { min-height:0; gap:14px; }
+
+/* Scroll the catalog without compressing its implicit grid rows. */
+body .content .businessCatalog {
+  grid-auto-rows:max-content;
+  align-content:start;
+}
+body .content .businessCatalog > .businessCard {
+  min-height:240px;
+}
+body .content .businessCatalog > .businessCard > * {
+  flex-shrink:0;
+}
