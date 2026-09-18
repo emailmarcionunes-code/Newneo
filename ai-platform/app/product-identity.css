@@ -1,0 +1,110 @@
+/* Hybrid v4 shared identity. Solid blue approved Sep 17; domain tints from
+   the catalog reference. Never infer operational readiness from a domain color. */
+.agentIcon.service { --agent-color: var(--primary); --agent-tint: var(--primary-tint); }
+.agentIcon.it { --agent-color: #6d42b8; --agent-tint: #f3edfc; }
+.agentIcon.assistant { --agent-color: #16784e; --agent-tint: #ecf8f1; }
+.agentIcon.sales { --agent-color: #a85a15; --agent-tint: #fff5e8; }
+.agentIcon.automation { --agent-color: #087b91; --agent-tint: #eaf8fb; }
+.agentIcon.research { --agent-color: #b04360; --agent-tint: #fdf0f4; }
+.agentIcon[class] { background: var(--agent-tint, var(--primary-tint)); color: var(--agent-color, var(--primary)); width:40px; height:40px; border-radius:10px; flex-shrink:0; }
+.agentIcon .assetIcon { color:inherit; }
+.referenceIconLabel .agentIcon { width:34px; height:34px; border-radius:8px; }
+.hybridMetrics article { position:relative; }
+.hybridMetrics article .metricLabel { padding-right:30px; min-height:18px; }
+.hybridMetrics article .metricIcon { position:absolute; right:14px; top:12px; display:grid; place-items:center; width:28px; height:28px; border-radius:8px; color:var(--primary); background:var(--primary-tint); }
+.hybridMetrics article[data-tone='green'] .metricIcon { color:#16784e; background:#ecf8f1; }
+.hybridMetrics article[data-tone='amber'] .metricIcon { color:#a85a15; background:#fff5e8; }
+.hybridMetrics article[data-tone='violet'] .metricIcon { color:#6d42b8; background:#f3edfc; }
+.hybridMetrics article[data-tone='muted'] .metricIcon { color:#64748b; background:#f1f5f9; }
+.hybridMetrics article[data-tone='green']>strong { color:#16784e; }
+.hybridMetrics article[data-tone='amber']>strong { color:#a85a15; }
+.hybridMetrics article[data-tone='violet']>strong { color:#6d42b8; }
+.hybridMetrics article[data-tone='muted']>strong { color:#64748b; }
+.hybridMetrics article[data-value='0']>strong { color:var(--ink); }
+.hybridMetrics.count-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.hybridMetrics.count-5 { grid-template-columns:repeat(5,minmax(0,1fr)); }
+.hybridMetrics .metricIcon svg { flex-shrink:0; }
+.referenceIconLabel.source .referenceIcon { color:#16784e; background:#ecf8f1; }
+.referenceIconLabel.tool .referenceIcon { color:#6d42b8; background:#f3edfc; }
+.referenceIconLabel.evaluation .referenceIcon { color:var(--primary); background:var(--primary-tint); }
+.referenceIconLabel.deployment .referenceIcon { color:#087b91; background:#eaf8fb; }
+.businessWorkspace .hybridMetrics { margin:0; flex-shrink:0; }
+.businessWorkspace .hybridMetrics article { padding:14px 16px; min-height:100px; }
+.businessWorkspace .hybridMetrics strong { font-size:26px; }
+.businessWorkspace .hybridMetrics .metricLabel { font-size:12px; }
+.businessWorkspace .panel h2,.workspaceAnalytics .panel h2 { display:flex; align-items:center; gap:9px; font-size:16px; font-weight:600; }
+.businessWorkspace .panel h2>svg,.workspaceAnalytics .panel h2>svg { color:var(--primary); flex-shrink:0; }
+.businessWorkspace .businessPanelHead { padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--line); }
+.businessWorkspace .businessPanelHead h2 { margin:0; }
+.businessWorkspace .businessPanelHead>a,.businessWorkspace .panel>a:not(.button) { color:var(--primary); font-size:13px; font-weight:500; }
+.businessWorkspace .businessCard { border-radius:12px; box-shadow:var(--shadow); }
+.businessWorkspace .businessCard:hover { border-color:var(--primary-light); background:var(--primary-tint); }
+.businessWorkspace .businessMain .businessCard>.agentIcon { grid-column:1; grid-row:1/4; }
+.businessWorkspace .businessMain .businessCardStatus { grid-column:2; }
+.businessWorkspace .businessCardStatus { width:fit-content; }
+.businessWorkspace .businessCardStatus .hybridStatus { font-size:11px; font-weight:500; }
+.businessWorkspace .businessCardMeta { padding-top:10px; margin-top:auto; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
+.businessWorkspace .businessCardMeta>span { display:flex; align-items:center; gap:6px; }
+.businessWorkspace .businessCardMeta + .businessCardAction { margin-top:0; padding-top:4px; }
+.businessWorkspace .businessCategory { color:var(--muted); font-size:11px; font-weight:500; }
+.businessWorkspace .businessEmpty { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:12px; min-height:210px; padding:24px; }
+.businessWorkspace .businessEmpty p { margin:0; max-width:260px; font-size:13px; }
+.businessWorkspace .businessEmpty .businessCardAction { margin:0; }
+.businessWorkspace .businessHistory details { border-left:2px solid var(--primary-tint-strong); padding:12px 0 12px 16px; margin:10px 0; }
+.businessWorkspace .businessHistory details[open] { border-left-color:var(--primary); }
+.businessWorkspace .businessPreparation { border-color:#c8d9f0; background:var(--primary-tint); }
+.businessWorkspace .businessPreparation p { font-size:13px; }
+.businessWorkspace .businessProfile .panel { border-radius:12px; padding:18px; }
+.businessWorkspace .businessProfile .panel>h2 { padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:16px; }
+.businessWorkspace .profileIdentity { align-items:flex-start; }
+.businessWorkspace .profileIdentity .agentIcon { margin-top:3px; }
+.businessWorkspace .profileIdentity p { max-width:800px; }
+.businessWorkspace .businessDetail>.hybridMetrics { margin:16px 0; }
+.workspaceAnalytics .panel { padding:18px; border-radius:12px; }
+.workspaceAnalytics .panel>h2 { margin:0 0 16px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+.workspaceAnalytics .analyticsPanels { flex:1; min-height:0; }
+.workspaceAnalytics .analyticsTrend meter { height:10px; }
+.workspaceAnalytics .analyticsTrend meter::-webkit-meter-bar { background:var(--primary-tint); border:0; }
+.workspaceAnalytics .analyticsTrend meter::-webkit-meter-optimum-value { background:var(--primary); }
+.workspaceAnalytics .analyticsTrend meter::-moz-meter-bar { background:var(--primary); }
+.businessWorkspace .businessProfile { align-items:stretch; }
+.businessWorkspace .businessCatalog { align-content:start; }
+.businessWorkspace .businessMain>.panel { padding:18px; }
+.businessWorkspace .businessNotice { background:var(--primary-tint); color:var(--primary); border-color:var(--primary-tint-strong); }
+.businessWorkspace .businessTabs { margin-bottom:0; }
+.businessWorkspace .businessTabs button { padding:12px 16px; font-size:14px; }
+.businessWorkspace .businessDetail { padding:20px; }
+@media(min-width:1100px) and (min-height:650px) {
+ .content:has(>.businessWorkspace) { display:flex; flex-direction:column; height:calc(100dvh - var(--topbar-height)); min-height:0; }
+ .content:has(>.businessWorkspace)>.intelligenceNote { flex-shrink:0; margin:0 0 12px; }
+ .content>.businessWorkspace.businessHome { height:auto; flex:1; min-height:0; }
+ .businessWorkspace.businessHome .businessMain { grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); }
+ .businessWorkspace.businessHome .businessHistory { display:flex; flex-direction:column; }
+ .businessWorkspace.businessHome .businessEmpty { flex:1; }
+}
+@media(max-width:1100px) { .hybridMetrics.count-5 { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:650px) {
+ .hybridMetrics.count-5,.hybridMetrics.count-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .businessWorkspace .profileIdentity { gap:10px; }
+ .businessWorkspace .businessMain .businessCard>.agentIcon { width:34px; height:34px; }
+}
+@media(max-width:400px) { .businessWorkspace .hybridMetrics.count-3 { grid-template-columns:1fr; } }
+/* Keep the same profile composition across sidebar widths; do not leave a phantom third column. */
+@media(max-width:1200px) {
+ .businessWorkspace .businessProfile { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .businessWorkspace .businessProfile>.panel:first-child { grid-column:1/-1; }
+ .businessWorkspace .businessProfile>.panel:last-child { grid-column:auto; }
+}
+@media(max-width:650px) {
+ .businessWorkspace .businessProfile { grid-template-columns:minmax(0,1fr); }
+ .businessWorkspace .businessProfile>.panel:first-child { grid-column:auto; }
+}
+/* Shared by Operations and Workspace, including direct deep links. */
+.agentAddSteps { display:flex; gap:24px; padding:0; margin:0; list-style:none; flex-shrink:0; }
+.agentAddSteps li { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px; }
+.agentAddSteps li>span { display:grid; place-items:center; width:25px; height:25px; border:1px solid var(--line); border-radius:50%; background:white; font-weight:600; }
+.agentAddSteps .current { color:var(--primary); font-weight:600; }
+.agentAddSteps .current>span { background:var(--primary); color:white; border-color:var(--primary); }
+.agentAddSteps .done>span { background:var(--primary-tint); color:var(--primary); }
+.businessWorkspace .profileIdentity { display:flex; gap:14px; }
+@media(max-width:650px) { .agentAddSteps { gap:10px; flex-wrap:wrap; } .agentAddSteps li { font-size:11px; } }

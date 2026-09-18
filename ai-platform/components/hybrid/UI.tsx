@@ -4,10 +4,12 @@ import {
   Wrench,
   FlaskConical,
   Rocket,
-  Server,
+  Server, Activity, CircleCheck, Clock3, Coins, ShieldCheck, UsersRound,
+  Layers3, Puzzle, TriangleAlert, Search, ChartNoAxesCombined,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { AgentIcon } from '../Assets';
 export function PageTitle({
   title,
   description,
@@ -27,26 +29,34 @@ export function PageTitle({
     </header>
   );
 }
+function metricIdentity(label: string) {
+  if (/pending|incident|error|fail|violation|review|warning/i.test(label)) return { Icon: TriangleAlert, tone: 'amber' };
+  if (/success|passed|compliance|readiness|matches|healthy/i.test(label)) return { Icon: CircleCheck, tone: 'green' };
+  if (/cost|spend|budget|forecast/i.test(label)) return { Icon: Coins, tone: 'blue' };
+  if (/latency|time|duration/i.test(label)) return { Icon: Clock3, tone: 'blue' };
+  if (/user|member/i.test(label)) return { Icon: UsersRound, tone: 'blue' };
+  if (/skill|capabilit/i.test(label)) return { Icon: Puzzle, tone: 'violet' };
+  if (/knowledge|source|document/i.test(label)) return { Icon: BookOpen, tone: 'blue' };
+  if (/polic|governance|control/i.test(label)) return { Icon: ShieldCheck, tone: 'blue' };
+  if (/version|archiv/i.test(label)) return { Icon: Layers3, tone: 'blue' };
+  if (/search/i.test(label)) return { Icon: Search, tone: 'blue' };
+  if (/agent/i.test(label)) return { Icon: Bot, tone: 'blue' };
+  return { Icon: /task|execution/i.test(label) ? Activity : ChartNoAxesCombined, tone: 'blue' };
+}
 export function Metrics({ items }: { items: [string, string, string?][] }) {
-  return (
-    <div className={`hybridMetrics count-${items.length}`}>
-      {items.map(([label, value, note]) => (
-        <article key={label} data-metric={label} data-value={value}>
-          <span>{label}</span>
-          <strong>{value}</strong>
-          {note && <small>{note}</small>}
-          {/readiness|compliance score/i.test(label) && value.endsWith('%') && (
-            <Progress
-              value={parseFloat(value)}
-              label={label}
-              tone={/compliance/i.test(label) ? 'green' : 'blue'}
-              compact
-            />
-          )}
-        </article>
-      ))}
-    </div>
-  );
+  return <div className={`hybridMetrics count-${items.length}`}>
+    {items.map(([label, value, note]) => {
+      const { Icon, tone } = metricIdentity(label);
+      const unavailable = /^(—|–|Unavailable|Not enabled)$/i.test(value);
+      return <article key={label} data-metric={label} data-value={value} data-tone={unavailable ? 'muted' : tone}>
+        <span className="metricLabel">{label}</span>
+        <i className="metricIcon" aria-hidden="true"><Icon size={18} strokeWidth={1.5}/></i>
+        <strong>{value}</strong>
+        {note && <small>{note}</small>}
+        {/readiness|compliance score/i.test(label) && value.endsWith('%') && <Progress value={parseFloat(value)} label={label} tone={/compliance/i.test(label) ? 'green' : 'blue'} compact />}
+      </article>;
+    })}
+  </div>;
 }
 export function Table({
   headers,
@@ -116,8 +126,10 @@ export function Table({
 export function IconLabel({
   children,
   kind = 'agent',
+  identity,
 }: {
   children: ReactNode;
+  identity?: string;
   kind?: 'agent' | 'source' | 'tool' | 'evaluation' | 'deployment' | 'server';
 }) {
   const Icon = {
@@ -130,9 +142,7 @@ export function IconLabel({
   }[kind];
   return (
     <span className={`referenceIconLabel ${kind}`}>
-      <span className="referenceIcon">
-        <Icon size={17} strokeWidth={1.7} aria-hidden="true" />
-      </span>
+      {kind === 'agent' ? <AgentIcon identity={identity} name={typeof children === 'string' ? children : undefined}/> : <span className="referenceIcon"><Icon size={17} strokeWidth={1.5} aria-hidden="true" /></span>}
       {children}
     </span>
   );
@@ -160,7 +170,7 @@ export function Progress({
   );
 }
 export function Status({ children }: { children: string }) {
-  const tone = /paused|archived|revoked|inactive|optional/i.test(children)
+  const tone = /not |unavailable|disconnected|not enabled|not activated|paused|archived|revoked|inactive|optional|demo/i.test(children)
     ? 'muted'
     : /live|success|passed|active|approved|resolved|enforced|low|synced|online|complete/i.test(
           children,

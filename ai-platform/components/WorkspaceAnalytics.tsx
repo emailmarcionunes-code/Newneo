@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAccount } from './AccountContext';
-import { Metrics, Table } from './hybrid/UI';
+import { Metrics, Table, IconLabel } from './hybrid/UI';
 import WorkspaceCostConsole from './WorkspaceCostConsole';
 import './BusinessWorkspace.css';
+import { Activity, ChartNoAxesCombined, UsersRound } from 'lucide-react';
 type AgentUsage = {
   id: string;
   name: string;
@@ -31,7 +32,8 @@ export default function WorkspaceAnalytics({
   company?: boolean;
 }) {
   const account = useAccount();
-  const [data, setData] = useState<Analytics>();
+  const [loadedData, setData] = useState<Analytics>();
+  const data = account.mode === 'demo' ? { scope: 'personal', period: '30d', agents: [], trend: [], users: [] } as Analytics : loadedData;
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
   const [controls, setControls] = useState(false);
@@ -125,7 +127,7 @@ export default function WorkspaceAnalytics({
           />
           <div className="analyticsPanels">
             <article className="panel">
-              <h2>{agentId ? 'Work summary' : 'Usage by Agent'}</h2>
+              <h2><ChartNoAxesCombined size={18}/>{agentId ? 'Work summary' : 'Usage by Agent'}</h2>
               <Table
                 caption="Recorded document searches by Agent"
                 headers={[
@@ -137,7 +139,7 @@ export default function WorkspaceAnalytics({
                 ]}
                 rows={agents.map((a) => [
                   <Link key={a.id} href={`/workspace/agents/${a.id}`}>
-                    {a.name}
+                    <IconLabel identity={a.id}>{a.name}</IconLabel>
                   </Link>,
                   String(a.searches),
                   String(a.matched),
@@ -149,7 +151,7 @@ export default function WorkspaceAnalytics({
             </article>
             {company ? (
               <article className="panel">
-                <h2>Most active users</h2>
+                <h2><UsersRound size={18}/>Most active users</h2>
                 <p>Workspace member references · ordered by searches</p>
                 <Table
                   caption="Usage by workspace member"
@@ -166,7 +168,7 @@ export default function WorkspaceAnalytics({
               </article>
             ) : (
               <article className="panel">
-                <h2>{agentId ? 'Latest work' : 'Activity over time'}</h2>
+                <h2><Activity size={18}/>{agentId ? 'Latest work' : 'Activity over time'}</h2>
                 {agentId ? (
                   <>
                     <p>

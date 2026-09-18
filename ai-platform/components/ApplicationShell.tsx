@@ -23,7 +23,7 @@ export const navigation = [
   ['Skills', '/skills', 'skills'],
   ['Knowledge', '/knowledge', 'knowledge'],
   ['Connections', '/tools', 'tools'],
-  ['Models', '/models', 'tools'],
+  ['Models', '/models', 'models'],
   ['Governance', '/governance', 'governance'],
   ['Evaluations', '/evaluations', 'evaluations'],
   ['Deployments', '/deployments', 'deployments'],

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { SignOutControl } from './SignOutControl';
-import { Bot, ArrowRight, BookOpen, CheckCircle, Search } from 'lucide-react';
+import { ArrowRight, BookOpen, CheckCircle, Search, Activity, ShieldCheck, UsersRound, Puzzle, Clock3 } from 'lucide-react';
 import { useAccount } from './AccountContext';
 import { usePreviewValue } from './journeys/PreviewState';
 import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
@@ -10,6 +10,9 @@ import { agentTemplates } from '@/lib/catalog';
 import { demoProductRole, productCapabilities } from '@/lib/product-access';
 import './BusinessWorkspace.css';
 import WorkspaceAnalytics from './WorkspaceAnalytics';
+import { AgentIcon } from './Assets';
+import { Metrics, Status } from './hybrid/UI';
+import AgentAddSteps from './AgentAddSteps';
 type Agent = {
   id: string;
   name: string;
@@ -156,12 +159,10 @@ export default function BusinessWorkspace({
           href={`/workspace/agents/${a.id}`}
           key={a.id}
         >
-          <span className="businessIcon">
-            <Bot size={22} />
-          </span>
+          <AgentIcon identity={a.templateId ?? a.id} name={a.name} />
           <h2>{a.name}</h2>
           <p>{a.purpose}</p>
-          <small>{a.canSearch ? 'Document search available' : a.status}</small>
+          <span className="businessCardStatus"><Status>{a.canSearch ? 'Search ready' : a.status}</Status></span>
           <span className="businessCardAction">
             Open Agent <ArrowRight size={15} />
           </span>
@@ -191,9 +192,7 @@ export default function BusinessWorkspace({
           </details>
         ))
       ) : (
-        <p className="businessEmpty">
-          Your completed document searches will appear here.
-        </p>
+        <div className="businessEmpty"><span className="businessIcon"><Clock3 size={22}/></span><strong>Your work starts here</strong><p>Your completed document searches and results will appear here.</p><Link className="businessCardAction" href="/workspace/agents">Explore My Agents <ArrowRight size={15}/></Link></div>
       )}
     </div>
   );
@@ -248,26 +247,15 @@ export default function BusinessWorkspace({
               Discover Agents <ArrowRight size={16} />
             </Link>
           </header>
-          <div className="businessSummary">
-            <div>
-              <strong>{d.agents.length}</strong>
-              <span>Agents in your workspace</span>
-            </div>
-            <div>
-              <strong>{d.work.length}</strong>
-              <span>Your recent searches</span>
-            </div>
-            <div>
-              <strong>
-                {d.requests.filter((r) => r.status === 'Pending review').length}
-              </strong>
-              <span>Your pending requests</span>
-            </div>
-          </div>
+          <Metrics items={[
+            ['My Agents', String(d.agents.length), 'Specialists in your workspace'],
+            ['Recent searches', String(d.work.length), 'Your recorded activity'],
+            ['Pending requests', String(d.requests.filter(r => r.status === 'Pending review').length), 'Awaiting Operations review'],
+          ]}/>
           <div className="businessMain">
             <article className="panel">
               <div className="businessPanelHead">
-                <h2>My Agents</h2>
+                <h2><UsersRound size={18}/> My Agents</h2>
                 <Link href="/workspace/agents">View all →</Link>
               </div>
               {d.agents.length ? (
@@ -277,7 +265,7 @@ export default function BusinessWorkspace({
               )}
             </article>
             <article className="panel">
-              <h2>Recent work</h2>
+              <h2><Activity size={18}/> Recent work</h2>
               {history(d.work.slice(0, 5))}
               <Link href="/workspace/work">View your work →</Link>
             </article>
@@ -327,10 +315,7 @@ export default function BusinessWorkspace({
           <>
             <Link href="/workspace/agents">← My Agents</Link>
             <header className="pageHead">
-              <div>
-                <h1>{agent.name}</h1>
-                <p>{agent.purpose}</p>
-              </div>
+              <div className="profileIdentity"><AgentIcon identity={agent.templateId ?? agent.id} name={agent.name}/><div><h1>{agent.name}</h1><p>{agent.purpose}</p></div></div>
               <button className="button primary" onClick={() => setTab('Work')}>
                 {agent.canSearch ? 'Search documents' : 'Request setup'}{' '}
                 <ArrowRight size={16} />
@@ -359,22 +344,11 @@ export default function BusinessWorkspace({
                 <>
                   <h2>How this Agent helps</h2>
                   <p>{agent.purpose}</p>
-                  <div className="businessSummary">
-                    <div>
-                      <strong>{capabilities.length}</strong>
-                      <span>Planned capabilities</span>
-                    </div>
-                    <div>
-                      <strong>{agent.sources.length}</strong>
-                      <span>Connected sources</span>
-                    </div>
-                    <div>
-                      <strong>
-                        {agent.canSearch ? 'Search ready' : agent.status}
-                      </strong>
-                      <span>Current availability</span>
-                    </div>
-                  </div>
+                  <Metrics items={[
+                    ['Planned capabilities', String(capabilities.length)],
+                    ['Connected sources', String(agent.sources.length)],
+                    ['Availability', agent.canSearch ? 'Search ready' : agent.status],
+                  ]}/>
                   <p>
                     {agent.canSearch
                       ? 'Search the connected documents below. Broader AI tasks are not yet activated.'
@@ -583,12 +557,12 @@ export default function BusinessWorkspace({
                   key={t.id}
                   href={`/workspace/discover/${t.id}`}
                 >
-                  <span className="businessIcon">
-                    <Bot size={22} />
-                  </span>
-                  <small>{t.categories.join(' · ')}</small>
+                  <AgentIcon type={t.type} identity={t.id}/>
+
+                  <small className="businessCategory">{t.categories.join(' · ')}</small>
                   <h2>{t.name}</h2>
                   <p>{t.description}</p>
+                  <div className="businessCardMeta"><span><Puzzle size={13}/>{t.recommendedSkills.filter(s=>!s.optional).length} core capabilities</span></div>
                   <span className="businessCardAction">
                     Learn more <ArrowRight size={15} />
                   </span>
@@ -602,13 +576,7 @@ export default function BusinessWorkspace({
         (template ? (
           <>
             <Link href="/workspace/discover">← Discover</Link>
-            <ol className="businessSteps">
-              <li>Select</li>
-              <li aria-current={stage === 1 ? 'step' : undefined}>
-                Understand
-              </li>
-              <li aria-current={stage === 2 ? 'step' : undefined}>Request</li>
-            </ol>
+            <AgentAddSteps current={saved ? 2 : stage} complete={Boolean(saved)} finalLabel="Request Agent"/>
             {saved ? (
               <article className="panel">
                 <span className="businessIcon">
@@ -635,15 +603,12 @@ export default function BusinessWorkspace({
             ) : (
               <>
                 <header className="pageHead">
-                  <div>
-                    <h1>{template.name}</h1>
-                    <p>{template.description}</p>
-                  </div>
+                  <div className="profileIdentity"><AgentIcon type={template.type} identity={template.id}/><div><h1>{template.name}</h1><p>{template.description}</p></div></div>
                 </header>
                 {stage === 1 ? (
                   <div className="businessProfile">
                     <article className="panel">
-                      <h2>What it helps you do</h2>
+                      <h2><Puzzle size={18}/> What it helps you do</h2>
                       <p>{template.defaultMission}</p>
                       <ul className="businessFeatures">
                         {Array.from(
@@ -669,7 +634,7 @@ export default function BusinessWorkspace({
                       </ul>
                     </article>
                     <article className="panel">
-                      <h2>For your team</h2>
+                      <h2><UsersRound size={18}/> For your team</h2>
                       <p>{template.defaultTargetUsers}</p>
                       <h3>Expected outcomes</h3>
                       <ul>
@@ -678,8 +643,8 @@ export default function BusinessWorkspace({
                         ))}
                       </ul>
                     </article>
-                    <article className="panel">
-                      <h2>Prepared by Operations</h2>
+                    <article className="panel businessPreparation">
+                      <h2><ShieldCheck size={18}/> Prepared by Operations</h2>
                       <p>
                         Your request goes to the Operations team. They review
                         your needs, connect approved documents and services,

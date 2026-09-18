@@ -1,10 +1,13 @@
 import {
   ChartNoAxesCombined,
-  Terminal,
+  Terminal, Cpu,
   ScrollText,
-  Puzzle,
+  Puzzle, MessageSquareText, UserRoundCheck, Siren, KeyRound,
+  ChartNoAxesColumnIncreasing, Presentation, ContactRound, UsersRound,
+  ShoppingCart, ReceiptText, ShieldCheck, CalendarRange, Megaphone, FileCheck2,
 } from 'lucide-react';
 import type { CSSProperties } from 'react';
+import { agentIdentity } from '@/lib/agent-identity';
 
 /** Exact Figma exports; replace assets here when final optical polish is approved. */
 export function AssetIcon({
@@ -23,7 +26,8 @@ export function AssetIcon({
     playground: Terminal,
     audit: ScrollText,
     skills: Puzzle,
-  }[name as 'reports' | 'playground' | 'audit' | 'skills'];
+    models: Cpu,
+  }[name as 'reports' | 'playground' | 'audit' | 'skills' | 'models'];
   if (navigationIcon) {
     const Icon = navigationIcon;
     return (
@@ -64,12 +68,20 @@ export function AssetIcon({
 }
 export type AgentType =
   'service' | 'it' | 'assistant' | 'sales' | 'automation' | 'research';
-export function AgentIcon({ type }: { type: AgentType }) {
-  return (
-    <span className={`agentIcon ${type}`}>
-      <AssetIcon name={type} size={18} monochrome />
-    </span>
-  );
+const specialistIcons = {
+  'customer-feedback': MessageSquareText, 'customer-onboarding': UserRoundCheck,
+  'incident-response': Siren, 'access-requests': KeyRound,
+  'revenue-intelligence': ChartNoAxesColumnIncreasing, 'sales-enablement': Presentation,
+  'employee-onboarding': ContactRound, 'employee-self-service': UsersRound,
+  procurement: ShoppingCart, 'invoice-review': ReceiptText, 'compliance-monitor': ShieldCheck,
+  'operations-planning': CalendarRange, 'marketing-insights': Megaphone, 'content-review': FileCheck2,
+};
+export function AgentIcon({ type = 'automation', identity, name }: { type?: AgentType; identity?: string; name?: string }) {
+  const visual = agentIdentity(identity, name, type);
+  const Icon = specialistIcons[visual.key as keyof typeof specialistIcons];
+  return <span className={`agentIcon ${visual.type}`} data-agent-identity={visual.key} aria-hidden="true">
+    {Icon ? <Icon size={20} strokeWidth={1.5} /> : <AssetIcon name={visual.type} size={20} monochrome />}
+  </span>;
 }
 export function ProviderLogo({
   provider,

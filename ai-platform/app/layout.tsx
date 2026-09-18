@@ -19,6 +19,7 @@ import './experience-quality.css';
 import './make-refinement.css';
 import './launch-reference.css';
 import './desktop-density.css';
+import './product-identity.css';
 import { SidebarStateProvider } from '@/components/SidebarState';
 import { PreviewStateProvider } from '@/components/journeys/PreviewState';
 
