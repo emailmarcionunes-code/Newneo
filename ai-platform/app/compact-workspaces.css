@@ -1,0 +1,119 @@
+/* Screen-specific density audit. Compact summaries; natural-height workspaces. */
+body .content :is(.pageHead, .overviewTitle) { margin:0 0 14px; }
+body .content :is(.hybridMetrics, .overviewReferenceMetrics) { gap:10px; margin:0 0 14px; }
+body .content :is(.hybridMetrics article, .overviewReferenceMetrics > article) {
+  min-height:72px; height:auto; padding:10px 12px;
+}
+body .content .overviewReferenceMetrics h2 { font-size:10px; font-weight:500; line-height:1.35; text-transform:none; margin:0; }
+body .content .overviewReferenceMetrics strong { font-size:23px; line-height:1.2; margin:5px 0; font-weight:600; }
+body .content .overviewReferenceMetrics p { font-size:10px; line-height:1.35; margin:0; }
+body .content .overviewTitle p { font-size:12px; margin-top:4px; }
+body .content > .overviewFidelity { min-height:0; gap:14px; }
+body .content .overviewReferencePanels { flex:none; gap:12px; align-items:start; }
+body .content .overviewSummaryPanels { gap:10px; }
+body .content .overviewSummaryPanels > section { flex:none; padding:12px; }
+body .content :is(.overviewHealthPanel, .overviewActivityPanel) > header { height:auto; min-height:40px; padding:10px 12px; }
+body .content :is(.overviewReferencePanels, .overviewSummaryPanels) h2 { font-size:12px; line-height:1.4; }
+body .content .overviewAgentList li { min-height:48px; padding:8px 12px; gap:8px; }
+body .content .overviewAgentList strong { font-size:12px; line-height:1.4; font-weight:500; }
+body .content .overviewAgentList small { font-size:10px; line-height:1.4; }
+body .content .overviewActivityPanel > ul { padding:10px 12px; }
+body .content .overviewActivityPanel li { font-size:11px; padding:7px 0; }
+body .content .overviewSummaryPanels :is(p, a, span) { font-size:11px; line-height:1.45; }
+body .content .overviewInsight p { padding:8px; }
+body .content :is(.hybridPage, .workspaceAnalytics, .businessWorkspace) .panel { padding:14px; }
+body .content :is(.hybridSplit, .skillOverviewGrid, .agentOverviewGrid, .toolOverviewGrid, .registryPanels, .analyticsPanels) { gap:12px; }
+body .content .agentOverviewGrid > .panel { min-height:0; }
+body .content :is(.hybridPage, .skillDetailPage) [role='tablist'] { margin:4px 0 10px; }
+body .content :is(.hybridPage, .skillDetailPage) [role='tabpanel'] { padding-top:4px; }
+body .content :is(.hybridChart, .agentOverviewGrid .hybridChart) { height:160px; min-height:140px; max-height:180px; }
+body .content :is(.surfaceFacts, .referenceFacts) > div { padding:6px 0; }
+body .content .skillOverviewGrid .reuseDetail { padding:12px; }
+body .content .environmentSummaryGrid { gap:12px; margin-bottom:14px; }
+body .content .environmentSummaryGrid > article { padding:12px; min-height:0; }
+body .content .environmentSummaryGrid :is(h2, h3, strong) { font-size:13px; }
+body .content .environmentSummaryGrid p { margin:6px 0; font-size:11px; }
+body .content :is(.finopsWorkspace, .evaluationWorkspace) > .panel { min-height:0; margin-top:0; }
+body .content .finOpsPage .hybridBars > div { padding:8px 0; }
+body .content .reportsPage .panel { min-height:0; }
+body .content .playgroundChat { min-height:360px; }
+body .content .playgroundMessages { min-height:160px; max-height:320px; padding:8px 0; }
+body .content .playgroundMessages > div { padding:10px; margin:8px 0; }
+body .content .playgroundLayout label { margin:12px 0; }
+body .content .businessCard { padding:14px; gap:8px; min-height:0; }
+body .content .businessEmpty { min-height:140px; padding:16px; gap:8px; }
+body .content .businessDetail { padding:14px; flex:0 0 auto; }
+body .content .businessTabs button { padding:8px 12px; }
+body .content .businessHistory details { margin:6px 0; padding:8px 0 8px 12px; }
+body .content .settingsWorkspace .panel { min-height:0; }
+@media(min-width:1024px) {
+ body .content .overviewReferencePanels { grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr); }
+ body .content .overviewSummaryPanels { grid-column:auto; display:flex; flex-direction:column; }
+ body .content :is(.overviewAgentList, .overviewActivityPanel > ul) { max-height:390px; overflow:auto; }
+ body .content .overviewAgentList li { grid-template-columns:6px minmax(0,1fr) 40px 40px 36px; }
+ body .content .agentOverviewGrid { grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,1fr); align-items:start; }
+ body .content .agentOverviewGrid .recentTaskPanel { grid-column:auto; }
+}
+@media(max-width:767px) {
+ body .content .overviewReferenceMetrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ body .content .overviewReferencePanels { grid-template-columns:1fr; }
+ body .content .overviewSummaryPanels { display:grid; grid-template-columns:1fr; }
+}
+/* Findings from the hosted screen-by-screen review. */
+body .content .hybridPage { gap:12px; }
+body .content .hybridPage > :is(.pageHead, .hybridMetrics) { margin-bottom:0; }
+body .content :is(.skillOverviewGrid, .finopsWorkspace, .toolOverviewGrid, .analyticsPanels) { align-items:start; }
+body .content .panel .listFrame :is(th, td):first-child { min-width:0; }
+body .content .recentTaskPanel .listFrame :is(th, td) { white-space:normal; overflow-wrap:anywhere; padding:8px; }
+body .content .recentTaskPanel .listFrame :is(th, td):first-child { width:45%; }
+body .content .recentTaskPanel .listFrame :is(th, td):nth-child(2) { width:22%; }
+body .content .recentTaskPanel .listFrame :is(th, td):nth-child(3) { width:33%; }
+body .content .knowledgeOverviewGrid { display:grid; gap:12px; align-items:start; }
+body .content .knowledgeOverviewGrid > .panel { margin:0; }
+body .content .settingsDirectory > div { gap:10px; }
+body .content .settingsDirectory > div > a { padding:12px; min-height:0; gap:8px; }
+body .content .settingsDirectory small { font-size:10px; line-height:1.4; }
+body .content .settingsDirectory strong { font-size:12px; }
+@media(min-width:1024px) {
+ body .content .knowledgeOverviewGrid { grid-template-columns:1.3fr 1fr 1fr; }
+ body .content .toolOverviewGrid { grid-template-columns:1fr .8fr 1.4fr; }
+ body .content .toolRecentCalls .hybridTable table { min-width:0; }
+ body .content .toolRecentCalls .hybridTable :is(th, td) { padding:8px; white-space:normal; overflow-wrap:anywhere; }
+ body .content .settingsDirectory > div { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
+body .content .hybridControls[hidden] { display:none; }
+
+/* Detail tabs use content height; only long activity lists scroll internally. */
+body .content .businessWorkspace:not(.businessHome) { min-height:0; gap:14px; }
+
+/* Scroll the catalog without compressing its implicit grid rows. */
+body .content .businessCatalog {
+  grid-auto-rows:max-content;
+  align-content:start;
+}
+body .content .businessCatalog > .businessCard {
+  min-height:240px;
+}
+body .content .businessCatalog > .businessCard > * {
+  flex-shrink:0;
+}
+
+/* Skills keeps its navigation outside the scrollable data workspace. */
+body .content .skillsWorkspace > [role='tabpanel'] { min-height:0; overflow:auto; }
+body .content .skillsWorkspace .matrixScroll { overflow:auto; }
+@media(min-width:768px) {
+ body .content .skillsWorkspace { height:calc(100dvh - var(--topbar-height) - 48px); min-height:480px; display:flex; flex-direction:column; }
+ body .content .skillsWorkspace > :not([role='tabpanel']) { flex-shrink:0; }
+ body .content .skillsWorkspace > [role='tabpanel'] { flex:1; }
+ body .content .skillsWorkspace .skillsListPanel,
+ body .content .skillsWorkspace .skillsListPanel > .listFrame { height:100%; min-height:0; }
+ body .content .skillsWorkspace .listFrame { display:flex; flex-direction:column; overflow:hidden; }
+ body .content .skillsWorkspace .listFrame > :not(.hybridTable) { flex-shrink:0; }
+ body .content .skillsWorkspace .hybridTable { flex:1; min-height:0; max-height:none; overflow:auto; }
+ body .content .skillsWorkspace .skillMatrix { height:100%; box-sizing:border-box; display:flex; flex-direction:column; margin:0; min-height:0; }
+ body .content .skillsWorkspace .skillMatrix > :not(.matrixScroll):not(.listFrame) { flex-shrink:0; }
+ body .content .skillsWorkspace .skillMatrix > :is(.matrixScroll,.listFrame) { flex:1; min-height:0; max-height:none; }
+}
+@media(max-width:767px) {
+ body .content .skillsWorkspace :is(.hybridTable,.matrixScroll) { max-height:60dvh; overflow:auto; }
+}

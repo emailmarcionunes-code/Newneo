@@ -1,5 +1,7 @@
 # Newneo
 
+> **Current reference: 2026-09-17.** The `main` branch contains the consolidated website and hosted platform source. Start with [Reference baseline](docs/REFERENCE_BASELINE.md) before reusing screens, tokens or architecture.
+
 **Enterprise AI Engineering**
 
 Newneo builds and operates enterprise AI — from AI infrastructure and accelerated compute to production agents and AgentOps.

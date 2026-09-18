@@ -1,0 +1,14 @@
+[Unit]
+Description=NEWNEO private local database backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ubuntu/platform
+ExecStart=/bin/bash /home/ubuntu/platform/scripts/automatic-backup.sh
+User=root
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+TimeoutStartSec=15min

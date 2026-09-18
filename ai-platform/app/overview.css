@@ -1,0 +1,209 @@
+.overview {
+  display: grid;
+  gap: 24px;
+}
+.overview .pageHead {
+  margin-bottom: 0;
+}
+.overviewDemo {
+  padding: 16px 20px;
+  background: var(--primary-tint);
+  border: 1px solid var(--primary-tint-strong);
+  border-radius: var(--radius);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+.overviewDemo strong {
+  color: var(--primary-hover);
+}
+.overviewDemo p,
+.overviewSectionHead p,
+.overviewMuted,
+.overviewHealthNote {
+  color: var(--muted);
+  font-size: 13px;
+}
+.overviewModes {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.overviewMetrics,
+.overviewAttention {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--card-gap);
+}
+.overviewMetric > strong {
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+.overviewMetric .tag {
+  margin-top: auto;
+  align-self: flex-start;
+}
+.overviewSectionHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.overview h2 {
+  font-size: 18px;
+  line-height: 1.4;
+}
+.overview .agentCard h2,
+.overview .agentCard h3 {
+  font-size: 15px;
+}
+.overviewSectionHead h2 {
+  margin-bottom: 4px;
+}
+.overviewStatus {
+  display: inline-block;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.overviewStatus.warning {
+  background: #fffbeb;
+  color: #92400e;
+}
+.overviewStatus.healthy {
+  background: var(--success-tint);
+  color: #166534;
+}
+.overviewHealthGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.overview details {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--surface);
+}
+.overview summary {
+  font-size: 13px;
+}
+.overviewHealthGrid summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.overview summary::after {
+  content: '+';
+  margin-left: 8px;
+  color: var(--primary);
+}
+.overview details[open] > summary::after {
+  content: '−';
+}
+.overview details p {
+  color: var(--muted);
+  margin-top: 12px;
+  font-size: 13px;
+  min-height: 0;
+}
+.overviewAttention .overviewSectionHead {
+  margin: 0;
+}
+.overviewAttention .agentCard > strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.overviewAttention details {
+  margin-top: auto;
+}
+.overviewBottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--card-gap);
+}
+.overviewOutcomes {
+  margin: 16px 0 0;
+}
+.overviewOutcomes > div {
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+}
+.overviewOutcomes dt {
+  color: var(--muted);
+}
+.overviewOutcomes dd {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.overviewChanges {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.overviewChanges li {
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+}
+.overviewChanges strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.overviewChanges p,
+.overviewChanges span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.overviewEmpty {
+  padding: 64px 24px;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.overviewEmpty h2 {
+  margin: 0;
+  font-size: 24px;
+}
+.overviewEmpty p {
+  color: var(--muted);
+  max-width: 480px;
+}
+@media (max-width: 1100px) {
+  .overviewDemo {
+    flex-wrap: wrap;
+  }
+  .overviewMetrics,
+  .overviewAttention,
+  .overviewHealthGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .overviewBottom {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 520px) {
+  .overviewMetrics,
+  .overviewAttention,
+  .overviewHealthGrid {
+    grid-template-columns: 1fr;
+  }
+  .overviewSectionHead {
+    flex-wrap: wrap;
+  }
+}
+.overviewDemo p, .overview .tag { color: var(--ink); }

@@ -1,0 +1,13 @@
+[Unit]
+Description=NEWNEO local operational health checks
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /home/ubuntu/platform/scripts/monitor-platform.py
+User=root
+UMask=0022
+NoNewPrivileges=true
+PrivateTmp=true
+TimeoutStartSec=45

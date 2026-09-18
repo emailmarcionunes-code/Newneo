@@ -1,0 +1,11 @@
+[Unit]
+Description=Check NEWNEO services and backups every five minutes
+
+[Timer]
+OnBootSec=60s
+OnUnitActiveSec=5min
+AccuracySec=15s
+Unit=newneo-monitor.service
+
+[Install]
+WantedBy=timers.target

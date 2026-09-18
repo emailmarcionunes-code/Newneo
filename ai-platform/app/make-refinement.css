@@ -1,0 +1,706 @@
+/* Supporting screens: reference screenshots supplied September 16, 2026. */
+.shellBreadcrumb {
+  font-size: 12px;
+  gap: 10px;
+  font-weight: 400;
+}
+.shellBreadcrumb strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+.hybridPage .pageHead {
+  margin-bottom: 28px;
+}
+.hybridPage .pageHead h1 {
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+.hybridPage .pageHead p {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 6px;
+}
+.hybridPage .hybridTable {
+  border: 1px solid #dfe7f1;
+  border-radius: 13px;
+  min-height: 0;
+  background: white;
+}
+.hybridPage .hybridTable th {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  font-weight: 600;
+  padding: 14px 16px;
+  white-space: nowrap;
+}
+.hybridPage .hybridTable td {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 13px;
+  color: #475569;
+}
+.hybridPage .hybridTable td:first-child {
+  color: #1e293b;
+  font-weight: 500;
+}
+.hybridPage .hybridTable tr:last-child td {
+  border-bottom: 0;
+}
+.hybridPage .hybridDetailLink {
+  color: inherit;
+  font-weight: 500;
+}
+.hybridPage .hybridMetrics {
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.hybridPage .hybridMetrics article {
+  border: 1px solid #dfe7f1;
+  border-radius: 13px;
+  padding: 19px;
+  box-shadow: none;
+  min-height: 108px;
+}
+.hybridPage .hybridMetrics article > span {
+  font-size: 12px;
+  color: #64748b;
+}
+.hybridPage .hybridMetrics article > strong {
+  font-size: 28px;
+  line-height: 1.3;
+  margin: 8px 0;
+}
+.hybridPage .hybridMetrics article > small {
+  font-size: 12px;
+  color: #64748b;
+}
+.hybridPage .panel {
+  border-color: #dfe7f1;
+  border-radius: 13px;
+  box-shadow: none;
+}
+.hybridPage .panel h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.referenceProgress {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 90px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  --bar: #1955a6;
+}
+.referenceProgress progress {
+  display: block;
+  appearance: none;
+  min-width: 40px;
+  width: 100%;
+  height: 5px;
+  flex: 1;
+  border: 0;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #e2e8f0;
+  accent-color: var(--bar);
+}
+.referenceProgress progress::-webkit-progress-bar {
+  background: #e2e8f0;
+  border-radius: 9px;
+}
+.referenceProgress progress::-webkit-progress-value {
+  background: var(--bar);
+  border-radius: 9px;
+}
+.referenceProgress progress::-moz-progress-bar {
+  background: var(--bar);
+  border-radius: 9px;
+}
+.referenceProgress > span {
+  white-space: nowrap;
+}
+.referenceProgress.green {
+  --bar: #16a34a;
+  color: #15803d;
+}
+.referenceProgress.amber {
+  --bar: #d97706;
+  color: #b45309;
+}
+.referenceProgress.red {
+  --bar: #dc2626;
+  color: #dc2626;
+}
+.referenceProgress.cyan {
+  --bar: #7dd3fc;
+}
+.referenceProgress.compact {
+  margin-top: 10px;
+}
+.hybridTable .referenceProgress {
+  max-width: 175px;
+}
+.knowledgePage .referenceProgress,
+.evaluationsPage .referenceProgress {
+  max-width: 100px;
+}
+.referenceIconLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+.referenceIcon {
+  background: #eff4fb;
+  color: #1955a6;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+}
+.referenceIconLabel.tool .referenceIcon,
+.referenceIconLabel.server .referenceIcon {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.referenceTag {
+  display: inline-block;
+  border: 1px solid #dfe7f1;
+  border-radius: 5px;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 3px 9px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.agentsPage td:nth-child(7) .referenceTag {
+  background: #eef2ff;
+  color: #4f46e5;
+  border-color: #c7d2fe;
+}
+.referenceMono {
+  font:
+    12px ui-monospace,
+    SFMono-Regular,
+    monospace;
+  color: #64748b;
+}
+.hybridPage .hybridStatus {
+  border: 0;
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 3px 10px;
+  font-weight: 500;
+}
+.hybridPage .hybridStatus.healthy {
+  background: #dcfce7;
+  color: #15803d;
+}
+.hybridPage .hybridStatus.warning {
+  background: #fef3c7;
+  color: #b45309;
+}
+.hybridPage .hybridStatus.danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.referenceSegments {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: #fff;
+  border: 1px solid #dfe7f1;
+  border-radius: 9px;
+  width: max-content;
+  max-width: 100%;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.referenceSegments button {
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  border-radius: 5px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+.referenceSegments button[aria-pressed='true'] {
+  background: #1955a6;
+  color: white;
+}
+.referenceActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.referenceServers {
+  display: grid;
+  gap: 14px;
+}
+.referenceServers section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+.referenceServers small {
+  display: block;
+  color: #64748b;
+  margin-top: 4px;
+  font-size: 12px;
+}
+.referenceEvaluationLayout {
+  display: grid;
+  gap: 20px;
+}
+.referenceScenarioDetails summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: #64748b;
+}
+.referenceScenarioDetails[open] .hybridBars {
+  margin-top: 20px;
+}
+.referenceCompliance {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 18px;
+}
+.referenceCompliance > div {
+  display: grid;
+  text-align: center;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  gap: 10px;
+  color: #64748b;
+  font-size: 12px;
+}
+.referenceCompliance strong {
+  font-size: 28px;
+  color: #16a34a;
+}
+.referenceCompliance > div:nth-child(2) strong {
+  color: #d97706;
+}
+.referenceCompliance > div:nth-child(3) strong {
+  color: #1955a6;
+}
+.finOpsPage .hybridSplit {
+  grid-template-columns: 1fr 1fr;
+}
+.finOpsPage .hybridBars > div {
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.hybridBars .referenceProgress {
+  margin-top: 12px;
+}
+.playgroundPage .playgroundLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 18px;
+}
+.playgroundPage .playgroundLayout > section:first-child {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+}
+.playgroundPage .playgroundChat {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 0;
+  min-height: 570px;
+  display: flex;
+  flex-direction: column;
+}
+.referenceChatHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #f8fafc;
+  border-bottom: 1px solid #eef2f7;
+  border-radius: 13px 13px 0 0;
+  flex-wrap: wrap;
+}
+.referenceChatHeader select {
+  min-width: 0;
+  max-width: 100%;
+  padding: 7px;
+  border: 1px solid #dfe7f1;
+  border-radius: 8px;
+  background: white;
+}
+.referenceChatHeader .button {
+  margin-left: auto;
+}
+.playgroundPage .playgroundMessages {
+  flex: 1;
+  min-height: 390px;
+  display: flex;
+  flex-direction: column;
+}
+.referenceChatEmpty {
+  margin: auto;
+  text-align: center;
+  padding: 30px 10px;
+  color: #64748b;
+}
+.referenceChatEmpty > span {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  background: #eff4fb;
+  color: #1955a6;
+  border-radius: 14px;
+  margin: 0 auto 18px;
+}
+.referenceChatEmpty p {
+  color: #64748b;
+  font-size: 12px;
+}
+.referenceChatEmpty button {
+  margin: 6px 3px;
+  border: 1px solid #dfe7f1;
+  border-radius: 24px;
+  padding: 8px 13px;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+}
+.playgroundPage .playgroundChat form {
+  padding: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+@media (max-width: 900px) {
+  .playgroundPage .playgroundLayout {
+    grid-template-columns: 1fr;
+  }
+  .playgroundPage .playgroundLayout > section:first-child {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .finOpsPage .hybridSplit {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .referenceCompliance {
+    grid-template-columns: 1fr;
+  }
+  .hybridPage .pageHead h1 {
+    font-size: 22px;
+  }
+  .referenceChatHeader {
+    gap: 8px;
+  }
+}
+@media print {
+  .sidebar,
+  .topbar,
+  .referenceActions,
+  .referenceSegments,
+  .hybridDataNote {
+    display: none !important;
+  }
+  .reportsPage {
+    width: 100%;
+    padding: 0;
+  }
+  .reportsPage .panel {
+    break-inside: avoid;
+  }
+}
+.referenceEnvironmentHealthy,
+.referenceEnvironmentWarning {
+  font-size: 12px;
+  margin: 12px 0 0;
+  color: #64748b;
+}
+.referenceEnvironmentHealthy::first-letter {
+  color: #16a34a;
+}
+.referenceEnvironmentWarning::first-letter {
+  color: #d97706;
+}
+.hybridPage .environmentSummaryGrid article {
+  padding: 18px;
+  min-height: 90px;
+}
+.hybridPage .environmentSummaryGrid article header span {
+  border: 1px solid #bbf7d0;
+  border-radius: 5px;
+  background: #f0fdf4;
+  padding: 3px 8px;
+  color: #15803d;
+  font-size: 12px;
+}
+.toolsPage td:nth-child(4) .hybridStatus,
+.governancePage td:nth-child(3) .hybridStatus {
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  background: transparent;
+}
+.agentsPage .filterRow,
+.toolsPage .filterRow {
+  padding: 4px;
+  border: 1px solid #dfe7f1;
+  background: white;
+  border-radius: 9px;
+  gap: 3px;
+}
+.agentsPage .filterRow button,
+.toolsPage .filterRow button {
+  border: 0;
+  border-radius: 5px;
+}
+.hybridPage .hybridMetrics article[data-metric*='readiness'] > strong {
+  color: #1955a6;
+}
+.hybridPage .hybridMetrics article[data-metric*='ompliance'] > strong,
+.hybridPage .hybridMetrics article[data-metric*='coverage'] > strong {
+  color: #16a34a;
+}
+.hybridPage {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+.hybridPage > * {
+  min-width: 0;
+}
+.hybridPage .pageHead,
+.hybridPage .hybridMetrics,
+.referenceSegments {
+  margin-bottom: 0;
+}
+.referenceSegments {
+  width: fit-content;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.hybridPage .hybridTable td {
+  font-size: 14px;
+}
+.reportsPage > section.panel:has(> .hybridTable),
+.evaluationsPage .referenceEvaluationLayout > section.panel {
+  padding: 0;
+  overflow: hidden;
+}
+.reportsPage > section.panel:has(> .hybridTable) > h2,
+.evaluationsPage .referenceEvaluationLayout > section.panel > .surfaceHeading {
+  padding: 18px;
+  margin: 0;
+}
+.reportsPage > section.panel > .hybridTable,
+.evaluationsPage .referenceEvaluationLayout > section.panel > .hybridTable {
+  border: 0;
+  border-radius: 0;
+}
+.playgroundPage .playgroundMessages > .referenceChatEmpty {
+  background: transparent;
+  max-width: 100%;
+  width: 100%;
+  margin: auto;
+  padding: 30px 14px;
+  border: 0;
+}
+.playgroundPage .playgroundMessages {
+  padding: 20px;
+  max-height: 600px;
+}
+.playgroundPage .playgroundChat {
+  min-height: calc(100vh - 210px);
+}
+.hybridJourney .launchStepper {
+  padding: 10px 16px;
+}
+.hybridJourney .launchStepper button {
+  min-height: 34px;
+  font-size: 11px;
+  padding: 6px 8px;
+  gap: 7px;
+}
+.hybridJourney .launchStepper .stepCircle {
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+}
+@media (max-width: 600px) {
+  .hybridPage .hybridTable td {
+    font-size: 13px;
+  }
+  .referenceSegments button {
+    padding: 8px 10px;
+  }
+  .playgroundPage .playgroundChat {
+    min-height: 540px;
+  }
+}
+.hybridJourney .launchStepper button {
+  min-height: 30px;
+  font-size: 10px;
+  padding: 5px 7px;
+}
+.hybridJourney .launchStepper .stepCircle {
+  width: 16px;
+  height: 16px;
+  font-size: 9px;
+}
+.referenceIncidentFilter {
+  max-width: 220px;
+  margin: 14px 0;
+}
+.referenceAuditFilters {
+  font-size: 12px;
+  color: #64748b;
+}
+.referenceAuditFilters summary {
+  cursor: pointer;
+}
+.referenceAuditFilters[open] {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.auditLogPage > section.panel {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.auditLogPage .hybridControls {
+  margin-bottom: 18px;
+}
+.agentOpsPage .resourceTabs {
+  border: 1px solid #dfe7f1;
+  border-radius: 8px;
+  background: white;
+  width: fit-content;
+  padding: 4px;
+  gap: 4px;
+}
+.agentOpsPage .resourceTabs button {
+  border: 0;
+  border-radius: 5px;
+  padding: 8px 16px;
+}
+.agentOpsPage .resourceTabs button[aria-selected='true'] {
+  background: #1955a6;
+  color: white;
+}
+@media print {
+  body .reportsPage .demoFieldset,
+  body .reportsPage .hybridDataNote {
+    display: none;
+  }
+  body .reportsPage .hybridTable {
+    overflow: visible;
+  }
+  body .reportsPage table {
+    min-width: 0;
+  }
+}
+.agentsPage .hybridControls {
+  justify-content: flex-start;
+  gap: 14px;
+}
+.hybridPage .hybridMetrics article > .referenceProgress.compact {
+  display: flex;
+  width: 100%;
+  max-width: none;
+}
+.hybridPage .hybridMetrics article > .referenceProgress.compact progress {
+  width: 100%;
+  flex: 1;
+}
+.hybridPage .hybridMetrics article > span:not(.referenceProgress) {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+  font-weight: 400;
+}
+.reportsPage .hybridMetrics article > strong,
+.knowledgePage .hybridMetrics article:nth-child(2) > strong,
+.evaluationsPage .hybridMetrics article:nth-child(2) > strong {
+  color: #0f172a;
+}
+.hybridPage .button.outline {
+  border-color: #dfe7f1;
+  color: #475569;
+  background: white;
+  box-shadow: none;
+}
+.deploymentsPage > section.panel {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.deploymentsPage > section.panel > .surfaceHeading {
+  justify-content: flex-start;
+}
+.deploymentsPage > section.panel > .surfaceHeading > h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.referenceChatHeader .hybridStatus {
+  flex-shrink: 0;
+}
+.referenceSync {
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  min-height: 30px;
+  color: #64748b;
+  border-radius: 6px;
+}
+.referenceSync:hover {
+  background: #eff4fb;
+  color: #1955a6;
+}
+.referenceSync:focus-visible {
+  outline: 2px solid #1955a6;
+  outline-offset: 2px;
+}
+.finOpsPage .hybridBars progress::-webkit-progress-value {
+  background: #1955a6;
+}
+.finOpsPage .hybridBars progress::-moz-progress-bar {
+  background: #1955a6;
+}
+.finOpsPage
+  aside
+  .hybridBars
+  > div:not(:first-child)
+  progress::-webkit-progress-value {
+  background: #7dd3fc;
+}
+.finOpsPage
+  aside
+  .hybridBars
+  > div:not(:first-child)
+  progress::-moz-progress-bar {
+  background: #7dd3fc;
+}
+.auditLogPage .hybridControls {
+  justify-content: flex-start;
+  gap: 14px;
+}
+.auditLogPage .referenceAuditFilters {
+  margin-left: auto;
+}

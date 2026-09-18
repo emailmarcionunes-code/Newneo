@@ -1,0 +1,113 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "NEWNEO monthly AWS account cost alerts. Notifications only, not a spending cap.",
+  "Parameters": {
+    "AlertEmail": {
+      "Type": "String",
+      "AllowedPattern": "[^\\s@]+@[^\\s@]+\\.[^\\s@]+",
+      "Description": "Owner email for budget notifications"
+    },
+    "MonthlyLimitUsd": {
+      "Type": "Number",
+      "Default": 1000,
+      "MinValue": 1
+    }
+  },
+  "Resources": {
+    "MonthlyBudget": {
+      "Type": "AWS::Budgets::Budget",
+      "Properties": {
+        "Budget": {
+          "BudgetName": "NEWNEO-monthly-account-guardrail",
+          "BudgetType": "COST",
+          "TimeUnit": "MONTHLY",
+          "BudgetLimit": {
+            "Amount": {
+              "Ref": "MonthlyLimitUsd"
+            },
+            "Unit": "USD"
+          },
+          "CostTypes": {
+            "IncludeCredit": false,
+            "IncludeRefund": false,
+            "IncludeTax": true,
+            "IncludeSupport": true,
+            "IncludeSubscription": true,
+            "IncludeUpfront": true,
+            "IncludeRecurring": true,
+            "IncludeOtherSubscription": true,
+            "IncludeDiscount": true,
+            "UseBlended": false,
+            "UseAmortized": false
+          }
+        },
+        "NotificationsWithSubscribers": [
+          {
+            "Notification": {
+              "NotificationType": "ACTUAL",
+              "ComparisonOperator": "GREATER_THAN",
+              "ThresholdType": "PERCENTAGE",
+              "Threshold": 50
+            },
+            "Subscribers": [
+              {
+                "SubscriptionType": "EMAIL",
+                "Address": {
+                  "Ref": "AlertEmail"
+                }
+              }
+            ]
+          },
+          {
+            "Notification": {
+              "NotificationType": "ACTUAL",
+              "ComparisonOperator": "GREATER_THAN",
+              "ThresholdType": "PERCENTAGE",
+              "Threshold": 80
+            },
+            "Subscribers": [
+              {
+                "SubscriptionType": "EMAIL",
+                "Address": {
+                  "Ref": "AlertEmail"
+                }
+              }
+            ]
+          },
+          {
+            "Notification": {
+              "NotificationType": "ACTUAL",
+              "ComparisonOperator": "GREATER_THAN",
+              "ThresholdType": "PERCENTAGE",
+              "Threshold": 100
+            },
+            "Subscribers": [
+              {
+                "SubscriptionType": "EMAIL",
+                "Address": {
+                  "Ref": "AlertEmail"
+                }
+              }
+            ]
+          },
+          {
+            "Notification": {
+              "NotificationType": "FORECASTED",
+              "ComparisonOperator": "GREATER_THAN",
+              "ThresholdType": "PERCENTAGE",
+              "Threshold": 100
+            },
+            "Subscribers": [
+              {
+                "SubscriptionType": "EMAIL",
+                "Address": {
+                  "Ref": "AlertEmail"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

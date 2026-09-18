@@ -1,0 +1,28 @@
+{$PUBLIC_HOST} {
+  encode zstd gzip
+  header {
+    X-Robots-Tag "noindex, nofollow"
+    X-Content-Type-Options nosniff
+    Referrer-Policy strict-origin-when-cross-origin
+    X-Frame-Options DENY
+  }
+  reverse_proxy app:3000
+}
+
+www.newneo.ai {
+  @demo path /demo /demo/
+  header @demo X-Robots-Tag "noindex, nofollow"
+  redir @demo https://app.newneo.ai/demo 302
+  encode zstd gzip
+  root * /srv/site
+  header {
+    X-Content-Type-Options nosniff
+    Referrer-Policy strict-origin-when-cross-origin
+    X-Frame-Options DENY
+  }
+  file_server
+}
+
+newneo.ai {
+  redir https://www.newneo.ai{uri} permanent
+}

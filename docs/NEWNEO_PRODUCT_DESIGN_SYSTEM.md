@@ -1,0 +1,552 @@
+# Newneo Product Design System v2
+
+> **Current Skills surface:** [ADR-003 — Global Skills](decisions/ADR-003-GLOBAL-SKILLS.md) supersedes earlier Agent-only entry points. Skills are created globally and consumed through versioned Agent bindings. `/skills` owns discovery, analytics, creation and versioning; Agent Detail owns Add Skill and binding. Production gates and the eight-stage Agent journey remain unchanged.
+
+
+> **Canonical architecture — ADR-001 (accepted).** [Neo, Agents and reusable Skills](decisions/ADR-001-NEO-AGENTS-SKILLS.md) governs the Agent/Skill/Neo model and resolves older conceptual ambiguity. **One Neo. Many Agents. Reusable Skills.** Neo orchestrates bounded specialized Agents; Skills are reusable versioned capabilities distinct from Tools. Production changes require a new evaluated and approved Agent Version. Hybrid v4 and its eight-stage journey remain unchanged. See the ADR for the current-code audit and unimplemented prerequisites.
+
+> **Current implementation authority — Issue #3 / Hybrid v4.** The approved Hybrid file `7NFyk2kxLzbWsFWF8zWKNO` supersedes earlier visual references, navigation and seven-stage journey definitions in this document. The journey is now Use Case → Knowledge → Tools & MCP → Infrastructure → Model → Governance → Evaluate → Deploy. Existing commercial, security and product boundaries remain in force. See [Hybrid v4 implementation](HYBRID_V4_IMPLEMENTATION.md) for node mappings and verification.
+
+## Status
+**Approved family-wide design standard.**
+
+This document is the canonical visual and interaction reference for:
+- Newneo AI Platform
+- Newneo Business Platform
+- Newneo Admin Plane
+- Newneo Website where application patterns are reused
+- future Newneo product surfaces
+- other products that intentionally adopt the Newneo visual system
+
+Primary principle: **More sophistication through precision, not decoration.**
+North star / Golden Reference UI: the approved **Agent Catalog + Agent Launch Guide** sequence in the `Newneo Product Design` Figma file.
+
+The approved Golden Reference is the default benchmark for spacing, hierarchy, typography, density, component treatment and interaction quality. New screens should extend this system rather than invent a new visual language.
+
+## 0. Product-family rule
+**One design language. Different information density.**
+
+- Customer AI Platform: cleanest and lowest cognitive load.
+- Business Platform: same language, more workflow and commercial density.
+- Admin Plane: same language, highest analytical and operational density.
+- Website: same brand foundations, but more freedom for storytelling, hero sections, motion and visual expression.
+
+Application surfaces should not use website-style visual decoration as a substitute for product hierarchy.
+
+## 1. Core visual language
+Newneo product surfaces should feel premium, calm, precise, enterprise-grade and easy to understand.
+
+Use:
+- compact dark sidebar
+- simple lowercase `newneo` wordmark
+- white / near-white working canvas
+- light topbar
+- thin borders
+- nearly flat cards
+- modest page titles
+- compact but readable controls
+- blue as the single primary action color
+- green for success / healthy states
+- contextual right-side assistance
+- progressive disclosure
+- real integration identities
+
+Avoid:
+- hero cards inside the application
+- decorative waves or gradients
+- heavy shadows
+- excessive rounding
+- cyberpunk treatment
+- oversized marketing headlines
+- too many accent colors
+
+## 2. Design tokens
+
+### Colors
+| Token | Value |
+|---|---|
+| primary | `#2563EB` |
+| primary-hover | `#1D4ED8` |
+| primary-light | `#3B82F6` |
+| primary-tint | `#EFF6FF` |
+| primary-tint-strong | `#DBEAFE` |
+| navy | `#0B1220` |
+| navy-soft / text-primary | `#0F172A` |
+| text-secondary | `#64748B` |
+| text-muted | `#94A3B8` |
+| border | `#E2E8F0` |
+| surface | `#FFFFFF` |
+| canvas | `#F8FAFC` |
+| chip-bg | `#F1F5F9` |
+| success | `#16A34A` |
+| success-light | `#10B981` |
+| success-tint | `#ECFDF5` |
+| warning | `#F59E0B` |
+| danger | `#EF4444` |
+| accent-purple | `#7C3AED` |
+| accent-purple-tint | `#F3E8FF` |
+| accent-green | `#059669` |
+| accent-green-tint | `#D1FAE5` |
+
+Color rule: blue = action, green = confirmation, amber/red = attention/failure, violet = limited secondary use.
+
+### Typography
+Font: `Inter, system-ui, -apple-system, sans-serif`.
+
+- page title: 24–28px / 700 / 1.2
+- section title: 18–20px / 600
+- card title: 15–16px / 600
+- body: 14px / 400 / 1.5
+- label: 13px / 500
+- caption: 12–13px / 400
+- button: 14px / 500
+- sidebar item: 14px / 500
+- stepper label: 12px / 500
+- metric large: 32–36px / 700
+
+Do not reduce body/sidebar text to tiny sizes merely to fit more information.
+
+### Spacing
+Use an 8px-based system:
+`4 / 8 / 12 / 16 / 24 / 32px`.
+
+Defaults:
+- card padding: 16–24px
+- card gap: 16px
+- canvas padding: 32px
+- section gap: 24–32px
+
+### Radius
+- small: 6px
+- medium: 8px
+- large: 12px
+- full: 9999px
+
+### Borders and elevation
+Default border: `1px solid #E2E8F0`.
+Default card shadow: `0 1px 2px rgba(15,23,42,0.04)`.
+
+Hierarchy comes from spacing, border and background before shadow.
+
+Selected card: `2px solid #3B82F6` + `#EFF6FF`.
+Selected success state: `2px solid #16A34A` + `#ECFDF5`.
+
+## 3. Application shell
+
+### Sidebar
+Canonical width: **220px**.
+Background: `#0B1220`.
+
+Wordmark: `newneo`, all lowercase, no symbol.
+- on dark: `new` white, `neo` `#3B82F6`
+- reference height ~24px
+
+Sidebar item:
+- 40px height
+- 8px 12px padding
+- 18px Lucide icon
+- 14px label
+- active = primary blue background + white icon/text
+- radius 8px
+
+Customer navigation:
+- Overview
+- Agents
+- Knowledge
+- Tools & MCP
+- Models
+- Evaluations
+- Deployments
+- AgentOps
+- FinOps
+- Governance
+- Settings
+
+`Team / Access` stays under Governance or Settings unless a future requirement justifies top-level navigation.
+
+Workspace / organization switcher belongs at the bottom.
+
+### Topbar
+Canonical height: **56px**.
+Background white, border-bottom `#E2E8F0`, horizontal padding 24px.
+
+Preferred contents:
+- breadcrumb left
+- notification
+- help
+- avatar
+- user / organization
+- chevron
+
+Search is optional and should not visually dominate.
+
+### Canvas
+Background `#F8FAFC`, padding **32px**, max width about 1280px.
+
+Normal page order:
+1. optional breadcrumb
+2. page title
+3. short subtitle
+4. one primary action
+5. optional stepper
+6. content
+
+## 4. Icons and third-party logos
+Canonical UI icon library: **Lucide**.
+
+- stroke 1.5px
+- 18–20px standard UI size
+- monochrome menu/action icons
+- category icons may sit in same-family tint tiles
+- agent categories should use distinct semantic icons, not repeated placeholders
+- third-party integrations must use credible official brand logos / supplied SVG assets where licensing and availability allow
+
+Suggested agent mapping:
+- Customer Service Agent → headset
+- IT Support Agent → monitor
+- Knowledge Assistant → book-open
+- Sales Assistant → chart / trending-up
+- Process Automation → settings / workflow
+- Research Assistant → flask
+
+Suggested platform mapping:
+Agent `bot`; Knowledge `database/book-open`; Tools & MCP `plug/wrench`; Model `cpu`; Governance `shield-check`; Evaluation `clipboard-check`; Deploy `rocket`; Success `check-circle`; API `code`.
+
+**Asset rule:** icon/logo polish is replaceable and must not block engineering. Code must reference reusable `AgentIcon`, `ProviderLogo`, `LaunchIcon` or equivalent components/assets rather than hard-coded drawings.
+
+## 5. Buttons
+Primary: blue background, white text, 14px/500, 8px 16px, radius 8px.
+Secondary: white + neutral border + dark text.
+Outline blue: white + primary border/text; used for `Connect`.
+Add action: dashed light-blue border, primary text, plus icon.
+Link action: primary text + optional arrow-right.
+
+One dominant primary CTA per screen.
+
+## 6. Chips and tags
+Filter chips: pill, 6px 14px, 13px/500. Active = primary blue/white. Inactive = white/border/secondary text.
+
+Tags: `#F1F5F9`, secondary text, 12px, 2px 8px, radius 6px.
+
+## 7. Agent Catalog
+Card:
+- white surface
+- neutral border
+- radius 12px
+- padding 20px
+- 40px icon tile with 22px icon
+- unique semantic icon per agent type
+- concise title and one-line description
+- short tags
+- clear Launch / Use This Agent action
+
+Grid generally 3 columns, gap 16px.
+
+Avoid oversized descriptions or cards.
+
+## 8. Knowledge and Tools & MCP
+Integration tile:
+- white surface
+- border
+- radius 12px
+- padding 16px
+- official / approved provider logo ~28–32px
+- provider name 13px/600
+- short caption
+- full-width outline-blue `Connect`
+
+Examples:
+SharePoint, Google Drive, Confluence, OneDrive, Notion, Salesforce, ServiceNow, SAP, Microsoft Teams, Slack, Custom API.
+
+Connected / selected resources may appear in a contextual right-side panel. These panels must preserve comfortable horizontal padding, row spacing, status alignment and readable two-line labels; do not compress the content merely to preserve a rigid 2/3 split.
+
+## 9. Forms
+Label: 13px/500.
+Input/select: 40px height, white, border, radius 8px, padding 0 12px, 14px text.
+Focus: primary border + 2px primary-tint-strong ring.
+Textarea: minimum 80px.
+Checkbox: 18px, radius 6px, primary blue when checked.
+
+Advanced engineering controls live behind `Advanced settings`, drawers, expanders or secondary tabs.
+
+## 10. Canonical Agent Launch Guide
+Flow:
+`Use Case → Knowledge → Tools → Model → Governance → Evaluate → Deploy`
+
+Stepper:
+- horizontal desktop
+- 7 steps
+- 28px circles
+- 1px connector
+- active = primary blue + white number
+- completed = success green + white check
+- completed connector segment = success green
+- pending = neutral border / muted text
+- 12px labels
+
+Wizard desktop layout:
+- primary task area approximately 2/3
+- contextual panel approximately 1/3
+- 24px gap
+- proportions may flex when readability requires more room in contextual panels
+
+Bottom navigation:
+`← Back` left and `Next →` right.
+
+Every wizard page must reuse this same skeleton.
+
+## 11. Contextual side panel
+Radius 12px, padding 20px.
+
+Only current-decision context belongs here:
+- expected outcomes
+- connected sources
+- selected tools
+- estimated impact
+- cost / latency
+- evaluation score
+- readiness
+
+Connected source pattern: 24px logo + name + detail/domain + 8px green status dot.
+
+## 12. Model & Runtime
+First question: **Where should this AI run?**
+
+If the organization has a default, show it first as recommended with `Change execution model`.
+
+Choices:
+- Organization Default
+- Managed AI
+- Customer Cloud
+- Private AI
+- Hybrid AI
+
+Then show only approved model endpoints.
+
+Hide endpoint internals, inference settings, region, cluster, GPU and networking until advanced view.
+
+## 13. Governance
+Business-readable groups:
+- Access & Permissions
+- Policies
+- Data Controls
+- Compliance
+- Approvals
+
+Examples:
+- Require approval for sensitive actions
+- Log all interactions
+- Do not store customer PII
+- Respect data residency
+- Mask sensitive data
+
+Technical policy-engine detail remains advanced.
+
+## 14. Test & Evaluate
+Show production confidence rather than raw telemetry.
+
+Core evaluation dimensions:
+- relevance
+- groundedness
+- safety
+- tool success
+- task success
+- failed/warning cases
+
+Donut: **continuous** green progress ring, neutral trail, large central value. Do not use visually chopped or segmented progress rings unless explicitly required.
+Metric bars: 6px, fully rounded, green fill.
+Status: Passed / Needs Review / Failed.
+
+Test chat uses 28px avatars, light bordered message bubbles and 40px input with blue Send button.
+
+## 15. Deployment
+Environments:
+- Development
+- Staging / Test
+- Production
+
+Before Production summarize:
+- Agent
+- Model / runtime
+- Knowledge sources
+- Tools
+- Access
+- Governance
+- Evaluation score
+
+Final CTA: **Deploy to Production**.
+
+## 16. Success state
+Centered, simple confirmation.
+
+- 64px success-tint circle
+- 32px green check
+- short headline: `Your agent is live!`
+- short subtitle
+- primary: `Go to Agent Overview →`
+- secondary: `Create Another Agent`
+
+`What's next?` may show:
+Monitor performance, Review user feedback, Iterate and improve, Explore additional agents.
+
+## 17. Dashboard rules
+Operational dashboards should use:
+- 3–5 top metrics
+- one or two primary charts
+- ranked lists
+- lightweight tables
+- explicit recommendations
+
+Avoid giant hero cards, decorative waves, large colored backgrounds, heavy shadows and excessive metrics.
+
+## 18. AgentOps
+Prioritize:
+- what needs attention
+- affected agents/tasks
+- business impact
+- likely cause
+- evidence
+- recommended action
+
+## 19. FinOps
+Prioritize:
+- AI Units
+- total spend
+- cost per task
+- cost per successful task
+- budget vs actual
+- forecast
+- optimization opportunities
+
+Raw token accounting is not the default customer view.
+
+## 20. Business Platform adaptation
+Use the same shell and components.
+Higher density is acceptable for pipeline, accounts, assessments, proposal readiness, handoff and renewals.
+It must still look like Newneo, not a separate CRM product.
+
+## 21. Admin Plane adaptation
+Use the same shell and design language.
+Admin Plane may have the highest density.
+Prioritize Customer 360, subscriptions, contracts, usage, infrastructure, incidents, FinOps, profitability and renewals.
+Dense tables are acceptable, but the UI stays flat and calm.
+
+## 22. Website adaptation
+The Website shares brand foundations, typography, color discipline and component DNA, but may be more expressive.
+
+Allowed on Website when useful:
+- hero storytelling
+- larger typography
+- background motion / subtle waves
+- richer illustration
+- marketing narrative sections
+
+Do not copy marketing decoration into ordinary product screens.
+
+## 23. Reuse across other products
+The Newneo foundations may be reused by other products when intentionally adopted.
+
+Reusable layers include:
+- tokens
+- typography
+- spacing
+- radius
+- icon system
+- cards
+- forms
+- tables
+- navigation patterns
+- status patterns
+- charts
+- progressive disclosure
+
+Brand accent, wordmark, domain terminology and product-specific IA may change. The core UX philosophy remains reusable.
+
+## 24. Implementation tokens
+```js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: { DEFAULT:'#2563EB', hover:'#1D4ED8', light:'#3B82F6', tint:'#EFF6FF', 'tint-strong':'#DBEAFE' },
+        navy: { DEFAULT:'#0B1220', soft:'#0F172A' },
+        surface:'#FFFFFF', canvas:'#F8FAFC', chip:'#F1F5F9', line:'#E2E8F0',
+        ink: { DEFAULT:'#0F172A', secondary:'#64748B', muted:'#94A3B8' },
+        success: { DEFAULT:'#16A34A', light:'#10B981', tint:'#ECFDF5' },
+        warning:'#F59E0B', danger:'#EF4444',
+        accent: { purple:'#7C3AED', 'purple-tint':'#F3E8FF', green:'#059669', 'green-tint':'#D1FAE5' }
+      },
+      fontFamily: { sans:['Inter','system-ui','sans-serif'] },
+      borderRadius: { sm:'6px', md:'8px', lg:'12px' },
+      boxShadow: { card:'0 1px 2px rgba(15,23,42,0.04)' },
+      spacing: { sidebar:'220px', topbar:'56px' }
+    }
+  }
+}
+```
+
+## 25. Acceptance checklist
+Before approving a screen:
+1. Does it match the approved Golden Reference UI visual language?
+2. Is the shell quieter than the content?
+3. Can the user understand the screen within five seconds?
+4. Is there one primary action?
+5. Is body/sidebar text readable without miniaturization?
+6. Is color semantic rather than decorative?
+7. Are borders doing more work than shadows?
+8. Are advanced technical details progressively disclosed?
+9. Are third-party integrations represented with credible identity?
+10. Is spacing consistent with the 8px system?
+11. Could any visual element be removed without losing meaning?
+12. Does it look like a production product rather than a concept dashboard?
+13. Does it reuse an existing pattern before inventing a new one?
+
+## Golden Reference UI
+**Agent Catalog + Agent Launch Guide** in Figma are the approved Golden Reference UI for the Newneo product family.
+
+The sophistication should live in the system, not in the user's cognitive load.
+
+**More sophistication through precision, not decoration.**
+
+## Neo — official NEWNEO product companion
+
+Neo is the NEWNEO mascot. Neo is not renamed per agent. The business role/name belongs to the created agent and appears separately, for example “Assembling: IT Support Agent”. Chest branding, if present in future approved assets, must be NEO or the official NEWNEO N mark, never an agent role.
+
+Neo provides a calm, premium, enterprise technology presence for assembly, onboarding, contextual guidance and completion. Use selectively in meaningful setup milestones, help or empty states. Do not repeat Neo across cards, tables, dashboards or KPIs. Avoid cartoon exaggeration, comic speech bubbles, bouncing, gaming effects and excessive glow.
+
+### Component and assets
+
+`NeoMascot` centralizes assets, accessible naming and reveal behavior. Supported states: `default`, `assembling`, `success`, `thinking`, `warning`; props: `state`, `progress`, `size`, `agentName`, `showLabel`, `animate`. Approved full-body assets live at `public/assets/neo/standing-full.png` (default, assembling, thinking, warning) and `public/assets/neo/salute-full.png` (success only). The saluting gesture is reserved for completion. Future approved poses can be replaced in the registry without touching screens.
+
+### Agent Assembly
+
+Use one proportional transparent image, progressively clipped from bottom to top using validated readiness across the canonical eight stages. At zero, a subtle neutral silhouette/base indicates assembly has not started. Each completion reveals more of Neo; editing invalid configuration may lower progress again. The full-body neutral pose reveals from feet upward. The rail renders Neo at 112px; successful completion renders the full-body salute at 200px.
+
+The right rail contains only one Readiness card, combining Neo, contextual agent name, percentage, progress bar, completed stage count and current stage. The redundant Agent Assembly heading and vertical stage list are removed; all eight stage states remain in the top journey guide. Neo is supplemental and must never be required to understand progress.
+
+Animate only the vertical reveal when its value changes (650ms ease-in-out). No idle animation. Honor `animate={false}` and `prefers-reduced-motion`. Preserve aspect ratio and responsive sizing.
+
+### Completion and accessibility
+
+Success shows Neo fully and immediately, without clipping, alongside “Agent Created”, a configuration summary and View Agent / Open AgentOps / View Deployment / Create New Version actions. Preview mode remains explicitly identified; never imply a live deployment has occurred. Success has concise accessible text naming Neo; other states use empty alt text because independent text communicates all functional information. The faint assembly silhouette is hidden from assistive technology.
+
+Implementation verification: production build passed; eight launch browser tests passed at 1440, 1180, 768 and 390 pixels, including accessibility scans, 0→13% reveal progression, reduced-motion behavior, full 100% success reveal, loaded image, seven summary items, persistence and preview approval gates. The assembly rail stacks below content on tablet/mobile to prevent action overlap.
+
+## Skill lifecycle milestone
+
+[ADR-002: Skill lifecycle](decisions/ADR-002-SKILL-LIFECYCLE.md) defines the implemented demo Skills tab, reusable library, four-step Add Skill flow, version gates and restrained Neo confirmation. Create Skill has a complete five-stage interactive demo builder on `/skills/new`. Live persistence, execution and evidence are future prerequisites.
+
+## Template-guided agent creation (2026-09-17)
+
+Templates are production blueprints, not empty forms. NEWNEO recommends; customers confirm. Opinionated by default, flexible when needed. The shortest path to a safe production agent is the default path; customization is an option, not a requirement.
+
+Keep the approved eight stages and Hybrid v4 design. Prepopulate business context, intended skills/sources/tools, infrastructure preference, provider-neutral model requirements, governance requirements, evaluation scenarios and deployment path. Distinguish Recommended, Customized, available bindings, and pending connections. Blueprint progress is not production readiness. Never label a planned policy enforced, an unapproved model approved, or an unrun evaluation passed. High-risk actions stay unselected until their approval requirements are satisfied. Fast confirmation cannot skip production gates.
+
+## Curated Agent portfolio — canonical customer journey (2026-09-17)
+NEWNEO builds Agents. Customers add and operate them. NEWNEO is not a DIY Agent factory for customers: it delivers a curated portfolio of enterprise Agents and owns its reusable intelligence. Customers select, contextualize and activate Agents. NEWNEO turns implementation experience into reusable product.
+
+Primary entry is **+ Add Agent → Agent Catalog → Agent Introduction → Use this Agent / Customize**. Introductions expose business outcomes, core/optional Skills, expected systems and recommendations before review. Preserve the canonical eight stages internally; customer copy emphasizes Select → Connect → Confirm → Activate. Preserve Hybrid v4 and One Neo. Many Agents. Reusable Skills.
+
+Global Skill Library entries are linked when available; unresolved profile capabilities must show binding required, never masquerade as installed Skills. Governance defaults are blueprint requirements until enforcement is verified. Maturity cannot claim measured readiness without evaluation evidence. Activation and live success language require actual execution/deployment evidence.
+
+Replace arbitrary customer custom creation with Request a New Agent. Store a separate workspace-scoped business brief for product review; do not create Agent definitions on submission. Review considers existing Agent fit, additional Skills, or a new portfolio profile. Internal template/Skill/version authoring remains a product responsibility.

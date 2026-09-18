@@ -1,0 +1,788 @@
+'use client';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { SignOutControl } from './SignOutControl';
+import { ArrowRight, BookOpen, CheckCircle, Search, Activity, ShieldCheck, UsersRound, Puzzle, Clock3 } from 'lucide-react';
+import { useAccount } from './AccountContext';
+import { usePreviewValue } from './journeys/PreviewState';
+import { useWorkspaceAgents } from './journeys/WorkspaceAgents';
+import { agentTemplates } from '@/lib/catalog';
+import { demoProductRole, productCapabilities } from '@/lib/product-access';
+import './BusinessWorkspace.css';
+import WorkspaceHelp from './WorkspaceHelp';
+import WorkspaceAnalytics from './WorkspaceAnalytics';
+import { AgentIcon } from './Assets';
+import {useAcmeDemo,acmeSources} from '@/lib/acme-demo';
+import { Metrics, Status, Table } from './hybrid/UI';
+import AgentAddSteps from './AgentAddSteps';
+type Agent = {
+  id: string;
+  name: string;
+  purpose: string;
+  templateId?: string;
+  capabilities: string[];
+  sources: { id: string; title: string }[];
+  versionId: string | null;
+  status: string;
+  canSearch: boolean;
+};
+type Work = {
+  id: string;
+  query: string;
+  agent_id: string;
+  agent_name: string;
+  created_at: string;
+  result: { id: string; title: string; excerpt: string }[];
+};
+type Data = {
+  agents: Agent[];
+  work: Work[];
+  requests: { id: string; status: string; created_at: string }[];
+  capabilities: readonly string[];
+};
+export default function BusinessWorkspace({
+  view = 'home',
+  id,
+}: {
+  view?: string;
+  id?: string;
+}) {
+  const account = useAccount(),
+    demo = account.mode === 'demo',
+    previewAgents = useWorkspaceAgents();
+  const [role] = usePreviewValue('demo:role', 'Administrator');
+  const [data, setData] = useState<Data>(),
+    [error, setError] = useState(''),
+    [busy, setBusy] = useState(false),
+    [message, setMessage] = useState(''),
+    [query, setQuery] = useState(''),
+    [term, setTerm] = useState(''),
+    [tab, setTab] = useState('Overview'),
+    [result, setResult] = useState<Work>(),
+    [stage, setStage] = useState(1),
+    [saved, setSaved] = useState('');
+  const [brief, setBrief] = useState('');
+  async function load() {
+    if (demo) return;
+    setError('');
+    try {
+      const r = await fetch('/api/business', { cache: 'no-store' }),
+        d = await r.json();
+      if (!r.ok) throw Error(d.error);
+      setData(d);
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : 'Unable to load your workspace.',
+      );
+    }
+  }
+  useEffect(() => {
+    void load();
+  }, [demo, account.workspaceId]);
+  const simulation=useAcmeDemo(demo);
+  const demoData: Data = {
+    agents: previewAgents.map((a) => {
+      const t = agentTemplates.find((t) => t.id === a.id);
+      return {
+        id: a.id,
+        templateId: t?.id,
+        name: a.name,
+        purpose: t?.defaultMission ?? 'Your AI specialist for business tasks.',
+        capabilities:
+          t?.recommendedSkills.filter((s) => !s.optional).map((s) => s.name) ??
+          [],
+        sources: acmeSources(a.id),
+        versionId: null,
+        status: 'Available',
+        canSearch: true,
+      };
+    }),
+    work: simulation.work,
+    requests: simulation.requests,
+    capabilities: productCapabilities(demoProductRole(role)),
+  };
+  const d = demo ? demoData : data;
+  const agent = d?.agents.find((a) => a.id === id),
+    template = agentTemplates.find((t) => t.id === id);
+  async function post(body: Record<string, unknown>) {
+    if (demo && body.action === 'search') {
+      const sample=simulation.work.find(w=>w.agent_id===id)??simulation.work[0];
+      const words=String(body.query).toLowerCase().split(/\s+/).filter(w=>w.length>2);
+      const matches=simulation.work.filter(w=>w.agent_id===id).flatMap(w=>w.result).filter(hit=>words.some(word=>`${hit.title} ${hit.excerpt}`.toLowerCase().includes(word)));
+      return {...sample,id:`acme-query-${Date.now()}`,query:String(body.query),created_at:new Date().toISOString(),result:[...new Map(matches.map(hit=>[hit.id,hit])).values()]};
+    }
+    const r = await fetch('/api/business', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...body, workspaceId: account.workspaceId }),
+    });
+    const v = await r.json();
+    if (!r.ok) throw Error(v.error || 'Unable to complete this action.');
+    return v;
+  }
+  async function action(fn: () => Promise<void>) {
+    if (busy) return;
+    setBusy(true);
+    setError('');
+    setMessage('');
+    try {
+      await fn();
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : 'Unable to complete this action.',
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  const request = (outcome: string, complete = false) =>
+    action(async () => {
+      if (demo) {
+        setMessage('Demo preview only. No request was sent to Operations.');
+        if (complete) setSaved('demo');
+        return;
+      }
+      const submitted = await post({
+        action: 'request',
+        brief: {
+          outcome,
+          department: 'Workspace',
+          targetUsers: 'Workspace members',
+          systems: 'Administrator to review required connections',
+          volume: 'To be agreed',
+          sensitivity: 'Administrator review required',
+        },
+      });
+      setMessage(
+        'Request sent to Operations. The team will review your needs and prepare the approved sources, connections and capabilities before the Agent is ready.',
+      );
+      if (complete) setSaved(submitted.id || 'submitted');
+      setBrief('');
+      await load();
+    });
+  const cards = (agents: Agent[]) => (
+    <div className="businessCards">
+      {agents.map((a) => (
+        <Link
+          className="businessCard"
+          href={`/workspace/agents/${a.id}`}
+          key={a.id}
+        >
+          <AgentIcon identity={a.templateId ?? a.id} name={a.name} />
+          <h2>{a.name}</h2>
+          <p>{a.purpose}</p>
+          <span className="businessCardStatus"><Status>{a.canSearch ? 'Search ready' : a.status}</Status></span>
+          <span className="businessCardAction">
+            Open Agent <ArrowRight size={15} />
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+  const history = (items: Work[]) => (
+    <div className="businessHistory">
+      {items.length ? (
+        items.map((w) => (
+          <details key={w.id}>
+            <summary>
+              <strong>{w.query}</strong>
+              <span>
+                {w.agent_name} · {new Date(w.created_at).toLocaleString()}
+              </span>
+              <small>{w.result.length} matching sources</small>
+            </summary>
+            {w.result.map((hit) => (
+              <article key={hit.id}>
+                <h3>{hit.title}</h3>
+                <p>{hit.excerpt}</p>
+              </article>
+            ))}
+            {!w.result.length && <p>No matching passages found.</p>}
+          </details>
+        ))
+      ) : (
+        <div className="businessEmpty"><span className="businessIcon"><Clock3 size={22}/></span><strong>Your work starts here</strong><p>Your searches and results appear here.</p><Link className="businessCardAction" href="/workspace/agents">Explore My Agents <ArrowRight size={15}/></Link></div>
+      )}
+    </div>
+  );
+  if (!d)
+    return (
+      <section className="businessWorkspace">
+        <h1>Your workspace</h1>
+        {error ? (
+          <>
+            <p role="alert">{error}</p>
+            <button onClick={load}>Retry</button>
+          </>
+        ) : (
+          <p role="status">Loading your agents…</p>
+        )}
+      </section>
+    );
+  const profile = agentTemplates.find((t) => t.id === agent?.templateId);
+  const capabilities = Array.from(
+    new Set([
+      ...(agent?.capabilities ?? []),
+      ...(profile
+        ? [...profile.recommendedSkills, ...profile.recommendedTools].map(
+            (s) => s.name,
+          )
+        : []),
+    ]),
+  );
+  const own = agent ? d.work.filter((w) => w.agent_id === agent.id) : d.work;
+  return (
+    <section
+      className={`businessWorkspace ${view === 'home' ? 'businessHome' : ''}`}
+    >
+      {error && (
+        <p className="businessNotice" role="alert">
+          {error}
+        </p>
+      )}
+      {message && (
+        <p className="businessNotice" role="status">
+          {message}
+        </p>
+      )}
+      {view === 'home' && (
+        <>
+          <header className="pageHead">
+            <div>
+              <h1>Your workspace</h1>
+              <p>Choose an agent and start a task.</p>
+            </div>
+            <Link className="button primary" href="/workspace/discover">
+              Discover Agents <ArrowRight size={16} />
+            </Link>
+          </header>
+          <Metrics items={[
+            ['My Agents', String(d.agents.length), 'Specialists in your workspace'],
+            ['Recent searches', String(d.work.length), 'Your recorded activity'],
+            ['Pending requests', String(d.requests.filter(r => r.status === 'Pending review').length), 'Awaiting Operations review'],
+          ]}/>
+          <div className="businessMain">
+            <article className="panel">
+              <div className="businessPanelHead">
+                <h2><UsersRound size={18}/> My Agents</h2>
+                <Link href="/workspace/agents">View all →</Link>
+              </div>
+              {d.agents.length ? (
+                cards(d.agents)
+              ) : (
+                <p>Start in Discover to choose a specialist for your team.</p>
+              )}
+            </article>
+            <article className="panel">
+              <h2><Activity size={18}/> Recent work</h2>
+              {history(d.work.slice(0, 5))}
+              <Link href="/workspace/work">View your work →</Link>
+            </article>
+          </div>
+        </>
+      )}
+      {view === 'agents' && !id && (
+        <>
+          <header className="pageHead">
+            <div>
+              <h1>My Agents</h1>
+              <p>
+                Specialists available in your workspace. Open an Agent to see
+                what it can help with.
+              </p>
+            </div>
+            <Link className="button primary" href="/workspace/discover">
+              Discover Agents
+            </Link>
+          </header>
+          <label className="businessSearch">
+            Find an Agent
+            <input
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              placeholder="Name or task"
+            />
+          </label>
+          {cards(
+            d.agents.filter((a) =>
+              (a.name + ' ' + a.purpose)
+                .toLowerCase()
+                .includes(term.toLowerCase()),
+            ),
+          )}
+          {!d.agents.length && (
+            <p>
+              No Agents have been added yet. Choose one from Discover or ask
+              your administrator.
+            </p>
+          )}
+        </>
+      )}
+      {view === 'agents' &&
+        id &&
+        (agent ? (
+          <>
+            <Link href="/workspace/agents">← My Agents</Link>
+            <header className="pageHead">
+              <div className="profileIdentity"><AgentIcon identity={agent.templateId ?? agent.id} name={agent.name}/><div><h1>{agent.name}</h1><p>{agent.purpose}</p></div></div>
+              <button className="button primary" onClick={() => setTab('Work')}>
+                {agent.canSearch ? 'Search documents' : 'Request setup'}{' '}
+                <ArrowRight size={16} />
+              </button>
+            </header>
+            <nav className="businessTabs" aria-label="Agent details">
+              {[
+                'Overview',
+                'Capabilities',
+                'Sources',
+                'Work',
+                'Results',
+                'Analytics',
+              ].map((t) => (
+                <button
+                  key={t}
+                  aria-current={tab === t ? 'page' : undefined}
+                  onClick={() => setTab(t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </nav>
+            <article className="panel businessDetail">
+              {tab === 'Overview' && (
+                <>
+                  <h2>How this Agent helps</h2>
+                  <p>{agent.purpose}</p>
+                  <Metrics items={[
+                    ['Planned capabilities', String(capabilities.length)],
+                    ['Connected sources', String(agent.sources.length)],
+                    ['Availability', agent.canSearch ? 'Search ready' : agent.status],
+                  ]}/>
+                  <p>
+                    {agent.canSearch
+                      ? 'Search the connected documents below. Broader AI tasks are not yet activated.'
+                      : 'Your administrator needs to connect sources and activate the Agent before you can work with it.'}
+                  </p>
+                  {d.capabilities.includes('business:propose') && (
+                    <details>
+                      <summary>Request a business adjustment</summary>
+                      <label>
+                        Describe the outcome, rules or team needs
+                        <textarea
+                          maxLength={1500}
+                          value={brief}
+                          onChange={(e) => setBrief(e.target.value)}
+                        />
+                      </label>
+                      <button
+                        className="button secondary"
+                        disabled={busy || !brief.trim()}
+                        onClick={() =>
+                          request(
+                            `Business adjustment for ${agent.name} (${agent.id}): ${brief}`,
+                          )
+                        }
+                      >
+                        Submit for review
+                      </button>
+                    </details>
+                  )}
+                  {d.capabilities.includes('operations:view') && (
+                    <Link href={`/agents/${agent.id}`}>
+                      Open in Operations →
+                    </Link>
+                  )}
+                </>
+              )}
+              {tab === 'Capabilities' && (
+                <>
+                  <h2>What it is designed to do</h2>
+                  <p>
+                    These capabilities describe the Agent’s intended work.
+                    Availability depends on your team’s setup and approval.
+                  </p>
+                  {capabilities.length ? (
+                    <ul className="businessFeatures">
+                      {capabilities.map((c, i) => (
+                        <li key={i}>
+                          <CheckCircle size={16} />
+                          {c}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>
+                      Your administrator has not defined the capabilities yet.
+                    </p>
+                  )}
+                </>
+              )}
+              {tab === 'Sources' && (
+                <>
+                  <h2>Sources this Agent can use</h2>
+                  {agent.sources.length ? (
+                    <ul className="businessFeatures">
+                      {agent.sources.map((s) => (
+                        <li key={s.id}>
+                          <BookOpen size={18} />
+                          {s.title}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>
+                      No sources are connected yet. Ask your administrator to
+                      connect the approved documents.
+                    </p>
+                  )}
+                </>
+              )}
+              {tab === 'Work' && (
+                <>
+                  <h2>Find information in your documents</h2>
+                  <p>
+                    Enter a few keywords to find matching passages in the
+                    connected sources. This is document search, not an
+                    AI-generated answer.
+                  </p>
+                  {agent.canSearch &&
+                  d.capabilities.includes('work:search') ? (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        void action(async () => {
+                          const w = await post({
+                            action: 'search',
+                            id: crypto.randomUUID(),
+                            agentVersionId: agent.versionId,
+                            query,
+                          });
+                          setResult(w);
+                          await load();
+                        });
+                      }}
+                    >
+                      <label>
+                        What are you looking for?
+                        <input
+                          required
+                          maxLength={200}
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
+                          placeholder="For example: travel policy"
+                        />
+                      </label>
+                      <button
+                        className="button primary"
+                        disabled={busy || !query.trim()}
+                      >
+                        <Search size={16} />
+                        {busy ? 'Searching…' : 'Search sources'}
+                      </button>
+                    </form>
+                  ) : (
+                    <>
+                      <p>
+                        {demo
+                          ? 'This preview does not execute live tasks.'
+                          : !agent.canSearch
+                            ? 'This Agent has no connected sources yet.'
+                            : 'Your current role does not include document search access.'}
+                      </p>
+                      <button
+                        className="button secondary"
+                        disabled={busy}
+                        onClick={() =>
+                          request(
+                            `Request access and readiness review to use ${agent.name} (${agent.id}).`,
+                          )
+                        }
+                      >
+                        Request assistance
+                      </button>
+                    </>
+                  )}
+                  {result && (
+                    <div className="businessResults">
+                      <h3>{result.result.length} matching sources</h3>
+                      {result.result.map((hit) => (
+                        <article key={hit.id}>
+                          <h3>{hit.title}</h3>
+                          <p>{hit.excerpt}</p>
+                        </article>
+                      ))}
+                      {!result.result.length && (
+                        <p>No matching passages. Try different keywords.</p>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+              {tab === 'Analytics' && (
+                <WorkspaceAnalytics agentId={agent.id} embedded />
+              )}
+              {tab === 'Results' && (
+                <>
+                  <h2>Your results</h2>
+                  {history(own)}
+                </>
+              )}
+            </article>
+          </>
+        ) : (
+          <>
+            <h1>Agent unavailable</h1>
+            <p>This Agent is not available in your workspace.</p>
+            <Link href="/workspace/agents">Return to My Agents</Link>
+          </>
+        ))}
+      {view === 'discover' && !id && (
+        <>
+          <header className="pageHead">
+            <div>
+              <h1>Discover</h1>
+              <p>Choose a specialist by the job you need done.</p>
+            </div>
+          </header>
+          <label className="businessSearch">
+            Find a specialist
+            <input
+              placeholder="Search by name or purpose"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+            />
+          </label>
+          <div className="businessCards businessCatalog">
+            {agentTemplates
+              .filter((t) =>
+                (t.name + ' ' + t.description)
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
+              )
+              .map((t) => (
+                <Link
+                  className="businessCard"
+                  key={t.id}
+                  href={`/workspace/discover/${t.id}`}
+                >
+                  <AgentIcon type={t.type} identity={t.id}/>
+
+                  <small className="businessCategory">{t.categories.join(' · ')}</small>
+                  <h2>{t.name}</h2>
+                  <p>{t.description}</p>
+                  <div className="businessCardMeta"><span><Puzzle size={13}/>{t.recommendedSkills.filter(s=>!s.optional).length} core capabilities</span></div>
+                  <span className="businessCardAction">
+                    Learn more <ArrowRight size={15} />
+                  </span>
+                </Link>
+              ))}
+          </div>
+        </>
+      )}
+      {view === 'discover' &&
+        id &&
+        (template ? (
+          <>
+            <Link href="/workspace/discover">← Discover</Link>
+            <AgentAddSteps current={saved ? 2 : stage} complete={Boolean(saved)} finalLabel="Request Agent"/>
+            {saved ? (
+              <article className="panel">
+                <span className="businessIcon">
+                  <CheckCircle size={24} />
+                </span>
+                <h1>
+                  {demo ? 'Request preview' : 'Request sent to Operations'}
+                </h1>
+                <p>
+                  {template.name}:{' '}
+                  {demo
+                    ? 'This is a demo; nothing was submitted.'
+                    : 'Your request is awaiting review by the Operations team.'}
+                </p>
+                <p>
+                  The team reviews your needs, connects approved documents and
+                  services, and prepares the Agent’s capabilities. Setup and
+                  activation happen after review.
+                </p>
+                <Link className="button primary" href="/workspace/work">
+                  View your requests →
+                </Link>
+              </article>
+            ) : (
+              <>
+                <header className="pageHead">
+                  <div className="profileIdentity"><AgentIcon type={template.type} identity={template.id}/><div><h1>{template.name}</h1><p>{template.description}</p></div></div>
+                </header>
+                {stage === 1 ? (
+                  <div className="businessProfile">
+                    <article className="panel">
+                      <h2><Puzzle size={18}/> What it helps you do</h2>
+                      <p>{template.defaultMission}</p>
+                      <ul className="businessFeatures">
+                        {Array.from(
+                          new Map(
+                            [
+                              ...template.recommendedSkills,
+                              ...template.recommendedTools,
+                            ].map((s) => [s.name, s]),
+                          ).values(),
+                        ).map((s) => (
+                          <li key={s.id}>
+                            <CheckCircle size={16} />
+                            <span>
+                              {s.name}
+                              {s.highRisk && (
+                                <small className="businessApproval">
+                                  Approval required
+                                </small>
+                              )}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </article>
+                    <article className="panel">
+                      <h2><UsersRound size={18}/> For your team</h2>
+                      <p>{template.defaultTargetUsers}</p>
+                      <h3>Expected outcomes</h3>
+                      <ul>
+                        {template.outcomes.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ul>
+                    </article>
+                    <article className="panel businessPreparation">
+                      <h2><ShieldCheck size={18}/> Prepared by Operations</h2>
+                      <p>
+                        Your request goes to the Operations team. They review
+                        your needs, connect approved documents and services,
+                        configure capabilities and permissions, and validate
+                        readiness.
+                      </p>
+                      <p>
+                        These are available profile capabilities, not active
+                        connections. Operations confirms what can be enabled for
+                        your team.
+                      </p>
+                      <button
+                        className="button primary"
+                        onClick={() => setStage(2)}
+                      >
+                        Request this Agent →
+                      </button>
+                    </article>
+                  </div>
+                ) : (
+                  <article className="panel businessConfirm">
+                    <h2>What do you need help with?</h2>
+                    <p>
+                      Request {template.name}. Operations will prepare the Agent
+                      for your team; you do not need to configure it here.
+                    </p>
+                    <label>
+                      Your needs{' '}
+                      <small>
+                        Optional — tasks, documents or systems your team uses
+                      </small>
+                      <textarea
+                        maxLength={1500}
+                        value={brief}
+                        onChange={(e) => setBrief(e.target.value)}
+                        placeholder="Describe the work you want this Agent to handle…"
+                      />
+                    </label>
+                    <div className="businessActions">
+                      <button
+                        className="button secondary"
+                        onClick={() => setStage(1)}
+                      >
+                        Back
+                      </button>
+                      <button
+                        className="button primary"
+                        disabled={busy}
+                        onClick={() =>
+                          request(
+                            `Agent request: ${template.name} (${template.id}). ${brief.trim() || template.defaultMission}`,
+                            true,
+                          )
+                        }
+                      >
+                        {busy ? 'Sending…' : 'Send to Operations'}
+                      </button>
+                    </div>
+                  </article>
+                )}
+              </>
+            )}
+          </>
+        ) : (
+          <h1>Specialist not found</h1>
+        ))}
+      {view === 'work' && (
+        <>
+          <header className="pageHead">
+            <div>
+              <h1>Work</h1>
+              <p>Your latest 50 document searches and saved results.</p>
+            </div>
+            <Link href="/workspace/agents" className="button primary">
+              Start with an Agent
+            </Link>
+          </header>
+          <article className="panel">{history(d.work)}</article>
+          {d.requests.length > 0 && (
+            <article className="panel">
+              <h2>Your requests</h2>
+              {d.requests.map((r) => (
+                <p key={r.id}>
+                  {r.status} · {new Date(r.created_at).toLocaleDateString()}
+                </p>
+              ))}
+            </article>
+          )}
+        </>
+      )}
+      {view === 'analytics' && <WorkspaceAnalytics />}
+      {view === 'reports' && (
+        <>
+          <header className="pageHead">
+            <div>
+              <h1>Reports</h1>
+              <p>A summary of your latest 50 document searches.</p>
+            </div>
+          </header>
+          <Metrics items={[
+            ['Searches completed', String(d.work.length)],
+            ['Searches with matches', String(d.work.filter(w => w.result.length > 0).length)],
+            ['Agents used', String(new Set(d.work.map(w => w.agent_id)).size)],
+          ]}/>
+          <article className="panel">
+            <h2><Activity size={18}/>Results by Agent</h2>
+            <Table caption="Your recorded searches by Agent" headers={['Agent', 'Searches']} rows={d.agents.map(a => [
+              <Link key={a.id} className="referenceIconLabel agent" href={`/workspace/agents/${a.id}`}><AgentIcon identity={a.templateId ?? a.id} name={a.name}/>{a.name}</Link>,
+              String(d.work.filter(w => w.agent_id === a.id).length),
+            ])} emptyMessage="No Agents in your workspace yet."/>
+            <p>
+              These counts describe document searches, not AI task completion or
+              business impact.
+            </p>
+          </article>
+        </>
+      )}
+      {view === 'profile' && (
+        <article className="panel">
+          <h1>Your account</h1>
+          <p>{demo ? 'Ana Martinez' : account.displayName}</p>
+          <p>{demo ? 'Acme Corp' : account.workspace?.organization_name}</p>
+          <p>Access: {demo ? role : account.workspace?.role}</p>
+          <Link href="/">Return to Workspace</Link>
+          <p>
+            <SignOutControl />
+          </p>
+        </article>
+      )}
+      {view === 'help' && <WorkspaceHelp/>}
+    </section>
+  );
+}

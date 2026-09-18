@@ -1,0 +1,1014 @@
+/* Shared finish, calibrated against the approved Command Center and Hybrid references.
+   Design controls composition; Make supplies interaction and shared component detail. */
+:root {
+  --surface-border: #dce4ef;
+  --surface-divider: #eef2f7;
+  --surface-text: #1e293b;
+  --surface-muted: #64748b;
+}
+.content:has(> .hybridPage),
+.content:has(> .catalog) {
+  max-width: none;
+  padding: 24px;
+}
+.hybridPage {
+  gap: 24px;
+  color: var(--surface-text);
+}
+.hybridPage .pageHead,
+.catalog .pageHead {
+  align-items: flex-start;
+  gap: 20px;
+}
+.hybridPage .pageHead h1,
+.catalog .pageHead h1 {
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.025em;
+  margin: 0 0 4px;
+}
+.hybridPage .pageHead p,
+.catalog .pageHead p {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--surface-muted);
+  margin: 0;
+}
+.hybridPage .button,
+.catalog .button {
+  font-size: 14px;
+  font-weight: 500;
+}
+.hybridPage .button:not(.link),
+.catalog .button:not(.link) {
+  padding: 8px 12px;
+  min-height: 36px;
+}
+.hybridPage .button.secondary {
+  color: #475569;
+  background: white;
+  border-color: var(--surface-border);
+}
+.hybridPage .panel {
+  padding: 16px;
+  border-color: var(--surface-border);
+}
+.hybridPage .panel h2 {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.hybridPage .panel h3 {
+  font-size: 14px;
+  line-height: 20px;
+}
+.hybridPage .panel p {
+  font-size: 13px;
+  line-height: 20px;
+}
+.hybridMetrics {
+  gap: 12px;
+}
+.hybridMetrics article {
+  padding: 14px 16px;
+  min-height: 106px;
+  border-color: var(--surface-border);
+}
+.hybridMetrics article > span {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--surface-muted);
+}
+.hybridMetrics article > strong {
+  font-size: 25px;
+  line-height: 30px;
+  margin: 6px 0;
+  letter-spacing: -0.015em;
+}
+.hybridMetrics article > small {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--surface-muted);
+}
+.hybridSplit {
+  gap: 16px;
+}
+.hybridSplit > aside {
+  gap: 16px;
+}
+.hybridTable {
+  border-color: var(--surface-border);
+}
+.hybridTable table {
+  font-size: 13px;
+  line-height: 20px;
+}
+.hybridTable th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  color: #64748b;
+  padding: 10px 16px;
+  height: 40px;
+}
+.hybridTable td {
+  font-size: 13px;
+  padding: 14px 16px;
+  border-top-color: var(--surface-divider);
+  height: 52px;
+}
+.hybridDetailLink {
+  font-weight: 500;
+  color: #1e293b;
+}
+.hybridDetailLink:hover {
+  color: var(--primary);
+}
+.hybridStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+.hybridStatus.healthy {
+  background: #ecfdf5;
+}
+.hybridStatus.warning {
+  background: #fffbeb;
+}
+.hybridStatus.danger {
+  background: #fef2f2;
+}
+.hybridStatus.neutral {
+  background: #eff4fb;
+}
+.hybridControls input,
+.hybridControls select {
+  min-height: 36px;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-color: var(--surface-border);
+}
+.hybridControls label {
+  font-size: 12px;
+}
+.hybridPage .filterRow {
+  gap: 6px;
+}
+.hybridPage .chip,
+.catalog .chip {
+  font-size: 12px;
+  padding: 6px 12px;
+  font-weight: 500;
+}
+.hybridPage .resourceTabs {
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+}
+.hybridPage .resourceTabs button {
+  font-size: 14px;
+  padding: 10px 16px;
+}
+.hybridPage .surfaceFacts {
+  margin: 12px 0;
+}
+.hybridPage .surfaceFacts > div {
+  padding: 10px 0;
+}
+.hybridPage .surfaceFacts dt {
+  font-size: 12px;
+  color: var(--surface-muted);
+}
+.hybridPage .surfaceFacts dd {
+  font-size: 13px;
+  line-height: 20px;
+}
+.hybridPage .hybridBars {
+  gap: 20px;
+}
+.hybridPage .hybridBars > div > div {
+  font-size: 13px;
+  line-height: 20px;
+}
+.hybridPage .hybridBars strong {
+  font-size: 13px;
+}
+.hybridPage .intelligenceNote {
+  padding: 16px;
+  font-size: 13px;
+  line-height: 20px;
+  border-radius: 12px;
+}
+.hybridPage .intelligenceNote > strong {
+  font-size: 11px;
+  margin-bottom: 8px;
+  letter-spacing: 0.025em;
+}
+.hybridPage .hybridDataNote {
+  color: var(--surface-muted);
+  font-size: 11px;
+  margin: 0;
+}
+.hybridPage .field label,
+.hybridPage .journeyField,
+.hybridPage .resourceField {
+  font-size: 13px;
+}
+.hybridPage input:not([type='checkbox']):not([type='range']),
+.hybridPage select,
+.hybridPage textarea {
+  border-color: var(--surface-border);
+  font-size: 14px;
+}
+.hybridPage .hybridTimeline li {
+  font-size: 13px;
+  line-height: 20px;
+  padding-bottom: 24px;
+}
+.hybridPage .hybridTimeline small {
+  font-size: 12px;
+  line-height: 18px;
+}
+.hybridPage .hybridTimeline strong {
+  font-weight: 500;
+}
+/* Inventory and contextual detail screens retain the Design compositions. */
+.agentsPage > .hybridTable {
+  min-height: 0;
+}
+.agentNameWithStatus {
+  gap: 10px;
+}
+.hybridPage .hybridHealth {
+  padding: 16px;
+}
+.hybridPage .hybridHealth h2 {
+  font-size: 14px;
+  margin: 0;
+}
+.hybridHealth dl {
+  gap: 8px;
+  margin-top: 16px;
+}
+.hybridHealth dl > div {
+  padding: 10px;
+}
+.hybridHealth dt {
+  font-size: 11px;
+  line-height: 16px;
+}
+.hybridHealth dd {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.hybridPage .hybridHealth > p.hybridDanger {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 16px;
+}
+.environmentSummaryGrid article {
+  padding: 16px;
+  border-color: var(--surface-border);
+}
+.environmentSummaryGrid h2 {
+  font-size: 14px;
+}
+.environmentSummaryGrid small,
+.environmentSummaryGrid header > span {
+  font-size: 12px;
+}
+.hybridPage .mcpServers li {
+  padding: 9px 0;
+  font-size: 13px;
+}
+.hybridPage .mcpServers small {
+  font-size: 12px;
+}
+.hybridPage .permissionBreakdown .hybridBars > div > div {
+  font-size: 12px;
+}
+.hybridPage .hybridPolicyList > div {
+  font-size: 13px;
+  padding: 14px 16px;
+  border-color: var(--surface-border);
+}
+.hybridPage .hybridPolicyList small {
+  font-size: 12px;
+  line-height: 18px;
+}
+.hybridPage .scenarioResults > div {
+  padding: 14px 0;
+}
+.hybridPage .scenarioResults strong,
+.hybridPage .scenarioResults span {
+  font-size: 13px;
+}
+.hybridPage .scenarioResults small {
+  font-size: 12px;
+}
+.hybridPage .policyModes label {
+  font-size: 13px;
+  padding: 16px;
+}
+.hybridPage .policyModes small {
+  font-size: 12px;
+  line-height: 18px;
+}
+.costRecommendations {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 16px;
+}
+.costRecommendations li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 0;
+}
+.costRecommendations strong {
+  white-space: nowrap;
+  color: #124381;
+  font-size: 13px;
+}
+.modelCostFacts dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modelCostFacts dt::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1955a6;
+  flex-shrink: 0;
+}
+.modelCostFacts > div:nth-child(2) dt::before {
+  background: #6366f1;
+}
+.modelCostFacts > div:nth-child(3) dt::before {
+  background: #0891b2;
+}
+.modelCostFacts > div:nth-child(4) dt::before {
+  background: #d97706;
+}
+.modelCostFacts > div:nth-child(5) dt::before {
+  background: #15803d;
+}
+/* Catalog has one reusable card scale, with status separate from brand accents. */
+.catalog .agentGrid {
+  gap: 16px;
+}
+.catalog .hybridCatalogCard {
+  min-height: 264px;
+  border-color: var(--surface-border);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.catalog .hybridCatalogCard:hover {
+  border-color: #8fadd6;
+  box-shadow: 0 4px 12px #0f172a08;
+}
+.catalog .hybridCatalogCard > a {
+  padding: 20px;
+}
+.catalog .hybridCatalogCard h2 {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.catalog .hybridCatalogCard p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.catalog .catalogTagline {
+  min-height: 36px;
+}
+.catalog .catalogMetrics {
+  margin-top: auto;
+  padding-top: 12px;
+}
+.catalog .catalogMetrics dt {
+  font-size: 11px;
+  color: var(--surface-muted);
+}
+.catalog .catalogMetrics dd {
+  font-size: 16px;
+  line-height: 22px;
+}
+.catalog .modelPill {
+  font-size: 11px;
+}
+.catalog .modelPill[data-complexity='Medium'] {
+  color: #b45309;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.catalog .modelPill[data-complexity='High'] {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.catalog .modelPill[data-complexity='Low'] {
+  color: #15803d;
+  background: #ecfdf5;
+  border-color: #bbf7d0;
+}
+.catalogSearch {
+  font-size: 12px;
+}
+.catalogSearch input {
+  font-size: 14px;
+  border-color: var(--surface-border);
+}
+/* Eight-stage journey: preserve grid/rail structure, improve information density. */
+.hybridStage .stepHeading p {
+  font-size: 14px;
+  line-height: 20px;
+}
+.hybridStage .stageEyebrow {
+  font-size: 11px;
+}
+.hybridJourney .field label,
+.hybridJourney .journeyField {
+  font-size: 13px;
+}
+.hybridJourney .missionControl p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.hybridJourney .missionControl h3 {
+  font-size: 16px;
+}
+.hybridJourney .missionSuggestions button {
+  font-size: 12px;
+}
+.hybridJourney .hybridSourceGrid button {
+  min-height: 144px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+}
+.hybridJourney .hybridSourceGrid button[aria-pressed='true'] {
+  background: #eff4fb;
+}
+.hybridJourney .hybridSourceGrid strong {
+  font-size: 13px;
+  line-height: 18px;
+}
+.hybridJourney .hybridSourceGrid small {
+  font-size: 11px;
+  line-height: 16px;
+}
+.hybridJourney .knowledgeCoverage {
+  font-size: 12px;
+  padding: 16px;
+}
+.hybridJourney .knowledgeCoverage p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.hybridJourney .hybridToolRows label {
+  padding: 14px 16px;
+  min-height: 64px;
+  background: white;
+  border-radius: 10px;
+}
+.hybridJourney .hybridToolRows label.selected {
+  background: #f5f9ff;
+}
+.hybridJourney .hybridToolRows strong {
+  font-size: 14px;
+  line-height: 20px;
+}
+.hybridJourney .hybridToolRows small {
+  font-size: 12px;
+  line-height: 18px;
+}
+.hybridJourney .modelPill {
+  font-size: 11px;
+}
+.hybridJourney .infraOption {
+  padding: 18px;
+}
+.hybridJourney .infraOption strong {
+  font-size: 15px;
+}
+.hybridJourney .infraOption p {
+  font-size: 13px;
+  line-height: 20px;
+  min-height: 40px;
+}
+.hybridJourney .infraOption dt {
+  font-size: 11px;
+}
+.hybridJourney .infraOption dd {
+  font-size: 15px;
+}
+.hybridJourney .hybridModel {
+  padding: 16px;
+  min-height: 70px;
+}
+.hybridJourney .modelIdentity strong {
+  font-size: 14px;
+}
+.hybridJourney .modelIdentity small,
+.hybridJourney .modelProfile {
+  font-size: 12px;
+}
+.hybridJourney .modelStrengths {
+  padding: 18px;
+  font-size: 14px;
+}
+.hybridJourney .modelStrengths p {
+  font-size: 13px;
+  line-height: 20px;
+}
+.hybridJourney .intelligenceNote {
+  padding: 14px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.hybridJourney .policyRow {
+  padding: 16px;
+}
+.hybridJourney .evaluationRows strong {
+  font-size: 14px;
+}
+.hybridJourney .evaluationScenarios > details {
+  padding: 14px;
+  font-size: 13px;
+}
+.hybridJourney .deploymentSummary {
+  padding: 20px;
+}
+.hybridJourney .deploymentSummary dt,
+.hybridJourney .deploymentSummary dd {
+  font-size: 13px;
+  line-height: 20px;
+}
+.hybridJourney .hybridAssembly {
+  border-color: var(--surface-border);
+}
+.hybridJourney .assemblyStages {
+  font-size: 12px;
+}
+.hybridJourney .readinessIssues {
+  font-size: 12px;
+  line-height: 18px;
+}
+/* Settings, reports, audit and conversation share the same reading scale. */
+.settingsWorkspace .organizationFacts dt {
+  font-size: 12px;
+}
+.settingsWorkspace .organizationFacts dd {
+  font-size: 13px;
+}
+.settingsWorkspace .notificationChoice {
+  font-size: 13px;
+}
+.settingsWorkspace .notificationChoice small {
+  font-size: 12px;
+  line-height: 18px;
+}
+.settingsWorkspace .hybridControls .filterRow button {
+  font-size: 13px;
+}
+.settingsWorkspace .onboardingTask {
+  padding: 16px 0;
+  font-size: 13px;
+}
+.settingsWorkspace .onboardingTask small {
+  font-size: 12px;
+}
+.settingsWorkspace .onboardingBanner h2 {
+  font-size: 20px;
+}
+.settingsWorkspace .onboardingBanner p {
+  font-size: 14px;
+}
+.hybridPage .playgroundAgents button {
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.hybridPage .playgroundMessages p {
+  font-size: 14px;
+  line-height: 22px;
+}
+.hybridPage .playgroundMessages > div {
+  padding: 14px 16px;
+}
+.hybridPage .playgroundChat > h2 {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--surface-divider);
+}
+.hybridPage .playgroundChat form {
+  padding-top: 12px;
+  border-top: 1px solid var(--surface-divider);
+}
+.hybridPage .hybridChart small {
+  font-size: 12px;
+}
+.resourceDialog {
+  box-shadow: 0 20px 70px #0b122026;
+}
+.resourceDialog .field label,
+.resourceDialog .resourceField {
+  font-size: 13px;
+}
+.resourceDialog .resourceSteps {
+  font-size: 12px;
+  line-height: 18px;
+}
+.resourceDialog button {
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+@media (max-width: 1100px) {
+  .hybridPage .hybridTable table {
+    min-width: 700px;
+  }
+  .hybridPage .hybridSplit {
+    grid-template-columns: 1fr;
+  }
+  .hybridPage .hybridSplit.equal {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 800px) {
+  .hybridPage .resourceTabs button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .hybridJourney .hybridSourceGrid button {
+    padding: 12px;
+  }
+  .hybridPage .hybridPolicyList > div {
+    padding: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .content:has(> .hybridPage),
+  .content:has(> .catalog) {
+    padding: 20px 16px;
+  }
+  .hybridPage .pageHead,
+  .catalog .pageHead {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .hybridPage .pageHead h1,
+  .catalog .pageHead h1 {
+    font-size: 20px;
+  }
+  .hybridMetrics article {
+    min-height: 104px;
+    padding: 12px;
+  }
+  .hybridMetrics article > span {
+    font-size: 11px;
+  }
+  .hybridMetrics article > strong {
+    font-size: 24px;
+  }
+  .hybridMetrics article > small {
+    font-size: 11px;
+  }
+  .hybridJourney .hybridToolRows label {
+    padding: 12px;
+    gap: 8px;
+  }
+  .hybridJourney .hybridToolRows strong {
+    font-size: 13px;
+  }
+  .hybridJourney .modelProfile {
+    display: none;
+  }
+  .hybridPage .surfaceFacts > div {
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog .hybridCatalogCard,
+  .resourceDialog button {
+    transition: none;
+  }
+}
+
+.hybridStatus.danger {
+  color: #b91c1c;
+}
+.hybridStatus.muted {
+  color: #475569;
+  background: #f1f5f9;
+}
+.agentWorkspace .hybridSplit,
+.settingsWorkspace .hybridSplit.equal {
+  align-items: stretch;
+}
+.agentWorkspace .hybridSplit > .panel:first-child {
+  display: flex;
+  flex-direction: column;
+}
+.agentWorkspace .hybridChart {
+  flex: 1;
+  min-height: 180px;
+}
+.agentWorkspace .surfaceFacts > div {
+  padding: 4px 0;
+}
+.agentWorkspace .surfaceFacts {
+  margin: 8px 0;
+}
+.agentWorkspace .hybridSplit > .panel:last-child > .button {
+  margin-top: 12px;
+}
+
+/* Reference-specific alignment and semantic emphasis. */
+.hybridPage .modelCostFacts > div {
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 8px 0;
+}
+.hybridPage .modelCostFacts dd {
+  text-align: right;
+}
+.hybridPage .hybridHealth.degraded {
+  border-color: #fecaca;
+}
+.hybridPage .hybridHealth .surfaceHeading h2 {
+  font-size: 14px;
+}
+.reportsPage .hybridSplit {
+  align-items: stretch;
+}
+.reportsPage .hybridSplit > .panel:first-child {
+  display: flex;
+  flex-direction: column;
+}
+.reportsPage .hybridChart {
+  flex: 1;
+  min-height: 180px;
+}
+.hybridPage .scenarioResults {
+  gap: 0;
+}
+.hybridPage .scenarioResults > div {
+  padding: 10px 0;
+  min-height: 44px;
+}
+.auditLogPage .panel > .hybridControls {
+  margin-bottom: 16px;
+}
+.hybridMetrics [data-metric='Documents indexed'] > strong,
+.evaluationsPage .hybridMetrics [data-metric='Runs this month'] > strong,
+.auditLogPage .hybridMetrics [data-metric='Policy changes'] > strong,
+.reportsPage [data-fact='HITL approvals'] dd {
+  color: #1955a6;
+}
+.evaluationsPage .hybridMetrics [data-metric='Avg readiness score'] > strong,
+.auditLogPage .hybridMetrics [data-metric='Deployments'] > strong,
+.reportsPage [data-fact='Auto-resolved'] dd {
+  color: #15803d;
+}
+.auditLogPage .hybridMetrics [data-metric='Incidents'] > strong,
+.reportsPage [data-fact='Requiring action'] dd {
+  color: #dc2626;
+}
+.hybridWarning,
+.reportsPage [data-fact='Policy violations'] dd {
+  color: #b45309;
+}
+.playgroundChat > .hybridStatus {
+  justify-self: start;
+}
+@media (min-width: 1101px) {
+  .hybridPage .hybridPolicyList > div {
+    grid-template-columns:
+      34px minmax(130px, 1.1fr) 84px minmax(150px, 1.6fr)
+      82px 112px;
+  }
+}
+
+.agentWorkspace
+  .hybridMetrics
+  [data-metric='Health'][data-value='Live']
+  > strong,
+.agentWorkspace .hybridMetrics [data-metric='Success'] > strong {
+  color: #15803d;
+}
+.agentWorkspace
+  .hybridMetrics
+  [data-metric='Health'][data-value='Degraded']
+  > strong {
+  color: #dc2626;
+}
+
+/* Shared treatment for contextual editors, without adding sidebar sections. */
+.operationalEditor {
+  gap: 20px;
+}
+.operationalEditor .surfaceCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+.operationalEditor .surfaceColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.operationalEditor .surfaceColumns > .surfaceCards {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.operationalEditor .agentCard {
+  padding: 20px;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  background: white;
+  min-height: 150px;
+}
+.operationalEditor .agentCard h2,
+.operationalEditor .agentCard h3 {
+  font-size: 15px;
+}
+.operationalEditor .surfaceAside {
+  position: static;
+}
+.recoveryPage {
+  max-width: 640px;
+  margin: 12vh auto;
+  padding: 24px;
+}
+.recoveryBrand {
+  background: #0b1220;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.recoveryPage .panel {
+  padding: 24px;
+}
+.refreshFeedback {
+  color: #475569;
+  font-size: 12px;
+  margin: 0;
+}
+@media (max-width: 900px) {
+  .operationalEditor .surfaceColumns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.operationalEditor .modelPrimaryColumn {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.operationalEditor .surfaceNotice {
+  padding: 10px 14px;
+  background: #f0f5ff;
+}
+.operationalEditor .surfaceNotice p {
+  margin: 4px 0 0;
+  font-size: 12px;
+}
+
+.demoControls {
+  position: relative;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.demoControls > details > summary {
+  cursor: pointer;
+  color: #52647d;
+  width: fit-content;
+  padding: 5px 0;
+}
+.demoControlsBody {
+  padding: 16px;
+  border: 1px solid #dce5f1;
+  background: white;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+.demoControlsBody label {
+  display: grid;
+  gap: 6px;
+  max-width: 320px;
+}
+.demoControlsBody select {
+  padding: 10px;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  background: white;
+}
+.demoRoleTable {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+}
+.demoRoleTable th,
+.demoRoleTable td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #edf1f7;
+}
+.demoRoleTable caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 8px;
+}
+.demoFieldset {
+  display: contents;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.demoPermission {
+  padding: 12px;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  background: #f0f5ff;
+}
+.gettingStarted ol {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.gettingStarted li {
+  border: 1px solid #dce5f1;
+  border-radius: 12px;
+  padding: 20px;
+}
+.gettingStarted h2 {
+  font-size: 16px;
+}
+@media (max-width: 650px) {
+  .gettingStarted ol {
+    grid-template-columns: 1fr;
+  }
+  .demoRoleTable th,
+  .demoRoleTable td {
+    padding: 6px;
+  }
+}
+.topbar .demoControls {
+  margin: 0;
+  flex-shrink: 0;
+}
+.topbar .demoControls summary {
+  padding: 6px 8px;
+  border: 1px solid #dce5f1;
+  border-radius: 8px;
+  background: white;
+}
+.topbar .demoControlsBody {
+  position: absolute;
+  z-index: 80;
+  top: 32px;
+  right: 0;
+  width: min(520px, calc(100vw - 32px));
+  box-shadow: 0 12px 32px #14203324;
+  max-height: 75vh;
+  overflow: auto;
+  color: #172337;
+  font-size: 13px;
+}
+@media (max-width: 650px) {
+  .topbar .demoControlsBody {
+    position: fixed;
+    top: 64px;
+    right: 16px;
+  }
+  .topbar .topActions {
+    gap: 6px;
+  }
+}
+.demoRoleTable > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  border-bottom: 1px solid #edf1f7;
+  padding: 8px 0;
+}
+.demoRoleTable dt {
+  font-weight: 600;
+}
+.demoRoleTable dd {
+  margin: 0;
+}

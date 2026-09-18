@@ -1,0 +1,332 @@
+/* Hybrid v4 density: composition changes only; no new color or type system. */
+.agentOverviewGrid > *,
+.skillOverviewGrid > * {
+  min-width: 0;
+}
+.skillOverviewGrid {
+  display: grid;
+  gap: 16px;
+}
+.skillOverviewGrid .reuseDetail {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #dfe7f1;
+  border-radius: 13px;
+  background: white;
+}
+@media (min-width: 1000px) {
+  .content:has(.hybridPage),
+  .content:has(.overviewFidelity) {
+    max-width: none;
+    padding: 20px 24px;
+  }
+  .hybridPage .pageHead {
+    margin-bottom: 16px;
+  }
+  .hybridPage .pageHead p {
+    margin-top: 4px;
+  }
+  .hybridPage .hybridMetrics {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .hybridPage .hybridMetrics article {
+    min-height: 80px;
+    padding: 12px 16px;
+  }
+  .hybridPage .hybridMetrics article > strong {
+    font-size: 25px;
+    margin: 4px 0;
+    line-height: 1.2;
+  }
+  .hybridPage .panel {
+    padding: 16px;
+  }
+  .hybridPage .hybridSplit {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .hybridPage .intelligenceNote {
+    padding: 12px 16px;
+    margin: 12px 0;
+  }
+  .hybridPage [role='tablist'] {
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+  .hybridPage [role='tabpanel'] > .hybridMetrics {
+    margin-top: 0;
+  }
+  .hybridPage .hybridChart {
+    min-height: 150px;
+    height: 180px;
+  }
+  .hybridPage .surfaceFacts > div {
+    padding: 7px 0;
+  }
+  .hybridPage .surfaceFacts dd {
+    overflow-wrap: anywhere;
+  }
+  .overviewTitle {
+    margin-bottom: 16px;
+  }
+  .overviewReferenceMetrics {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .overviewReferenceMetrics > article {
+    min-height: 80px;
+    padding: 12px 16px;
+  }
+  .overviewReferencePanels {
+    gap: 16px;
+    align-items: stretch;
+  }
+  .overviewReferencePanels > section {
+    min-height: 0;
+  }
+  .overviewSummaryPanels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+  }
+  .overviewSummaryPanels > section {
+    padding: 14px 16px;
+  }
+  .overviewSummaryPanels h2 {
+    margin-bottom: 10px;
+  }
+  .overviewSummaryPanels .overviewProgressFoot {
+    margin: 8px 0;
+  }
+  .overviewSummaryPanels .overviewInsight {
+    margin: 0;
+    padding: 0;
+  }
+  .overviewSummaryPanels .overviewInsight p {
+    margin: 0;
+  }
+  .overviewAgentList,
+  .overviewActivityPanel > ul {
+    max-height: 430px;
+    overflow: auto;
+  }
+  .skillOverviewGrid {
+    grid-template-columns: 1fr 1.3fr 1fr;
+  }
+  .skillOverviewGrid > * {
+    margin: 0;
+  }
+  .skillOverviewGrid .reuseDetail {
+    max-height: 440px;
+    overflow: auto;
+  }
+  .skillDetailPage .skillDetailPanel {
+    padding: 16px;
+  }
+  .finOpsPage .finopsWorkspace {
+    grid-template-columns: 1.2fr 1fr 1fr;
+    align-items: stretch;
+  }
+  .finopsWorkspace .costInsightPanel {
+    margin: 0;
+  }
+}
+@media (min-width: 1280px) {
+  .agentWorkspace .agentOverviewGrid {
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+  .agentOverviewGrid > .panel {
+    margin: 0;
+    min-height: 340px;
+  }
+  .agentOverviewGrid .hybridChart {
+    min-height: 180px;
+    max-height: 260px;
+  }
+  .agentOverviewGrid .recentTaskPanel {
+    display: flex;
+    flex-direction: column;
+  }
+  .agentOverviewGrid .recentTaskPanel .hybridTable {
+    overflow: auto;
+    max-height: 330px;
+  }
+  .agentOverviewGrid .recentTaskPanel th,
+  .agentOverviewGrid .recentTaskPanel td {
+    padding: 10px 8px;
+    font-size: 12px;
+    white-space: normal;
+  }
+  .overviewReferencePanels {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (min-width: 768px) and (max-width: 1279px) {
+  .agentWorkspace .agentOverviewGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .agentOverviewGrid .recentTaskPanel {
+    grid-column: 1 / -1;
+  }
+  .overviewReferencePanels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .overviewSummaryPanels {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 999px) {
+  .finOpsPage .finopsWorkspace,
+  .skillOverviewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .agentWorkspace .agentOverviewGrid,
+  .overviewReferencePanels,
+  .overviewSummaryPanels {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (min-width: 1280px) {
+  .toolsDetail .toolOverviewGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.5fr);
+    align-items: stretch;
+  }
+  .toolOverviewGrid > * {
+    min-width: 0;
+    margin: 0;
+  }
+  .toolRecentCalls .hybridTable {
+    max-height: 340px;
+    overflow: auto;
+  }
+  .evaluationWorkspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .evaluationWorkspace > .panel {
+    margin: 0 0 16px;
+  }
+}
+@media (min-width: 1000px) {
+  .hybridPage [role='tabpanel'] {
+    padding-top: 12px;
+  }
+  .skillDetailPage {
+    gap: 16px;
+  }
+  .skillDetailPage > .intelligenceNote {
+    margin: 0;
+  }
+  .skillDetailPage .skillDetailPanel [role='tabpanel'] {
+    padding-top: 12px;
+  }
+  .skillDetailPage .skillDetailPanel > [role='tablist'] {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  .finOpsPage .hybridBars > div {
+    padding: 12px 0;
+    min-height: 0;
+  }
+  .finOpsPage .hybridBars {
+    max-height: min(460px, calc(100vh - 360px));
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .agentOverviewGrid .recentTaskPanel table {
+    min-width: 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .agentOverviewGrid .recentTaskPanel th:first-child {
+    width: 45%;
+  }
+  .agentOverviewGrid .recentTaskPanel th:nth-child(2) {
+    width: 25%;
+  }
+  .agentOverviewGrid .recentTaskPanel th:nth-child(3) {
+    width: 30%;
+  }
+  .agentOverviewGrid .recentTaskPanel .hybridStatus {
+    white-space: normal;
+  }
+  .skillOverviewGrid .reuseDetail {
+    max-height: max(300px, calc(100vh - 450px));
+  }
+  .evaluationSummary .hybridMetrics article {
+    min-height: 76px;
+  }
+  .evaluationSummary .hybridMetrics strong {
+    font-size: 22px;
+  }
+}
+@media (min-width: 1000px) {
+  .finOpsPage .hybridBars {
+    gap: 0;
+    margin: 12px 0;
+    max-height: 380px;
+  }
+  .finOpsPage .hybridBars > div {
+    padding: 10px 0;
+  }
+  .finOpsPage .hybridBars .referenceProgress {
+    margin-top: 6px;
+  }
+  .finOpsPage .finopsWorkspace > .panel {
+    min-height: 0;
+  }
+}
+
+/* Fill the desktop viewport with the operational workspace, not enlarged KPIs.
+   Shared by demo and authenticated accounts; small screens keep natural flow. */
+@media (min-width: 1280px) {
+  .content > .overviewFidelity {
+    min-height: calc(100dvh - var(--topbar-height, 56px) - 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .overviewFidelity > .overviewTitle,
+  .overviewFidelity > .overviewReferenceMetrics,
+  .overviewFidelity > .overviewDemoNote {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .overviewFidelity > .overviewReferencePanels {
+    flex: 1 0 auto;
+    align-items: stretch;
+  }
+  .overviewReferencePanels > .overviewSummaryPanels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .overviewSummaryPanels > section {
+    flex: 1 0 auto;
+  }
+  .overviewHealthPanel,
+  .overviewActivityPanel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .overviewHealthPanel > header,
+  .overviewActivityPanel > header {
+    flex-shrink: 0;
+  }
+  .overviewAgentList,
+  .overviewActivityPanel > ul {
+    max-height: max(280px, calc(100dvh - 320px));
+    overflow-y: auto;
+  }
+}
