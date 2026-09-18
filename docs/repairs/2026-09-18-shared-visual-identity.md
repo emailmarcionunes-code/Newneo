@@ -54,3 +54,21 @@ application and shared components used by both modes.
 - Unit suite: 71 passed, 1 environment-dependent skip, 0 failed.
 - No changes to API authorization, credentials, tenant isolation or billing.
 - Reversible application-only deployment; server backup retained.
+
+## Authenticated follow-up — GAW
+
+The user restored the session. Verified the hosted GAW identity and real records
+on Home, My Agents, Discover, Operations overview, agent inventory/detail, Skills,
+Governance, personal Analytics, Reports and FinOps. Remaining primary navigation
+routes were opened and checked for the expected live-workspace surface, including
+Knowledge, Connections, Models, Evaluations, Deployments, AgentOps, Playground,
+Audit Log, Settings, Work, Profile and Help. No demo account or demo control leaked
+into the authenticated header. This resolves the expired-session limitation above;
+it does not claim exhaustive validation of every modal, role or empty/error state.
+
+The two active IT Support entries are separate saved records of the same template,
+so they appropriately share its identity. No records were deleted or merged.
+
+One additional inconsistency was found in Workspace Reports: its older summary
+markup bypassed shared Metrics and agent identities. It now uses shared Metrics,
+Table and AgentIcon while retaining the original personal search counts and scope.

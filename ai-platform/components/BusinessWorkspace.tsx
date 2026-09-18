@@ -11,7 +11,7 @@ import { demoProductRole, productCapabilities } from '@/lib/product-access';
 import './BusinessWorkspace.css';
 import WorkspaceAnalytics from './WorkspaceAnalytics';
 import { AgentIcon } from './Assets';
-import { Metrics, Status } from './hybrid/UI';
+import { Metrics, Status, Table } from './hybrid/UI';
 import AgentAddSteps from './AgentAddSteps';
 type Agent = {
   id: string;
@@ -744,33 +744,17 @@ export default function BusinessWorkspace({
               <p>A summary of your latest 50 document searches.</p>
             </div>
           </header>
-          <div className="businessSummary">
-            <div>
-              <strong>{d.work.length}</strong>
-              <span>Searches completed</span>
-            </div>
-            <div>
-              <strong>
-                {d.work.filter((w) => w.result.length > 0).length}
-              </strong>
-              <span>Searches with matches</span>
-            </div>
-            <div>
-              <strong>{new Set(d.work.map((w) => w.agent_id)).size}</strong>
-              <span>Agents used</span>
-            </div>
-          </div>
+          <Metrics items={[
+            ['Searches completed', String(d.work.length)],
+            ['Searches with matches', String(d.work.filter(w => w.result.length > 0).length)],
+            ['Agents used', String(new Set(d.work.map(w => w.agent_id)).size)],
+          ]}/>
           <article className="panel">
-            <h2>Results by Agent</h2>
-            {d.agents.map((a) => {
-              const runs = d.work.filter((w) => w.agent_id === a.id);
-              return (
-                <p key={a.id}>
-                  <Link href={`/workspace/agents/${a.id}`}>{a.name}</Link> ·{' '}
-                  {runs.length} searches
-                </p>
-              );
-            })}
+            <h2><Activity size={18}/>Results by Agent</h2>
+            <Table caption="Your recorded searches by Agent" headers={['Agent', 'Searches']} rows={d.agents.map(a => [
+              <Link key={a.id} className="referenceIconLabel agent" href={`/workspace/agents/${a.id}`}><AgentIcon identity={a.templateId ?? a.id} name={a.name}/>{a.name}</Link>,
+              String(d.work.filter(w => w.agent_id === a.id).length),
+            ])} emptyMessage="No Agents in your workspace yet."/>
             <p>
               These counts describe document searches, not AI task completion or
               business impact.
