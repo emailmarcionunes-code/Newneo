@@ -25,3 +25,9 @@ Profile is accessed from the header avatar/name menu, not a separate sidebar ite
 Help is now a persistent lower-right Neo face button, replacing the sidebar Help item and the header question-mark popup. It opens a dismissible, keyboard-accessible panel with role-aware guidance and a link to the full help page. Profile remains in the avatar menu. The launcher reuses the approved standing Neo asset through CSS framing; no new mascot artwork was introduced.
 
 Settings → Configure Help is administrator-only and previews the three role-specific guides, linking to membership management to change the assigned access that controls help. This is guidance and navigation, not a live AI conversation or a help-content editor. No user role or permissions are changed by previewing guidance.
+
+## Inline guided conversation
+
+Neo now opens its help panel on mouse pointer entry, without taking keyboard focus or closing when the pointer moves from the launcher into the panel. Click/tap still opens it and focuses the composer; Escape, close and outside click dismiss it. The initial message is “How can I help you?”. Users can type questions and receive in-panel guidance, with no forced page navigation.
+
+This is a deterministic product-guide assistant, not an LLM integration. It recognizes supported English/Portuguese help topics, handles topic follow-ups and admits unsupported questions. It does not inspect workspace data, transmit chat text to an external provider or execute account actions. Messages stay in component memory and reset when workspace, demo mode or role changes. Topic guidance is restricted to the relevant access level. Regression tests cover specific-topic precedence, access-limited guidance, truthful billing limitations and unknown questions.
